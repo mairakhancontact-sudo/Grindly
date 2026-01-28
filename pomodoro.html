@@ -1,0 +1,232 @@
+
+<!-- pomodoro in studentmode -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pomodoro Timer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.5s;
+    }
+
+    .container {
+      text-align: center;
+      padding: 30px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .focus {
+      background: #0f172a;
+      color: white;
+    }
+
+    .break {
+      background: #dcfce7;
+      color: #065f46;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      margin: 10px 0;
+    }
+
+    button {
+      padding: 12px 18px;
+      margin: 8px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .music-box {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 14px;
+    }
+
+    .music-box h3 {
+      margin-bottom: 10px;
+    }
+
+    audio {
+      width: 100%;
+      margin: 6px 0;
+    }
+  </style>
+</head>
+
+<body class="focus">
+
+<div class="container">
+  <h2 id="modeText">Focus Time 💪</h2>
+  <h1 id="timer">25:00</h1>
+
+  <div>
+    <button onclick="start()">Start</button>
+    <button onclick="stop()">Stop</button>
+    <button onclick="goBack()">Back</button>
+  </div>
+
+  <div class="music-box">
+    <h3>🎵 Play some music</h3>
+    <audio loop controls src="music1.mp3"></audio>
+    <audio  loop controls src="music2.mp3"></audio>
+    <audio loop  controls src="music3.mp3"></audio>
+  </div>
+</div>
+
+<script>
+  let focusTime = 1500; // 25 min
+  let breakTime = 300;  // 5 min
+  let time = focusTime;
+  let isBreak = false;
+  let interval;
+
+  // At the top of the script section
+let totalSessions = parseInt(localStorage.pomodoroSessions || "0");
+
+function switchMode() {
+  isBreak = !isBreak;
+
+  // Play completion sound!
+  playCompletionSound();
+
+  if (isBreak) {
+    document.body.className = "break";
+    document.getElementById("modeText").textContent = "Break Time 😌";
+    time = breakTime;
+    alert("Great job! Take a 5 minute break 🌿");
+  } else {
+    document.body.className = "focus";
+    document.getElementById("modeText").textContent = "Focus Time 💪";
+    time = focusTime;
+    alert("Break over! Back to focus 🔥");
+  }
+
+  updateDisplay();
+  start();
+}
+
+// Add this new function
+function playCompletionSound() {
+  // Create audio context
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  
+  // Play 3 beeps
+  for (let i = 0; i < 3; i++) {
+    setTimeout(() => {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      // Set frequency (higher = higher pitch)
+      oscillator.frequency.value = 800;
+      oscillator.type = 'sine';
+      
+      // Set volume
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      
+      // Play beep
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.2);
+    }, i * 300); // 300ms between beeps
+  }
+
+
+  if (isBreak) {
+    // BREAK TIME
+    document.body.className = "break";
+    document.getElementById("modeText").textContent = "Break Time 😌";
+    time = breakTime;
+    
+    // Add 1 to completed sessions!
+    totalSessions++;
+    localStorage.pomodoroSessions = totalSessions;
+    
+    alert(`Great job! You completed ${totalSessions} sessions today! Take a 5 minute break 🌿`);
+  } else {
+    // FOCUS TIME
+    document.body.className = "focus";
+    document.getElementById("modeText").textContent = "Focus Time 💪";
+    time = focusTime;
+    alert("Break over! Back to focus 🔥");
+  }
+
+  updateDisplay();
+  start();
+}
+
+// Show sessions on page
+document.querySelector('.container').insertAdjacentHTML('afterbegin', 
+  `<div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+    <h3>🏆 Sessions Today: ${totalSessions}</h3>
+  </div>`
+);
+
+  function updateDisplay() {
+    let m = Math.floor(time / 60);
+    let s = time % 60;
+    document.getElementById("timer").textContent =
+      `${m}:${s.toString().padStart(2, "0")}`;
+  }
+
+  function start() {
+    clearInterval(interval);
+    interval = setInterval(() => {
+      time--;
+      updateDisplay();
+
+      if (time <= 0) {
+        clearInterval(interval);
+        switchMode();
+      }
+    }, 1000);
+  }
+
+  function stop() {
+    clearInterval(interval);
+  }
+
+  function switchMode() {
+    isBreak = !isBreak;
+
+    if (isBreak) {
+      document.body.className = "break";
+      document.getElementById("modeText").textContent = "Break Time 😌";
+      time = breakTime;
+      alert("Great job! Take a 5 minute break 🌿");
+    } else {
+      document.body.className = "focus";
+      document.getElementById("modeText").textContent = "Focus Time 💪";
+      time = focusTime;
+      alert("Break over! Back to focus 🔥");
+    }
+
+    updateDisplay();
+    start();
+  }
+
+  function goBack() {
+    window.location.href = "studentmode.html";
+  }
+
+  updateDisplay();
+</script>
+
+</body>
+</html>

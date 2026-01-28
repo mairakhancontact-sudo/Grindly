@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Study Groups</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <style>
+    :root{
+  --bg:#eef1ff;
+  --card:#ffffff;
+  --accent:#6c63ff;
+  --text:#222;
+}
+body.purple{
+  --bg:#140a26;
+  --card:#24144a;
+  --accent:#b388ff;
+  --text:#f3eefe;
+}
+body.ocean{
+  --bg:#0a1929;
+  --card:#1e3a5f;
+  --accent:#00b4d8;
+  --text:#caf0f8;
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui;
+  transition: 0.4s;
+}
+
+.header{
+  background: var(--card);
+  padding: 20px 40px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.grid{
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 30px;
+  height: calc(100vh - 150px);
+}
+
+.sidebar{
+  background: var(--card);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  overflow-y: auto;
+}
+
+.chat-area{
+  background: var(--card);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+button{
+  padding: 12px 25px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+button:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+input, textarea{
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: inherit;
+  background: var(--bg);
+  color: var(--text);
+  margin: 10px 0;
+}
+
+input:focus, textarea:focus{
+  outline: none;
+  border-color: var(--accent);
+}
+
+.group-item{
+  background: var(--bg);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-left: 4px solid transparent;
+}
+
+.group-item:hover{
+  transform: translateX(5px);
+  border-left-color: var(--accent);
+}
+
+.group-item.active{
+  background: var(--accent);
+  color: white;
+  border-left-color: white;
+}
+
+.message{
+  background: var(--bg);
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  animation: slideIn 0.3s;
+}
+
+@keyframes slideIn{
+  from{opacity: 0; transform: translateY(10px);}
+  to{opacity: 1; transform: translateY(0);}
+}
+
+.my-message{
+  background: var(--accent);
+  color: white;
+  margin-left: 60px;
+}
+
+.message-header{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.message-content{
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.chat-messages{
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-right: 10px;
+}
+
+.chat-input-area{
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.chat-input-area textarea{
+  flex: 1;
+  resize: none;
+  margin: 0;
+}
+
+.empty-state{
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-state-icon{
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.resource-item{
+  background: var(--bg);
+  padding: 12px 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.resource-item a{
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.member-list{
+  background: var(--bg);
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.member-item{
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.online-dot{
+  width: 8px;
+  height: 8px;
+  background: #4caf50;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px){
+  .grid{
+    grid-template-columns: 1fr;
+  }
+  .sidebar{
+    display: none;
+  }
+}
+  </style>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+
+<body>
+  <div class="header">
+    <h2>👥 Study Groups</h2>
+    <div>
+      <select onchange="changeTheme(this.value)" id="themeSelector" style="padding: 10px 18px; border-radius: 10px; border: none; background: var(--accent); color: white; cursor: pointer; margin-right: 10px;">
+        <option value="">🎨 Light</option>
+        <option value="purple">💜 Purple</option>
+        <option value="ocean">🌊 Ocean</option>
+      </select>
+      <button onclick="location.href='studentmode.html'">← Back</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="grid">
+      <!-- SIDEBAR: Groups List -->
+      <div class="sidebar">
+        <h3>My Study Groups</h3>
+        
+        <div style="margin: 20px 0;">
+          <button onclick="showCreateGroup()" style="width: 100%; background: #4caf50;">
+            ➕ Create New Group
+          </button>
+          <button onclick="showJoinGroup()" style="width: 100%; background: #2196f3; margin-top: 10px;">
+            🔗 Join Existing Group
+          </button>
+        </div>
+        
+        <div id="groupsList"></div>
+      </div>
+      
+      <!-- MAIN: Chat Area -->
+      <div class="chat-area">
+        <!-- No Group Selected -->
+        <div id="noGroupSelected" class="empty-state">
+          <div class="empty-state-icon">💬</div>
+          <h3>Select a group to start chatting!</h3>
+          <p>Create a new group or join an existing one</p>
+        </div>
+        
+        <!-- Group Chat -->
+        <div id="groupChat" style="display: none; flex-direction: column; height: 100%;">
+          <!-- Group Header -->
+          <div style="border-bottom: 2px solid var(--bg); padding-bottom: 15px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h2 id="currentGroupName" style="margin: 0; margin-bottom: 5px;"></h2>
+                <p id="currentGroupCode" style="margin: 0; font-size: 14px; color: #666;"></p>
+              </div>
+              <div>
+                <button onclick="showGroupInfo()" style="background: #666; padding: 10px 20px;">
+                  ℹ️ Info
+                </button>
+                <button onclick="leaveGroup()" style="background: #e74c3c; padding: 10px 20px; margin-left: 10px;">
+                  🚪 Leave
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Messages -->
+          <div class="chat-messages" id="chatMessages">
+            <div class="empty-state">
+              <p>No messages yet. Start the conversation! 💬</p>
+            </div>
+          </div>
+          
+          <!-- Resources Section -->
+          <div style="background: var(--bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; max-height: 150px; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <strong>📚 Shared Resources</strong>
+              <button onclick="showAddResource()" style="padding: 6px 12px; font-size: 14px;">+ Add</button>
+            </div>
+            <div id="resourcesList"></div>
+          </div>
+          
+          <!-- Message Input -->
+          <div class="chat-input-area">
+            <textarea id="messageInput" placeholder="Type your message..." rows="2"></textarea>
+            <button onclick="sendMessage()" style="padding: 15px 30px;">
+              📤 Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+// 🔥 FIREBASE INITIALIZATION
+const firebaseConfig = {
+  apiKey: "AIzaSyC_aJwr5EJELuz0_H_Qzs4nqmihBcMIf3U",
+  authDomain: "study-groups-app-19c8a.firebaseapp.com",
+  databaseURL: "https://study-groups-app-19c8a-default-rtdb.firebaseio.com",
+  projectId: "study-groups-app-19c8a",
+  storageBucket: "study-groups-app-19c8a.appspot.com",
+  messagingSenderId: "919201377577",
+  appId: "1:919201377577:web:5fcf62440f1cc2a4b71b38"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+/* ============================================
+   STUDY GROUP SYSTEM
+   ============================================ */
+
+// Get user's name
+let myName = localStorage.getItem('name') || prompt("What's your name?") || "Anonymous";
+if (myName && myName !== "Anonymous") {
+  localStorage.setItem('name', myName);
+}
+
+// My groups: array of group codes I'm in
+let myGroups = JSON.parse(localStorage.getItem('myStudyGroups') || "[]");
+
+// Current active group
+let currentGroup = null;
+let messageListeners = {};
+let resourceListeners = {};
+
+// Theme system
+function changeTheme(theme) {
+  document.body.className = '';
+  if (theme) document.body.classList.add(theme);
+  localStorage.setItem('selectedTheme', theme);
+}
+
+const savedTheme = localStorage.getItem('selectedTheme');
+if (savedTheme) {
+  document.body.classList.add(savedTheme);
+  document.getElementById('themeSelector').value = savedTheme;
+}
+
+/* ============================================
+   CREATE GROUP
+   ============================================ */
+function showCreateGroup() {
+  const groupName = prompt("Enter group name (e.g., Math Study Group):");
+  if (!groupName) return;
+  
+  // Generate random group code
+  const code = generateCode();
+  
+  // Create group data
+  const groupData = {
+    name: groupName,
+    creator: myName,
+    created: new Date().toISOString(),
+    members: { [myName]: true },
+    lastActivity: Date.now()
+  };
+  
+  // Save to Firebase
+  database.ref('groups/' + code).set(groupData)
+    .then(() => {
+      // Add to my groups
+      myGroups.push(code);
+      localStorage.setItem('myStudyGroups', JSON.stringify(myGroups));
+      
+      renderGroupsList();
+      selectGroup(code);
+      
+      alert(`✅ Group created!\nCode: ${code}\nShare this code with friends!`);
+    })
+    .catch(error => {
+      console.error("Error creating group:", error);
+      alert("❌ Failed to create group.");
+    });
+}
+
+function generateCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+/* ============================================
+   JOIN GROUP - FIXED! WORKS ACROSS DEVICES
+   ============================================ */
+function showJoinGroup() {
+  const code = prompt("Enter the group code:").toUpperCase().trim();
+  if (!code) return;
+  
+  // Check if already in group
+  if (myGroups.includes(code)) {
+    alert("You're already in this group!");
+    return;
+  }
+  
+  // Check if group exists in Firebase
+  database.ref('groups/' + code).once('value')
+    .then(snapshot => {
+      if (!snapshot.exists()) {
+        alert("❌ Invalid group code!");
+        return;
+      }
+      
+      const groupData = snapshot.val();
+      
+      // Add yourself as member
+      const updates = {};
+      updates[`groups/${code}/members/${myName}`] = true;
+      updates[`groups/${code}/lastActivity`] = Date.now();
+      
+      return database.ref().update(updates)
+        .then(() => {
+          // Add to my groups
+          myGroups.push(code);
+          localStorage.setItem('myStudyGroups', JSON.stringify(myGroups));
+          
+          renderGroupsList();
+          selectGroup(code);
+          
+          alert(`✅ Joined "${groupData.name}"!`);
+        });
+    })
+    .catch(error => {
+      console.error("Error joining group:", error);
+      alert("❌ Failed to join group.");
+    });
+}
+
+/* ============================================
+   RENDER GROUPS LIST
+   ============================================ */
+function renderGroupsList() {
+  const list = document.getElementById('groupsList');
+  list.innerHTML = '';
+  
+  if (myGroups.length === 0) {
+    list.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No groups yet</p>';
+    return;
+  }
+  
+  myGroups.forEach(code => {
+    // Listen for group data updates
+    database.ref('groups/' + code).on('value', (snapshot) => {
+      if (!snapshot.exists()) {
+        // Group was deleted
+        myGroups = myGroups.filter(c => c !== code);
+        localStorage.setItem('myStudyGroups', JSON.stringify(myGroups));
+        if (currentGroup === code) {
+          currentGroup = null;
+          showNoGroupSelected();
+        }
+        renderGroupsList();
+        return;
+      }
+      
+      const group = snapshot.val();
+      
+      // Update or create group item
+      let groupDiv = document.querySelector(`[data-group-code="${code}"]`);
+      
+      if (!groupDiv) {
+        groupDiv = document.createElement('div');
+        groupDiv.className = 'group-item';
+        groupDiv.setAttribute('data-group-code', code);
+        groupDiv.onclick = () => selectGroup(code);
+        list.appendChild(groupDiv);
+      }
+      
+      if (currentGroup === code) {
+        groupDiv.classList.add('active');
+      } else {
+        groupDiv.classList.remove('active');
+      }
+      
+      const memberCount = group.members ? Object.keys(group.members).length : 0;
+      
+      groupDiv.innerHTML = `
+        <div style="font-weight: bold; margin-bottom: 5px;">${group.name}</div>
+        <div style="font-size: 12px; opacity: 0.7;">
+          👥 ${memberCount} members • Code: ${code}
+        </div>
+      `;
+    });
+  });
+}
+
+/* ============================================
+   SELECT GROUP
+   ============================================ */
+function selectGroup(code) {
+  currentGroup = code;
+  
+  document.getElementById('noGroupSelected').style.display = 'none';
+  document.getElementById('groupChat').style.display = 'flex';
+  
+  // Get group info
+  database.ref('groups/' + code).once('value')
+    .then(snapshot => {
+      const group = snapshot.val();
+      if (!group) {
+        showNoGroupSelected();
+        return;
+      }
+      
+      document.getElementById('currentGroupName').textContent = group.name;
+      document.getElementById('currentGroupCode').textContent = `Code: ${code}`;
+      
+      renderGroupsList();
+      loadMessages();
+      loadResources();
+    });
+}
+
+function showNoGroupSelected() {
+  currentGroup = null;
+  document.getElementById('noGroupSelected').style.display = 'block';
+  document.getElementById('groupChat').style.display = 'none';
+  
+  // Clear any existing listeners
+  if (messageListeners[currentGroup]) {
+    database.ref('messages/' + currentGroup).off('value', messageListeners[currentGroup]);
+  }
+  if (resourceListeners[currentGroup]) {
+    database.ref('resources/' + currentGroup).off('value', resourceListeners[currentGroup]);
+  }
+}
+
+/* ============================================
+   MESSAGES
+   ============================================ */
+function loadMessages() {
+  if (!currentGroup) return;
+  
+  // Clear previous listener
+  if (messageListeners[currentGroup]) {
+    database.ref('messages/' + currentGroup).off('value', messageListeners[currentGroup]);
+  }
+  
+  // Set up new listener
+  messageListeners[currentGroup] = (snapshot) => {
+    renderMessages(snapshot.val());
+  };
+  
+  database.ref('messages/' + currentGroup).on('value', messageListeners[currentGroup]);
+}
+
+function renderMessages(messagesData) {
+  const messagesDiv = document.getElementById('chatMessages');
+  messagesDiv.innerHTML = '';
+  
+  if (!messagesData) {
+    messagesDiv.innerHTML = '<div class="empty-state"><p>No messages yet. Start the conversation! 💬</p></div>';
+    return;
+  }
+  
+  // Convert object to array and sort by timestamp
+  const messagesArray = Object.entries(messagesData || {})
+    .map(([id, msg]) => ({ id, ...msg }))
+    .sort((a, b) => a.timestamp - b.timestamp);
+  
+  if (messagesArray.length === 0) {
+    messagesDiv.innerHTML = '<div class="empty-state"><p>No messages yet. Start the conversation! 💬</p></div>';
+    return;
+  }
+  
+  messagesArray.forEach(msg => {
+    const div = document.createElement('div');
+    div.className = 'message';
+    if (msg.sender === myName) div.classList.add('my-message');
+    
+    const time = new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+    
+    div.innerHTML = `
+      <div class="message-header">
+        <strong>${msg.sender}</strong>
+        <span>${time}</span>
+      </div>
+      <div class="message-content">${msg.text}</div>
+    `;
+    
+    messagesDiv.appendChild(div);
+  });
+  
+  // Scroll to bottom
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function sendMessage() {
+  const text = document.getElementById('messageInput').value.trim();
+  if (!text || !currentGroup) return;
+  
+  const messageData = {
+    sender: myName,
+    text: text,
+    timestamp: Date.now()
+  };
+  
+  // Save message to Firebase
+  database.ref('messages/' + currentGroup).push(messageData)
+    .then(() => {
+      // Update last activity
+      database.ref('groups/' + currentGroup + '/lastActivity').set(Date.now());
+      
+      // Clear input
+      document.getElementById('messageInput').value = '';
+    })
+    .catch(error => {
+      console.error("Error sending message:", error);
+      alert("❌ Failed to send message.");
+    });
+}
+
+/* ============================================
+   RESOURCES
+   ============================================ */
+function showAddResource() {
+  if (!currentGroup) return;
+  
+  const title = prompt("Resource title:");
+  if (!title) return;
+  
+  const link = prompt("Resource link (URL):");
+  if (!link) return;
+  
+  const resourceData = {
+    title: title,
+    link: link,
+    addedBy: myName,
+    date: new Date().toLocaleDateString(),
+    timestamp: Date.now()
+  };
+  
+  database.ref('resources/' + currentGroup).push(resourceData)
+    .then(() => {
+      alert("✅ Resource added!");
+    })
+    .catch(error => {
+      console.error("Error adding resource:", error);
+      alert("❌ Failed to add resource.");
+    });
+}
+
+function loadResources() {
+  if (!currentGroup) return;
+  
+  // Clear previous listener
+  if (resourceListeners[currentGroup]) {
+    database.ref('resources/' + currentGroup).off('value', resourceListeners[currentGroup]);
+  }
+  
+  // Set up new listener
+  resourceListeners[currentGroup] = (snapshot) => {
+    renderResources(snapshot.val());
+  };
+  
+  database.ref('resources/' + currentGroup).on('value', resourceListeners[currentGroup]);
+}
+
+function renderResources(resourcesData) {
+  const resourcesDiv = document.getElementById('resourcesList');
+  resourcesDiv.innerHTML = '';
+  
+  if (!resourcesData) {
+    resourcesDiv.innerHTML = '<p style="color: #999; font-size: 14px;">No resources yet</p>';
+    return;
+  }
+  
+  // Convert object to array and sort by timestamp
+  const resourcesArray = Object.entries(resourcesData || {})
+    .map(([id, resource]) => ({ id, ...resource }))
+    .sort((a, b) => b.timestamp - a.timestamp);
+  
+  resourcesArray.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'resource-item';
+    div.innerHTML = `
+      <a href="${r.link}" target="_blank">📎 ${r.title}</a>
+      <div style="font-size: 11px; color: #666; margin-top: 3px;">Added by ${r.addedBy}</div>
+    `;
+    resourcesDiv.appendChild(div);
+  });
+}
+
+/* ============================================
+   GROUP INFO
+   ============================================ */
+function showGroupInfo() {
+  if (!currentGroup) return;
+  
+  database.ref('groups/' + currentGroup).once('value')
+    .then(snapshot => {
+      if (!snapshot.exists()) {
+        alert("Group not found!");
+        return;
+      }
+      
+      const group = snapshot.val();
+      
+      let info = `📊 Group Info\n\n`;
+      info += `Name: ${group.name}\n`;
+      info += `Code: ${currentGroup}\n`;
+      info += `Created by: ${group.creator}\n`;
+      info += `Created: ${new Date(group.created).toLocaleString()}\n`;
+      info += `Members: ${Object.keys(group.members || {}).length}\n\n`;
+      info += `Members:\n${Object.keys(group.members || {}).join('\n')}`;
+      
+      alert(info);
+    })
+    .catch(error => {
+      console.error("Error getting group info:", error);
+      alert("❌ Failed to get group info.");
+    });
+}
+
+/* ============================================
+   LEAVE GROUP
+   ============================================ */
+function leaveGroup() {
+  if (!currentGroup) return;
+  
+  if (!confirm("Are you sure you want to leave this group?")) return;
+  
+  // Remove yourself from members
+  database.ref(`groups/${currentGroup}/members/${myName}`).remove()
+    .then(() => {
+      // Remove from my groups
+      myGroups = myGroups.filter(c => c !== currentGroup);
+      localStorage.setItem('myStudyGroups', JSON.stringify(myGroups));
+      
+      // Reset view
+      currentGroup = null;
+      showNoGroupSelected();
+      renderGroupsList();
+      
+      alert("✅ Left the group successfully!");
+    })
+    .catch(error => {
+      console.error("Error leaving group:", error);
+      alert("❌ Failed to leave group.");
+    });
+}
+
+/* ============================================
+   ENTER KEY TO SEND
+   ============================================ */
+document.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey && document.activeElement.id === 'messageInput') {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+/* ============================================
+   INITIALIZE
+   ============================================ */
+// Start the app
+renderGroupsList();
+  </script>
+</body>
+</html>

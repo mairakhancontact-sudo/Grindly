@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Join Class</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- USE FIREBASE 8.10.0 - COMPATIBLE VERSION -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<style>
+:root{
+  --bg:#eef1ff;
+  --card:#ffffff;
+  --accent:#6c63ff;
+  --text:#222;
+}
+body.purple{
+  --bg:#140a26;
+  --card:#24144a;
+  --accent:#b388ff;
+  --text:#f3eefe;
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+.container{
+  background:var(--card);
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+}
+h1{
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+input{
+  width: 100%;
+  padding: 20px;
+  font-size: 24px;
+  border: 2px solid #e0e0e0;
+  border-radius: 15px;
+  text-align: center;
+  margin: 30px 0;
+  font-weight: bold;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: var(--bg);
+  color: var(--text);
+}
+input:focus{
+  outline: none;
+  border-color: var(--accent);
+}
+button{
+  width: 100%;
+  padding: 18px;
+  font-size: 18px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+button:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(108, 99, 255, 0.3);
+}
+.back-btn{
+  background: #666;
+  margin-top: 15px;
+}
+.joined-class{
+  background: var(--bg);
+  padding: 25px;
+  border-radius: 15px;
+  margin-top: 30px;
+}
+.success{
+  color: #4caf50;
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🎓 Join a Class</h1>
+  <p style="color: #666; margin-bottom: 10px;">Enter the class code your teacher gave you</p>
+  
+  <div id="joinSection">
+    <input id="classCodeInput" placeholder="Enter Code" maxlength="15">
+    <button onclick="joinClass()">Join Class</button>
+    <button class="back-btn" onclick="location.href='studentmode.html'">← Back to Student Mode</button>
+  </div>
+  
+  <div id="successSection" style="display: none;">
+    <div class="success">✅</div>
+    <h2 style="color: var(--accent);">Successfully Joined!</h2>
+    <div class="joined-class">
+      <p style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Class Code:</p>
+      <p id="joinedCode" style="font-size: 32px; color: var(--accent); font-weight: bold; letter-spacing: 3px;"></p>
+    </div>
+    <button onclick="location.href='studentmode.html'" style="margin-top: 20px;">Go to Student Mode →</button>
+  </div>
+  
+  <div id="currentClass" style="display: none; margin-top: 30px; background: var(--bg); padding: 20px; border-radius: 15px;">
+    <p style="font-size: 14px; color: #666; margin-bottom: 10px;">Currently in class:</p>
+    <p id="currentClassCode" style="font-size: 24px; color: var(--accent); font-weight: bold; letter-spacing: 2px;"></p>
+    <button onclick="leaveClass()" style="background: #e74c3c; margin-top: 15px;">Leave Class</button>
+  </div>
+</div>
+
+<script>
+// ========== FIREBASE CONFIGURATION ==========
+const firebaseConfig = {
+  apiKey: "AIzaSyBAIPxgXPZmGdPvB98TLFRfTAClgXWEIM0",
+  authDomain: "student-teacher-app-4e7c9.firebaseapp.com",
+  databaseURL: "https://student-teacher-app-4e7c9-default-rtdb.firebaseio.com",
+  projectId: "student-teacher-app-4e7c9",
+  storageBucket: "student-teacher-app-4e7c9.firebasestorage.app",
+  messagingSenderId: "737621420458",
+  appId: "1:737621420458:web:74c873869a1a47c2ce23d3"
+};
+
+// ========== FIREBASE INITIALIZATION ==========
+let database;
+try {
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  database = firebase.database();
+  console.log("✅ Firebase 8.10.0 initialized successfully");
+} catch (error) {
+  console.error("❌ Firebase initialization error:", error);
+  alert("Firebase failed to load. Please refresh the page.");
+}
+
+// ========== DOM ELEMENTS ==========
+const classCodeInput = document.getElementById("classCodeInput");
+const joinSection = document.getElementById("joinSection");
+const successSection = document.getElementById("successSection");
+const joinedCode = document.getElementById("joinedCode");
+const currentClass = document.getElementById("currentClass");
+const currentClassCode = document.getElementById("currentClassCode");
+
+// ========== JOIN CLASS FUNCTION ==========
+function joinClass() {
+  console.log("🎯 Join Class button clicked");
+  
+  if (!classCodeInput) {
+    alert("Error: Input field not found!");
+    return;
+  }
+  
+  const code = classCodeInput.value.trim().toUpperCase();
+  console.log("Entered code:", code);
+
+  if (!code) {
+    alert("⚠️ Please enter a class code!");
+    return;
+  }
+
+  // Check if Firebase is available
+  if (!database) {
+    alert("❌ Database connection error. Using localStorage instead.");
+    joinWithLocalStorage(code);
+    return;
+  }
+
+  // Show loading
+  const joinBtn = document.querySelector("button[onclick='joinClass()']");
+  const originalButtonText = joinBtn.textContent;
+  joinBtn.textContent = "Checking...";
+  joinBtn.disabled = true;
+  
+  // Check if class exists in Firebase
+  console.log("📡 Checking class in Firebase...");
+  database.ref('classes/' + code).once('value').then(snapshot => {
+    console.log("Firebase response:", snapshot.exists());
+    
+    if (!snapshot.exists()) {
+      // Class doesn't exist, ask if teacher wants to create it
+      if (confirm("Class not found. Would you like to create this class as a teacher?")) {
+        // This could be a teacher creating a new class
+        localStorage.setItem("teacherClassCode", code);
+        localStorage.setItem("studentClassCode", code);
+        
+        // Create class in Firebase
+        database.ref('classes/' + code).set({
+          code: code,
+          created: new Date().toISOString(),
+          teacherId: 'teacher_' + Date.now()
+        }).then(() => {
+          completeJoinProcess(code, joinBtn, originalButtonText);
+        });
+      } else {
+        joinBtn.textContent = originalButtonText;
+        joinBtn.disabled = false;
+        alert("❌ Class not found. Please check the code with your teacher.");
+      }
+      return;
+    }
+
+    console.log("✅ Class found in Firebase");
+    
+    // Get student name
+    let studentName = localStorage.getItem("name");
+    if (!studentName) {
+      studentName = prompt("Enter your name:") || "Student";
+      if (studentName) {
+        localStorage.setItem("name", studentName);
+      }
+    }
+
+    // Get or create user ID
+    let userId = localStorage.getItem('firebaseUserId');
+    if (!userId) {
+      userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('firebaseUserId', userId);
+    }
+
+    // Save class code locally
+    localStorage.setItem("studentClassCode", code);
+
+    // Create student profile for Firebase
+    const studentProfile = {
+      name: studentName,
+      classCode: code,
+      streak: 0,
+      totalStudyHours: 0,
+      lastActive: firebase.database.ServerValue.TIMESTAMP,
+      joinedDate: new Date().toISOString()
+    };
+
+    // Save to Firebase
+    console.log("💾 Saving student to Firebase...");
+    return database.ref('classes/' + code + '/students/' + userId).set(studentProfile);
+    
+  }).then(() => {
+    completeJoinProcess(code, joinBtn, originalButtonText);
+    
+  }).catch(error => {
+    console.error("❌ Error joining class:", error);
+    joinBtn.textContent = originalButtonText;
+    joinBtn.disabled = false;
+    
+    // Fallback to localStorage if Firebase fails
+    if (error.code === 'PERMISSION_DENIED') {
+      alert("⚠️ Firebase permission denied. Using localStorage instead.");
+      joinWithLocalStorage(code);
+    } else {
+      alert("❌ Error joining class. Please try again.\nError: " + error.message);
+    }
+  });
+}
+
+// Helper function to complete join process
+function completeJoinProcess(code, joinBtn, originalButtonText) {
+  console.log("✅ Join process completed");
+  
+  // Restore button
+  if (joinBtn) {
+    joinBtn.textContent = originalButtonText;
+    joinBtn.disabled = false;
+  }
+  
+  // Update UI
+  joinSection.style.display = "none";
+  successSection.style.display = "block";
+  joinedCode.textContent = code;
+  
+  // Redirect after 1.5 seconds
+  setTimeout(() => {
+    window.location.href = "studentmode.html";
+  }, 1500);
+}
+
+// Fallback function using only localStorage
+function joinWithLocalStorage(code) {
+  console.log("📝 Using localStorage fallback");
+  
+  // Get student name
+  let studentName = localStorage.getItem("name");
+  if (!studentName) {
+    studentName = prompt("Enter your name:") || "Student";
+    localStorage.setItem("name", studentName);
+  }
+  
+  // Save class code
+  localStorage.setItem("studentClassCode", code);
+  
+  // Update UI
+  joinSection.style.display = "none";
+  successSection.style.display = "block";
+  joinedCode.textContent = code;
+  
+  // Redirect
+  setTimeout(() => {
+    window.location.href = "studentmode.html";
+  }, 1500);
+}
+
+// ========== LEAVE CLASS FUNCTION ==========
+function leaveClass() {
+  if (!confirm("Are you sure you want to leave this class?")) return;
+
+  const classCode = localStorage.getItem("studentClassCode");
+  const userId = localStorage.getItem('firebaseUserId');
+  
+  if (classCode && userId && database) {
+    // Remove student from Firebase
+    database.ref('classes/' + classCode + '/students/' + userId).remove()
+      .then(() => {
+        console.log("✅ Student removed from Firebase");
+      })
+      .catch(error => {
+        console.error("❌ Error removing student:", error);
+      });
+  }
+
+  // Clear local storage
+  localStorage.removeItem("studentClassCode");
+  localStorage.removeItem("firebaseUserId");
+  
+  // Reload page
+  location.reload();
+}
+
+// ========== PAGE LOAD INITIALIZATION ==========
+document.addEventListener("DOMContentLoaded", function() {
+  console.log("📄 Page loaded");
+  
+  // Check if already in a class
+  const existingClass = localStorage.getItem("studentClassCode");
+  if (existingClass) {
+    console.log("✅ Already in class:", existingClass);
+    currentClassCode.textContent = existingClass;
+    currentClass.style.display = "block";
+  }
+  
+  // Add Enter key support
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      console.log("⌨️ Enter key pressed");
+      joinClass();
+    }
+  });
+  
+  // Debug info
+  console.log("Firebase available:", typeof firebase !== 'undefined');
+  console.log("Database available:", database ? "Yes" : "No");
+});
+
+// ========== TEST FUNCTION ==========
+function testFirebase() {
+  console.log("🧪 Testing Firebase 8.10.0...");
+  console.log("Firebase version:", firebase.SDK_VERSION);
+  console.log("Firebase object:", typeof firebase);
+  console.log("Database object:", database ? "Connected" : "Not connected");
+  
+  if (typeof firebase === 'undefined') {
+    alert("❌ Firebase SDK not loaded!");
+  } else if (!database) {
+    alert("⚠️ Firebase loaded but database not connected");
+  } else {
+    alert("✅ Firebase 8.10.0 working correctly!");
+  }
+}
+</script>
+
+</body>
+</html>

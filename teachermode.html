@@ -1,0 +1,4673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cramly | Teacher Mode </title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<style>
+/* ===== CSS VARIABLES ===== */
+:root {
+  /* Light theme (default) */
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --accent: #4f46e5;
+  --accent-dark: #4338ca;
+  --accent-light: #e0e7ff;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --purple: #8b5cf6;
+  
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* Border Radius */
+  --radius-sm: 0.5rem;
+  --radius: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  
+  /* Shadows */
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  --gradient-success: linear-gradient(135deg, var(--success), #059669);
+  --gradient-warning: linear-gradient(135deg, var(--warning), #d97706);
+  --gradient-danger: linear-gradient(135deg, var(--danger), #dc2626);
+  --gradient-info: linear-gradient(135deg, var(--info), #2563eb);
+  --gradient-purple: linear-gradient(135deg, var(--purple), #7c3aed);
+}
+
+/* ===== THEMES ===== */
+body.dark {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --accent-light: rgba(79, 70, 229, 0.2);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+body.ocean {
+  --bg: #0c4a6e;
+  --card: #075985;
+  --text: #e0f2fe;
+  --text-muted: #7dd3fc;
+  --border: #0369a1;
+  --accent: #0891b2;
+  --accent-dark: #0e7490;
+  --accent-light: rgba(8, 145, 178, 0.2);
+}
+
+body.forest {
+  --bg: #064e3b;
+  --card: #047857;
+  --text: #d1fae5;
+  --text-muted: #a7f3d0;
+  --border: #059669;
+  --accent: #059669;
+  --accent-dark: #047857;
+  --accent-light: rgba(5, 150, 105, 0.2);
+}
+
+body.sunset {
+  --bg: #7c2d12;
+  --card: #c2410c;
+  --text: #ffedd5;
+  --text-muted: #fed7aa;
+  --border: #ea580c;
+  --accent: #ea580c;
+  --accent-dark: #c2410c;
+  --accent-light: rgba(234, 88, 12, 0.2);
+}
+
+body.purple {
+  --bg: #1e1b4b;
+  --card: #312e81;
+  --text: #e0e7ff;
+  --text-muted: #a5b4fc;
+  --border: #4f46e5;
+  --accent: #8b5cf6;
+  --accent-dark: #7c3aed;
+  --accent-light: rgba(139, 92, 246, 0.2);
+}
+
+/* ===== BASE STYLES ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: all var(--transition);
+  overflow-x: hidden;
+}
+
+/* ===== LAYOUT STRUCTURE ===== */
+.app-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  padding: var(--spacing-xl);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+  padding-bottom: var(--spacing-xl);
+  border-bottom: 1px solid var(--border);
+}
+
+.teacher-emoji {
+  font-size: 3.5rem;
+  margin-bottom: var(--spacing-md);
+  display: block;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+.sidebar h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: var(--spacing-xs);
+}
+
+.sidebar-subtitle {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Class switcher */
+.class-switcher {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.class-switcher select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--text);
+  font-size: 0.875rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xl);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all var(--transition);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  transform: translateX(5px);
+}
+
+.nav-item.active {
+  background: var(--gradient-primary);
+  color: white;
+}
+
+.nav-item.active:hover {
+  background: var(--gradient-primary);
+  border-color: transparent;
+}
+
+.sidebar-stats {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.sidebar-stats h3 {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-md);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-value {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--accent);
+}
+
+/* Pro-tip styles */
+.pro-tip {
+  background: var(--accent-light);
+  border-left: 4px solid var(--accent);
+  padding: var(--spacing-md);
+  border-radius: var(--radius);
+  margin: var(--spacing-md) 0;
+  font-size: 0.875rem;
+}
+
+.pro-tip strong {
+  color: var(--accent);
+  display: block;
+  margin-bottom: var(--spacing-xs);
+}
+
+/* ===== MODAL STYLES ===== */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+}
+
+.modal-content {
+  background: var(--card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-xl);
+  max-width: 500px;
+  width: 100%;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border);
+  animation: modalSlideIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+}
+
+.modal-header {
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.modal-header h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: var(--spacing-sm);
+}
+
+.modal-close {
+  position: absolute;
+  top: var(--spacing);
+  right: var(--spacing);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all var(--transition);
+}
+
+.modal-close:hover {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+@keyframes modalSlideIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(-50px) scale(0.9); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  padding: var(--spacing-xl);
+  overflow-y: auto;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ===== DASHBOARD HEADER ===== */
+.dashboard-header {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: var(--spacing-sm);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dashboard-subtitle {
+  color: var(--text-muted);
+  font-size: 1.125rem;
+  margin-bottom: var(--spacing-xl);
+}
+
+.controls-bar {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+  padding: var(--spacing-lg);
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  margin-bottom: var(--spacing-xl);
+}
+
+/* ===== DASHBOARD GRID ===== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--spacing-xl);
+}
+
+/* Quick Stats */
+.quick-stats {
+  grid-column: span 12;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.stat-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  background: var(--gradient-primary);
+  color: white;
+  flex-shrink: 0;
+}
+
+.stat-card:nth-child(2) .stat-icon {
+  background: var(--gradient-success);
+}
+
+.stat-card:nth-child(3) .stat-icon {
+  background: var(--gradient-warning);
+}
+
+.stat-card:nth-child(4) .stat-icon {
+  background: var(--gradient-info);
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: var(--spacing-xs);
+  color: var(--text);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+/* Forms Section */
+.forms-section {
+  grid-column: span 4;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.form-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+
+.form-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.form-card h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.875rem;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  transition: all var(--transition-fast);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light);
+  background: var(--card);
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 1rem;
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+}
+
+/* Content Section */
+.content-section {
+  grid-column: span 8;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.content-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.content-header {
+  padding: var(--spacing-xl);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.content-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.content-body {
+  padding: var(--spacing-xl);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Students Card */
+.students-card .content-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--spacing-md);
+  max-height: 600px;
+  padding: var(--spacing-lg);
+}
+
+.student-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--spacing-md);
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.student-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent);
+}
+
+.student-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.student-item:hover::before {
+  opacity: 1;
+}
+
+.student-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-md);
+}
+
+.student-info h4 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+}
+
+.student-id {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: 'Courier New', monospace;
+  background: rgba(0,0,0,0.05);
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--radius-sm);
+}
+
+.streak-badge {
+  background: var(--gradient-warning);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.student-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-md);
+}
+
+.stat-pill {
+  text-align: center;
+  padding: var(--spacing-sm);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.stat-pill-value {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.stat-pill-label {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.25rem;
+}
+
+/* Items List */
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--spacing-lg);
+  transition: all var(--transition);
+}
+
+.item:hover {
+  transform: translateX(5px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow);
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-sm);
+}
+
+.item-title {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 1.125rem;
+}
+
+.item-date {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  background: var(--card);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+}
+
+.item-content {
+  color: var(--text);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.7;
+}
+
+.item-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.delete-btn {
+  background: var(--gradient-danger);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.delete-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  border: none;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+}
+
+.btn-success {
+  background: var(--gradient-success);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.btn-warning {
+  background: var(--gradient-warning);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+}
+
+.btn-danger {
+  background: var(--gradient-danger);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+}
+
+.btn-secondary {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== TOAST NOTIFICATIONS ===== */
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toast {
+  min-width: 300px;
+  padding: 1.125rem 1.5rem;
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border-left: 4px solid var(--accent);
+  border: 1px solid var(--border);
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px) scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+.toast.success { border-left-color: var(--success); }
+.toast.error { border-left-color: var(--danger); }
+.toast.warning { border-left-color: var(--warning); }
+.toast.info { border-left-color: var(--info); }
+
+/* ===== CLASS CODE DISPLAY ===== */
+.class-code-display {
+  background: var(--gradient-primary);
+  color: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  margin: var(--spacing-xl) 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.class-code-display .code {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 0.5rem;
+  font-family: 'Courier New', monospace;
+  margin: var(--spacing-md) 0;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* ===== ASSIGNMENT SPECIFIC STYLES ===== */
+.assignment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.assignment-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  transition: all var(--transition);
+  position: relative;
+}
+
+.assignment-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent);
+}
+
+.assignment-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-md);
+}
+
+.assignment-card-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.assignment-card-due {
+  background: var(--gradient-warning);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.assignment-card-description {
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.6;
+}
+
+.assignment-card-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+}
+
+/* ===== SYNC STATUS ===== */
+.sync-status {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background: var(--card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.875rem;
+  z-index: 999;
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  animation: slideIn 0.3s ease-out;
+  box-shadow: var(--shadow);
+}
+
+.sync-status.syncing { 
+  color: var(--warning);
+  border-left: 4px solid var(--warning);
+}
+.sync-status.success { 
+  color: var(--success);
+  border-left: 4px solid var(--success);
+}
+.sync-status.error { 
+  color: var(--danger);
+  border-left: 4px solid var(--danger);
+}
+.sync-status.info { 
+  color: var(--info);
+  border-left: 4px solid var(--info);
+}
+
+/* ===== EMPTY STATES ===== */
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.5;
+}
+
+.empty-state-title {
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-sm);
+  color: var(--text);
+}
+
+.empty-state-description {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* ===== LOADING STATES ===== */
+.loading {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--text-muted);
+  font-size: 1.125rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.loading::after {
+  content: '';
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1400px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .forms-section,
+  .content-section {
+    grid-column: span 1;
+  }
+  
+  .quick-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .app-layout {
+    grid-template-columns: 240px 1fr;
+  }
+  
+  .students-card .content-body {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 992px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    display: none;
+  }
+  
+  .quick-stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .controls-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 768px) {
+  .quick-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .students-card .content-body {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2rem;
+  }
+  
+  .controls-bar {
+    padding: var(--spacing-md);
+  }
+  
+  .main-content {
+    padding: var(--spacing-md);
+  }
+  
+  .assignment-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .quick-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-md);
+  }
+  
+  .btn {
+    width: 100%;
+  }
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { 
+  width: 8px; 
+  height: 8px;
+}
+
+::-webkit-scrollbar-track { 
+  background: var(--bg); 
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb { 
+  background: var(--accent); 
+  border-radius: 4px;
+  border: 2px solid var(--bg);
+}
+
+::-webkit-scrollbar-thumb:hover { 
+  background: var(--accent-dark); 
+}
+.footer {
+  grid-column: span 12;
+  text-align: center;
+  padding: var(--spacing-xl);
+  margin-top: var(--spacing-2xl);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  border-top: 1px solid var(--border);
+}
+
+</style>
+</head>
+<body>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal" style="display: flex;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Welcome to Teacher Dashboard</h3>
+      <p>Please sign in to access your classes</p>
+    </div>
+    <div class="login-form">
+      <div class="form-group">
+        <label for="teacherEmail">Email</label>
+        <input type="email" id="teacherEmail" placeholder="teacher@example.com" value="teacher@example.com">
+      </div>
+      <div class="form-group">
+        <label for="teacherPassword">Password</label>
+        <input type="password" id="teacherPassword" placeholder="Enter password" value="teacher123">
+      </div>
+      <div class="auth-actions">
+        <button class="btn btn-primary" onclick="loginTeacher()" id="loginBtn">Sign In</button>
+        <button class="btn btn-secondary" onclick="useDemoMode()" id="demoBtn">Use Demo Mode</button>
+      </div>
+      <p style="text-align: center; color: var(--text-muted); font-size: 0.875rem;">
+        Demo credentials: teacher@example.com / teacher123<br>
+        <strong>Note:</strong> Firebase Authentication might not be set up. Use Demo Mode.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="app-layout" style="display: none;">
+  
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="teacher-emoji">👩‍🏫</div>
+      <h2>Teacher Dashboard</h2>
+      <p class="sidebar-subtitle">Manage Your Classroom</p>
+    </div>
+ 
+    <!-- Class Switcher -->
+    <div class="class-switcher">
+      <select id="classSelector" onchange="switchClass(this.value)">
+        <option value="">Select a Class</option>
+      </select>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="showSection('dashboard')">
+        📊 Dashboard
+      </div>
+      <div class="nav-item" onclick="showSection('announcements')">
+        📢 Announcements
+      </div>
+      <div class="nav-item" onclick="showSection('assignments')">
+        📚 Assignments
+      </div>
+      <div class="nav-item" onclick="showSection('resources')">
+        📁 Resources
+      </div>
+      <div class="nav-item" onclick="showSection('students')">
+        👥 Students
+      </div>
+      <div class="nav-item" onclick="showSection('analytics')">
+        📈 Analytics
+      </div>
+      <div class="nav-item" onclick="showSection('settings')">
+        ⚙️ Settings
+      </div>
+    </nav>
+    
+    <div class="sidebar-stats">
+      <h3>Class Stats</h3>
+      <div class="stat-row">
+        <span>Total Students</span>
+        <span class="stat-value" id="sidebarStudents">0</span>
+      </div>
+      <div class="stat-row">
+        <span>Assignments</span>
+        <span class="stat-value" id="sidebarAssignments">0</span>
+      </div>
+      <div class="stat-row">
+        <span>Announcements</span>
+        <span class="stat-value" id="sidebarAnnouncements">0</span>
+      </div>
+      <div class="stat-row">
+        <span>Avg Streak</span>
+        <span class="stat-value" id="sidebarAvgStreak">0</span>
+      </div>
+    </div>
+    
+    <div class="pro-tip">
+      <strong>💡 Pro Tip</strong>
+      Share your class code with students to allow them to join. Students can view announcements, assignments, and submit their study progress.
+    </div>
+    
+    <div style="margin-top: var(--spacing-xl);">
+      <select class="theme-selector" onchange="changeTheme(this.value)" style="width: 100%; padding: 0.875rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text);">
+        <option value="light">☀️ Light Theme</option>
+        <option value="dark">🌙 Dark Theme</option>
+        <option value="ocean">🌊 Ocean Theme</option>
+        <option value="forest">🌲 Forest Theme</option>
+        <option value="sunset">🌅 Sunset Theme</option>
+        <option value="purple">💜 Purple Theme</option>
+      </select>
+    </div>
+    
+    <button class="logout-btn" onclick="logoutTeacher()" style="width: 100%; padding: 0.75rem; margin-top: var(--spacing-lg); background: var(--danger); color: white; border: none; border-radius: var(--radius); font-weight: 600; cursor: pointer; transition: all var(--transition); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+      👋 Logout
+    </button>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Dashboard Header -->
+    <div class="dashboard-header" id="dashboardHeader">
+      <h1>Welcome to Your Classroom</h1>
+      <p class="dashboard-subtitle" id="dashboardSubtitle">Manage announcements, assignments, and track student progress</p>
+      
+      <div class="controls-bar">
+        <div class="search-bar" style="position: relative; flex: 1; max-width: 400px;">
+          <input type="text" id="studentSearch" placeholder="Search students..." oninput="searchStudents()" style="width: 100%; padding: 0.875rem 1rem 0.875rem 3rem; background: var(--bg); border: 2px solid var(--border); border-radius: var(--radius); font-size: 0.9375rem;">
+          <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none;">🔍</span>
+        </div>
+        <div style="display: flex; gap: var(--spacing-sm);">
+          <button class="btn btn-primary" onclick="refreshStudents()">🔄 Refresh</button>
+          <button class="btn btn-primary" onclick="window.location.href='index.html'">
+    Home
+</button>
+          <button class="btn btn-warning" onclick="toggleDemoMode()" id="demoModeBtn" style="background: var(--gradient-warning);">🌐 Demo Mode: ON</button>
+        </div>
+      </div>
+      
+      <div class="pro-tip">
+        <strong>💡 Pro Tip</strong>
+        Use the search bar to quickly find specific students. Click on any student to view their detailed progress and study habits.
+      </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- Sync Status -->
+    <div id="syncStatus" class="sync-status"></div>
+    
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+      
+      <!-- Dashboard Section -->
+      <div id="dashboard" class="dashboard-content" style="grid-column: span 12; display: block;">
+
+        
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-content">
+              <div class="stat-number" id="studentsCount">0</div>
+              <div class="stat-label">Total Students</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📢</div>
+            <div class="stat-content">
+              <div class="stat-number" id="announcementsCount">0</div>
+              <div class="stat-label">Announcements</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-content">
+              <div class="stat-number" id="assignmentsCount">0</div>
+              <div class="stat-label">Assignments</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-content">
+              <div class="stat-number" id="avgStreak">0</div>
+              <div class="stat-label">Avg Streak</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="pro-tip">
+          <strong>📊 Quick Stats Guide</strong>
+          Monitor your class health at a glance: Total students shows enrollment, announcements track communication, assignments measure workload, and average streak indicates student engagement consistency.
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="dashboard-grid" style="margin-top: var(--spacing-xl);">
+          
+          <!-- Left Column: Forms -->
+          <div class="forms-section">
+            <!-- Class Code Display -->
+            <div class="form-card class-code-display">
+              <h2 style="color: white;">🏫 Class Code</h2>
+              <div class="code" id="currentClassCodeDisplay">------</div>
+              <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-lg);">
+                <button class="btn btn-secondary" onclick="copyClassCode()" style="flex: 1; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); color: white;">📋 Copy</button>
+                <button class="btn btn-danger" onclick="showDeleteClassModal()" style="flex: 1; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); color: white;">🗑️ Delete</button>
+              </div>
+            </div>
+            
+            <div class="pro-tip">
+              <strong>🔑 Class Code Management</strong>
+              Share this 6-digit code with students so they can join your class. Click "Copy" to easily share via email or messaging apps. Delete classes only when you're sure - this action is permanent!
+            </div>
+           
+            <!-- New Announcement Form -->
+            <div class="form-card">
+              <h2>📢 New Announcement</h2>
+              <div class="form-group">
+                <label for="announcementTitle">Title</label>
+                <input type="text" id="announcementTitle" placeholder="Announcement title...">
+              </div>
+              <div class="form-group">
+                <label for="announcementContent">Content</label>
+                <textarea id="announcementContent" placeholder="Write your announcement..."></textarea>
+              </div>
+              <button class="btn-submit" onclick="addAnnouncement()">📤 Post Announcement</button>
+            </div>
+            
+            <div class="pro-tip">
+              <strong>📢 Announcement Tips</strong>
+              Keep announcements clear and concise. Use them for important updates, deadline reminders, or weekly summaries. Students receive these in real-time on their dashboard.
+            </div>
+            
+            <!-- New Assignment Form -->
+            <div class="form-card">
+              <h2>📚 New Assignment</h2>
+              <div class="form-group">
+                <label for="assignmentTitle">Title</label>
+                <input type="text" id="assignmentTitle" placeholder="Assignment title...">
+              </div>
+              <div class="form-group">
+                <label for="assignmentDescription">Description</label>
+                <textarea id="assignmentDescription" placeholder="Assignment details..."></textarea>
+              </div>
+              <div class="form-group">
+                <label for="assignmentDueDate">Due Date</label>
+                <input type="date" id="assignmentDueDate">
+              </div>
+              <button class="btn-submit" onclick="addAssignment()">➕ Add Assignment</button>
+            </div>
+            
+            <div class="pro-tip">
+              <strong>📚 Assignment Best Practices</strong>
+              Be specific with descriptions and clear about expectations. Set realistic due dates and consider breaking larger projects into smaller tasks. Students can track their progress against these assignments.
+            </div>
+          </div>
+          
+          <!-- Right Column: Content -->
+          <div class="content-section">
+            <!-- Students Card -->
+            <div class="content-card" id="studentsCard">
+              <div class="content-header">
+                <h2>👥 Students</h2>
+                <button class="btn btn-primary" onclick="showSection('students')">View All</button>
+              </div>
+              <div class="content-body">
+                <div class="students-card .content-body" id="studentsList">
+                  <!-- Students will appear here -->
+                </div>
+              </div>
+            </div>
+            
+            <div class="pro-tip">
+              <strong>👥 Student Monitoring</strong>
+              Each student card shows their study streak (🔥), total hours studied, points earned, and last active time. Points are automatically calculated based on study time and consistency. Monitor streaks to identify engagement patterns.
+            </div>
+            
+            <!-- Recent Announcements Card -->
+            <div class="content-card">
+              <div class="content-header">
+                <h2>📢 Recent Announcements</h2>
+                <button class="btn btn-primary" onclick="showSection('announcements')">View All</button>
+              </div>
+              <div class="content-body">
+                <div class="items-list" id="announcementsList">
+                  <!-- Announcements will appear here -->
+                </div>
+              </div>
+            </div>
+            
+            <!-- Recent Assignments Card -->
+            <div class="content-card">
+              <div class="content-header">
+                <h2>📚 Recent Assignments</h2>
+                <button class="btn btn-primary" onclick="showSection('assignments')">View All</button>
+              </div>
+              <div class="content-body">
+                <div class="items-list" id="assignmentsList">
+                  <!-- Assignments will appear here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+         <div class="footer">
+          <p>© 2024 Student Learning Dashboard. All rights reserved. Made with ❤️ for students everywhere.</p>
+          <p style="margin-top: var(--spacing-sm); font-size: 0.75rem; opacity: 0.7;">
+            Education is the most powerful weapon which you can use to change the world. — Nelson Mandela
+          </p>
+        </div>
+      </div>
+      </div>
+     
+      <!-- Announcements Section -->
+      <div id="announcements" class="dashboard-content" style="grid-column: span 12; display: none;">
+        <div class="content-card">
+          <div class="content-header">
+            <h2>📢 All Announcements</h2>
+            <button class="btn btn-primary" onclick="showCreateAnnouncementModal()">+ New Announcement</button>
+          </div>
+          <div class="content-body">
+            <div class="pro-tip">
+              <strong>📢 Announcement Management</strong>
+              Delete outdated announcements to keep the list manageable. Consider archiving important announcements by saving them as resources. Announcements are displayed to students in chronological order (newest first).
+            </div>
+            <div id="allAnnouncementsList">
+              <!-- All announcements will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Assignments Section -->
+      <div id="assignments" class="dashboard-content" style="grid-column: span 12; display: none;">
+        <div class="content-card">
+          <div class="content-header">
+            <h2>📚 All Assignments</h2>
+            <button class="btn btn-primary" onclick="showCreateAssignmentModal()">+ New Assignment</button>
+          </div>
+          <div class="content-body">
+            <div class="pro-tip">
+              <strong>📚 Assignment Strategy</strong>
+              Space assignments evenly throughout the term. Use clear due dates and provide detailed descriptions. Students can mark assignments as completed on their end, helping them stay organized.
+            </div>
+            <div class="assignment-grid" id="allAssignmentsList">
+              <!-- All assignments will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Resources Section -->
+      <div id="resources" class="dashboard-content" style="grid-column: span 12; display: none;">
+        <div class="content-card">
+          <div class="content-header">
+            <h2>📁 Learning Resources</h2>
+            <button class="btn btn-primary" onclick="showCreateResourceModal()">+ New Resource</button>
+          </div>
+          <div class="content-body">
+            <div class="pro-tip">
+              <strong>📁 Resource Curation</strong>
+              Share links to helpful websites, PDFs, videos, or tools. Organize resources by topic or week. Students appreciate having all materials in one accessible location.
+            </div>
+            <div id="allResourcesList">
+              <!-- All resources will appear here -->
+              <div class="item">
+                <div class="item-header">
+                  <div class="item-title">Student Mode Guide</div>
+                  <div class="item-date">Jan 27, 2026</div>
+                </div>
+                <div class="item-content">
+                  <a href="http://127.0.0.1:3002/lifeOS/studentmode-guide.html" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">
+                    📘 Student Mode Guide (PNG Image)
+                  </a>
+                  <p style="margin-top:0.75rem; color: var(--text-muted);">
+                    Complete guide for students on how to use Student Mode. Learn how to track study sessions, earn points, maintain streaks, and make the most of your learning dashboard.
+                  </p>
+                  <div style="margin-top: 1rem; padding: 1rem; background: var(--accent-light); border-radius: var(--radius);">
+                    <h4 style="margin-bottom: 0.5rem; color: var(--accent);">📖 What's in the Student Mode Guide:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                      <li><strong>Getting Started:</strong> How to join classes and set up your profile</li>
+                      <li><strong>Study Timer:</strong> Track study sessions and earn points</li>
+                      <li><strong>Streak System:</strong> Maintain daily study habits</li>
+                      <li><strong>Assignments:</strong> Track and complete coursework</li>
+                      <li><strong>Announcements:</strong> Stay updated with class news</li>
+                      <li><strong>Resources:</strong> Access learning materials</li>
+                      <li><strong>Leaderboard:</strong> Friendly competition with classmates</li>
+                      <li><strong>Analytics:</strong> Track your progress over time</li>
+                    </ul>
+                    <p style="margin-top: 0.75rem; font-size: 0.9rem;">
+                      Click the link above to view/download the complete Student Mode Guide image file. This guide will help students maximize their learning experience.
+                    </p>
+                  </div>
+                </div>
+                <div class="item-actions">
+                  <button class="delete-btn" onclick="deleteResource('student_mode_guide')">🗑️ Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Students Section -->
+      <div id="students" class="dashboard-content" style="grid-column: span 12; display: none;">
+        <div class="content-card">
+          <div class="content-header">
+            <h2>👥 All Students</h2>
+            <button class="btn btn-primary" onclick="refreshStudents()">🔄 Refresh</button>
+          </div>
+          <div class="content-body">
+            <div class="pro-tip">
+              <strong>👥 Student Engagement Tips</strong>
+              Use the refresh button to get the latest student data. Students earn points based on study time and consistency. Streaks reset if a student misses a day. Consider recognizing students with the highest streaks or points to encourage healthy competition.
+            </div>
+            <div class="students-card .content-body" id="allStudentsList">
+              <!-- All students will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Analytics Section -->
+      <div id="analytics" class="dashboard-content" style="grid-column: span 12; display: none;">
+        <div class="content-card">
+          <div class="content-header">
+            <h2>📈 Class Analytics</h2>
+            <button class="btn btn-primary" onclick="exportAnalytics()">📊 Export Data</button>
+          </div>
+          <div class="content-body">
+            <div class="pro-tip">
+              <strong>📈 Data-Driven Teaching</strong>
+              Use analytics to identify students who need extra support, track class-wide engagement trends, and measure the effectiveness of your teaching strategies. Export data for reports or parent meetings.
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-xl);">
+              <div class="form-card">
+                <h3>📊 Student Performance</h3>
+                <div style="height: 200px; display: flex; align-items: flex-end; gap: var(--spacing-sm); margin-top: var(--spacing-lg);">
+                  <div style="flex: 1; background: var(--gradient-primary); border-radius: var(--radius-sm);" id="streakBar1"></div>
+                  <div style="flex: 1; background: var(--gradient-success); border-radius: var(--radius-sm);" id="streakBar2"></div>
+                  <div style="flex: 1; background: var(--gradient-warning); border-radius: var(--radius-sm);" id="streakBar3"></div>
+                  <div style="flex: 1; background: var(--gradient-info); border-radius: var(--radius-sm);" id="streakBar4"></div>
+                  <div style="flex: 1; background: var(--gradient-danger); border-radius: var(--radius-sm);" id="streakBar5"></div>
+                </div>
+                <div style="margin-top: var(--spacing-md); font-size: 0.875rem; color: var(--text-muted);">
+                  <div id="analyticsSummary">Loading analytics...</div>
+                </div>
+              </div>
+              
+              <div class="form-card">
+                <h3>📈 Engagement Metrics</h3>
+                <div style="margin-top: var(--spacing-lg);">
+                  <div style="margin-bottom: var(--spacing-md);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-xs);">
+                      <span>Daily Active Students</span>
+                      <span id="dailyActive">0%</span>
+                    </div>
+                    <div style="height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden;">
+                      <div id="dailyActiveBar" style="height: 100%; background: var(--gradient-success); width: 0%;"></div>
+                    </div>
+                  </div>
+                  <div style="margin-bottom: var(--spacing-md);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-xs);">
+                      <span>Assignment Completion</span>
+                      <span id="assignmentCompletion">0%</span>
+                    </div>
+                    <div style="height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden;">
+                      <div id="assignmentCompletionBar" style="height: 100%; background: var(--gradient-primary); width: 0%;"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-xs);">
+                      <span>Avg Study Hours</span>
+                      <span id="avgStudyHours">0h</span>
+                    </div>
+                    <div style="height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden;">
+                      <div id="avgStudyHoursBar" style="height: 100%; background: var(--gradient-warning); width: 0%;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-card" style="margin-top: var(--spacing-xl);">
+              <h3>📋 Top Performers</h3>
+              <div class="pro-tip" style="margin-bottom: var(--spacing-md);">
+                <strong>🏆 Recognition Strategy</strong>
+                Consider recognizing top performers to motivate the entire class. You can export this data for certificates, announcements, or parent communications.
+              </div>
+              <div id="topPerformers" style="margin-top: var(--spacing-lg);">
+                <!-- Top performers will appear here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Settings Section -->
+      <div id="settings" class="dashboard-content" style="grid-column: span 12; display: none;">
+        <div class="content-card">
+          <div class="content-header">
+            <h2>⚙️ Teacher Settings</h2>
+          </div>
+          <div class="content-body">
+            <div style="max-width: 600px; margin: 0 auto;">
+              <div class="pro-tip">
+                <strong>⚙️ Profile Management</strong>
+                Keep your information up-to-date. Students will see your name on announcements and assignments. Regular backups ensure you never lose your classroom data.
+              </div>
+              
+              <div class="form-group">
+                <label for="teacherName">Your Name</label>
+                <input type="text" id="teacherName" placeholder="Enter your name">
+              </div>
+              <div class="form-group">
+                <label for="teacherEmail">Email</label>
+                <input type="email" id="teacherEmail" placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label>Class Management</label>
+                <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+                  <button class="btn btn-primary" onclick="showCreateClassModal()" style="flex: 1;">➕ Create Class</button>
+                  <button class="btn btn-secondary" onclick="exportAllData()" style="flex: 1;">📤 Export All Data</button>
+                </div>
+              </div>
+              <button class="btn-submit" onclick="saveTeacherSettings()" style="margin-top: var(--spacing-lg);">
+                💾 Save Settings
+              </button>
+              
+              <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-xl); border-top: 1px solid var(--border);">
+                <h3>🔄 Data Management</h3>
+                <div class="pro-tip" style="margin-bottom: var(--spacing-md);">
+                  <strong>💾 Backup Regularly</strong>
+                  Create backups before major changes or at the end of each term. Restore from backup if you encounter issues. Clear all data only when starting fresh with a new academic year.
+                </div>
+                <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-md); flex-wrap: wrap;">
+                  <button class="btn btn-warning" onclick="backupData()">💾 Backup Data</button>
+                  <button class="btn btn-secondary" onclick="restoreData()">📂 Restore Backup</button>
+                  <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
+                </div>
+                <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: var(--spacing-sm);">
+                  Backup your data regularly to prevent data loss.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modals -->
+<div id="createClassModal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="hideModal('createClassModal')">×</button>
+    <div class="modal-header">
+      <h3>Create New Class</h3>
+    </div>
+    <div class="form-group">
+      <label for="classNameInput">Class Name</label>
+      <input type="text" id="classNameInput" placeholder="e.g., Math 101, English Class" autofocus>
+    </div>
+    <div class="pro-tip" style="margin-bottom: var(--spacing-lg);">
+      <strong>🏫 Class Naming Tips</strong>
+      Use clear, descriptive names like "Algebra I - Period 2" or "10th Grade English". This helps you organize multiple classes efficiently.
+    </div>
+    <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-xl);">
+      <button class="btn btn-secondary" onclick="hideModal('createClassModal')" style="flex: 1;">Cancel</button>
+      <button class="btn btn-primary" onclick="createNewClass()" style="flex: 1;">Create Class</button>
+    </div>
+  </div>
+</div>
+
+<div id="deleteClassModal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="hideModal('deleteClassModal')">×</button>
+    <div class="modal-header">
+      <h3>Delete Class</h3>
+      <p>Are you sure you want to delete this class?</p>
+    </div>
+    <div style="margin-bottom: var(--spacing-xl);">
+      <p style="color: var(--danger); font-size: 0.875rem; font-weight: 600; padding: var(--spacing-sm); background: rgba(239, 68, 68, 0.1); border-radius: var(--radius); border: 1px solid rgba(239, 68, 68, 0.2);">
+        ⚠️ Warning: This will delete all students, announcements, assignments, and resources in this class.
+      </p>
+    </div>
+    <div class="pro-tip" style="margin-bottom: var(--spacing-lg);">
+      <strong>🗑️ Before You Delete</strong>
+      Consider exporting the class data first if you might need it later. Deleted classes cannot be recovered. This action is permanent.
+    </div>
+    <div style="display: flex; gap: var(--spacing-sm);">
+      <button class="btn btn-secondary" onclick="hideModal('deleteClassModal')" style="flex: 1;">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDeleteClass()" style="flex: 1; background: var(--gradient-danger); border: none;">Delete Class</button>
+    </div>
+  </div>
+</div>
+
+<div id="createAnnouncementModal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="hideModal('createAnnouncementModal')">×</button>
+    <div class="modal-header">
+      <h3>Create Announcement</h3>
+    </div>
+    <div class="form-group">
+      <label for="modalAnnouncementTitle">Title</label>
+      <input type="text" id="modalAnnouncementTitle" placeholder="Announcement title...">
+    </div>
+    <div class="form-group">
+      <label for="modalAnnouncementContent">Content</label>
+      <textarea id="modalAnnouncementContent" placeholder="Write your announcement..." rows="5"></textarea>
+    </div>
+    <div class="pro-tip" style="margin-bottom: var(--spacing-lg);">
+      <strong>📢 Effective Announcements</strong>
+      Keep titles clear and content concise. Use bullet points for multiple items. Important announcements should be posted at times when students are most likely to see them.
+    </div>
+    <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-xl);">
+      <button class="btn btn-secondary" onclick="hideModal('createAnnouncementModal')" style="flex: 1;">Cancel</button>
+      <button class="btn btn-primary" onclick="addAnnouncementFromModal()" style="flex: 1;">Post Announcement</button>
+    </div>
+  </div>
+</div>
+
+<div id="createAssignmentModal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="hideModal('createAssignmentModal')">×</button>
+    <div class="modal-header">
+      <h3>Create Assignment</h3>
+    </div>
+    <div class="form-group">
+      <label for="modalAssignmentTitle">Title</label>
+      <input type="text" id="modalAssignmentTitle" placeholder="Assignment title...">
+    </div>
+    <div class="form-group">
+      <label for="modalAssignmentDescription">Description</label>
+      <textarea id="modalAssignmentDescription" placeholder="Assignment details..." rows="5"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="modalAssignmentDueDate">Due Date</label>
+      <input type="date" id="modalAssignmentDueDate">
+    </div>
+    <div class="pro-tip" style="margin-bottom: var(--spacing-lg);">
+      <strong>📚 Assignment Planning</strong>
+      Provide clear instructions, expected outcomes, and grading criteria. Consider breaking complex assignments into smaller tasks. Allow sufficient time for completion.
+    </div>
+    <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-xl);">
+      <button class="btn btn-secondary" onclick="hideModal('createAssignmentModal')" style="flex: 1;">Cancel</button>
+      <button class="btn btn-primary" onclick="addAssignmentFromModal()" style="flex: 1;">Create Assignment</button>
+    </div>
+  </div>
+</div>
+
+<div id="createResourceModal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="hideModal('createResourceModal')">×</button>
+    <div class="modal-header">
+      <h3>Add Resource</h3>
+    </div>
+    <div class="form-group">
+      <label for="modalResourceTitle">Title</label>
+      <input type="text" id="modalResourceTitle" placeholder="Resource title...">
+    </div>
+    <div class="form-group">
+      <label for="modalResourceUrl">URL</label>
+      <input type="url" id="modalResourceUrl" placeholder="https://example.com">
+    </div>
+    <div class="form-group">
+      <label for="modalResourceDescription">Description (Optional)</label>
+      <textarea id="modalResourceDescription" placeholder="Description..." rows="3"></textarea>
+    </div>
+    <div class="pro-tip" style="margin-bottom: var(--spacing-lg);">
+      <strong>📁 Resource Sharing</strong>
+      Share links to educational videos, articles, practice exercises, or reference materials. Add descriptions to help students understand why the resource is valuable.
+    </div>
+    <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-xl);">
+      <button class="btn btn-secondary" onclick="hideModal('createResourceModal')" style="flex: 1;">Cancel</button>
+      <button class="btn btn-primary" onclick="addResourceFromModal()" style="flex: 1;">Add Resource</button>
+    </div>
+  </div>
+
+</div>
+
+</footer>
+<script>
+// ========== FIREBASE CONFIGURATION ==========
+const firebaseConfig = {
+  apiKey: "AIzaSyBAIPxgXPZmGdPvB98TLFRfTAClgXWEIM0",
+  authDomain: "student-teacher-app-4e7c9.firebaseapp.com",
+  databaseURL: "https://student-teacher-app-4e7c9-default-rtdb.firebaseio.com",
+  projectId: "student-teacher-app-4e7c9",
+  storageBucket: "student-teacher-app-4e7c9.firebasestorage.app",
+  messagingSenderId: "737621420458",
+  appId: "1:737621420458:web:74c873869a1a47c2ce23d3"
+};
+
+// ========== GLOBAL VARIABLES ==========
+let database;
+let auth;
+let currentUser = null;
+let teacherId = null;
+let teacherName = "Teacher";
+let teacherClasses = [];
+let currentClassCode = null;
+let currentClassId = null;
+let selectedClassIndex = 0;
+let isFirebaseInitialized = false;
+let isDemoMode = false;
+
+// Data arrays for current class
+let announcements = [];
+let assignments = [];
+let resources = [];
+let students = [];
+let currentSection = 'dashboard';
+
+// Track announcements and resources to prevent duplicates
+let announcementIds = new Set();
+let resourceIds = new Set();
+
+// Modal state
+let classToDelete = null;
+
+// ========== BROWSER SEPARATION ==========
+function ensureBrowserSeparation() {
+    console.log("🔍 Ensuring browser separation...");
+    
+    // Check if we're in teacher mode
+    const isTeacherMode = window.location.href.includes('teachermode') || 
+                         window.location.pathname.includes('teachermode') ||
+                         document.querySelector('.teacher-emoji') !== null;
+    
+    if (isTeacherMode) {
+        console.log("👩‍🏫 Running in Teacher Mode");
+        
+        // Clear any student-specific localStorage data
+        const studentKeys = [
+            'studentUserId',
+            'studentStudyData',
+            'studentTasks',
+            'studentAssignments',
+            'studentUserClasses',
+            'studentName',
+            'studentProfile'
+        ];
+        
+        studentKeys.forEach(key => {
+            if (localStorage.getItem(key)) {
+                console.log(`🗑️ Removing student data: ${key}`);
+                localStorage.removeItem(key);
+            }
+        });
+        
+        // Also remove any sessionStorage data
+        sessionStorage.clear();
+        
+        // Check for conflicting Firebase auth
+        Object.keys(localStorage).forEach(key => {
+            if (key.includes('firebase:authUser:')) {
+                try {
+                    const authData = JSON.parse(localStorage.getItem(key));
+                    if (authData && authData.uid && authData.uid.includes('student')) {
+                        console.log(`🗑️ Removing student auth token: ${key}`);
+                        localStorage.removeItem(key);
+                    }
+                } catch (e) {
+                    // Ignore parsing errors
+                }
+            }
+        });
+        
+        // Set teacher-specific theme if not set
+        if (!localStorage.getItem('teacherTheme')) {
+            localStorage.setItem('teacherTheme', 'light');
+        }
+        
+        // Ensure we have a teacher ID
+        if (!localStorage.getItem('teacherUserId') && !teacherId) {
+            const teacherUserId = 'teacher_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('teacherUserId', teacherUserId);
+            console.log(`👩‍🏫 Generated teacher ID: ${teacherUserId}`);
+        }
+        
+    } else {
+        console.log("❌ Not in Teacher Mode");
+    }
+}
+
+// ========== LOCALSTORAGE FUNCTIONS ==========
+function saveToLocalStorage(key, data) {
+  try {
+    localStorage.setItem(`teacher_${key}_${currentClassCode}`, JSON.stringify(data));
+    console.log(`💾 Saved ${key} to localStorage for class ${currentClassCode}`);
+  } catch (error) {
+    console.error(`❌ Error saving ${key} to localStorage:`, error);
+  }
+}
+
+function loadFromLocalStorage(key) {
+  if (!currentClassCode) return [];
+  
+  try {
+    const data = localStorage.getItem(`teacher_${key}_${currentClassCode}`);
+    if (data) {
+      const parsed = JSON.parse(data);
+      console.log(`📂 Loaded ${key} from localStorage for class ${currentClassCode}`);
+      return Array.isArray(parsed) ? parsed : [];
+    }
+  } catch (error) {
+    console.error(`❌ Error loading ${key} from localStorage:`, error);
+  }
+  return [];
+}
+
+function saveAnnouncementsToLocalStorage() {
+  saveToLocalStorage('announcements', announcements);
+}
+
+function saveAssignmentsToLocalStorage() {
+  saveToLocalStorage('assignments', assignments);
+}
+
+function saveResourcesToLocalStorage() {
+  saveToLocalStorage('resources', resources);
+}
+
+function saveTeacherClassesToLocalStorage() {
+  if (teacherId) {
+    try {
+      localStorage.setItem(`teacher_classes_${teacherId}`, JSON.stringify(teacherClasses));
+    } catch (error) {
+      console.error("Error saving teacher classes to localStorage:", error);
+    }
+  }
+}
+
+function loadTeacherClassesFromLocalStorage() {
+  if (teacherId) {
+    try {
+      const data = localStorage.getItem(`teacher_classes_${teacherId}`);
+      if (data) {
+        teacherClasses = JSON.parse(data);
+        console.log(`📚 Loaded ${teacherClasses.length} classes from localStorage`);
+      }
+    } catch (error) {
+      console.error("Error loading teacher classes from localStorage:", error);
+    }
+  }
+}
+
+// ========== DEMO MODE FUNCTIONS ==========
+function useDemoMode() {
+  console.log("🎭 Activating Demo Mode");
+  isDemoMode = true;
+  
+  // Generate demo teacher ID
+  teacherId = "demo_teacher_" + Math.random().toString(36).substr(2, 9);
+  currentUser = {
+    uid: teacherId,
+    email: "teacher@example.com"
+  };
+  
+  // Hide login modal, show dashboard
+  document.getElementById('loginModal').style.display = 'none';
+  document.querySelector('.app-layout').style.display = 'grid';
+  document.getElementById('demoModeBtn').style.display = 'flex';
+  
+  // Initialize teacher dashboard
+  initializeTeacher();
+  
+  showNotification("Demo Mode Activated! Creating demo class...", "success");
+}
+
+function toggleDemoMode() {
+  if (confirm("Switch to Firebase mode? This will reload the page.")) {
+    isDemoMode = false;
+    localStorage.removeItem('demoMode');
+    window.location.reload();
+  }
+}
+
+// ========== AUTHENTICATION FUNCTIONS ==========
+async function loginTeacher() {
+  console.log("🔐 Login button clicked");
+  
+  const loginBtn = document.getElementById('loginBtn');
+  const originalText = loginBtn.innerHTML;
+  
+  // Show loading state
+  loginBtn.classList.add('btn-loading');
+  loginBtn.disabled = true;
+  loginBtn.innerHTML = 'Signing in...';
+  
+  try {
+    // Ensure Firebase is initialized
+    if (!isFirebaseInitialized) {
+      console.log("Initializing Firebase...");
+      const initialized = await initializeFirebase();
+      if (!initialized) {
+        throw new Error("Firebase failed to initialize");
+      }
+    }
+    
+    const email = document.getElementById('teacherEmail').value;
+    const password = document.getElementById('teacherPassword').value;
+    
+    console.log(`Attempting login with email: ${email}`);
+    
+    if (!email || !password) {
+      throw new Error("Please enter email and password");
+    }
+    
+    // Show loading message
+    showNotification("Signing in...", "info");
+    
+    // Attempt login with Firebase
+    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    currentUser = userCredential.user;
+    teacherId = currentUser.uid;
+    
+    console.log(`✅ Login successful! Teacher ID: ${teacherId}`);
+    
+    // Hide login modal, show dashboard
+    document.getElementById('loginModal').style.display = 'none';
+    document.querySelector('.app-layout').style.display = 'grid';
+    document.getElementById('demoModeBtn').style.display = 'none';
+    
+    // Initialize teacher dashboard
+    await initializeTeacher();
+    
+    showNotification("Welcome back, Teacher! 🎓", "success");
+    
+  } catch (error) {
+    console.error(`❌ Login error: ${error.message}`);
+    
+    // If Firebase auth fails, suggest demo mode
+    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+      showNotification("Firebase authentication failed. Use Demo Mode instead.", "warning");
+    } else {
+      showNotification("Login failed. Try Demo Mode.", "error");
+    }
+  } finally {
+    // Reset button state
+    loginBtn.classList.remove('btn-loading');
+    loginBtn.disabled = false;
+    loginBtn.innerHTML = originalText;
+  }
+}
+
+function logoutTeacher() {
+  if (confirm("Are you sure you want to logout?")) {
+    if (isDemoMode) {
+      // Clear demo data
+      currentUser = null;
+      teacherId = null;
+      teacherClasses = [];
+      currentClassCode = null;
+      currentClassId = null;
+      isDemoMode = false;
+      
+      // Show login modal, hide dashboard
+      document.getElementById('loginModal').style.display = 'flex';
+      document.querySelector('.app-layout').style.display = 'none';
+      
+      showNotification("Logged out from Demo Mode", "success");
+    } else {
+      auth.signOut().then(() => {
+        currentUser = null;
+        teacherId = null;
+        teacherClasses = [];
+        currentClassCode = null;
+        currentClassId = null;
+        
+        // Show login modal, hide dashboard
+        document.getElementById('loginModal').style.display = 'flex';
+        document.querySelector('.app-layout').style.display = 'none';
+        
+        showNotification("Logged out successfully", "success");
+      }).catch((error) => {
+        console.error(`❌ Logout error: ${error.message}`);
+        showNotification("Logout failed: " + error.message, "error");
+      });
+    }
+  }
+}
+
+// ========== INITIALIZATION ==========
+async function initializeFirebase() {
+  try {
+    console.log("🔥 Initializing Firebase...");
+    
+    // Check if Firebase is already initialized
+    if (!firebase.apps.length) {
+      console.log("Creating new Firebase app instance");
+      firebase.initializeApp(firebaseConfig);
+    } else {
+      console.log("Firebase already initialized");
+    }
+    
+    // Get Firebase services
+    database = firebase.database();
+    auth = firebase.auth();
+    
+    console.log("✅ Firebase services initialized");
+    isFirebaseInitialized = true;
+    
+    return true;
+  } catch (error) {
+    console.error(`❌ Firebase initialization failed: ${error.message}`);
+    return false;
+  }
+}
+
+async function initializeTeacher() {
+  console.log("🎯 Initializing teacher dashboard...");
+  
+  // Show loading state
+  showNotification("Loading your classes...", "info");
+  
+  if (isDemoMode) {
+    loadTeacherClassesFromLocalStorage();
+  } else {
+    // Load classes from Firebase
+    await loadClassesFromFirebase();
+  }
+  
+  // If no classes, create a default one
+  if (teacherClasses.length === 0) {
+    console.log("No classes found, creating default class...");
+    await createDefaultClass();
+  }
+  
+  // Set current class
+  if (teacherClasses.length > 0) {
+    currentClassId = teacherClasses[0].id;
+    currentClassCode = teacherClasses[0].code;
+    selectedClassIndex = 0;
+    console.log(`📝 Current class set to: ${teacherClasses[0].name}`);
+  }
+  
+  // Update UI
+  updateClassSelector();
+  updateUI();
+  
+  // Load current class data
+  if (currentClassCode) {
+    await loadClassData();
+  }
+  
+  // Setup real-time listeners for current class
+  if (!isDemoMode) {
+    setupRealtimeListeners();
+  }
+  
+  console.log(`✅ Teacher dashboard initialized with ${teacherClasses.length} classes`);
+  showNotification("Dashboard loaded successfully! ✅", "success");
+  
+  // Update theme
+  const savedTheme = localStorage.getItem('teacherTheme') || 'light';
+  changeTheme(savedTheme);
+}
+
+async function loadClassesFromFirebase() {
+  if (!teacherId) {
+    loadTeacherClassesFromLocalStorage();
+    return;
+  }
+  
+  try {
+    console.log("📚 Loading classes from Firebase...");
+    const snapshot = await database.ref('teachers/' + teacherId + '/classes').once('value');
+    if (snapshot.exists()) {
+      teacherClasses = [];
+      snapshot.forEach(child => {
+        teacherClasses.push({
+          id: child.key,
+          code: child.val().code,
+          name: child.val().name,
+          createdAt: child.val().createdAt,
+          studentCount: child.val().studentCount || 0
+        });
+      });
+      console.log(`✅ Loaded ${teacherClasses.length} classes from Firebase`);
+    } else {
+      console.log("No classes found in Firebase");
+      loadTeacherClassesFromLocalStorage();
+    }
+  } catch (error) {
+    console.error(`❌ Error loading classes from Firebase: ${error.message}`);
+    loadTeacherClassesFromLocalStorage();
+  }
+}
+
+async function saveTeacherData() {
+  if (isDemoMode) {
+    saveTeacherClassesToLocalStorage();
+    return;
+  }
+  
+  if (!teacherId) return;
+  
+  const teacherData = {
+    teacherId: teacherId,
+    classes: teacherClasses.reduce((acc, cls) => {
+      acc[cls.id] = {
+        name: cls.name,
+        code: cls.code,
+        createdAt: cls.createdAt,
+        studentCount: cls.studentCount || 0
+      };
+      return acc;
+    }, {}),
+    lastActive: new Date().toISOString(),
+    email: currentUser?.email || '',
+    name: teacherName
+  };
+  
+  try {
+    await database.ref('teachers/' + teacherId).set(teacherData);
+    console.log("✅ Teacher data saved to Firebase");
+  } catch (error) {
+    console.error(`❌ Error saving teacher data: ${error.message}`);
+  }
+}
+
+async function createDefaultClass() {
+  const classCode = generateClassCode();
+  const defaultClass = {
+    id: 'class_' + Date.now(),
+    name: "My First Classroom",
+    code: classCode,
+    createdAt: new Date().toISOString(),
+    studentCount: 0
+  };
+  
+  teacherClasses = [defaultClass];
+  currentClassId = defaultClass.id;
+  currentClassCode = classCode;
+  selectedClassIndex = 0;
+  
+  // Save to Firebase or localStorage
+  await saveTeacherData();
+  
+  if (!isDemoMode) {
+    // Create class structure for students to access
+    await createClassStructureForStudents(classCode, defaultClass.name);
+  }
+  
+  console.log(`✅ Created default class: ${classCode}`);
+  showNotification(`Default class created! Code: ${classCode}`, "success");
+  return defaultClass;
+}
+
+function generateClassCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+async function createClassStructureForStudents(classCode, className) {
+  try {
+    const classData = {
+      teacherId: teacherId,
+      name: className,
+      code: classCode,
+      createdAt: new Date().toISOString(),
+      isActive: true
+    };
+    
+    console.log(`📝 Creating class structure for ${classCode} with teacherId: ${teacherId}`);
+    
+    // Write to classCodes (for lookup)
+    await database.ref('classCodes/' + classCode).set(classData);
+    
+    // Write to classes with teacherId set so security rules pass
+    await database.ref('classes/' + classCode).set(classData);
+    
+    console.log(`✅ Class structure created for students: ${classCode}`);
+    
+    // Also add a default announcement so structure exists
+    const welcomeAnnouncement = {
+      title: `Welcome to ${className}!`,
+      content: `Welcome to our class! I'm excited to work with you all. Check the Resources section for a Student Mode Guide to get started.`,
+      teacherId: teacherId,
+      teacherName: teacherName,
+      createdAt: new Date().toISOString(),
+      classCode: classCode
+    };
+    
+    await database.ref('announcements/' + classCode).push().set(welcomeAnnouncement);
+    console.log(`✅ Default announcement added to class ${classCode}`);
+    
+    // Add a default resource (Student Mode Guide)
+    const studentModeGuide = {
+      title: "Student Mode Guide",
+      url: "http://127.0.0.1:3002/lifeOS/studentmode-guide.html",
+      description: "Complete guide for students on how to use Student Mode. Learn how to track study sessions, earn points, maintain streaks, and make the most of your learning dashboard.",
+      teacherId: teacherId,
+      createdAt: new Date().toISOString(),
+      classCode: classCode
+    };
+    
+    await database.ref('resources/' + classCode).push().set(studentModeGuide);
+    console.log(`✅ Student Mode Guide added to class ${classCode}`);
+    
+  } catch (error) {
+    console.error(`❌ Error creating class structure: ${error.message}`);
+    throw error;
+  }
+}
+
+// ========== CLASS MANAGEMENT ==========
+function updateClassSelector() {
+  const selector = document.getElementById('classSelector');
+  if (!selector) return;
+  
+  selector.innerHTML = '<option value="">Select a Class</option>';
+  
+  teacherClasses.forEach((classInfo, index) => {
+    const option = document.createElement('option');
+    option.value = index;
+    option.textContent = `${classInfo.name} (${classInfo.code})`;
+    if (index === selectedClassIndex) {
+      option.selected = true;
+    }
+    selector.appendChild(option);
+  });
+}
+
+async function switchClass(classIndex) {
+  if (classIndex === "") return;
+  
+  classIndex = parseInt(classIndex);
+  if (classIndex >= 0 && classIndex < teacherClasses.length) {
+    selectedClassIndex = classIndex;
+    currentClassCode = teacherClasses[classIndex].code;
+    currentClassId = teacherClasses[classIndex].id;
+    
+    console.log(`🔄 Switched to class: ${currentClassCode}`);
+    
+    // Update UI
+    updateUI();
+    
+    // Load class data
+    await loadClassData();
+    
+    showNotification(`Switched to ${teacherClasses[classIndex].name}`, "success");
+  }
+}
+
+function showCreateClassModal() {
+  document.getElementById('classNameInput').value = '';
+  showModal('createClassModal');
+  document.getElementById('classNameInput').focus();
+}
+
+async function createNewClass() {
+  const className = document.getElementById('classNameInput').value.trim();
+  if (!className) {
+    showNotification("Please enter a class name", "error");
+    return;
+  }
+  
+  const classCode = generateClassCode();
+  const newClass = {
+    id: 'class_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+    name: className,
+    code: classCode,
+    createdAt: new Date().toISOString(),
+    studentCount: 0
+  };
+  
+  // Add to local state
+  teacherClasses.push(newClass);
+  currentClassCode = classCode;
+  currentClassId = newClass.id;
+  selectedClassIndex = teacherClasses.length - 1;
+  
+  // Save to Firebase or localStorage
+  await saveTeacherData();
+  
+  if (!isDemoMode) {
+    // Create class structure for students to access
+    await createClassStructureForStudents(classCode, className);
+  }
+  
+  // Update UI
+  updateClassSelector();
+  updateUI();
+  hideModal('createClassModal');
+  
+  // Clear current data and switch to new class
+  students = [];
+  announcements = [];
+  assignments = [];
+  resources = [];
+  
+  await loadClassData();
+  
+  showNotification(`Class "${className}" created! Code: ${classCode}`, "success");
+  console.log(`✅ New class created: ${className} (${classCode})`);
+}
+
+function showDeleteClassModal() {
+  if (!currentClassCode) {
+    showNotification("No class selected", "error");
+    return;
+  }
+  
+  classToDelete = teacherClasses.find(c => c.code === currentClassCode);
+  if (!classToDelete) return;
+  
+  // Don't allow deleting the last class
+  if (teacherClasses.length <= 1) {
+    showNotification("You must have at least one class", "error");
+    return;
+  }
+  
+  showModal('deleteClassModal');
+}
+
+async function confirmDeleteClass() {
+  if (!classToDelete) return;
+  
+  const classIndex = teacherClasses.findIndex(c => c.code === classToDelete.code);
+  if (classIndex === -1) return;
+  
+  const className = classToDelete.name;
+  const classCode = classToDelete.code;
+  
+  if (isDemoMode) {
+    // Delete from localStorage
+    localStorage.removeItem(`teacher_announcements_${classCode}`);
+    localStorage.removeItem(`teacher_assignments_${classCode}`);
+    localStorage.removeItem(`teacher_resources_${classCode}`);
+  } else {
+    try {
+      // Delete from Firebase - use teacher's own path
+      await database.ref('teachers/' + teacherId + '/classes/' + classToDelete.id).remove();
+      
+      // Try to delete from other paths if we have permission
+      try {
+        await database.ref('classCodes/' + classCode).remove();
+      } catch (e) { console.log("Could not delete from classCodes"); }
+      
+      try {
+        await database.ref('classes/' + classCode).remove();
+      } catch (e) { console.log("Could not delete from classes"); }
+      
+      try {
+        await database.ref('announcements/' + classCode).remove();
+      } catch (e) { console.log("Could not delete announcements"); }
+      
+      try {
+        await database.ref('assignments/' + classCode).remove();
+      } catch (e) { console.log("Could not delete assignments"); }
+      
+      try {
+        await database.ref('resources/' + classCode).remove();
+      } catch (e) { console.log("Could not delete resources"); }
+      
+      try {
+        await database.ref('classStudents/' + classCode).remove();
+      } catch (e) { console.log("Could not delete classStudents"); }
+      
+      // Also delete from localStorage
+      localStorage.removeItem(`teacher_announcements_${classCode}`);
+      localStorage.removeItem(`teacher_assignments_${classCode}`);
+      localStorage.removeItem(`teacher_resources_${classCode}`);
+    } catch (error) {
+      console.error(`❌ Error deleting class from Firebase: ${error.message}`);
+      showNotification("Error deleting class from database: " + error.message, "error");
+      return;
+    }
+  }
+  
+  // Remove from local arrays
+  teacherClasses.splice(classIndex, 1);
+  
+  // Update current class if needed
+  if (currentClassCode === classCode) {
+    if (teacherClasses.length > 0) {
+      selectedClassIndex = 0;
+      currentClassCode = teacherClasses[0].code;
+      currentClassId = teacherClasses[0].id;
+      await loadClassData();
+    } else {
+      currentClassCode = null;
+      currentClassId = null;
+      selectedClassIndex = -1;
+      students = [];
+      announcements = [];
+      assignments = [];
+      resources = [];
+      updateUI();
+    }
+  } else if (selectedClassIndex > classIndex) {
+    selectedClassIndex--;
+  }
+  
+  // Save teacher data
+  await saveTeacherData();
+  
+  // Update UI
+  updateClassSelector();
+  hideModal('deleteClassModal');
+  
+  showNotification(`Class "${className}" deleted`, "success");
+  console.log(`🗑️ Class deleted: ${className} (${classCode})`);
+  classToDelete = null;
+}
+
+// ========== MODAL FUNCTIONS ==========
+function showModal(id) {
+  document.getElementById(id).style.display = 'flex';
+}
+
+function hideModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function showCreateAnnouncementModal() {
+  document.getElementById('modalAnnouncementTitle').value = '';
+  document.getElementById('modalAnnouncementContent').value = '';
+  showModal('createAnnouncementModal');
+  document.getElementById('modalAnnouncementTitle').focus();
+}
+
+function showCreateAssignmentModal() {
+  document.getElementById('modalAssignmentTitle').value = '';
+  document.getElementById('modalAssignmentDescription').value = '';
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('modalAssignmentDueDate').value = tomorrow.toISOString().split('T')[0];
+  showModal('createAssignmentModal');
+  document.getElementById('modalAssignmentTitle').focus();
+}
+
+function showCreateResourceModal() {
+  document.getElementById('modalResourceTitle').value = '';
+  document.getElementById('modalResourceUrl').value = '';
+  document.getElementById('modalResourceDescription').value = '';
+  showModal('createResourceModal');
+  document.getElementById('modalResourceTitle').focus();
+}
+
+// ========== CLASS DATA MANAGEMENT ==========
+async function loadClassData() {
+  
+  if (!currentClassCode) {
+    console.log("❌ Cannot load class data: No class selected");
+    return;
+  }
+  
+  console.log(`📂 Loading data for class: ${currentClassCode} (Teacher ID: ${teacherId})`);
+     if (!isDemoMode) {
+        // Load students from MULTIPLE possible paths
+        let studentsSnap;
+        
+        // Try main path first
+        studentsSnap = await database.ref(`classes/${currentClassCode}/students`).once('value');
+        
+        if (!studentsSnap.exists()) {
+            console.log(`⚠️ No students at main path, trying alternatives...`);
+            
+            // Try classStudents
+            studentsSnap = await database.ref(`classStudents/${currentClassCode}`).once('value');
+            
+            if (!studentsSnap.exists()) {
+                // Try studentData path
+                studentsSnap = await database.ref(`studentData/${currentClassCode}`).once('value');
+            }
+        }
+      }
+  try {
+    // Show loading state
+    updateSyncStatus("Loading class data...", "syncing");
+    
+    // Clear previous data
+    students = [];
+    announcements = [];
+    assignments = [];
+    resources = [];
+    
+    // Reset ID sets
+    announcementIds.clear();
+    resourceIds.clear();
+    
+    if (isDemoMode) {
+      // Load from localStorage for demo mode
+      announcements = loadFromLocalStorage('announcements');
+      assignments = loadFromLocalStorage('assignments');
+      resources = loadFromLocalStorage('resources');
+      
+      // Track IDs to prevent duplicates
+      announcements.forEach(ann => announcementIds.add(ann.id));
+      resources.forEach(res => resourceIds.add(res.id));
+      
+      // Create demo students
+      createDemoStudents();
+      
+      // Create demo content if empty
+      if (announcements.length === 0) {
+        createDemoAnnouncements();
+        saveAnnouncementsToLocalStorage();
+      }
+      if (assignments.length === 0) {
+        createDemoAssignments();
+        saveAssignmentsToLocalStorage();
+      }
+      if (resources.length === 0) {
+        createDemoResources();
+        saveResourcesToLocalStorage();
+      }
+    } else {
+      // Load from Firebase - IMPORTANT: Use proper path and handle same-browser issue
+      try {
+        console.log(`📊 Loading students from Firebase path: classes/${currentClassCode}/students`);
+        
+        // FIRST: Check if we're the teacher of this class
+        const classInfo = await database.ref(`classes/${currentClassCode}`).once('value');
+        const classData = classInfo.val();
+        
+        if (!classData) {
+          console.log(`❌ Class ${currentClassCode} doesn't exist`);
+          showNotification("Class not found in database", "error");
+          return;
+        }
+        
+        const isTeacherOfClass = classData.teacherId === teacherId;
+        console.log(`👨‍🏫 Are we the teacher of this class? ${isTeacherOfClass}`);
+        console.log(`   Class teacherId: ${classData.teacherId}, Our teacherId: ${teacherId}`);
+        
+        // Load students from multiple possible paths
+        let studentsSnap;
+        
+        // Try main path first
+        studentsSnap = await database.ref(`classes/${currentClassCode}/students`).once('value');
+        
+        if (!studentsSnap.exists()) {
+          console.log(`⚠️ No students at classes/${currentClassCode}/students, trying classStudents/${currentClassCode}`);
+          // Try alternative path
+          studentsSnap = await database.ref(`classStudents/${currentClassCode}`).once('value');
+        }
+        
+        console.log("Students snapshot exists:", studentsSnap.exists());
+        console.log("Number of student entries:", studentsSnap.exists() ? studentsSnap.numChildren() : 0);
+        
+        if (studentsSnap.exists()) {
+          students = []; // Clear array
+          studentsSnap.forEach(child => {
+            const studentData = child.val();
+            const studentId = child.key;
+            
+            console.log(`👤 Student found: ${studentId}`, studentData);
+            
+            // CRITICAL FIX: Filter out teacher's own ID from student list
+            // But show warning if teacher's ID appears as student
+            if (studentId === teacherId) {
+              console.warn(`⚠️ Teacher's ID found in students list! This happens when teacher and student use same browser.`);
+              console.warn(`   Teacher ID: ${teacherId}, Student ID in list: ${studentId}`);
+              
+              // Show notification to teacher
+              showNotification("Warning: Your teacher account appears in student list. Consider using separate browser for student mode.", "warning");
+              
+              // Still add for debugging, but mark as teacher
+              students.push({
+                id: studentId,
+                name: studentData.name || 'Teacher (in student list)',
+                streak: studentData.streak || 0,
+                totalMinutes: studentData.totalMinutes || 0,
+                totalStudyHours: studentData.totalStudyHours || 
+                                 (studentData.totalMinutes ? (studentData.totalMinutes / 60).toFixed(1) : '0.0'),
+                points: studentData.points || Math.floor((studentData.totalMinutes || 0) / 60) * 100 || 0,
+                lastActive: studentData.lastActive || studentData.updatedAt || 'Unknown',
+                isTeacher: true
+              });
+            } else {
+              // Regular student
+              students.push({
+                id: studentId,
+                name: studentData.name || studentData.userName || 'Student ' + studentId.substr(0, 6),
+                streak: studentData.streak || 0,
+                totalMinutes: studentData.totalMinutes || 0,
+                totalStudyHours: studentData.totalStudyHours || 
+                                 (studentData.totalMinutes ? (studentData.totalMinutes / 60).toFixed(1) : '0.0'),
+                points: studentData.points || Math.floor((studentData.totalMinutes || 0) / 60) * 100 || 0,
+                lastActive: studentData.lastActive || studentData.updatedAt || 'Unknown',
+                isTeacher: false
+              });
+            }
+          });
+          console.log(`✅ Loaded ${students.length} students from Firebase`);
+        } else {
+          console.log("❌ No students found in Firebase for this class");
+          students = [];
+        }
+        
+        // Load announcements
+        try {
+          const announcementsSnap = await database.ref(`announcements/${currentClassCode}`).once('value');
+          if (announcementsSnap.exists()) {
+            announcements = [];
+            announcementsSnap.forEach(child => {
+              const ann = { id: child.key, ...child.val() };
+              announcements.push(ann);
+              announcementIds.add(ann.id);
+            });
+            console.log(`✅ Loaded ${announcements.length} announcements from Firebase`);
+            saveAnnouncementsToLocalStorage();
+          } else {
+            announcements = loadFromLocalStorage('announcements');
+            console.log(`📂 Loaded ${announcements.length} announcements from localStorage`);
+          }
+        } catch (annError) {
+          console.error("Error loading announcements:", annError);
+          announcements = loadFromLocalStorage('announcements');
+        }
+        
+        // Load assignments
+        try {
+          const assignmentsSnap = await database.ref(`assignments/${currentClassCode}`).once('value');
+          if (assignmentsSnap.exists()) {
+            assignments = [];
+            assignmentsSnap.forEach(child => {
+              assignments.push({ id: child.key, ...child.val() });
+            });
+            console.log(`✅ Loaded ${assignments.length} assignments from Firebase`);
+            saveAssignmentsToLocalStorage();
+          } else {
+            assignments = loadFromLocalStorage('assignments');
+            console.log(`📂 Loaded ${assignments.length} assignments from localStorage`);
+          }
+        } catch (assgnError) {
+          console.error("Error loading assignments:", assgnError);
+          assignments = loadFromLocalStorage('assignments');
+        }
+        
+        // Load resources
+        try {
+          const resourcesSnap = await database.ref(`resources/${currentClassCode}`).once('value');
+          if (resourcesSnap.exists()) {
+            resources = [];
+            resourcesSnap.forEach(child => {
+              const res = { id: child.key, ...child.val() };
+              resources.push(res);
+              resourceIds.add(res.id);
+            });
+            console.log(`✅ Loaded ${resources.length} resources from Firebase`);
+            saveResourcesToLocalStorage();
+          } else {
+            resources = loadFromLocalStorage('resources');
+            console.log(`📂 Loaded ${resources.length} resources from localStorage`);
+          }
+        } catch (resError) {
+          console.error("Error loading resources:", resError);
+          resources = loadFromLocalStorage('resources');
+        }
+        
+      } catch (firebaseError) {
+        console.error(`❌ Error loading class data from Firebase: ${firebaseError.message}`);
+        showNotification("Error loading data from Firebase. Using local data.", "warning");
+        
+        // Fallback to localStorage
+        announcements = loadFromLocalStorage('announcements');
+        assignments = loadFromLocalStorage('assignments');
+        resources = loadFromLocalStorage('resources');
+        createDemoStudents();
+      }
+    }
+    
+    // Sort data
+    students.sort((a, b) => (b.points || 0) - (a.points || 0));
+    announcements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    assignments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    resources.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    // Update UI
+    updateUI();
+    renderAllData();
+    updateStats();
+    
+    console.log(`✅ Loaded: ${students.length} students, ${announcements.length} announcements, ${assignments.length} assignments, ${resources.length} resources`);
+    
+    if (students.length === 0) {
+      console.log("ℹ️ No students found. Students may need to join using the class code.");
+      showNotification("No students found in this class. Share the class code with students!", "info");
+    } else {
+      console.log("👥 Students found:", students.map(s => s.name + (s.isTeacher ? " (Teacher)" : "")));
+    }
+    
+    updateSyncStatus("Class data loaded", "success");
+    
+    // Setup real-time listeners if not in demo mode
+    if (!isDemoMode && currentClassCode) {
+      setupRealtimeListeners();
+    }
+    
+  } catch (error) {
+    console.error(`❌ Unexpected error in loadClassData: ${error.message}`);
+    console.error(error.stack);
+    updateSyncStatus("Error loading data", "error");
+    showNotification("Failed to load class data: " + error.message, "error");
+  }
+}
+
+// ========== DEMO DATA CREATION FUNCTIONS ==========
+function createDemoStudents() {
+  const demoStudents = [
+    { name: "Alex Johnson", streak: 7, totalMinutes: 1250, points: 150 },
+    { name: "Sam Smith", streak: 3, totalMinutes: 850, points: 90 },
+    { name: "Taylor Brown", streak: 14, totalMinutes: 2100, points: 250 },
+    { name: "Jordan Lee", streak: 1, totalMinutes: 300, points: 35 }
+  ];
+  
+  demoStudents.forEach((student, index) => {
+    students.push({
+      id: 'demo_student_' + index,
+      name: student.name,
+      streak: student.streak,
+      totalMinutes: student.totalMinutes,
+      totalStudyHours: (student.totalMinutes / 60).toFixed(1),
+      points: student.points,
+      lastActive: new Date().toISOString()
+    });
+  });
+}
+
+function createDemoAnnouncements() {
+  const demoAnnouncements = [
+    { 
+      title: "Welcome to the Class!", 
+      content: "Welcome everyone to our new class. I'm excited to work with you all this semester! Please check the Resources section for a Student Mode Guide.",
+      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    { 
+      title: "Important Assignment Due", 
+      content: "Remember that the first assignment is due this Friday. Please submit through the portal.",
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+    },
+    { 
+      title: "Class Schedule Update", 
+      content: "Next week's class will be held in Room 204 instead of Room 105.",
+      createdAt: new Date().toISOString()
+    }
+  ];
+  
+  demoAnnouncements.forEach((ann, index) => {
+    const id = 'demo_ann_' + index;
+    announcements.push({
+      id: id,
+      title: ann.title,
+      content: ann.content,
+      teacherId: teacherId,
+      teacherName: teacherName,
+      createdAt: ann.createdAt,
+      classCode: currentClassCode
+    });
+    announcementIds.add(id);
+  });
+}
+
+function createDemoAssignments() {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const nextWeek = new Date();
+  nextWeek.setDate(nextWeek.getDate() + 7);
+  
+  const demoAssignments = [
+    { 
+      title: "Math Chapter 5 Exercises", 
+      description: "Complete exercises 1-20 from Chapter 5. Show all your work.",
+      dueDate: tomorrow.toISOString().split('T')[0]
+    },
+    { 
+      title: "Science Lab Report", 
+      description: "Write a lab report on the photosynthesis experiment we conducted.",
+      dueDate: nextWeek.toISOString().split('T')[0]
+    },
+    { 
+      title: "History Essay", 
+      description: "Write a 1000-word essay on the causes of World War II.",
+      dueDate: nextWeek.toISOString().split('T')[0]
+    }
+  ];
+  
+  demoAssignments.forEach((assgn, index) => {
+    assignments.push({
+      id: 'demo_assgn_' + index,
+      title: assgn.title,
+      description: assgn.description,
+      dueDate: assgn.dueDate,
+      teacherId: teacherId,
+      createdAt: new Date().toISOString(),
+      classCode: currentClassCode
+    });
+  });
+}
+
+function createDemoResources() {
+  const demoResources = [
+    { 
+      title: "Student Mode Guide",
+      url: "studentmode-guide.html",
+      description: "Complete guide for students on how to use Student Mode. Learn how to track study sessions, earn points, maintain streaks, and make the most of your learning dashboard."
+    },
+    { 
+      title: "Math Textbook PDF", 
+      url: "http://127.0.0.1:3000/lifeOS/studentmode-guide.png",
+      description: "Complete digital version of our math textbook"
+    },
+    { 
+      title: "Science Lab Videos", 
+      url: "https://example.com/science-videos",
+      description: "Video demonstrations of all required lab experiments"
+    },
+    { 
+      title: "Study Guide Template", 
+      url: "https://example.com/study-guide",
+      description: "Template for creating effective study guides"
+    }
+  ];
+  
+  demoResources.forEach((res, index) => {
+    const id = 'demo_res_' + index;
+    resources.push({
+      id: id,
+      title: res.title,
+      url: res.url,
+      description: res.description,
+      teacherId: teacherId,
+      createdAt: new Date().toISOString(),
+      classCode: currentClassCode
+    });
+    resourceIds.add(id);
+  });
+}
+
+// ========== DATA MANAGEMENT FUNCTIONS ==========
+async function addAnnouncement() {
+  const title = document.getElementById('announcementTitle').value.trim();
+  const content = document.getElementById('announcementContent').value.trim();
+  
+  if (!title || !content) {
+    showNotification("Please fill in all fields", "error");
+    return;
+  }
+  
+  if (!currentClassCode) {
+    showNotification("Please select a class first", "error");
+    return;
+  }
+  
+  console.log(`📢 Adding announcement for class: ${currentClassCode}`);
+  
+  await postAnnouncement(title, content);
+  
+  // Clear form
+  document.getElementById('announcementTitle').value = '';
+  document.getElementById('announcementContent').value = '';
+}
+
+async function addAnnouncementFromModal() {
+  const title = document.getElementById('modalAnnouncementTitle').value.trim();
+  const content = document.getElementById('modalAnnouncementContent').value.trim();
+  
+  if (!title || !content) {
+    showNotification("Please fill in all fields", "error");
+    return;
+  }
+  
+  if (!currentClassCode) {
+    showNotification("Please select a class first", "error");
+    return;
+  }
+  
+  await postAnnouncement(title, content);
+  hideModal('createAnnouncementModal');
+}
+
+async function postAnnouncement(title, content) {
+    const announcement = {
+        title: title,
+        content: content,
+        teacherId: teacherId,
+        teacherName: teacherName,
+        createdAt: new Date().toISOString(),
+        classCode: currentClassCode
+    };
+    
+    if (isDemoMode) {
+        // Save to localStorage
+        const id = 'ann_' + Date.now();
+        announcements.unshift({ id: id, ...announcement });
+        announcementIds.add(id);
+        saveAnnouncementsToLocalStorage();
+        
+        // Update UI
+        renderAnnouncements();
+        renderAllAnnouncements();
+        updateStats();
+        
+        showNotification("Announcement posted successfully (Demo Mode)", "success");
+        console.log(`✅ Announcement posted: ${title}`);
+    } else {
+        try {
+            console.log(`📤 Posting announcement to Firebase for class ${currentClassCode}`);
+            
+            // Check if we have permission by trying to write to teacher's own path first
+            const teacherClassRef = database.ref(`teachers/${teacherId}/classes`);
+            const teacherSnapshot = await teacherClassRef.once('value');
+            
+            if (!teacherSnapshot.exists()) {
+                showNotification("You don't have permission to post to this class", "error");
+                return;
+            }
+            
+            // Save to Firebase
+            const newAnnouncementRef = database.ref(`announcements/${currentClassCode}`).push();
+            await newAnnouncementRef.set(announcement);
+            
+            console.log(`✅ Announcement saved to Firebase at: announcements/${currentClassCode}/${newAnnouncementRef.key}`);
+            
+            // Add to local array WITHOUT duplicating (real-time listener will add it)
+            // Just track the ID to prevent duplicates
+            announcementIds.add(newAnnouncementRef.key);
+            
+            // Show success immediately
+            showNotification("Announcement posted successfully", "success");
+            console.log(`✅ Announcement posted: ${title}`);
+            
+        } catch (error) {
+            console.error(`❌ Error adding announcement: ${error.message}`);
+            console.error(`Error code: ${error.code}`);
+            
+            // Fallback to localStorage only
+            const id = 'local_' + Date.now();
+            announcements.unshift({ id: id, ...announcement });
+            announcementIds.add(id);
+            saveAnnouncementsToLocalStorage();
+            
+            // Update UI
+            renderAnnouncements();
+            renderAllAnnouncements();
+            updateStats();
+            
+            showNotification("Announcement saved to local storage (Firebase offline)", "warning");
+            console.log(`💾 Announcement saved to localStorage: ${title}`);
+        }
+    }
+}
+
+async function addAssignment() {
+  const title = document.getElementById('assignmentTitle').value.trim();
+  const description = document.getElementById('assignmentDescription').value.trim();
+  const dueDate = document.getElementById('assignmentDueDate').value;
+  
+  if (!title || !description || !dueDate) {
+    showNotification("Please fill in all fields", "error");
+    return;
+  }
+  
+  if (!currentClassCode) {
+    showNotification("Please select a class first", "error");
+    return;
+  }
+  
+  console.log(`📚 Adding assignment for class: ${currentClassCode}`);
+  
+  await postAssignment(title, description, dueDate);
+  
+  // Clear form
+  document.getElementById('assignmentTitle').value = '';
+  document.getElementById('assignmentDescription').value = '';
+  document.getElementById('assignmentDueDate').value = '';
+}
+
+async function addAssignmentFromModal() {
+  const title = document.getElementById('modalAssignmentTitle').value.trim();
+  const description = document.getElementById('modalAssignmentDescription').value.trim();
+  const dueDate = document.getElementById('modalAssignmentDueDate').value;
+  
+  if (!title || !description || !dueDate) {
+    showNotification("Please fill in all fields", "error");
+    return;
+  }
+  
+  if (!currentClassCode) {
+    showNotification("Please select a class first", "error");
+    return;
+  }
+  
+  await postAssignment(title, description, dueDate);
+  hideModal('createAssignmentModal');
+}
+
+async function postAssignment(title, description, dueDate) {
+  const assignment = {
+    title: title,
+    description: description,
+    dueDate: dueDate,
+    teacherId: teacherId,
+    createdAt: new Date().toISOString(),
+    classCode: currentClassCode
+  };
+  
+  if (isDemoMode) {
+    // Save to localStorage
+    const id = 'assgn_' + Date.now();
+    assignments.unshift({ id: id, ...assignment });
+    saveAssignmentsToLocalStorage();
+    
+    // Update UI
+    renderAssignments();
+    renderAllAssignments();
+    updateStats();
+    
+    showNotification("Assignment added successfully (Demo Mode)", "success");
+    console.log(`✅ Assignment added: ${title}`);
+  } else {
+    try {
+      // Check if we have permission by checking teacher's classes
+      const teacherClassRef = database.ref(`teachers/${teacherId}/classes`);
+      const teacherSnapshot = await teacherClassRef.once('value');
+      
+      if (!teacherSnapshot.exists()) {
+        showNotification("You don't have permission to add assignments to this class", "error");
+        return;
+      }
+      
+      // Save to Firebase
+      const newAssignmentRef = database.ref('assignments/' + currentClassCode).push();
+      await newAssignmentRef.set(assignment);
+      
+      showNotification("Assignment added successfully", "success");
+      console.log(`✅ Assignment added: ${title}`);
+    } catch (error) {
+      console.error(`❌ Error adding assignment: ${error.message}`);
+      
+      // Fallback to localStorage only
+      const id = 'local_' + Date.now();
+      assignments.unshift({ id: id, ...assignment });
+      saveAssignmentsToLocalStorage();
+      
+      // Update UI
+      renderAssignments();
+      renderAllAssignments();
+      updateStats();
+      
+      showNotification("Assignment saved to local storage (Firebase offline)", "warning");
+      console.log(`💾 Assignment saved to localStorage: ${title}`);
+    }
+  }
+}
+
+async function addResourceFromModal() {
+  const title = document.getElementById('modalResourceTitle').value.trim();
+  const url = document.getElementById('modalResourceUrl').value.trim();
+  const description = document.getElementById('modalResourceDescription').value.trim();
+  
+  if (!title || !url) {
+    showNotification("Please fill in all required fields", "error");
+    return;
+  }
+  
+  if (!currentClassCode) {
+    showNotification("Please select a class first", "error");
+    return;
+  }
+  
+  await postResource(title, url, description);
+  hideModal('createResourceModal');
+}
+
+async function postResource(title, url, description = "") {
+  const resource = {
+    title: title,
+    url: url,
+    description: description,
+    teacherId: teacherId,
+    createdAt: new Date().toISOString(),
+    classCode: currentClassCode
+  };
+  
+  if (isDemoMode) {
+    // Save to localStorage
+    const id = 'res_' + Date.now();
+    resources.push({ id: id, ...resource });
+    resourceIds.add(id);
+    saveResourcesToLocalStorage();
+    
+    // Update UI
+    renderResources();
+    renderAllResources();
+    updateStats();
+    
+    showNotification("Resource added successfully (Demo Mode)", "success");
+    console.log(`✅ Resource added: ${title}`);
+  } else {
+    try {
+      console.log(`📁 Posting resource to Firebase for class ${currentClassCode}`);
+      
+      // Check if we have permission by checking teacher's classes
+      const teacherClassRef = database.ref(`teachers/${teacherId}/classes`);
+      const teacherSnapshot = await teacherClassRef.once('value');
+      
+      if (!teacherSnapshot.exists()) {
+        showNotification("You don't have permission to add resources to this class", "error");
+        return;
+      }
+      
+      const newResourceRef = database.ref('resources/' + currentClassCode).push();
+      await newResourceRef.set(resource);
+      
+      console.log(`✅ Resource saved to Firebase at: resources/${currentClassCode}/${newResourceRef.key}`);
+      
+      // Add to local array WITHOUT duplicating (real-time listener will add it)
+      // Just track the ID to prevent duplicates
+      resourceIds.add(newResourceRef.key);
+      
+      // Show success immediately
+      showNotification("Resource added successfully", "success");
+      console.log(`✅ Resource added: ${title}`);
+      
+    } catch (error) {
+      console.error(`❌ Error adding resource: ${error.message}`);
+      
+      // Fallback to localStorage only
+      const id = 'local_' + Date.now();
+      resources.push({ id: id, ...resource });
+      resourceIds.add(id);
+      saveResourcesToLocalStorage();
+      
+      // Update UI
+      renderResources();
+      renderAllResources();
+      updateStats();
+      
+      showNotification("Resource saved to local storage (Firebase offline)", "warning");
+      console.log(`💾 Resource saved to localStorage: ${title}`);
+    }
+  }
+}
+
+// ========== DELETE FUNCTIONS ==========
+async function deleteAnnouncement(id) {
+  if (!currentClassCode) return;
+  
+  if (confirm("Delete this announcement?")) {
+    if (isDemoMode) {
+      // Delete from localStorage
+      announcements = announcements.filter(a => a.id !== id);
+      announcementIds.delete(id);
+      saveAnnouncementsToLocalStorage();
+      
+      // Update UI
+      renderAnnouncements();
+      renderAllAnnouncements();
+      updateStats();
+      
+      showNotification("Announcement deleted (Demo Mode)", "success");
+      console.log(`🗑️ Announcement deleted: ${id}`);
+    } else {
+      try {
+        await database.ref('announcements/' + currentClassCode + '/' + id).remove();
+        
+        // Also delete from local state
+        announcements = announcements.filter(a => a.id !== id);
+        announcementIds.delete(id);
+        saveAnnouncementsToLocalStorage();
+        
+        // Update UI
+        renderAnnouncements();
+        renderAllAnnouncements();
+        updateStats();
+        
+        showNotification("Announcement deleted", "success");
+        console.log(`🗑️ Announcement deleted: ${id}`);
+      } catch (error) {
+        console.error(`❌ Error deleting announcement: ${error.message}`);
+        
+        // Fallback: delete from localStorage only
+        announcements = announcements.filter(a => a.id !== id);
+        announcementIds.delete(id);
+        saveAnnouncementsToLocalStorage();
+        
+        // Update UI
+        renderAnnouncements();
+        renderAllAnnouncements();
+        updateStats();
+        
+        showNotification("Announcement deleted from local storage", "warning");
+        console.log(`💾 Announcement deleted from localStorage: ${id}`);
+      }
+    }
+  }
+}
+
+async function deleteAssignment(id) {
+  if (!currentClassCode) return;
+  
+  if (confirm("Delete this assignment?")) {
+    if (isDemoMode) {
+      // Delete from localStorage
+      assignments = assignments.filter(a => a.id !== id);
+      saveAssignmentsToLocalStorage();
+      
+      // Update UI
+      renderAssignments();
+      renderAllAssignments();
+      updateStats();
+      
+      showNotification("Assignment deleted (Demo Mode)", "success");
+      console.log(`🗑️ Assignment deleted: ${id}`);
+    } else {
+      try {
+        await database.ref('assignments/' + currentClassCode + '/' + id).remove();
+        
+        // Also delete from localStorage
+        assignments = assignments.filter(a => a.id !== id);
+        saveAssignmentsToLocalStorage();
+        
+        // Update UI
+        renderAssignments();
+        renderAllAssignments();
+        updateStats();
+        
+        showNotification("Assignment deleted", "success");
+        console.log(`🗑️ Assignment deleted: ${id}`);
+      } catch (error) {
+        console.error(`❌ Error deleting assignment: ${error.message}`);
+        
+        // Fallback: delete from localStorage only
+        assignments = assignments.filter(a => a.id !== id);
+        saveAssignmentsToLocalStorage();
+        
+        // Update UI
+        renderAssignments();
+        renderAllAssignments();
+        updateStats();
+        
+        showNotification("Assignment deleted from local storage", "warning");
+        console.log(`💾 Assignment deleted from localStorage: ${id}`);
+      }
+    }
+  }
+}
+
+async function deleteResource(id) {
+  if (!currentClassCode) return;
+  
+  if (confirm("Delete this resource?")) {
+    if (isDemoMode) {
+      // Delete from localStorage
+      resources = resources.filter(r => r.id !== id);
+      resourceIds.delete(id);
+      saveResourcesToLocalStorage();
+      
+      // Update UI
+      renderResources();
+      renderAllResources();
+      updateStats();
+      
+      showNotification("Resource deleted (Demo Mode)", "success");
+      console.log(`🗑️ Resource deleted: ${id}`);
+    } else {
+      try {
+        await database.ref('resources/' + currentClassCode + '/' + id).remove();
+        
+        // Also delete from local state
+        resources = resources.filter(r => r.id !== id);
+        resourceIds.delete(id);
+        saveResourcesToLocalStorage();
+        
+        // Update UI
+        renderResources();
+        renderAllResources();
+        updateStats();
+        
+        showNotification("Resource deleted", "success");
+        console.log(`🗑️ Resource deleted: ${id}`);
+      } catch (error) {
+        console.error(`❌ Error deleting resource: ${error.message}`);
+        
+        // Fallback: delete from localStorage only
+        resources = resources.filter(r => r.id !== id);
+        resourceIds.delete(id);
+        saveResourcesToLocalStorage();
+        
+        // Update UI
+        renderResources();
+        renderAllResources();
+        updateStats();
+        
+        showNotification("Resource deleted from local storage", "warning");
+        console.log(`💾 Resource deleted from localStorage: ${id}`);
+      }
+    }
+  }
+}
+
+// ========== REALTIME LISTENERS ==========
+function setupRealtimeListeners() {
+  if (!currentClassCode || isDemoMode) return;
+  
+  console.log(`👂 Setting up realtime listeners for class: ${currentClassCode} (Teacher: ${teacherId})`);
+  
+  // Remove any existing listeners first
+  if (database && database.ref) {
+    try {
+      database.ref(`classes/${currentClassCode}/students`).off();
+      database.ref(`announcements/${currentClassCode}`).off();
+      database.ref(`assignments/${currentClassCode}`).off();
+      database.ref(`resources/${currentClassCode}`).off();
+    } catch (e) {
+      console.log("No existing listeners to remove");
+    }
+  }
+  
+  // Listen for students - CRITICAL FIX: Proper student loading
+  database.ref(`classes/${currentClassCode}/students`).on('value', (snapshot) => {
+    updateSyncStatus("Live", "success");
+    
+    if (!snapshot.exists()) {
+      console.log(`📭 No students at classes/${currentClassCode}/students`);
+      if (students.length === 0) {
+        renderStudents();
+        updateStats();
+      }
+      return;
+    }
+    
+    const newStudents = [];
+    snapshot.forEach(child => {
+      const studentId = child.key;
+      const studentData = child.val();
+      
+      // CRITICAL FIX: Filter out teacher's own ID
+      if (studentId !== teacherId) {
+        newStudents.push({
+          id: studentId,
+          name: studentData.name || studentData.userName || 'Student ' + studentId.substr(0, 6),
+          streak: studentData.streak || 0,
+          totalMinutes: studentData.totalMinutes || 0,
+          totalStudyHours: studentData.totalStudyHours || 
+                           (studentData.totalMinutes ? (studentData.totalMinutes / 60).toFixed(1) : '0.0'),
+          points: studentData.points || Math.floor((studentData.totalMinutes || 0) / 60) * 100 || 0,
+          lastActive: studentData.lastActive || studentData.updatedAt || 'Unknown',
+          isTeacher: false
+        });
+      } else {
+        console.warn(`⚠️ Teacher's ID detected in students list (real-time): ${studentId}`);
+      }
+    });
+    
+    students = newStudents;
+    students.sort((a, b) => (b.points || 0) - (a.points || 0));
+    renderStudents();
+    updateStats();
+    console.log(`👥 Real-time students updated: ${students.length} students`);
+  });
+  
+  // Listen for announcements
+  database.ref(`announcements/${currentClassCode}`).on('value', (snapshot) => {
+    if (snapshot.exists()) {
+      const newAnnouncements = [];
+      snapshot.forEach(child => {
+        const annId = child.key;
+        if (!announcementIds.has(annId)) {
+          newAnnouncements.push({ id: annId, ...child.val() });
+          announcementIds.add(annId);
+        }
+      });
+      
+      if (newAnnouncements.length > 0) {
+        announcements = [...newAnnouncements, ...announcements.filter(a => !newAnnouncements.some(n => n.id === a.id))];
+        announcements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        saveAnnouncementsToLocalStorage();
+        renderAnnouncements();
+        renderAllAnnouncements();
+        updateStats();
+      }
+    }
+  });
+  
+  // Listen for assignments
+  database.ref(`assignments/${currentClassCode}`).on('value', (snapshot) => {
+    if (snapshot.exists()) {
+      assignments = [];
+      snapshot.forEach(child => {
+        assignments.push({ id: child.key, ...child.val() });
+      });
+      assignments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      saveAssignmentsToLocalStorage();
+      renderAssignments();
+      renderAllAssignments();
+      updateStats();
+    }
+  });
+  
+  // Listen for resources
+  database.ref(`resources/${currentClassCode}`).on('value', (snapshot) => {
+    if (snapshot.exists()) {
+      const newResources = [];
+      snapshot.forEach(child => {
+        const resId = child.key;
+        if (!resourceIds.has(resId)) {
+          newResources.push({ id: resId, ...child.val() });
+          resourceIds.add(resId);
+        }
+      });
+      
+      if (newResources.length > 0) {
+        resources = [...resources.filter(r => !newResources.some(n => n.id === r.id)), ...newResources];
+        resources.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        saveResourcesToLocalStorage();
+        renderResources();
+        renderAllResources();
+        updateStats();
+      }
+    }
+  });
+  
+  console.log(`✅ Realtime listeners set up for class: ${currentClassCode}`);
+}
+
+// ========== RENDER FUNCTIONS ==========
+function renderAllData() {
+  renderStudents();
+  renderAnnouncements();
+  renderAssignments();
+  renderResources();
+}
+
+function renderStudents() {
+  const studentsList = document.getElementById('studentsList');
+  const allStudentsList = document.getElementById('allStudentsList');
+  
+  if (!studentsList && !allStudentsList) return;
+  
+  const studentsHTML = students.map(student => {
+    return `
+      <div class="student-item" style="${student.isTeacher ? 'border-left: 4px solid var(--warning); background: rgba(245, 158, 11, 0.1);' : ''}">
+        <div class="student-header">
+          <div class="student-info">
+            <h4>${student.name} ${student.isTeacher ? '👨‍🏫' : ''}</h4>
+            <div class="student-id">ID: ${student.id.substr(0, 8)}...</div>
+          </div>
+          <div class="streak-badge">
+            🔥 ${student.streak || 0}
+          </div>
+        </div>
+        <div class="student-stats">
+          <div class="stat-pill">
+            <div class="stat-pill-value">${student.totalStudyHours || '0.0'}h</div>
+            <div class="stat-pill-label">Hours</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-pill-value">${student.points || 0}</div>
+            <div class="stat-pill-label">Points</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-pill-value">${formatShortDate(student.lastActive)}</div>
+            <div class="stat-pill-label">Last Active</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  if (students.length === 0) {
+    const emptyHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">👥</div>
+        <div class="empty-state-title">No students yet</div>
+        <div class="empty-state-description">Share your class code with students to get started!</div>
+      </div>
+    `;
+    if (studentsList) studentsList.innerHTML = emptyHTML;
+    if (allStudentsList) allStudentsList.innerHTML = emptyHTML;
+  } else {
+    const recentStudents = students.slice(0, 4);
+    if (studentsList) studentsList.innerHTML = recentStudents.map(student => {
+      return `
+        <div class="student-item" style="${student.isTeacher ? 'border-left: 4px solid var(--warning); background: rgba(245, 158, 11, 0.1);' : ''}">
+          <div class="student-header">
+            <div class="student-info">
+              <h4>${student.name} ${student.isTeacher ? '👨‍🏫' : ''}</h4>
+              <div class="student-id">ID: ${student.id.substr(0, 8)}...</div>
+            </div>
+            <div class="streak-badge">
+              🔥 ${student.streak || 0}
+            </div>
+          </div>
+          <div class="student-stats">
+            <div class="stat-pill">
+              <div class="stat-pill-value">${student.totalStudyHours || '0.0'}h</div>
+              <div class="stat-pill-label">Hours</div>
+            </div>
+            <div class="stat-pill">
+              <div class="stat-pill-value">${student.points || 0}</div>
+              <div class="stat-pill-label">Points</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    if (allStudentsList) allStudentsList.innerHTML = studentsHTML;
+  }
+}
+
+function renderAnnouncements() {
+  const announcementsList = document.getElementById('announcementsList');
+  const allAnnouncementsList = document.getElementById('allAnnouncementsList');
+  
+  if (!announcementsList && !allAnnouncementsList) return;
+  
+  if (announcements.length === 0) {
+    const emptyHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📢</div>
+        <div class="empty-state-title">No announcements yet</div>
+        <div class="empty-state-description">Create your first announcement!</div>
+      </div>
+    `;
+    if (announcementsList) announcementsList.innerHTML = emptyHTML;
+    if (allAnnouncementsList) allAnnouncementsList.innerHTML = emptyHTML;
+  } else {
+    const recentAnnouncements = announcements.slice(0, 3);
+    if (announcementsList) {
+      announcementsList.innerHTML = recentAnnouncements.map(ann => `
+        <div class="item">
+          <div class="item-header">
+            <div class="item-title">${ann.title || 'Announcement'}</div>
+            <div class="item-date">${formatDate(ann.createdAt)}</div>
+          </div>
+          <div class="item-content">${ann.content || ''}</div>
+          <div class="item-actions">
+            <button class="delete-btn" onclick="deleteAnnouncement('${ann.id}')">🗑️ Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    if (allAnnouncementsList) {
+      allAnnouncementsList.innerHTML = announcements.map(ann => `
+        <div class="item">
+          <div class="item-header">
+            <div class="item-title">${ann.title || 'Announcement'}</div>
+            <div class="item-date">${formatDate(ann.createdAt)}</div>
+          </div>
+          <div class="item-content">${ann.content || ''}</div>
+          <div class="item-actions">
+            <button class="delete-btn" onclick="deleteAnnouncement('${ann.id}')">🗑️ Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+function renderAssignments() {
+  const assignmentsList = document.getElementById('assignmentsList');
+  const allAssignmentsList = document.getElementById('allAssignmentsList');
+  
+  if (!assignmentsList && !allAssignmentsList) return;
+  
+  if (assignments.length === 0) {
+    const emptyHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📚</div>
+        <div class="empty-state-title">No assignments yet</div>
+        <div class="empty-state-description">Create your first assignment!</div>
+      </div>
+    `;
+    if (assignmentsList) assignmentsList.innerHTML = emptyHTML;
+    if (allAssignmentsList) allAssignmentsList.innerHTML = emptyHTML;
+  } else {
+    const recentAssignments = assignments.slice(0, 3);
+    if (assignmentsList) {
+      assignmentsList.innerHTML = recentAssignments.map(assignment => `
+        <div class="item">
+          <div class="item-header">
+            <div class="item-title">${assignment.title || 'Assignment'}</div>
+            <div class="item-date">Due: ${formatDate(assignment.dueDate)}</div>
+          </div>
+          <div class="item-content">${assignment.description || ''}</div>
+          <div class="item-actions">
+            <button class="delete-btn" onclick="deleteAssignment('${assignment.id}')">🗑️ Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    if (allAssignmentsList) {
+      allAssignmentsList.innerHTML = assignments.map(assignment => `
+        <div class="assignment-card">
+          <div class="assignment-card-header">
+            <div class="assignment-card-title">${assignment.title || 'Assignment'}</div>
+            <div class="assignment-card-due">Due: ${formatDate(assignment.dueDate)}</div>
+          </div>
+          <div class="assignment-card-description">${assignment.description || ''}</div>
+          <div class="assignment-card-actions">
+            <button class="btn btn-danger" onclick="deleteAssignment('${assignment.id}')">🗑️ Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+function renderAllAssignments() {
+  renderAssignments();
+}
+
+function renderResources() {
+  // Resources rendering is handled by renderAllResources
+}
+
+function renderAllResources() {
+  const allResourcesList = document.getElementById('allResourcesList');
+  
+  if (!allResourcesList) return;
+  
+  if (resources.length === 0) {
+    allResourcesList.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📁</div>
+        <div class="empty-state-title">No resources yet</div>
+        <div class="empty-state-description">Add your first learning resource!</div>
+      </div>
+    `;
+  } else {
+    allResourcesList.innerHTML = resources.map(res => `
+      <div class="item">
+        <div class="item-header">
+          <div class="item-title">${res.title || 'Resource'}</div>
+          <div class="item-date">${formatDate(res.createdAt)}</div>
+        </div>
+        <div class="item-content">
+          <a href="${res.url}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">🔗 ${res.url}</a>
+          ${res.description ? `<p style="margin-top:0.75rem; color: var(--text-muted);">${res.description}</p>` : ''}
+        </div>
+        <div class="item-actions">
+          <button class="delete-btn" onclick="deleteResource('${res.id}')">🗑️ Delete</button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function renderAllAnnouncements() {
+  renderAnnouncements();
+}
+
+function renderAnalytics() {
+  const analyticsSummary = document.getElementById('analyticsSummary');
+  const topPerformers = document.getElementById('topPerformers');
+  
+  if (!analyticsSummary || !topPerformers) return;
+  
+  if (students.length === 0) {
+    analyticsSummary.innerHTML = "No student data available yet.";
+    topPerformers.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📊</div>
+        <div class="empty-state-title">No data yet</div>
+        <div class="empty-state-description">Wait for students to join and start studying</div>
+      </div>
+    `;
+    return;
+  }
+  
+  // Calculate analytics (excluding teacher from calculations)
+  const realStudents = students.filter(s => !s.isTeacher);
+  const totalStudents = realStudents.length;
+  const totalHours = realStudents.reduce((sum, student) => sum + parseFloat(student.totalStudyHours || 0), 0);
+  const avgHours = totalStudents > 0 ? totalHours / totalStudents : 0;
+  const totalStreak = realStudents.reduce((sum, student) => sum + (student.streak || 0), 0);
+  const avgStreak = totalStudents > 0 ? Math.round(totalStreak / totalStudents) : 0;
+  
+  const today = new Date().toISOString().split('T')[0];
+  const dailyActive = realStudents.filter(s => {
+    if (!s.lastActive || s.lastActive === 'Unknown') return false;
+    return s.lastActive.includes(today);
+  }).length;
+  const dailyActivePercent = totalStudents > 0 ? Math.round((dailyActive / totalStudents) * 100) : 0;
+  
+  // Update bars
+  document.getElementById('dailyActive').textContent = dailyActivePercent + '%';
+  document.getElementById('dailyActiveBar').style.width = dailyActivePercent + '%';
+  document.getElementById('assignmentCompletion').textContent = 'N/A';
+  document.getElementById('assignmentCompletionBar').style.width = '50%';
+  document.getElementById('avgStudyHours').textContent = avgHours.toFixed(1) + 'h';
+  document.getElementById('avgStudyHoursBar').style.width = Math.min(avgHours * 10, 100) + '%';
+  
+  // Update streak bars
+  const streakValues = realStudents.slice(0, 5).map(s => s.streak || 0);
+  const maxStreak = Math.max(...streakValues, 1);
+  streakValues.forEach((streak, i) => {
+    const bar = document.getElementById(`streakBar${i + 1}`);
+    if (bar) {
+      const height = Math.round((streak / maxStreak) * 100);
+      bar.style.height = height + 'px';
+    }
+  });
+  
+  // Update summary
+  analyticsSummary.innerHTML = `
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm);">
+      <div>Total Students: <strong>${totalStudents}</strong></div>
+      <div>Total Study Hours: <strong>${totalHours.toFixed(1)}h</strong></div>
+      <div>Average Streak: <strong>${avgStreak} days</strong></div>
+      <div>Daily Active: <strong>${dailyActive}/${totalStudents}</strong></div>
+    </div>
+  `;
+  
+  // Show top performers (excluding teacher)
+  const topStudents = [...realStudents].sort((a, b) => (b.points || 0) - (a.points || 0)).slice(0, 5);
+  topPerformers.innerHTML = topStudents.map((student, index) => `
+    <div style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--bg); border-radius: var(--radius); margin-bottom: var(--spacing-sm);">
+      <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent); min-width: 30px;">
+        ${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+      </div>
+      <div style="flex: 1;">
+        <div style="font-weight: 600;">${student.name}</div>
+        <div style="font-size: 0.875rem; color: var(--text-muted);">
+          ${student.totalStudyHours || '0.0'}h • 🔥 ${student.streak || 0} • ⭐ ${student.points || 0}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ========== STATISTICS FUNCTIONS ==========
+function updateStats() {
+  // Fix for the error: check if elements exist before updating
+  try {
+    const realStudents = students.filter(s => !s.isTeacher);
+    const studentsCount = realStudents.length;
+    const announcementsCount = announcements.length;
+    const assignmentsCount = assignments.length;
+    const resourcesCount = resources.length;
+    
+    // Update main stats
+    const studentsCountEl = document.getElementById('studentsCount');
+    const announcementsCountEl = document.getElementById('announcementsCount');
+    const assignmentsCountEl = document.getElementById('assignmentsCount');
+    const avgStreakEl = document.getElementById('avgStreak');
+    
+    if (studentsCountEl) studentsCountEl.textContent = studentsCount;
+    if (announcementsCountEl) announcementsCountEl.textContent = announcementsCount;
+    if (assignmentsCountEl) assignmentsCountEl.textContent = assignmentsCount;
+    
+    // Calculate average streak (excluding teacher)
+    let avgStreak = 0;
+    if (studentsCount > 0) {
+      const totalStreak = realStudents.reduce((sum, student) => sum + (student.streak || 0), 0);
+      avgStreak = Math.round(totalStreak / studentsCount);
+    }
+    if (avgStreakEl) avgStreakEl.textContent = avgStreak;
+    
+    // Update sidebar stats
+    const sidebarStudentsEl = document.getElementById('sidebarStudents');
+    const sidebarAssignmentsEl = document.getElementById('sidebarAssignments');
+    const sidebarAnnouncementsEl = document.getElementById('sidebarAnnouncements');
+    const sidebarAvgStreakEl = document.getElementById('sidebarAvgStreak');
+    
+    if (sidebarStudentsEl) sidebarStudentsEl.textContent = studentsCount;
+    if (sidebarAssignmentsEl) sidebarAssignmentsEl.textContent = assignmentsCount;
+    if (sidebarAnnouncementsEl) sidebarAnnouncementsEl.textContent = announcementsCount;
+    if (sidebarAvgStreakEl) sidebarAvgStreakEl.textContent = avgStreak;
+    
+  } catch (error) {
+    console.error("Error updating stats:", error);
+  }
+}
+
+function updateUI() {
+  if (currentClassCode && teacherClasses.length > 0) {
+    const currentClass = teacherClasses[selectedClassIndex];
+    const codeDisplay = document.getElementById('currentClassCodeDisplay');
+    const subtitle = document.getElementById('dashboardSubtitle');
+    
+    if (codeDisplay) codeDisplay.textContent = currentClass.code;
+    if (subtitle) subtitle.textContent = `Managing: ${currentClass.name}`;
+  } else {
+    const codeDisplay = document.getElementById('currentClassCodeDisplay');
+    const subtitle = document.getElementById('dashboardSubtitle');
+    
+    if (codeDisplay) codeDisplay.textContent = '------';
+    if (subtitle) subtitle.textContent = 'Manage your classroom';
+  }
+}
+
+// ========== UTILITY FUNCTIONS ==========
+function formatDate(dateString) {
+  if (!dateString) return 'No date';
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  } catch {
+    return 'Invalid date';
+  }
+}
+
+function formatShortDate(dateString) {
+  if (!dateString || dateString === 'Unknown') return 'Unknown';
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return diffDays + "d ago";
+    if (diffDays < 30) return Math.floor(diffDays / 7) + "w ago";
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  } catch {
+    return 'Unknown';
+  }
+}
+
+function showNotification(message, type = "info") {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  
+  let icon = '💡';
+  if (type === 'success') icon = '✅';
+  if (type === 'error') icon = '❌';
+  if (type === 'warning') icon = '⚠️';
+  
+  toast.innerHTML = `
+    <span style="font-size: 1.5rem;">${icon}</span>
+    <div style="flex: 1;">
+      <div style="font-weight: 700;">${message}</div>
+      <div style="font-size: 0.875rem; opacity: 0.8;">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+    </div>
+  `;
+  
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(100%)';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+function updateSyncStatus(text, type = "info") {
+  try {
+    const syncStatus = document.getElementById('syncStatus');
+    if (!syncStatus) {
+      console.log(`Sync status: ${text} (${type})`);
+      return;
+    }
+    
+    // Clear and set new content
+    syncStatus.textContent = text;
+    syncStatus.className = `sync-status ${type}`;
+    syncStatus.style.display = 'flex';
+    
+    // Add icon as first child
+    let icon = '⏳';
+    if (type === 'success') icon = '✅';
+    if (type === 'error') icon = '❌';
+    if (type === 'warning') icon = '⚠️';
+    if (type === 'info') icon = 'ℹ️';
+    
+    syncStatus.innerHTML = `<span style="margin-right: 8px;">${icon}</span> ${text}`;
+    
+    if (type === 'success') {
+      setTimeout(() => {
+        if (syncStatus) {
+          syncStatus.style.opacity = '0';
+          setTimeout(() => {
+            if (syncStatus) {
+              syncStatus.style.display = 'none';
+              syncStatus.style.opacity = '1';
+            }
+          }, 300);
+        }
+      }, 2000);
+    }
+  } catch (error) {
+    console.error("Error updating sync status:", error);
+  }
+}
+
+function changeTheme(theme) {
+  document.body.className = theme;
+  localStorage.setItem('teacherTheme', theme);
+  showNotification(`Switched to ${theme} theme`, "success");
+}
+
+function copyClassCode() {
+  if (!currentClassCode) {
+    showNotification("No class selected", "error");
+    return;
+  }
+  
+  navigator.clipboard.writeText(currentClassCode).then(() => {
+    showNotification("Class code copied to clipboard!", "success");
+    console.log(`📋 Class code copied: ${currentClassCode}`);
+  });
+}
+
+async function refreshStudents() {
+  if (!currentClassCode) {
+    showNotification("Please select a class first", "error");
+    return;
+  }
+  
+  showNotification("Refreshing student list...", "info");
+  updateSyncStatus("Refreshing...", "syncing");
+  
+  if (isDemoMode) {
+    // For demo mode, just re-render
+    setTimeout(() => {
+      renderStudents();
+      updateStats();
+      showNotification(`Refreshed: ${students.length} students (Demo Mode)`, "success");
+      updateSyncStatus("Refreshed", "success");
+    }, 500);
+  } else {
+    try {
+      console.log(`🔄 Manually refreshing students for class: ${currentClassCode}`);
+      
+      // Try multiple paths
+      let snapshot = await database.ref(`classes/${currentClassCode}/students`).once('value');
+      
+      if (!snapshot.exists()) {
+        console.log(`⚠️ No students at main path, trying alternative...`);
+        snapshot = await database.ref(`classStudents/${currentClassCode}`).once('value');
+      }
+      
+      if (snapshot.exists()) {
+        const newStudents = [];
+        snapshot.forEach(child => {
+          const studentId = child.key;
+          const studentData = child.val();
+          
+          if (studentId !== teacherId) {
+            newStudents.push({
+              id: studentId,
+              name: studentData.name || studentData.userName || 'Student ' + studentId.substr(0, 6),
+              streak: studentData.streak || 0,
+              totalMinutes: studentData.totalMinutes || 0,
+              totalStudyHours: studentData.totalStudyHours || 
+                               (studentData.totalMinutes ? (studentData.totalMinutes / 60).toFixed(1) : '0.0'),
+              points: studentData.points || Math.floor((studentData.totalMinutes || 0) / 60) * 100 || 0,
+              lastActive: studentData.lastActive || studentData.updatedAt || 'Unknown',
+              isTeacher: false
+            });
+          }
+        });
+        
+        students = newStudents;
+        students.sort((a, b) => (b.points || 0) - (a.points || 0));
+        renderStudents();
+        updateStats();
+        
+        if (students.length > 0) {
+          showNotification(`Refreshed: Found ${students.length} student(s)`, "success");
+          console.log("✅ Students found:", students.map(s => s.name));
+        } else {
+          showNotification("No students found in this class", "info");
+          console.log("ℹ️ No students found after refresh");
+        }
+        
+        updateSyncStatus("Refreshed", "success");
+      } else {
+        students = [];
+        renderStudents();
+        updateStats();
+        showNotification("No students found", "info");
+        updateSyncStatus("No students", "info");
+        console.log("❌ No students found in Firebase after checking all paths");
+      }
+    } catch (error) {
+      console.error(`❌ Error refreshing students: ${error.message}`);
+      console.error(error.stack);
+      showNotification("Failed to refresh from Firebase: " + error.message, "error");
+      updateSyncStatus("Refresh failed", "error");
+    }
+  }
+}
+
+function searchStudents() {
+  const term = document.getElementById('studentSearch').value.toLowerCase();
+  
+  if (!term) {
+    renderStudents();
+    return;
+  }
+  
+  const filteredStudents = students.filter(s => 
+    (s.name && s.name.toLowerCase().includes(term)) || 
+    (s.id && s.id.toLowerCase().includes(term))
+  );
+  
+  const container = document.getElementById('studentsList');
+  
+  if (!container) return;
+  
+  if (filteredStudents.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <div class="empty-state-title">No students found</div>
+        <div class="empty-state-description">Try a different search term</div>
+      </div>
+    `;
+    return;
+  }
+  
+  const studentsHTML = filteredStudents.map(student => {
+    return `
+      <div class="student-item" style="${student.isTeacher ? 'border-left: 4px solid var(--warning); background: rgba(245, 158, 11, 0.1);' : ''}">
+        <div class="student-header">
+          <div class="student-info">
+            <h4>${student.name} ${student.isTeacher ? '👨‍🏫' : ''}</h4>
+            <div class="student-id">ID: ${student.id.substr(0, 8)}...</div>
+          </div>
+          <div class="streak-badge">
+            🔥 ${student.streak || 0}
+          </div>
+        </div>
+        <div class="student-stats">
+          <div class="stat-pill">
+            <div class="stat-pill-value">${student.totalStudyHours || '0.0'}h</div>
+            <div class="stat-pill-label">Hours</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-pill-value">${student.points || 0}</div>
+            <div class="stat-pill-label">Points</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  container.innerHTML = studentsHTML;
+}
+
+// ========== NAVIGATION ==========
+function showSection(sectionId) {
+  currentSection = sectionId;
+  
+  // Update active nav item
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  
+  // Find the clicked nav item and activate it
+  const navItems = document.querySelectorAll('.nav-item');
+  for (let item of navItems) {
+    if (item.textContent.includes(getNavItemText(sectionId))) {
+      item.classList.add('active');
+      break;
+    }
+  }
+  
+  // Hide all sections
+  document.querySelectorAll('.dashboard-content').forEach(section => {
+    section.style.display = 'none';
+  });
+  
+  // Show selected section
+  const sectionElement = document.getElementById(sectionId);
+  if (sectionElement) {
+    sectionElement.style.display = 'block';
+  }
+  
+  // Update header
+  updateDashboardHeader(sectionId);
+  
+  // Load specific data for section
+  if (sectionId === 'announcements') {
+    renderAllAnnouncements();
+  } else if (sectionId === 'assignments') {
+    renderAllAssignments();
+  } else if (sectionId === 'resources') {
+    renderAllResources();
+  } else if (sectionId === 'students') {
+    renderStudents();
+  } else if (sectionId === 'analytics') {
+    renderAnalytics();
+  }
+  
+  console.log(`📱 Switched to section: ${sectionId}`);
+}
+
+function getNavItemText(sectionId) {
+  const navTexts = {
+    'dashboard': '📊',
+    'announcements': '📢',
+    'assignments': '📚',
+    'resources': '📁',
+    'students': '👥',
+    'analytics': '📈',
+    'settings': '⚙️'
+  };
+  return navTexts[sectionId] || '';
+}
+
+function updateDashboardHeader(sectionId) {
+  const header = document.getElementById('dashboardHeader');
+  const subtitle = document.getElementById('dashboardSubtitle');
+  
+  if (!header || !subtitle) return;
+  
+  switch(sectionId) {
+    case 'dashboard':
+      header.querySelector('h1').textContent = 'Welcome to Your Classroom';
+      subtitle.textContent = 'Manage announcements, assignments, and track student progress';
+      break;
+    case 'announcements':
+      header.querySelector('h1').textContent = 'Announcements';
+      subtitle.textContent = 'Manage and create class announcements';
+      break;
+    case 'assignments':
+      header.querySelector('h1').textContent = 'Assignments';
+      subtitle.textContent = 'Create and manage class assignments';
+      break;
+    case 'resources':
+      header.querySelector('h1').textContent = 'Learning Resources';
+      subtitle.textContent = 'Share resources with your students';
+      break;
+    case 'students':
+      header.querySelector('h1').textContent = 'Students';
+      subtitle.textContent = 'View and manage student progress';
+      break;
+    case 'analytics':
+      header.querySelector('h1').textContent = 'Class Analytics';
+      subtitle.textContent = 'Track student performance and engagement';
+      break;
+    case 'settings':
+      header.querySelector('h1').textContent = 'Teacher Settings';
+      subtitle.textContent = 'Manage your account and preferences';
+      break;
+  }
+}
+
+// ========== SETTINGS FUNCTIONS ==========
+function saveTeacherSettings() {
+  const name = document.getElementById('teacherName').value.trim();
+  const email = document.getElementById('teacherEmail').value.trim();
+  
+  if (!name) {
+    showNotification("Please enter your name", "error");
+    return;
+  }
+  
+  teacherName = name;
+  
+  // Save to localStorage
+  localStorage.setItem('teacherName', teacherName);
+  if (email) localStorage.setItem('teacherEmail', email);
+  
+  showNotification("Settings saved successfully!", "success");
+}
+
+function backupData() {
+  const allData = {
+    backupDate: new Date().toISOString(),
+    version: "1.0",
+    teacher: {
+      id: teacherId,
+      name: teacherName,
+      classes: teacherClasses
+    },
+    currentClass: {
+      code: currentClassCode,
+      students: students,
+      announcements: announcements,
+      assignments: assignments,
+      resources: resources
+    }
+  };
+  
+  const dataStr = JSON.stringify(allData, null, 2);
+  const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  const exportFileDefaultName = `teacher-backup-${new Date().toISOString().split('T')[0]}.json`;
+  
+  const linkElement = document.createElement('a');
+  linkElement.setAttribute('href', dataUri);
+  linkElement.setAttribute('download', exportFileDefaultName);
+  linkElement.click();
+  
+  showNotification("Backup created successfully", "success");
+}
+
+function restoreData() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  
+  input.onchange = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const backupData = JSON.parse(e.target.result);
+        
+        if (confirm("Restore backup? This will overwrite current data.")) {
+          // Restore data
+          if (backupData.teacher) {
+            teacherName = backupData.teacher.name || teacherName;
+            teacherClasses = backupData.teacher.classes || teacherClasses;
+          }
+          
+          if (backupData.currentClass) {
+            if (backupData.currentClass.code === currentClassCode) {
+              students = backupData.currentClass.students || students;
+              announcements = backupData.currentClass.announcements || announcements;
+              assignments = backupData.currentClass.assignments || assignments;
+              resources = backupData.currentClass.resources || resources;
+              
+              // Save to localStorage
+              saveAnnouncementsToLocalStorage();
+              saveAssignmentsToLocalStorage();
+              saveResourcesToLocalStorage();
+            }
+          }
+          
+          // Update UI
+          updateClassSelector();
+          updateUI();
+          renderAllData();
+          updateStats();
+          
+          showNotification("Backup restored successfully!", "success");
+        }
+      } catch (error) {
+        console.error("Error restoring backup:", error);
+        showNotification("Invalid backup file", "error");
+      }
+    };
+    reader.readAsText(file);
+  };
+  
+  input.click();
+}
+
+function exportAllData() {
+  const allData = {
+    exportDate: new Date().toISOString(),
+    version: "1.0",
+    teacher: {
+      id: teacherId,
+      name: teacherName,
+      email: currentUser?.email || '',
+      classes: teacherClasses
+    },
+    allClasses: {}
+  };
+  
+  // Add data for each class
+  teacherClasses.forEach(cls => {
+    allData.allClasses[cls.code] = {
+      name: cls.name,
+      students: loadFromLocalStorageForClass('students', cls.code) || [],
+      announcements: loadFromLocalStorageForClass('announcements', cls.code) || [],
+      assignments: loadFromLocalStorageForClass('assignments', cls.code) || [],
+      resources: loadFromLocalStorageForClass('resources', cls.code) || []
+    };
+  });
+  
+  const dataStr = JSON.stringify(allData, null, 2);
+  const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  const exportFileDefaultName = `teacher-data-${new Date().toISOString().split('T')[0]}.json`;
+  
+  const linkElement = document.createElement('a');
+  linkElement.setAttribute('href', dataUri);
+  linkElement.setAttribute('download', exportFileDefaultName);
+  linkElement.click();
+  
+  showNotification("All data exported successfully", "success");
+}
+
+function loadFromLocalStorageForClass(key, classCode) {
+  try {
+    const data = localStorage.getItem(`teacher_${key}_${classCode}`);
+    if (data) {
+      return JSON.parse(data);
+    }
+  } catch (error) {
+    console.error(`Error loading ${key} for class ${classCode}:`, error);
+  }
+  return [];
+}
+
+function clearAllData() {
+  if (confirm("⚠️ This will delete ALL your data including classes, students, announcements, assignments, and resources. This cannot be undone! Continue?")) {
+    // Clear localStorage
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key.startsWith('teacher_') || key === 'teacherTheme' || key === 'teacherName' || key === 'teacherEmail') {
+        keysToRemove.push(key);
+      }
+    }
+    
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+    
+    // Reset variables
+    teacherClasses = [];
+    currentClassCode = null;
+    currentClassId = null;
+    selectedClassIndex = -1;
+    students = [];
+    announcements = [];
+    assignments = [];
+    resources = [];
+    announcementIds.clear();
+    resourceIds.clear();
+    
+    // Reset form fields
+    document.getElementById('teacherName').value = '';
+    document.getElementById('teacherEmail').value = '';
+    
+    // Update UI
+    updateClassSelector();
+    updateUI();
+    renderAllData();
+    updateStats();
+    
+    showNotification("All data cleared", "info");
+  }
+}
+
+function exportAnalytics() {
+  const realStudents = students.filter(s => !s.isTeacher);
+  const analyticsData = {
+    exportDate: new Date().toISOString(),
+    class: currentClassCode,
+    students: realStudents.map(s => ({
+      name: s.name,
+      streak: s.streak,
+      totalStudyHours: s.totalStudyHours,
+      points: s.points,
+      lastActive: s.lastActive
+    })),
+    stats: {
+      totalStudents: realStudents.length,
+      totalStudyHours: realStudents.reduce((sum, s) => sum + parseFloat(s.totalStudyHours || 0), 0),
+      averageStreak: realStudents.length > 0 ? Math.round(realStudents.reduce((sum, s) => sum + (s.streak || 0), 0) / realStudents.length) : 0,
+      topPerformer: realStudents.length > 0 ? realStudents[0].name : 'N/A'
+    }
+  };
+  
+  const dataStr = JSON.stringify(analyticsData, null, 2);
+  const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+  const exportFileDefaultName = `analytics-${currentClassCode}-${new Date().toISOString().split('T')[0]}.json`;
+  
+  const linkElement = document.createElement('a');
+  linkElement.setAttribute('href', dataUri);
+  linkElement.setAttribute('download', exportFileDefaultName);
+  linkElement.click();
+  
+  showNotification("Analytics exported successfully", "success");
+}
+
+// ========== PAGE INITIALIZATION ==========
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("👩‍🏫 Teacher Mode loaded");
+  
+  // Ensure clean separation first
+  ensureBrowserSeparation();
+  
+  // Set theme from localStorage
+  const savedTheme = localStorage.getItem('teacherTheme') || 'light';
+  changeTheme(savedTheme);
+  
+  // Set theme selector value
+  const themeSelector = document.querySelector('.theme-selector');
+  if (themeSelector) {
+    themeSelector.value = savedTheme;
+  }
+  
+  // Load teacher name
+  teacherName = localStorage.getItem('teacherName') || 'Teacher';
+  const teacherNameField = document.getElementById('teacherName');
+  if (teacherNameField) teacherNameField.value = teacherName;
+  
+  // Initialize Firebase
+  initializeFirebase().then(() => {
+    console.log("✅ Firebase initialized successfully");
+    
+    if (!isDemoMode) {
+      // Set up auth state listener
+      auth.onAuthStateChanged((user) => {
+        console.log(`🔐 Auth state changed: ${user ? "User logged in" : "User logged out"}`);
+        
+        if (user) {
+          currentUser = user;
+          teacherId = user.uid;
+          console.log(`✅ User authenticated: ${user.uid}`);
+          
+          // Hide login modal, show dashboard
+          document.getElementById('loginModal').style.display = 'none';
+          document.querySelector('.app-layout').style.display = 'grid';
+          const demoModeBtn = document.getElementById('demoModeBtn');
+          if (demoModeBtn) demoModeBtn.style.display = 'none';
+          
+          // Initialize teacher dashboard
+          initializeTeacher();
+        } else {
+          console.log("No user signed in");
+          // Show login modal
+          document.getElementById('loginModal').style.display = 'flex';
+          document.querySelector('.app-layout').style.display = 'none';
+        }
+      });
+    }
+  }).catch(error => {
+    console.error(`❌ Failed to initialize Firebase: ${error.message}`);
+    showNotification("Firebase initialization failed. Use Demo Mode.", "warning");
+  });
+  
+  // Close modals when clicking outside or pressing ESC
+  const modals = document.querySelectorAll('.modal');
+  modals.forEach(modal => {
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+  });
+  
+  // Close modals with ESC key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.style.display = 'none';
+      });
+    }
+  });
+});
+
+// ========== CLEANUP FUNCTION ==========
+async function cleanupTeacherFromStudents() {
+    if (!currentClassCode || !teacherId) return;
+    
+    try {
+        // Check if teacher ID is in students list
+        const teacherStudentRef = database.ref(`classes/${currentClassCode}/students/${teacherId}`);
+        const snapshot = await teacherStudentRef.once('value');
+        
+        if (snapshot.exists()) {
+            console.log(`⚠️ Found teacher ID in students list for class ${currentClassCode}, removing...`);
+            await teacherStudentRef.remove();
+            console.log(`✅ Removed teacher from students list`);
+            
+            // Also update the students array
+            students = students.filter(s => s.id !== teacherId);
+            renderStudents();
+            updateStats();
+        }
+    } catch (error) {
+        console.error("Error cleaning up teacher from students:", error);
+    }
+}
+</script>
+</body>
+</html>
