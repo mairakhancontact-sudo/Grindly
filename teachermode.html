@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Cramly | Teacher Mode </title>
+<title>Grindly | Teacher Mode</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -140,6 +140,23 @@ body {
   display: grid;
   grid-template-columns: 280px 1fr;
   min-height: 100vh;
+  transition: all var(--transition);
+}
+
+/* Sidebar collapsed state */
+.app-layout.sidebar-collapsed {
+  grid-template-columns: 0 1fr;
+}
+
+.app-layout.sidebar-collapsed .sidebar {
+  transform: translateX(-100%);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.app-layout.sidebar-collapsed .sidebar-toggle {
+  left: 20px;
+  transform: rotate(180deg);
 }
 
 /* ===== SIDEBAR ===== */
@@ -151,6 +168,8 @@ body {
   top: 0;
   height: 100vh;
   overflow-y: auto;
+  z-index: 100;
+  transition: transform var(--transition), opacity var(--transition), visibility var(--transition);
 }
 
 .sidebar-header {
@@ -183,6 +202,49 @@ body {
   color: var(--text-muted);
   font-size: 0.875rem;
   margin-bottom: var(--spacing-lg);
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 101;
+  background: var(--accent);
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition);
+  opacity: 1;
+  visibility: visible;
+}
+
+.sidebar-toggle:hover {
+  background: var(--accent-dark);
+  transform: scale(1.1);
+}
+
+/* Mobile-specific sidebar toggle positioning */
+@media (max-width: 1020px) {
+  .sidebar-toggle {
+    left: 20px;
+    top: 20px;
+    z-index: 102; /* Higher than sidebar */
+  }
+  
+  .sidebar.active ~ .sidebar-toggle {
+    left: calc(280px - 18px); /* Position toggle button on top of sidebar edge */
+    transform: rotate(180deg);
+    background: var(--danger);
+  }
 }
 
 /* Class switcher */
@@ -371,6 +433,51 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+}
+
+/* ===== MOBILE HEADER ===== */
+.mobile-header {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: var(--spacing-md) var(--spacing-xl);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mobile-menu-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  transition: all var(--transition);
+}
+
+.mobile-menu-btn:hover {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.mobile-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.mobile-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
 }
 
 /* ===== DASHBOARD HEADER ===== */
@@ -1080,21 +1187,6 @@ textarea {
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 1400px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .forms-section,
-  .content-section {
-    grid-column: span 1;
-  }
-  
-  .quick-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 @media (max-width: 1200px) {
   .app-layout {
     grid-template-columns: 240px 1fr;
@@ -1103,15 +1195,49 @@ textarea {
   .students-card .content-body {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   }
+  
+  .sidebar-toggle {
+    left: 220px;
+  }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1020px) {
   .app-layout {
     grid-template-columns: 1fr;
   }
   
+  .app-layout.sidebar-collapsed {
+    grid-template-columns: 1fr;
+  }
+  
   .sidebar {
-    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+    width: 280px;
+    height: 100vh;
+    z-index: 101;
+    overflow-y: auto;
+    box-shadow: var(--shadow-xl);
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .sidebar.active {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .app-layout.sidebar-collapsed .sidebar {
+    transform: translateX(-100%);
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .mobile-header {
+    display: flex;
   }
   
   .quick-stats {
@@ -1122,6 +1248,19 @@ textarea {
     flex-direction: column;
     align-items: stretch;
   }
+  
+  .main-content {
+    padding: var(--spacing-md);
+    padding-top: calc(var(--spacing-md) + 60px); /* Account for mobile header */
+  }
+  
+  .dashboard-header {
+    margin-top: var(--spacing-md);
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1129,24 +1268,34 @@ textarea {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .students-card .content-body {
+  .dashboard-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
   }
   
-  .dashboard-header h1 {
-    font-size: 2rem;
+  .forms-section,
+  .content-section {
+    grid-column: span 1;
+  }
+  
+  .students-card .content-body {
+    grid-template-columns: 1fr;
   }
   
   .controls-bar {
     padding: var(--spacing-md);
   }
   
-  .main-content {
-    padding: var(--spacing-md);
-  }
-  
   .assignment-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .mobile-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .mobile-title {
+    font-size: 1.125rem;
   }
 }
 
@@ -1163,6 +1312,37 @@ textarea {
   
   .btn {
     width: 100%;
+  }
+  
+  .content-header {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: flex-start;
+  }
+  
+  .content-header h2 {
+    margin-bottom: 0;
+  }
+  
+  .toast {
+    min-width: calc(100vw - 48px);
+    max-width: calc(100vw - 48px);
+  }
+  
+  .sidebar {
+    width: 85%;
+    max-width: 300px;
+  }
+  
+  /* Adjust toggle button position for very small screens */
+  .sidebar-toggle {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .sidebar.active ~ .sidebar-toggle {
+    left: calc(85% - 16px);
   }
 }
 
@@ -1186,6 +1366,7 @@ textarea {
 ::-webkit-scrollbar-thumb:hover { 
   background: var(--accent-dark); 
 }
+
 .footer {
   grid-column: span 12;
   text-align: center;
@@ -1199,6 +1380,19 @@ textarea {
 </style>
 </head>
 <body>
+
+<!-- Mobile Header -->
+<div class="mobile-header" style="display: none;">
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+  <div class="mobile-title" id="mobileTitle">Teacher Dashboard</div>
+  <div class="mobile-actions">
+    <button class="btn-icon btn-secondary" onclick="refreshStudents()" title="Refresh">🔄</button>
+    <button class="btn-icon btn-primary" onclick="window.location.href='index.html'" title="Home">🏠</button>
+  </div>
+</div>
+
+<!-- Sidebar Toggle Button -->
+<button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">←</button>
 
 <!-- Login Modal -->
 <div id="loginModal" class="modal" style="display: flex;">
@@ -1246,25 +1440,25 @@ textarea {
     </div>
     
     <nav class="sidebar-nav">
-      <div class="nav-item active" onclick="showSection('dashboard')">
+      <div class="nav-item active" onclick="showSection('dashboard'); closeSidebarOnMobile();">
         📊 Dashboard
       </div>
-      <div class="nav-item" onclick="showSection('announcements')">
+      <div class="nav-item" onclick="showSection('announcements'); closeSidebarOnMobile();">
         📢 Announcements
       </div>
-      <div class="nav-item" onclick="showSection('assignments')">
+      <div class="nav-item" onclick="showSection('assignments'); closeSidebarOnMobile();">
         📚 Assignments
       </div>
-      <div class="nav-item" onclick="showSection('resources')">
+      <div class="nav-item" onclick="showSection('resources'); closeSidebarOnMobile();">
         📁 Resources
       </div>
-      <div class="nav-item" onclick="showSection('students')">
+      <div class="nav-item" onclick="showSection('students'); closeSidebarOnMobile();">
         👥 Students
       </div>
-      <div class="nav-item" onclick="showSection('analytics')">
+      <div class="nav-item" onclick="showSection('analytics'); closeSidebarOnMobile();">
         📈 Analytics
       </div>
-      <div class="nav-item" onclick="showSection('settings')">
+      <div class="nav-item" onclick="showSection('settings'); closeSidebarOnMobile();">
         ⚙️ Settings
       </div>
     </nav>
@@ -1457,7 +1651,7 @@ textarea {
             <div class="content-card" id="studentsCard">
               <div class="content-header">
                 <h2>👥 Students</h2>
-                <button class="btn btn-primary" onclick="showSection('students')">View All</button>
+                <button class="btn btn-primary" onclick="showSection('students'); closeSidebarOnMobile();">View All</button>
               </div>
               <div class="content-body">
                 <div class="students-card .content-body" id="studentsList">
@@ -1475,7 +1669,7 @@ textarea {
             <div class="content-card">
               <div class="content-header">
                 <h2>📢 Recent Announcements</h2>
-                <button class="btn btn-primary" onclick="showSection('announcements')">View All</button>
+                <button class="btn btn-primary" onclick="showSection('announcements'); closeSidebarOnMobile();">View All</button>
               </div>
               <div class="content-body">
                 <div class="items-list" id="announcementsList">
@@ -1488,7 +1682,7 @@ textarea {
             <div class="content-card">
               <div class="content-header">
                 <h2>📚 Recent Assignments</h2>
-                <button class="btn btn-primary" onclick="showSection('assignments')">View All</button>
+                <button class="btn btn-primary" onclick="showSection('assignments'); closeSidebarOnMobile();">View All</button>
               </div>
               <div class="content-body">
                 <div class="items-list" id="assignmentsList">
@@ -1873,10 +2067,8 @@ textarea {
       <button class="btn btn-primary" onclick="addResourceFromModal()" style="flex: 1;">Add Resource</button>
     </div>
   </div>
-
 </div>
 
-</footer>
 <script>
 // ========== FIREBASE CONFIGURATION ==========
 const firebaseConfig = {
@@ -1915,6 +2107,89 @@ let resourceIds = new Set();
 
 // Modal state
 let classToDelete = null;
+
+// ========== SIDEBAR TOGGLE FUNCTIONS ==========
+let isSidebarCollapsed = false;
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const sidebarToggle = document.querySelector('.sidebar-toggle');
+  const appLayout = document.querySelector('.app-layout');
+  
+  if (window.innerWidth <= 1020) {
+    // Mobile behavior - toggle active class
+    sidebar.classList.toggle('active');
+    if (sidebar.classList.contains('active')) {
+      sidebarToggle.innerHTML = '→';
+      sidebarToggle.title = 'Close Sidebar';
+      sidebarToggle.style.left = 'calc(280px - 18px)';
+      sidebarToggle.style.background = 'var(--danger)';
+    } else {
+      sidebarToggle.innerHTML = '←';
+      sidebarToggle.title = 'Open Sidebar';
+      sidebarToggle.style.left = '20px';
+      sidebarToggle.style.background = 'var(--accent)';
+    }
+  } else {
+    // Desktop behavior - toggle collapsed class on app-layout
+    isSidebarCollapsed = !isSidebarCollapsed;
+    
+    if (isSidebarCollapsed) {
+      appLayout.classList.add('sidebar-collapsed');
+      sidebarToggle.innerHTML = '→';
+      sidebarToggle.title = 'Show Sidebar';
+      sidebarToggle.style.left = '20px';
+    } else {
+      appLayout.classList.remove('sidebar-collapsed');
+      sidebarToggle.innerHTML = '←';
+      sidebarToggle.title = 'Hide Sidebar';
+      sidebarToggle.style.left = '260px';
+    }
+    
+    // Save sidebar state to localStorage
+    localStorage.setItem('teacherSidebarCollapsed', isSidebarCollapsed);
+  }
+}
+
+function loadSidebarState() {
+  if (window.innerWidth <= 1020) return; // Don't load saved state on mobile
+  
+  const savedState = localStorage.getItem('teacherSidebarCollapsed');
+  if (savedState === 'true') {
+    isSidebarCollapsed = true;
+    const appLayout = document.querySelector('.app-layout');
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    
+    if (appLayout) {
+      appLayout.classList.add('sidebar-collapsed');
+    }
+    if (sidebarToggle) {
+      sidebarToggle.innerHTML = '→';
+      sidebarToggle.title = 'Show Sidebar';
+      sidebarToggle.style.left = '20px';
+    }
+  }
+}
+
+function closeSidebarOnMobile() {
+  if (window.innerWidth <= 1020) {
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    
+    sidebar.classList.remove('active');
+    sidebarToggle.innerHTML = '←';
+    sidebarToggle.title = 'Open Sidebar';
+    sidebarToggle.style.left = '20px';
+    sidebarToggle.style.background = 'var(--accent)';
+  }
+}
+
+function updateSidebarToggleVisibility() {
+  const sidebarToggle = document.querySelector('.sidebar-toggle');
+  if (!sidebarToggle) return;
+  
+  sidebarToggle.style.display = 'flex';
+}
 
 // ========== BROWSER SEPARATION ==========
 function ensureBrowserSeparation() {
@@ -2060,6 +2335,14 @@ function useDemoMode() {
   document.querySelector('.app-layout').style.display = 'grid';
   document.getElementById('demoModeBtn').style.display = 'flex';
   
+  // Show mobile header on smaller screens
+  if (window.innerWidth <= 1020) {
+    document.querySelector('.mobile-header').style.display = 'flex';
+  }
+  
+  // Show sidebar toggle button
+  updateSidebarToggleVisibility();
+  
   // Initialize teacher dashboard
   initializeTeacher();
   
@@ -2120,6 +2403,14 @@ async function loginTeacher() {
     document.querySelector('.app-layout').style.display = 'grid';
     document.getElementById('demoModeBtn').style.display = 'none';
     
+    // Show mobile header on smaller screens
+    if (window.innerWidth <= 1020) {
+      document.querySelector('.mobile-header').style.display = 'flex';
+    }
+    
+    // Show sidebar toggle button
+    updateSidebarToggleVisibility();
+    
     // Initialize teacher dashboard
     await initializeTeacher();
     
@@ -2156,6 +2447,8 @@ function logoutTeacher() {
       // Show login modal, hide dashboard
       document.getElementById('loginModal').style.display = 'flex';
       document.querySelector('.app-layout').style.display = 'none';
+      document.querySelector('.mobile-header').style.display = 'none';
+      document.querySelector('.sidebar-toggle').style.display = 'none';
       
       showNotification("Logged out from Demo Mode", "success");
     } else {
@@ -2169,6 +2462,8 @@ function logoutTeacher() {
         // Show login modal, hide dashboard
         document.getElementById('loginModal').style.display = 'flex';
         document.querySelector('.app-layout').style.display = 'none';
+        document.querySelector('.mobile-header').style.display = 'none';
+        document.querySelector('.sidebar-toggle').style.display = 'none';
         
         showNotification("Logged out successfully", "success");
       }).catch((error) => {
@@ -2247,12 +2542,21 @@ async function initializeTeacher() {
     setupRealtimeListeners();
   }
   
+  // Load sidebar state
+  loadSidebarState();
+  
+  // Show/hide sidebar toggle based on screen size
+  updateSidebarToggleVisibility();
+  
   console.log(`✅ Teacher dashboard initialized with ${teacherClasses.length} classes`);
   showNotification("Dashboard loaded successfully! ✅", "success");
   
   // Update theme
   const savedTheme = localStorage.getItem('teacherTheme') || 'light';
   changeTheme(savedTheme);
+  
+  // Update mobile title
+  updateMobileTitle();
 }
 
 async function loadClassesFromFirebase() {
@@ -3983,12 +4287,30 @@ function updateUI() {
     
     if (codeDisplay) codeDisplay.textContent = currentClass.code;
     if (subtitle) subtitle.textContent = `Managing: ${currentClass.name}`;
+    
+    // Update mobile title
+    updateMobileTitle();
   } else {
     const codeDisplay = document.getElementById('currentClassCodeDisplay');
     const subtitle = document.getElementById('dashboardSubtitle');
     
     if (codeDisplay) codeDisplay.textContent = '------';
     if (subtitle) subtitle.textContent = 'Manage your classroom';
+    
+    // Update mobile title
+    document.getElementById('mobileTitle').textContent = 'Teacher Dashboard';
+  }
+}
+
+function updateMobileTitle() {
+  const mobileTitle = document.getElementById('mobileTitle');
+  if (!mobileTitle) return;
+  
+  const currentClass = teacherClasses[selectedClassIndex];
+  if (currentClass) {
+    mobileTitle.textContent = `${currentClass.name}`;
+  } else {
+    mobileTitle.textContent = 'Teacher Dashboard';
   }
 }
 
@@ -4033,6 +4355,7 @@ function showNotification(message, type = "info") {
   if (type === 'success') icon = '✅';
   if (type === 'error') icon = '❌';
   if (type === 'warning') icon = '⚠️';
+  if (type === 'info') icon = 'ℹ️';
   
   toast.innerHTML = `
     <span style="font-size: 1.5rem;">${icon}</span>
@@ -4610,6 +4933,14 @@ document.addEventListener('DOMContentLoaded', function() {
           const demoModeBtn = document.getElementById('demoModeBtn');
           if (demoModeBtn) demoModeBtn.style.display = 'none';
           
+          // Show mobile header on smaller screens
+          if (window.innerWidth <= 1020) {
+            document.querySelector('.mobile-header').style.display = 'flex';
+          }
+          
+          // Show sidebar toggle button
+          updateSidebarToggleVisibility();
+          
           // Initialize teacher dashboard
           initializeTeacher();
         } else {
@@ -4617,6 +4948,8 @@ document.addEventListener('DOMContentLoaded', function() {
           // Show login modal
           document.getElementById('loginModal').style.display = 'flex';
           document.querySelector('.app-layout').style.display = 'none';
+          document.querySelector('.mobile-header').style.display = 'none';
+          document.querySelector('.sidebar-toggle').style.display = 'none';
         }
       });
     }
@@ -4641,6 +4974,52 @@ document.addEventListener('DOMContentLoaded', function() {
       document.querySelectorAll('.modal').forEach(modal => {
         modal.style.display = 'none';
       });
+    }
+  });
+  
+  // Handle window resize
+  window.addEventListener('resize', function() {
+    // Update sidebar toggle button visibility
+    updateSidebarToggleVisibility();
+    
+    // Auto-show sidebar on resize to larger screens if it was collapsed
+    if (window.innerWidth > 1020) {
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarToggle = document.querySelector('.sidebar-toggle');
+      const appLayout = document.querySelector('.app-layout');
+      
+      if (sidebar && sidebar.classList.contains('active')) {
+        sidebar.classList.remove('active');
+        sidebarToggle.innerHTML = '←';
+        sidebarToggle.title = 'Open Sidebar';
+        sidebarToggle.style.left = '260px';
+        sidebarToggle.style.background = 'var(--accent)';
+      }
+      
+      // Restore desktop sidebar state
+      if (appLayout && isSidebarCollapsed) {
+        appLayout.classList.add('sidebar-collapsed');
+        sidebarToggle.innerHTML = '→';
+        sidebarToggle.title = 'Show Sidebar';
+        sidebarToggle.style.left = '20px';
+      } else if (appLayout) {
+        appLayout.classList.remove('sidebar-collapsed');
+        sidebarToggle.innerHTML = '←';
+        sidebarToggle.title = 'Hide Sidebar';
+        sidebarToggle.style.left = '260px';
+      }
+    } else {
+      // On mobile, ensure sidebar is hidden initially and toggle button is positioned correctly
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarToggle = document.querySelector('.sidebar-toggle');
+      
+      if (sidebar && sidebar.classList.contains('active')) {
+        sidebarToggle.style.left = 'calc(280px - 18px)';
+        sidebarToggle.style.background = 'var(--danger)';
+      } else {
+        sidebarToggle.style.left = '20px';
+        sidebarToggle.style.background = 'var(--accent)';
+      }
     }
   });
 });
