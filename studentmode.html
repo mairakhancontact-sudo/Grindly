@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Cramly | Student Mode</title>
+<title>Grindly | Student Mode</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -137,7 +137,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ===== NEW LAYOUT STRUCTURE ===== */
+/* ===== RESPONSIVE LAYOUT STRUCTURE ===== */
 .app-layout {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -153,6 +153,7 @@ body {
   top: 0;
   height: 100vh;
   overflow-y: auto;
+  z-index: 100;
 }
 
 .sidebar-header {
@@ -431,6 +432,37 @@ body {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   margin-bottom: var(--spacing-xl);
+}
+
+/* ===== MOBILE MENU TOGGLE ===== */
+.mobile-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  width: 50px;
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+}
+
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
 }
 
 /* ===== PRO TIPS - MATCHING TEACHER MODE ===== */
@@ -740,6 +772,8 @@ textarea {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
 }
 
 .content-header h2 {
@@ -871,6 +905,8 @@ textarea {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: var(--spacing-sm);
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
 }
 
 .assignment-title {
@@ -901,6 +937,7 @@ textarea {
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-sm);
+  flex-wrap: wrap;
 }
 
 /* Classroom Announcements & Resources */
@@ -924,6 +961,8 @@ textarea {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: var(--spacing-sm);
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
 }
 
 .classroom-item-title {
@@ -1027,6 +1066,7 @@ textarea {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  white-space: nowrap;
 }
 
 .btn-primary {
@@ -1367,6 +1407,8 @@ textarea {
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
 }
 
 .class-card-title {
@@ -1417,6 +1459,7 @@ textarea {
   display: flex;
   gap: var(--spacing-sm);
   margin-top: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
 /* ===== LEADERBOARD STYLES ===== */
@@ -1432,6 +1475,8 @@ textarea {
   align-items: center;
   padding-bottom: var(--spacing-md);
   border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
 }
 
 .leaderboard-stats {
@@ -1478,6 +1523,7 @@ textarea {
   border-radius: var(--radius);
   border: 1px solid var(--border);
   transition: all var(--transition);
+  flex-wrap: wrap;
 }
 
 .leaderboard-item:hover {
@@ -1526,6 +1572,7 @@ textarea {
 
 .leaderboard-info {
   flex: 1;
+  min-width: 200px;
 }
 
 .leaderboard-name {
@@ -1555,6 +1602,7 @@ textarea {
   display: flex;
   gap: var(--spacing-sm);
   margin-top: var(--spacing-sm);
+  flex-wrap: wrap;
 }
 
 .stats-badge {
@@ -1567,6 +1615,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  white-space: nowrap;
 }
 
 .stats-badge.fire { color: var(--warning); }
@@ -1742,135 +1791,6 @@ textarea {
   text-decoration: underline;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1400px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .forms-section,
-  .content-section {
-    grid-column: span 1;
-  }
-  
-  .quick-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .charts-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .comparison-chart {
-    grid-column: span 1;
-  }
-  
-  .daily-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 1200px) {
-  .app-layout {
-    grid-template-columns: 240px 1fr;
-  }
-}
-
-@media (max-width: 992px) {
-  .app-layout {
-    grid-template-columns: 1fr;
-  }
-  
-  .sidebar {
-    display: none;
-  }
-  
-  .quick-stats {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  
-  .controls-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .daily-stats-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .quick-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .dashboard-header h1 {
-    font-size: 2rem;
-  }
-  
-  .controls-bar {
-    padding: var(--spacing-md);
-  }
-  
-  .main-content {
-    padding: var(--spacing-md);
-  }
-  
-  .tools-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .leaderboard-item {
-    flex-wrap: wrap;
-    gap: var(--spacing-sm);
-  }
-  
-  .leaderboard-score {
-    text-align: left;
-    min-width: auto;
-  }
-  
-  .classes-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .charts-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .chart-card {
-    padding: var(--spacing-md);
-  }
-  
-  .chart-wrapper {
-    height: 250px;
-  }
-}
-
-@media (max-width: 576px) {
-  .quick-stats {
-    grid-template-columns: 1fr;
-  }
-  
-  .stat-card {
-    flex-direction: column;
-    text-align: center;
-    gap: var(--spacing-md);
-  }
-  
-  .tools-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .btn {
-    width: 100%;
-  }
-  
-  .stat-summary-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar { 
   width: 8px; 
@@ -1964,15 +1884,508 @@ textarea {
   backdrop-filter: blur(10px);
   animation: fadeIn 0.5s ease-out;
 }
+
+/* ===== EXTREME RESPONSIVENESS ===== */
+
+/* Large Desktop (1400px and above) */
+@media (min-width: 1400px) {
+  .app-layout {
+    grid-template-columns: 300px 1fr;
+  }
+  
+  .main-content {
+    padding: var(--spacing-2xl);
+  }
+  
+  .sidebar {
+    padding: var(--spacing-2xl);
+  }
+}
+
+/* Desktop (1200px to 1399px) */
+@media (max-width: 1399px) {
+  .app-layout {
+    grid-template-columns: 260px 1fr;
+  }
+  
+  .quick-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .forms-section,
+  .content-section {
+    grid-column: span 12;
+  }
+  
+  .daily-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Tablet Landscape (992px to 1199px) */
+@media (max-width: 1199px) {
+  .app-layout {
+    grid-template-columns: 240px 1fr;
+  }
+  
+  .sidebar {
+    padding: var(--spacing-lg);
+  }
+  
+  .main-content {
+    padding: var(--spacing-lg);
+  }
+  
+  .dashboard-header h1 {
+    font-size: 2rem;
+  }
+  
+  .quick-stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .forms-section,
+  .content-section {
+    grid-column: span 6;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .charts-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .daily-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Tablet Portrait (768px to 991px) */
+@media (max-width: 991px) {
+  .mobile-menu-toggle {
+    display: flex;
+  }
+  
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    transition: left 0.3s ease;
+    z-index: 100;
+  }
+  
+  .sidebar.active {
+    left: 0;
+  }
+  
+  .mobile-overlay.active {
+    display: block;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+  
+  .quick-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .forms-section,
+  .content-section {
+    grid-column: span 12;
+  }
+  
+  .controls-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+  
+  .dashboard-header h1 {
+    font-size: 1.75rem;
+    margin-top: 40px;
+  }
+  
+  .stat-number {
+    font-size: 1.75rem;
+  }
+  
+  .daily-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .chart-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .chart-wrapper {
+    height: 250px;
+  }
+}
+
+/* Large Mobile (576px to 767px) */
+@media (max-width: 767px) {
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .quick-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-md);
+  }
+  
+  .stat-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 1.5rem;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .controls-bar {
+    padding: var(--spacing-md);
+  }
+  
+  .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+  
+  .content-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+  
+  .content-header h2 {
+    font-size: 1.125rem;
+  }
+  
+  .content-body {
+    padding: var(--spacing-lg);
+    max-height: none;
+  }
+  
+  .task-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+  
+  .task-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .assignment-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .assignment-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .tools-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+  
+  .tool-item {
+    padding: var(--spacing-lg);
+  }
+  
+  .tool-icon {
+    font-size: 2.5rem;
+  }
+  
+  .daily-stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .daily-stat-card {
+    padding: var(--spacing-md);
+  }
+  
+  .daily-stat-number {
+    font-size: 2rem;
+  }
+  
+  .stat-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .leaderboard-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .leaderboard-score {
+    text-align: left;
+    min-width: auto;
+    align-self: flex-end;
+  }
+  
+  .classes-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .class-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .class-card-actions {
+    width: 100%;
+  }
+  
+  .class-card-actions .btn {
+    flex: 1;
+  }
+  
+  .toast {
+    min-width: 250px;
+    padding: 1rem;
+  }
+}
+
+/* Small Mobile (480px to 575px) */
+@media (max-width: 575px) {
+  .main-content {
+    padding: var(--spacing-md);
+  }
+  
+  .dashboard-header h1 {
+    font-size: 1.375rem;
+  }
+  
+  .dashboard-subtitle {
+    font-size: 1rem;
+  }
+  
+  .controls-bar {
+    padding: var(--spacing-sm);
+  }
+  
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .forms-section,
+  .content-section {
+    gap: var(--spacing-lg);
+  }
+  
+  .form-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .form-card h2 {
+    font-size: 1.125rem;
+  }
+  
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-card {
+    padding: var(--spacing-md);
+  }
+  
+  .chart-wrapper {
+    height: 200px;
+  }
+  
+  .stat-summary-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .leaderboard-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .class-code-display {
+    padding: var(--spacing-lg);
+  }
+  
+  .class-code-display .code {
+    font-size: 2rem;
+    letter-spacing: 0.25rem;
+  }
+  
+  .streak-number {
+    font-size: 3rem;
+  }
+  
+  .quote-text {
+    font-size: 1.25rem;
+  }
+}
+
+/* Extra Small Mobile (below 480px) */
+@media (max-width: 479px) {
+  .dashboard-header h1 {
+    font-size: 1.25rem;
+  }
+  
+  .stat-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .stat-number {
+    font-size: 1.25rem;
+  }
+  
+  .priority-selector {
+    flex-direction: column;
+  }
+  
+  .priority-option {
+    padding: 0.75rem;
+  }
+  
+  .task-input-container {
+    flex-direction: column;
+  }
+  
+  .task-input-container input {
+    width: 100%;
+  }
+  
+  .assignment-actions {
+    flex-direction: column;
+  }
+  
+  .leaderboard-stat .value {
+    font-size: 1.25rem;
+  }
+  
+  .toast-container {
+    top: 16px;
+    right: 16px;
+    left: 16px;
+  }
+  
+  .toast {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .streak-milestones {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .mobile-menu-toggle {
+    top: 16px;
+    left: 16px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.25rem;
+  }
+}
+
+/* Orientation-specific adjustments */
+@media (max-height: 600px) and (orientation: landscape) {
+  .sidebar {
+    padding-top: 70px;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .mobile-menu-toggle {
+    top: 10px;
+    left: 10px;
+  }
+  
+  .dashboard-header h1 {
+    margin-top: 0;
+  }
+  
+  .content-body {
+    max-height: 250px;
+  }
+  
+  .stories-section {
+    max-height: 150px;
+  }
+}
+
+/* High-DPI (Retina) Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .btn {
+    font-weight: 600;
+  }
+  
+  .stat-number {
+    font-weight: 900;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .sidebar,
+  .mobile-menu-toggle,
+  .controls-bar,
+  .btn,
+  .task-actions,
+  .assignment-actions,
+  .class-card-actions {
+    display: none !important;
+  }
+  
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .main-content {
+    padding: 0;
+    margin: 0;
+  }
+  
+  .content-card {
+    border: 1px solid #000;
+    box-shadow: none;
+  }
+  
+  .task-item,
+  .assignment-item,
+  .classroom-item {
+    break-inside: avoid;
+  }
+}
 </style>
 </head>
 
 <body>
 
+<!-- Mobile Menu Toggle -->
+<button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+<div class="mobile-overlay" id="mobileOverlay"></div>
+
 <div class="app-layout">
   
   <!-- Sidebar -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div class="student-emoji">👨‍🎓</div>
       <h2>Student Dashboard</h2>
@@ -1987,35 +2400,35 @@ textarea {
     </div>
     
     <nav class="sidebar-nav">
-      <div class="nav-item active" onclick="showSection('dashboard')">
+      <div class="nav-item active" onclick="showSection('dashboard'); closeMobileMenu();">
         📊 Dashboard
       </div>
-      <div class="nav-item" onclick="showSection('tasks')">
+      <div class="nav-item" onclick="showSection('tasks'); closeMobileMenu();">
         📝 Tasks
       </div>
-      <div class="nav-item" onclick="showSection('assignments')">
+      <div class="nav-item" onclick="showSection('assignments'); closeMobileMenu();">
         📚 Assignments
       </div>
-      <div class="nav-item" onclick="showSection('classroom')">
+      <div class="nav-item" onclick="showSection('classroom'); closeMobileMenu();">
         🏫 Classroom
       </div>
-      <div class="nav-item" onclick="showSection('myclasses')">
+      <div class="nav-item" onclick="showSection('myclasses'); closeMobileMenu();">
         🎓 My Classes
       </div>
-      <div class="nav-item" onclick="showSection('statistics')">
+      <div class="nav-item" onclick="showSection('statistics'); closeMobileMenu();">
         📈 Statistics
       </div>
-      <div class="nav-item" onclick="showSection('tools')">
+      <div class="nav-item" onclick="showSection('tools'); closeMobileMenu();">
         🛠️ Study Tools
       </div>
-      <div class="nav-item" onclick="showSection('ai')">
+      <div class="nav-item" onclick="showSection('ai'); closeMobileMenu();">
         🤖 AI Help
       </div>
-      <div class="nav-item" onclick="showSection('profile')">
+      <div class="nav-item" onclick="showSection('profile'); closeMobileMenu();">
         👤 Profile
       </div>
       <!-- New Study Group Button -->
-      <div class="nav-item" onclick="window.location.href='studygroup.html'">
+      <div class="nav-item" onclick="window.location.href='studygroup.html'; closeMobileMenu();">
         👥 Study Group
       </div>
     </nav>
@@ -2301,7 +2714,7 @@ textarea {
         <div class="content-card">
           <div class="content-header">
             <h2>📝 Task Manager</h2>
-            <div style="display: flex; gap: var(--spacing-sm);">
+            <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
               <button class="btn btn-secondary" onclick="filterTasks('all')">All</button>
               <button class="btn btn-secondary" onclick="filterTasks('urgent')">Urgent</button>
               <button class="btn btn-secondary" onclick="filterTasks('not-urgent')">Not Urgent</button>
@@ -2324,7 +2737,7 @@ textarea {
     </button>
 </div>
             
-            <div class="task-filters" style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-xl);">
+            <div class="task-filters" style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-xl); flex-wrap: wrap;">
               <button class="btn btn-warning" onclick="clearCompletedTasks()">Clear Completed</button>
               <button class="btn btn-secondary" onclick="exportTasks()">Export Tasks</button>
             </div>
@@ -2389,7 +2802,7 @@ textarea {
                 <label for="assignmentDescription">Description (Optional)</label>
                 <textarea id="assignmentDescription" placeholder="Assignment details, requirements, notes..." rows="3"></textarea>
               </div>
-              <div style="display: flex; gap: var(--spacing-sm);">
+              <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
                 <button class="btn btn-success" onclick="addAssignment()" style="flex: 1;">➕ Add Assignment</button>
                 <button class="btn btn-secondary" onclick="hideAssignmentForm()">Cancel</button>
               </div>
@@ -2508,7 +2921,7 @@ textarea {
                 <label for="joinClassCode">Class Code</label>
                 <input type="text" id="joinClassCode" placeholder="Enter 6-digit class code" maxlength="6" style="text-transform: uppercase; font-family: 'Courier New', monospace; letter-spacing: 0.5rem; font-size: 1.5rem; text-align: center;">
               </div>
-              <div style="display: flex; gap: var(--spacing-sm);">
+              <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
                 <button class="btn btn-success" onclick="joinClass()" style="flex: 1;">🎓 Join Class</button>
                 <button class="btn btn-secondary" onclick="hideJoinClassForm()">Cancel</button>
               </div>
@@ -2537,7 +2950,7 @@ textarea {
         <div class="content-card">
           <div class="content-header">
             <h2>📈 Learning Statistics</h2>
-            <div style="display: flex; gap: var(--spacing-sm);">
+            <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
               <button class="btn btn-primary" onclick="refreshCharts()">🔄 Refresh Charts</button>
               <button class="btn btn-secondary" onclick="exportStatistics()">📥 Export Stats</button>
               <button class="btn btn-success" onclick="markStudySession()">📝 Mark Study Session</button>
@@ -2903,7 +3316,7 @@ textarea {
               
               <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-xl); border-top: 1px solid var(--border);">
                 <h3>📊 Data Management</h3>
-                <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-md);">
+                <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-md); flex-wrap: wrap;">
                   <button class="btn btn-warning" onclick="exportData()">📤 Export All Data</button>
                   <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>
                 </div>
@@ -2921,6 +3334,46 @@ textarea {
 </div>
 
 <script>
+// ========== MOBILE MENU FUNCTIONALITY ==========
+function toggleMobileMenu() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('mobileOverlay');
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+function closeMobileMenu() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('mobileOverlay');
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+}
+
+// Add mobile menu toggle listener
+document.getElementById('mobileMenuToggle').addEventListener('click', toggleMobileMenu);
+document.getElementById('mobileOverlay').addEventListener('click', closeMobileMenu);
+
+// Close menu when clicking outside on mobile
+document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('mobileMenuToggle');
+    const overlay = document.getElementById('mobileOverlay');
+    
+    if (window.innerWidth <= 991 && 
+        !sidebar.contains(event.target) && 
+        !toggleBtn.contains(event.target) && 
+        sidebar.classList.contains('active')) {
+        closeMobileMenu();
+    }
+});
+
+// Close menu on escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeMobileMenu();
+    }
+});
+
 // ========== FIREBASE CONFIGURATION ==========
 const firebaseConfig = {
     apiKey: "AIzaSyBAIPxgXPZmGdPvB98TLFRfTAClgXWEIM0",
