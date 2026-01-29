@@ -89,7 +89,7 @@ Teacher-Student Connection: Bridge the gap between classroom and self-study
 
 Habit Formation: Daily tracking builds consistent study routines
 
-🌟 Why Cramly?
+🌟 Why Grindly?
 Completely Free: No subscriptions or hidden fees
 
 Open Source: Transparent and community-driven
