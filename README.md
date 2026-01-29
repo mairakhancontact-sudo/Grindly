@@ -1,4 +1,4 @@
-📚 Cramly - Smart Learning Platform
+📚 Grindly - Smart Learning Platform
 A dual-interface platform for modern education. Teachers can manage classrooms, track student progress, and share resources. Students can organize their learning, track study habits, and compete on leaderboards.
 
 🎯 Key Features
