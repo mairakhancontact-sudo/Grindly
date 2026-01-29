@@ -3395,6 +3395,7 @@ let userClasses = [];
 let currentClassCode = null;
 let selectedClassIndex = 0;
 
+// Initialize with proper default values to prevent undefined errors
 let studyData = {
     streak: 0,
     lastStudyDate: "",
@@ -3406,7 +3407,6 @@ let studyData = {
     streakHistory: [],
     streakMilestones: [3, 7, 14, 30, 60, 90],
     currentMilestone: 0,
-    // NEW: Daily statistics tracking
     dailyStats: [],
     focusScores: [],
     consistencyScores: []
@@ -3416,7 +3416,7 @@ let tasks = [];
 let assignments = [];
 let currentTaskFilter = 'all';
 let currentSection = 'dashboard';
-let selectedPriority = 'urgent'; // Default priority
+let selectedPriority = 'urgent';
 
 // Chart instances
 let hoursChart = null;
@@ -3424,7 +3424,6 @@ let tasksChart = null;
 let weeklyChart = null;
 let assignmentsChart = null;
 let streakChart = null;
-// NEW: Daily statistics charts
 let focusChart = null;
 let sessionsChart = null;
 let consistencyChart = null;
@@ -3606,7 +3605,7 @@ const inspiringStories = [
 function persistData() {
     try {
         const dataToSave = {
-            version: "2.2",
+            version: "2.4", // Updated version
             lastSaved: new Date().toISOString(),
             userId: currentUserId,
             userName: currentUserName,
@@ -3618,6 +3617,12 @@ function persistData() {
             selectedClassIndex: selectedClassIndex,
             currentSection: currentSection
         };
+        
+        // Clean up any undefined arrays before saving
+        if (!studyData.studySessions) studyData.studySessions = [];
+        if (!studyData.dailyStats) studyData.dailyStats = [];
+        if (!studyData.focusScores) studyData.focusScores = [];
+        if (!studyData.consistencyScores) studyData.consistencyScores = [];
         
         localStorage.setItem('studentPersistentData', JSON.stringify(dataToSave));
         console.log("💾 Data persisted to localStorage");
@@ -3633,35 +3638,51 @@ function loadPersistedData() {
             const data = JSON.parse(savedData);
             
             // Check version compatibility
-            if (data.version && (data.version === "2.2" || data.version === "2.1" || data.version === "2.0")) {
+            if (data.version && (data.version === "2.4" || data.version === "2.3" || data.version === "2.2" || data.version === "2.1" || data.version === "2.0")) {
                 console.log("📂 Loading persisted data version:", data.version);
                 
-                // Load study data
+                // Load study data with safety checks
                 if (data.studyData) {
                     studyData = data.studyData;
+                    // Initialize arrays if they don't exist
+                    if (!studyData.studySessions) studyData.studySessions = [];
+                    if (!studyData.dailyStats) studyData.dailyStats = [];
+                    if (!studyData.focusScores) studyData.focusScores = [];
+                    if (!studyData.consistencyScores) studyData.consistencyScores = [];
+                    if (!studyData.streakHistory) studyData.streakHistory = [];
+                    if (!studyData.weeklyPattern) studyData.weeklyPattern = [0, 0, 0, 0, 0, 0, 0];
+                    if (!studyData.streakMilestones) studyData.streakMilestones = [3, 7, 14, 30, 60, 90];
+                    
                     console.log("📊 Loaded study data:", {
                         streak: studyData.streak,
                         hours: studyData.totalStudyHours,
-                        sessions: studyData.studySessions?.length || 0
+                        sessions: studyData.studySessions?.length || 0,
+                        dailyStats: studyData.dailyStats?.length || 0
                     });
                 }
                 
-                // Load tasks
-                if (data.tasks) {
+                // Load tasks with safety check
+                if (data.tasks && Array.isArray(data.tasks)) {
                     tasks = data.tasks;
                     console.log("📝 Loaded tasks:", tasks.length);
+                } else {
+                    tasks = [];
                 }
                 
-                // Load assignments
-                if (data.assignments) {
+                // Load assignments with safety check
+                if (data.assignments && Array.isArray(data.assignments)) {
                     assignments = data.assignments;
                     console.log("📚 Loaded assignments:", assignments.length);
+                } else {
+                    assignments = [];
                 }
                 
-                // Load classes
-                if (data.userClasses) {
+                // Load classes with safety check
+                if (data.userClasses && Array.isArray(data.userClasses)) {
                     userClasses = data.userClasses;
                     console.log("🏫 Loaded classes:", userClasses.length);
+                } else {
+                    userClasses = [];
                 }
                 
                 // Load current class
@@ -3702,6 +3723,7 @@ function loadPersistedData() {
     console.log("⚠️ No persisted data found, using defaults");
     return false;
 }
+
 // ========== FIREBASE DATABASE HELPERS ==========
 function getDatabaseRef(path) {
     if (!database) return null;
@@ -3790,13 +3812,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         // Check if we have a user ID from persisted data
         if (!currentUserId) {
-            // Try to get from localStorage
             const savedUserId = localStorage.getItem('studentUserId');
             if (savedUserId && savedUserId.startsWith('student_')) {
                 currentUserId = savedUserId;
                 console.log("🆔 Loaded user ID from localStorage:", currentUserId);
             } else {
-                // Generate a new persistent user ID
                 currentUserId = `student_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
                 localStorage.setItem('studentUserId', currentUserId);
                 console.log("🆕 Generated new persistent user ID:", currentUserId);
@@ -3826,7 +3846,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.log("📝 Firebase UID:", currentUser.uid);
             console.log("📝 Our Student ID:", currentUserId);
             
-            // Save both UIDs for reference
             localStorage.setItem('studentFirebaseUid', currentUser.uid);
             
         } catch (authError) {
@@ -3888,6 +3907,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         showNotification("⚠️ Working in offline mode. Data saved locally.", "warning");
     }
 });
+
 // ========== AUTO-SAVE SYSTEM ==========
 function setupAutoSave() {
     document.addEventListener('visibilitychange', function() {
@@ -3964,7 +3984,6 @@ function loadUserData() {
 }
 
 function saveUserData() {
-    // ALWAYS save the current user ID
     if (currentUserId) {
         localStorage.setItem('studentUserId', currentUserId);
     }
@@ -3977,7 +3996,6 @@ function saveUserData() {
         localStorage.setItem('studentUserClasses', JSON.stringify(userClasses));
     }
     
-    // Also save to the persisted data system
     persistData();
     
     console.log("💾 User data saved:", {
@@ -3997,7 +4015,7 @@ function updateStreakUI() {
     
     if (!streakNumber) return;
     
-    streakNumber.textContent = studyData.streak;
+    streakNumber.textContent = studyData.streak || 0;
     
     let streakEmoji = "📈";
     if (studyData.streak >= 30) streakEmoji = "🏆";
@@ -4005,7 +4023,7 @@ function updateStreakUI() {
     else if (studyData.streak >= 7) streakEmoji = "✨";
     else if (studyData.streak >= 3) streakEmoji = "⭐";
     
-    streakLabel.textContent = `${streakEmoji} ${studyData.streak} DAY STREAK`;
+    streakLabel.textContent = `${streakEmoji} ${studyData.streak || 0} DAY STREAK`;
     
     let nextMilestoneDay = studyData.streakMilestones.find(milestone => milestone > studyData.streak) || studyData.streakMilestones[studyData.streakMilestones.length - 1];
     let currentMilestoneIndex = studyData.streakMilestones.findIndex(milestone => milestone > studyData.streak) - 1;
@@ -4016,7 +4034,7 @@ function updateStreakUI() {
     
     let progressPercentage = 0;
     if (nextMilestoneDay) {
-        progressPercentage = (studyData.streak / nextMilestoneDay) * 100;
+        progressPercentage = ((studyData.streak || 0) / nextMilestoneDay) * 100;
         if (progressPercentage > 100) progressPercentage = 100;
     }
     streakProgressFill.style.width = `${progressPercentage}%`;
@@ -4030,7 +4048,7 @@ function updateStreakUI() {
     streakMilestones.innerHTML = milestonesHTML;
     
     if (nextMilestoneDay) {
-        const daysLeft = nextMilestoneDay - studyData.streak;
+        const daysLeft = nextMilestoneDay - (studyData.streak || 0);
         nextMilestone.textContent = `${nextMilestoneDay} days (${daysLeft} to go)`;
     } else {
         nextMilestone.textContent = "Maximum milestone reached! 🎉";
@@ -4077,7 +4095,7 @@ async function markStudyToday() {
         studyData.streak = 1;
         message = "🎉 First study day! Starting your streak!";
     } else if (studyData.lastStudyDate === yesterdayKey || isConsecutiveDay(studyData.lastStudyDate, todayKey)) {
-        studyData.streak += 1;
+        studyData.streak = (studyData.streak || 0) + 1;
         message = `🔥 Streak continued! Now at ${studyData.streak} days!`;
         
         const milestoneAchieved = studyData.streakMilestones.find(milestone => milestone === studyData.streak);
@@ -4101,20 +4119,82 @@ async function markStudyToday() {
     }
     
     studyData.lastStudyDate = todayKey;
-    studyData.totalStudyDays += 1;
+    studyData.totalStudyDays = (studyData.totalStudyDays || 0) + 1;
     
+    if (!studyData.streakHistory) studyData.streakHistory = [];
     studyData.streakHistory.push({
         date: todayKey,
         streak: studyData.streak
     });
     
     const dayOfWeek = new Date().getDay();
+    if (!studyData.weeklyPattern) studyData.weeklyPattern = [0, 0, 0, 0, 0, 0, 0];
     studyData.weeklyPattern[dayOfWeek] = (studyData.weeklyPattern[dayOfWeek] || 0) + 1;
+    
+    // Add a study session
+    const sessionHours = 1.0; // Default 1 hour for daily streak
+    const focusScore = calculateFocusScore();
+    const consistencyScore = calculateConsistencyScore();
+    
+    if (!studyData.studySessions) studyData.studySessions = [];
+    studyData.studySessions.push({
+        date: new Date().toISOString(),
+        hours: sessionHours,
+        baseHours: sessionHours,
+        bonusHours: 0,
+        streak: studyData.streak
+    });
+    
+    // Update daily stats
+    if (!studyData.dailyStats) studyData.dailyStats = [];
+    const todayStats = studyData.dailyStats.find(s => s.date === todayKey);
+    if (todayStats) {
+        todayStats.sessions = (todayStats.sessions || 0) + 1;
+        todayStats.hours = (todayStats.hours || 0) + sessionHours;
+        todayStats.focusScore = focusScore;
+        todayStats.consistencyScore = consistencyScore;
+    } else {
+        studyData.dailyStats.unshift({
+            date: todayKey,
+            sessions: 1,
+            hours: sessionHours,
+            focusScore: focusScore,
+            consistencyScore: consistencyScore
+        });
+        
+        if (!studyData.focusScores) studyData.focusScores = [];
+        studyData.focusScores.unshift({
+            date: todayKey,
+            score: focusScore
+        });
+        
+        if (!studyData.consistencyScores) studyData.consistencyScores = [];
+        studyData.consistencyScores.unshift({
+            date: todayKey,
+            score: consistencyScore
+        });
+        
+        // Keep only last 30 days
+        if (studyData.dailyStats.length > 30) {
+            studyData.dailyStats = studyData.dailyStats.slice(0, 30);
+        }
+        if (studyData.focusScores.length > 30) {
+            studyData.focusScores = studyData.focusScores.slice(0, 30);
+        }
+        if (studyData.consistencyScores.length > 30) {
+            studyData.consistencyScores = studyData.consistencyScores.slice(0, 30);
+        }
+    }
+    
+    // Update total hours
+    studyData.totalMinutes = (studyData.totalMinutes || 0) + sessionHours * 60;
+    studyData.totalStudyHours = (studyData.totalMinutes / 60).toFixed(1);
     
     persistData();
     updateUI();
     updateSidebarStats();
     updateStreakUI();
+    updateDailyStatsOverview();
     
     updateSyncStatus("Saving to all classes...", "syncing");
     await saveStudyDataToFirebase();
@@ -4146,12 +4226,12 @@ function updateStreakButton() {
         streakBtn.style.opacity = '0.8';
         
         if (streakMessage) {
-            streakMessage.textContent = `Come back tomorrow to continue your ${studyData.streak}-day streak!`;
+            streakMessage.textContent = `Come back tomorrow to continue your ${studyData.streak || 0}-day streak!`;
             streakMessage.style.color = 'white';
         }
         
         if (lastStudyDate) {
-            lastStudyDate.textContent = studyData.lastStudyDate;
+            lastStudyDate.textContent = studyData.lastStudyDate || 'Never';
         }
     } else {
         streakBtn.disabled = false;
@@ -4189,8 +4269,8 @@ async function saveStudyDataToFirebase() {
     
     const studentData = {
         name: currentUserName,
-        userId: currentUserId,  // Our custom student ID
-        firebaseUid: currentUser.uid,  // Firebase's anonymous UID
+        userId: currentUserId,
+        firebaseUid: currentUser.uid,
         streak: studyData.streak || 0,
         totalMinutes: studyData.totalMinutes || 0,
         totalStudyHours: (studyData.totalMinutes / 60).toFixed(1),
@@ -4199,14 +4279,13 @@ async function saveStudyDataToFirebase() {
         updatedAt: new Date().toISOString(),
         isStudentEntry: true,
         isTeacherAccount: false,
-        isSameBrowserIssue: false  // Flag to identify
+        isSameBrowserIssue: false
     };
     
     console.log(`💾 Saving student data. Student ID: ${currentUserId}, Firebase UID: ${currentUser.uid}`);
     
     for (const classInfo of userClasses) {
         try {
-            // Use our custom student ID as the key, not Firebase UID
             await firebaseSet(`classes/${classInfo.code}/students/${currentUserId}`, studentData);
             console.log(`✅ Updated data in class: ${classInfo.code} with student ID: ${currentUserId}`);
             
@@ -4244,24 +4323,71 @@ async function addStudyHours() {
     addButton.disabled = true;
     
     const baseHours = hours;
-    const streakBonus = studyData.streak > 7 ? 0.2 : studyData.streak > 3 ? 0.1 : 0;
+    const streakBonus = (studyData.streak || 0) > 7 ? 0.2 : (studyData.streak || 0) > 3 ? 0.1 : 0;
     const bonusHours = baseHours * streakBonus;
     const totalHours = baseHours + bonusHours;
     
-    studyData.totalMinutes += totalHours * 60;
+    studyData.totalMinutes = (studyData.totalMinutes || 0) + totalHours * 60;
     studyData.totalStudyHours = (studyData.totalMinutes / 60).toFixed(1);
     
+    if (!studyData.studySessions) studyData.studySessions = [];
     studyData.studySessions.push({
         date: new Date().toISOString(),
         hours: totalHours,
         baseHours: baseHours,
         bonusHours: bonusHours,
-        streak: studyData.streak
+        streak: studyData.streak || 0
     });
+    
+    // Update daily stats
+    const todayKey = getTodayKey();
+    if (!studyData.dailyStats) studyData.dailyStats = [];
+    const todayStats = studyData.dailyStats.find(s => s.date === todayKey);
+    const focusScore = calculateFocusScore();
+    const consistencyScore = calculateConsistencyScore();
+    
+    if (todayStats) {
+        todayStats.sessions = (todayStats.sessions || 0) + 1;
+        todayStats.hours = (todayStats.hours || 0) + totalHours;
+        todayStats.focusScore = focusScore;
+        todayStats.consistencyScore = consistencyScore;
+    } else {
+        studyData.dailyStats.unshift({
+            date: todayKey,
+            sessions: 1,
+            hours: totalHours,
+            focusScore: focusScore,
+            consistencyScore: consistencyScore
+        });
+        
+        if (!studyData.focusScores) studyData.focusScores = [];
+        studyData.focusScores.unshift({
+            date: todayKey,
+            score: focusScore
+        });
+        
+        if (!studyData.consistencyScores) studyData.consistencyScores = [];
+        studyData.consistencyScores.unshift({
+            date: todayKey,
+            score: consistencyScore
+        });
+        
+        // Keep only last 30 days
+        if (studyData.dailyStats.length > 30) {
+            studyData.dailyStats = studyData.dailyStats.slice(0, 30);
+        }
+        if (studyData.focusScores.length > 30) {
+            studyData.focusScores = studyData.focusScores.slice(0, 30);
+        }
+        if (studyData.consistencyScores.length > 30) {
+            studyData.consistencyScores = studyData.consistencyScores.slice(0, 30);
+        }
+    }
     
     persistData();
     updateUI();
     updateSidebarStats();
+    updateDailyStatsOverview();
     input.value = "";
     
     updateSyncStatus("Syncing to all classes...", "syncing");
@@ -4277,7 +4403,7 @@ async function addStudyHours() {
         message += ` (+${bonusHours.toFixed(1)} streak bonus)`;
     }
     message += ` Total: ${studyData.totalStudyHours} hours`;
-    message += ` | Streak: ${studyData.streak} days 🔥`;
+    message += ` | Streak: ${studyData.streak || 0} days 🔥`;
     
     showNotification(message, "success");
     
@@ -4705,19 +4831,13 @@ function hideAssignmentForm() {
     if (form) form.style.display = 'none';
 }
 
-// ========== STATISTICS SECTION - ENHANCED ==========
+// ========== STATISTICS SECTION - FIXED ==========
 function markStudySession() {
     const today = new Date().toDateString();
     
-    const todaySession = studyData.dailyStats.find(s => s.date === today);
-    if (todaySession) {
-        showNotification("You've already marked a study session today! 🎉", "info");
-        return;
-    }
+    const hours = parseFloat(prompt("How many hours did you study? (e.g., 2.5)", "1"));
     
-    const sessionHours = parseFloat(prompt("How many hours did you study today? (e.g., 2.5)", "1"));
-    
-    if (isNaN(sessionHours) || sessionHours <= 0) {
+    if (isNaN(hours) || hours <= 0) {
         showNotification("Please enter a valid number of hours", "error");
         return;
     }
@@ -4725,35 +4845,60 @@ function markStudySession() {
     const focusScore = Math.min(100, Math.floor(Math.random() * 30) + 70);
     const consistencyScore = calculateConsistencyScore();
     
-    studyData.dailyStats.unshift({
-        date: today,
-        sessions: 1,
-        hours: sessionHours,
-        focusScore: focusScore,
-        consistencyScore: consistencyScore
+    // Initialize arrays if they don't exist
+    if (!studyData.studySessions) studyData.studySessions = [];
+    if (!studyData.dailyStats) studyData.dailyStats = [];
+    if (!studyData.focusScores) studyData.focusScores = [];
+    if (!studyData.consistencyScores) studyData.consistencyScores = [];
+    
+    // Update study sessions
+    studyData.studySessions.unshift({
+        date: new Date().toISOString(),
+        hours: hours,
+        baseHours: hours,
+        bonusHours: 0,
+        streak: studyData.streak || 0
     });
     
-    studyData.focusScores.unshift({
-        date: today,
-        score: focusScore
-    });
-    
-    studyData.consistencyScores.unshift({
-        date: today,
-        score: consistencyScore
-    });
-    
-    if (studyData.dailyStats.length > 30) {
-        studyData.dailyStats = studyData.dailyStats.slice(0, 30);
+    // Update daily stats
+    const todayStats = studyData.dailyStats.find(s => s.date === today);
+    if (todayStats) {
+        todayStats.sessions = (todayStats.sessions || 0) + 1;
+        todayStats.hours = (todayStats.hours || 0) + hours;
+        todayStats.focusScore = focusScore;
+        todayStats.consistencyScore = consistencyScore;
+    } else {
+        studyData.dailyStats.unshift({
+            date: today,
+            sessions: 1,
+            hours: hours,
+            focusScore: focusScore,
+            consistencyScore: consistencyScore
+        });
+        
+        studyData.focusScores.unshift({
+            date: today,
+            score: focusScore
+        });
+        
+        studyData.consistencyScores.unshift({
+            date: today,
+            score: consistencyScore
+        });
+        
+        if (studyData.dailyStats.length > 30) {
+            studyData.dailyStats = studyData.dailyStats.slice(0, 30);
+        }
+        if (studyData.focusScores.length > 30) {
+            studyData.focusScores = studyData.focusScores.slice(0, 30);
+        }
+        if (studyData.consistencyScores.length > 30) {
+            studyData.consistencyScores = studyData.consistencyScores.slice(0, 30);
+        }
     }
-    if (studyData.focusScores.length > 30) {
-        studyData.focusScores = studyData.focusScores.slice(0, 30);
-    }
-    if (studyData.consistencyScores.length > 30) {
-        studyData.consistencyScores = studyData.consistencyScores.slice(0, 30);
-    }
     
-    studyData.totalMinutes += sessionHours * 60;
+    // Update total hours
+    studyData.totalMinutes = (studyData.totalMinutes || 0) + hours * 60;
     studyData.totalStudyHours = (studyData.totalMinutes / 60).toFixed(1);
     
     persistData();
@@ -4761,11 +4906,11 @@ function markStudySession() {
     updateAllStatistics();
     updateDailyStatsOverview();
     
-    showNotification(`Study session recorded! ${sessionHours} hours studied today.`, "success");
+    showNotification(`Study session recorded! ${hours} hours studied.`, "success");
 }
 
 function calculateConsistencyScore() {
-    if (studyData.dailyStats.length === 0) return 100;
+    if (!studyData.dailyStats || studyData.dailyStats.length === 0) return 100;
     
     const last7Days = studyData.dailyStats.slice(0, 7);
     const daysStudied = last7Days.length;
@@ -4776,24 +4921,25 @@ function calculateConsistencyScore() {
 
 function updateDailyStatsOverview() {
     const today = new Date().toDateString();
+    if (!studyData.dailyStats) studyData.dailyStats = [];
     const todayStats = studyData.dailyStats.find(s => s.date === today);
     
-    document.getElementById('todayFocusScore').textContent = todayStats ? `${todayStats.focusScore}%` : '0%';
-    document.getElementById('todaySessions').textContent = todayStats ? todayStats.sessions : '0';
-    document.getElementById('todayConsistency').textContent = todayStats ? `${todayStats.consistencyScore}%` : '0%';
+    document.getElementById('todayFocusScore').textContent = todayStats ? `${todayStats.focusScore || 0}%` : '0%';
+    document.getElementById('todaySessions').textContent = todayStats ? todayStats.sessions || 0 : '0';
+    document.getElementById('todayConsistency').textContent = todayStats ? `${todayStats.consistencyScore || 0}%` : '0%';
     
     updateTrends();
 }
 
 function updateTrends() {
-    if (studyData.dailyStats.length < 2) return;
+    if (!studyData.dailyStats || studyData.dailyStats.length < 2) return;
     
     const today = studyData.dailyStats[0];
     const yesterday = studyData.dailyStats[1];
     
-    updateTrend('focus', today ? today.focusScore : 0, yesterday ? yesterday.focusScore : 0, 'focusTrend');
-    updateTrend('sessions', today ? today.sessions : 0, yesterday ? yesterday.sessions : 0, 'sessionsTrend');
-    updateTrend('consistency', today ? today.consistencyScore : 0, yesterday ? yesterday.consistencyScore : 0, 'consistencyTrend');
+    updateTrend('focus', today ? (today.focusScore || 0) : 0, yesterday ? (yesterday.focusScore || 0) : 0, 'focusTrend');
+    updateTrend('sessions', today ? (today.sessions || 0) : 0, yesterday ? (yesterday.sessions || 0) : 0, 'sessionsTrend');
+    updateTrend('consistency', today ? (today.consistencyScore || 0) : 0, yesterday ? (yesterday.consistencyScore || 0) : 0, 'consistencyTrend');
 }
 
 function updateTrend(type, todayValue, yesterdayValue, elementId) {
@@ -4820,6 +4966,7 @@ function updateTrend(type, todayValue, yesterdayValue, elementId) {
 }
 
 function updateCharts() {
+    // Destroy existing charts
     if (focusChart) focusChart.destroy();
     if (sessionsChart) sessionsChart.destroy();
     if (consistencyChart) consistencyChart.destroy();
@@ -4832,6 +4979,7 @@ function updateCharts() {
     updateStatisticsSummary();
     updateDailyStatsOverview();
     
+    // Create new charts
     createDailyStatsCharts();
     createHoursChart();
     createTasksChart();
@@ -4847,19 +4995,22 @@ function createDailyStatsCharts() {
         return date.toDateString();
     }).reverse();
     
+    // Ensure arrays exist
+    if (!studyData.dailyStats) studyData.dailyStats = [];
+    
     const focusData = last7Days.map(day => {
         const stat = studyData.dailyStats.find(s => s.date === day);
-        return stat ? stat.focusScore : 0;
+        return stat ? (stat.focusScore || 0) : 0;
     });
     
     const sessionsData = last7Days.map(day => {
         const stat = studyData.dailyStats.find(s => s.date === day);
-        return stat ? stat.sessions : 0;
+        return stat ? (stat.sessions || 0) : 0;
     });
     
     const consistencyData = last7Days.map(day => {
         const stat = studyData.dailyStats.find(s => s.date === day);
-        return stat ? stat.consistencyScore : 0;
+        return stat ? (stat.consistencyScore || 0) : 0;
     });
     
     const formattedDates = last7Days.map(date => {
@@ -4867,95 +5018,105 @@ function createDailyStatsCharts() {
         return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     });
     
-    const focusCtx = document.getElementById('focusChart').getContext('2d');
-    focusChart = new Chart(focusCtx, {
-        type: 'bar',
-        data: {
-            labels: formattedDates,
-            datasets: [{
-                label: 'Focus Score (%)',
-                data: focusData,
-                backgroundColor: 'rgba(79, 70, 229, 0.7)',
-                borderColor: 'rgba(79, 70, 229, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    title: {
-                        display: true,
-                        text: 'Score (%)'
+    // Focus Chart
+    const focusCtx = document.getElementById('focusChart');
+    if (focusCtx) {
+        focusChart = new Chart(focusCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: formattedDates,
+                datasets: [{
+                    label: 'Focus Score (%)',
+                    data: focusData,
+                    backgroundColor: 'rgba(79, 70, 229, 0.7)',
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Score (%)'
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
     
-    const sessionsCtx = document.getElementById('sessionsChart').getContext('2d');
-    sessionsChart = new Chart(sessionsCtx, {
-        type: 'bar',
-        data: {
-            labels: formattedDates,
-            datasets: [{
-                label: 'Study Sessions',
-                data: sessionsData,
-                backgroundColor: 'rgba(16, 185, 129, 0.7)',
-                borderColor: 'rgba(16, 185, 129, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Sessions'
+    // Sessions Chart
+    const sessionsCtx = document.getElementById('sessionsChart');
+    if (sessionsCtx) {
+        sessionsChart = new Chart(sessionsCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: formattedDates,
+                datasets: [{
+                    label: 'Study Sessions',
+                    data: sessionsData,
+                    backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Sessions'
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
     
-    const consistencyCtx = document.getElementById('consistencyChart').getContext('2d');
-    consistencyChart = new Chart(consistencyCtx, {
-        type: 'bar',
-        data: {
-            labels: formattedDates,
-            datasets: [{
-                label: 'Consistency Score (%)',
-                data: consistencyData,
-                backgroundColor: 'rgba(245, 158, 11, 0.7)',
-                borderColor: 'rgba(245, 158, 11, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    title: {
-                        display: true,
-                        text: 'Score (%)'
+    // Consistency Chart
+    const consistencyCtx = document.getElementById('consistencyChart');
+    if (consistencyCtx) {
+        consistencyChart = new Chart(consistencyCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: formattedDates,
+                datasets: [{
+                    label: 'Consistency Score (%)',
+                    data: consistencyData,
+                    backgroundColor: 'rgba(245, 158, 11, 0.7)',
+                    borderColor: 'rgba(245, 158, 11, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Score (%)'
+                        }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 }
 
 function createHoursChart() {
-    const ctx = document.getElementById('hoursChart').getContext('2d');
+    const ctx = document.getElementById('hoursChart');
+    if (!ctx) return;
     
     const last7Days = Array.from({length: 7}, (_, i) => {
         const date = new Date();
@@ -4963,15 +5124,17 @@ function createHoursChart() {
         return date.toDateString();
     }).reverse();
     
+    if (!studyData.studySessions) studyData.studySessions = [];
+    
     const dailyHours = last7Days.map(day => {
         const daySessions = studyData.studySessions.filter(s => {
             const sessionDate = new Date(s.date).toDateString();
             return sessionDate === day;
         });
-        return daySessions.reduce((sum, session) => sum + session.hours, 0);
+        return daySessions.reduce((sum, session) => sum + (session.hours || 0), 0);
     });
     
-    hoursChart = new Chart(ctx, {
+    hoursChart = new Chart(ctx.getContext('2d'), {
         type: 'bar',
         data: {
             labels: last7Days.map(date => new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })),
@@ -5006,11 +5169,13 @@ function createHoursChart() {
 }
 
 function createTasksChart() {
-    const ctx = document.getElementById('tasksChart').getContext('2d');
+    const ctx = document.getElementById('tasksChart');
+    if (!ctx) return;
+    
     const completedTasks = tasks.filter(t => t.completed).length;
     const pendingTasks = tasks.filter(t => !t.completed).length;
     
-    tasksChart = new Chart(ctx, {
+    tasksChart = new Chart(ctx.getContext('2d'), {
         type: 'doughnut',
         data: {
             labels: ['Completed', 'Pending'],
@@ -5040,10 +5205,14 @@ function createTasksChart() {
 }
 
 function createWeeklyChart() {
-    const ctx = document.getElementById('weeklyChart').getContext('2d');
+    const ctx = document.getElementById('weeklyChart');
+    if (!ctx) return;
+    
     const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     
-    weeklyChart = new Chart(ctx, {
+    if (!studyData.weeklyPattern) studyData.weeklyPattern = [0, 0, 0, 0, 0, 0, 0];
+    
+    weeklyChart = new Chart(ctx.getContext('2d'), {
         type: 'line',
         data: {
             labels: daysOfWeek,
@@ -5074,7 +5243,8 @@ function createWeeklyChart() {
 }
 
 function createAssignmentsChart() {
-    const ctx = document.getElementById('assignmentsChart').getContext('2d');
+    const ctx = document.getElementById('assignmentsChart');
+    if (!ctx) return;
     
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -5105,7 +5275,7 @@ function createAssignmentsChart() {
         return diffDays > 3 && !a.completed;
     }).length;
     
-    assignmentsChart = new Chart(ctx, {
+    assignmentsChart = new Chart(ctx.getContext('2d'), {
         type: 'polarArea',
         data: {
             labels: ['Overdue', 'Due Today', 'Due Soon', 'Completed', 'Future'],
@@ -5136,7 +5306,8 @@ function createAssignmentsChart() {
 }
 
 function createStreakChart() {
-    const ctx = document.getElementById('streakChart').getContext('2d');
+    const ctx = document.getElementById('streakChart');
+    if (!ctx) return;
     
     const last14Days = Array.from({length: 14}, (_, i) => {
         const date = new Date();
@@ -5144,12 +5315,14 @@ function createStreakChart() {
         return date.toDateString();
     }).reverse();
     
+    if (!studyData.streakHistory) studyData.streakHistory = [];
+    
     const streakData = last14Days.map(day => {
         const streakEntry = studyData.streakHistory.find(s => s.date === day);
         return streakEntry ? streakEntry.streak : 0;
     });
     
-    streakChart = new Chart(ctx, {
+    streakChart = new Chart(ctx.getContext('2d'), {
         type: 'line',
         data: {
             labels: last14Days.map(date => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
@@ -5185,7 +5358,9 @@ function refreshCharts() {
 }
 
 function updateStatisticsSummary() {
-    document.getElementById('statsTotalHours').textContent = parseFloat(studyData.totalStudyHours || (studyData.totalMinutes / 60).toFixed(1)).toFixed(1);
+    // Safely access all properties with default values
+    const totalHours = parseFloat(studyData.totalStudyHours || (studyData.totalMinutes / 60).toFixed(1) || 0).toFixed(1);
+    document.getElementById('statsTotalHours').textContent = totalHours;
     document.getElementById('statsStreak').textContent = studyData.streak || 0;
     
     const totalTasks = tasks.length;
@@ -5202,12 +5377,14 @@ function updateStatisticsSummary() {
     const focusDetails = document.getElementById('statsFocusDetails');
     
     if (hoursDetails) {
-        const avgDaily = studyData.totalStudyDays > 0 ? (parseFloat(studyData.totalStudyHours) / studyData.totalStudyDays).toFixed(1) : 0;
-        hoursDetails.textContent = `${studyData.studySessions.length} sessions | Avg: ${avgDaily}h/day`;
+        const avgDaily = (studyData.totalStudyDays || 0) > 0 ? (parseFloat(studyData.totalStudyHours || 0) / (studyData.totalStudyDays || 1)).toFixed(1) : 0;
+        const sessionsCount = studyData.studySessions ? studyData.studySessions.length : 0;
+        hoursDetails.textContent = `${sessionsCount} sessions | Avg: ${avgDaily}h/day`;
     }
     
     if (streakDetails) {
-        const longestStreak = Math.max(...(studyData.streakHistory.map(s => s.streak)), 0);
+        const streakHistory = studyData.streakHistory || [];
+        const longestStreak = streakHistory.length > 0 ? Math.max(...(streakHistory.map(s => s.streak || 0)), 0) : 0;
         streakDetails.textContent = `Longest: ${longestStreak} days`;
     }
     
@@ -5223,23 +5400,31 @@ function updateStatisticsSummary() {
 }
 
 function updateDetailedMetrics() {
-    const totalSessions = studyData.studySessions.length;
-    const avgDailyHours = studyData.totalStudyDays > 0 ? (parseFloat(studyData.totalStudyHours) / studyData.totalStudyDays).toFixed(1) : 0;
-    const longestSession = studyData.studySessions.length > 0 ? 
-        Math.max(...studyData.studySessions.map(s => s.hours)).toFixed(1) : 0;
+    // Safely access all properties with default values
+    const totalSessions = studyData.studySessions ? studyData.studySessions.length : 0;
+    const avgDailyHours = (studyData.totalStudyDays || 0) > 0 ? (parseFloat(studyData.totalStudyHours || 0) / (studyData.totalStudyDays || 1)).toFixed(1) : 0;
+    
+    let longestSession = 0;
+    if (studyData.studySessions && studyData.studySessions.length > 0) {
+        const maxHours = Math.max(...studyData.studySessions.map(s => s.hours || 0));
+        longestSession = !isNaN(maxHours) && isFinite(maxHours) ? maxHours : 0;
+    }
     
     const completedTasks = tasks.filter(t => t.completed).length;
     const activeTasks = tasks.filter(t => !t.completed).length;
-    const avgTasksPerDay = studyData.totalStudyDays > 0 ? (tasks.length / studyData.totalStudyDays).toFixed(1) : 0;
+    const avgTasksPerDay = (studyData.totalStudyDays || 0) > 0 ? (tasks.length / (studyData.totalStudyDays || 1)).toFixed(1) : 0;
     
-    const totalPoints = Math.floor(parseFloat(studyData.totalStudyHours) * 100);
-    const longestStreak = Math.max(...(studyData.streakHistory.map(s => s.streak)), 0);
-    const consistencyScore = studyData.totalStudyDays > 0 ? 
-        Math.round((studyData.streak / studyData.totalStudyDays) * 100) : 0;
+    const totalPoints = Math.floor(parseFloat(studyData.totalStudyHours || 0) * 100);
+    
+    const streakHistory = studyData.streakHistory || [];
+    const longestStreak = streakHistory.length > 0 ? Math.max(...(streakHistory.map(s => s.streak || 0)), 0) : 0;
+    
+    const consistencyScore = (studyData.totalStudyDays || 0) > 0 ? 
+        Math.round(((studyData.streak || 0) / (studyData.totalStudyDays || 1)) * 100) : 0;
     
     document.getElementById('avgDailyHours').textContent = avgDailyHours;
     document.getElementById('totalSessions').textContent = totalSessions;
-    document.getElementById('longestSession').textContent = `${longestSession}h`;
+    document.getElementById('longestSession').textContent = `${longestSession.toFixed(1)}h`;
     document.getElementById('avgTasksPerDay').textContent = avgTasksPerDay;
     document.getElementById('activeTasksCount').textContent = activeTasks;
     document.getElementById('totalPoints').textContent = totalPoints;
@@ -5260,25 +5445,41 @@ function updateDetailedMetrics() {
     document.getElementById('fastestCompletion').textContent = fastestCompletion;
 }
 
+function calculateFocusScore() {
+    let score = 50;
+    
+    const streakBonus = Math.min((studyData.streak || 0) * 5, 30);
+    score += streakBonus;
+    
+    if ((studyData.totalStudyDays || 0) > 7) score += 10;
+    if ((studyData.totalStudyDays || 0) > 30) score += 10;
+    
+    const completionRate = tasks.length > 0 ? 
+        (tasks.filter(t => t.completed).length / tasks.length) * 100 : 0;
+    score += Math.min(completionRate * 0.2, 10);
+    
+    return Math.min(Math.max(Math.round(score), 0), 100);
+}
+
 function exportStatistics() {
     const statsData = {
         exportDate: new Date().toISOString(),
         summary: {
-            totalHours: parseFloat(studyData.totalStudyHours || (studyData.totalMinutes / 60).toFixed(1)),
+            totalHours: parseFloat(studyData.totalStudyHours || (studyData.totalMinutes / 60).toFixed(1) || 0),
             currentStreak: studyData.streak || 0,
             taskCompletionRate: tasks.length > 0 ? Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100) : 0,
             focusScore: calculateFocusScore()
         },
         detailed: {
-            totalSessions: studyData.studySessions.length,
-            avgDailyHours: studyData.totalStudyDays > 0 ? (parseFloat(studyData.totalStudyHours) / studyData.totalStudyDays).toFixed(1) : 0,
+            totalSessions: studyData.studySessions ? studyData.studySessions.length : 0,
+            avgDailyHours: (studyData.totalStudyDays || 0) > 0 ? (parseFloat(studyData.totalStudyHours || 0) / (studyData.totalStudyDays || 1)).toFixed(1) : 0,
             totalTasks: tasks.length,
             completedTasks: tasks.filter(t => t.completed).length,
             totalAssignments: assignments.length,
             completedAssignments: assignments.filter(a => a.completed).length,
-            weeklyPattern: studyData.weeklyPattern,
-            streakHistory: studyData.streakHistory,
-            dailyStats: studyData.dailyStats
+            weeklyPattern: studyData.weeklyPattern || [0, 0, 0, 0, 0, 0, 0],
+            streakHistory: studyData.streakHistory || [],
+            dailyStats: studyData.dailyStats || []
         }
     };
     
@@ -5338,7 +5539,7 @@ function showStoryModal(storyId) {
             <h3 style="color: var(--accent); margin-bottom: var(--spacing-sm);">Challenges They Overcame:</h3>
             <ul style="padding-left: var(--spacing-lg); line-height: 1.6;">
                 ${story.struggles.map(s => `<li style="margin-bottom: var(--spacing-xs);">${s}</li>`).join('')}
-            </ul>
+        </ul>
         </div>
         
         <div style="padding: var(--spacing-lg); background: var(--accent-light); border-radius: var(--radius); border-left: 4px solid var(--accent);">
@@ -5431,7 +5632,6 @@ async function joinClass() {
             return;
         }
         
-        // Check if class exists by trying multiple paths
         let classData = null;
         try {
             classData = await firebaseGet('classCodes/' + classCode);
@@ -5466,11 +5666,9 @@ async function joinClass() {
         
         console.log(`📤 Writing student data to class ${classCode}...`);
         
-        // TRY MULTIPLE PATHS
         let success = false;
         let errorMessages = [];
         
-        // Path 1: classes/classCode/students
         try {
             await firebaseSet(`classes/${classCode}/students/${currentUserId}`, studentData);
             console.log(`✅ Path 1 successful: classes/${classCode}/students/${currentUserId}`);
@@ -5480,7 +5678,6 @@ async function joinClass() {
             console.error(`❌ Path 1 failed: ${error1.message}`);
         }
         
-        // Path 2: classStudents/classCode
         if (!success) {
             try {
                 await firebaseSet(`classStudents/${classCode}/${currentUserId}`, studentData);
@@ -5492,10 +5689,8 @@ async function joinClass() {
             }
         }
         
-        // Path 3: Alternative path for permission issues
         if (!success) {
             try {
-                // Try with a simpler path that might have fewer restrictions
                 const simpleData = {
                     name: currentUserName || 'Student',
                     streak: studyData.streak || 0,
@@ -5516,7 +5711,6 @@ async function joinClass() {
             console.error("All paths failed:", errorMessages);
             showNotification("Could not join class due to permissions. Try using incognito mode.", "error");
             
-            // Show detailed error
             console.log("Full error details:", {
                 classCode,
                 teacherId: classData.teacherId,
@@ -5530,7 +5724,6 @@ async function joinClass() {
             return;
         }
         
-        // If we get here, student was successfully added
         const newClass = {
             code: classCode,
             name: classData.name || 'Class ' + classCode,
@@ -5552,7 +5745,6 @@ async function joinClass() {
         classCodeInput.value = '';
         hideJoinClassForm();
         
-        // Force save study data to ensure it appears in teacher's view
         await saveStudyDataToFirebase();
         
         showNotification(`Successfully joined ${classData.name || 'the class'}!`, "success");
@@ -6054,11 +6246,11 @@ function updateAllStatistics() {
 function updateUI() {
     const streakDisplay = document.getElementById('streakDisplay');
     const streakNumber = document.getElementById('streakNumber');
-    if (streakDisplay) streakDisplay.textContent = studyData.streak;
-    if (streakNumber) streakNumber.textContent = studyData.streak;
+    if (streakDisplay) streakDisplay.textContent = studyData.streak || 0;
+    if (streakNumber) streakNumber.textContent = studyData.streak || 0;
     
     const totalHoursDisplay = document.getElementById('totalHoursDisplay');
-    const hours = studyData.totalStudyHours || (studyData.totalMinutes / 60).toFixed(1);
+    const hours = studyData.totalStudyHours || (studyData.totalMinutes / 60).toFixed(1) || 0;
     if (totalHoursDisplay) totalHoursDisplay.textContent = parseFloat(hours).toFixed(1);
     
     const tasksCompleted = tasks.filter(t => t.completed).length;
@@ -6081,7 +6273,7 @@ function updateSidebarStats() {
     
     if (sidebarStreak) sidebarStreak.textContent = studyData.streak || 0;
     if (sidebarHours) {
-        const hours = studyData.totalStudyHours || (studyData.totalMinutes / 60).toFixed(1);
+        const hours = studyData.totalStudyHours || (studyData.totalMinutes / 60).toFixed(1) || 0;
         sidebarHours.textContent = parseFloat(hours).toFixed(1);
     }
     if (sidebarTasks) {
@@ -6092,22 +6284,6 @@ function updateSidebarStats() {
         const focusScore = calculateFocusScore();
         sidebarFocus.textContent = `${focusScore}%`;
     }
-}
-
-function calculateFocusScore() {
-    let score = 50;
-    
-    const streakBonus = Math.min(studyData.streak * 5, 30);
-    score += streakBonus;
-    
-    if (studyData.totalStudyDays > 7) score += 10;
-    if (studyData.totalStudyDays > 30) score += 10;
-    
-    const completionRate = tasks.length > 0 ? 
-        (tasks.filter(t => t.completed).length / tasks.length) * 100 : 0;
-    score += Math.min(completionRate * 0.2, 10);
-    
-    return Math.min(Math.max(Math.round(score), 0), 100);
 }
 
 // ========== PROFILE MANAGEMENT ==========
@@ -6241,7 +6417,6 @@ function updateDashboardHeader(sectionId) {
         case 'tasks':
             header.querySelector('h1').textContent = 'Task Manager';
             subtitle.textContent = 'Organize and track your daily tasks';
-            // FIX: Use renderTasks() instead of loadTasks()
             renderTasks();
             break;
         case 'assignments':
@@ -6281,24 +6456,20 @@ function updateDashboardHeader(sectionId) {
 
 // ========== UTILITY FUNCTIONS ==========
 function initUI() {
-    // Load theme
     const savedTheme = localStorage.getItem('studentTheme') || 'light';
     document.body.className = savedTheme;
     const themeSelector = document.querySelector('.theme-selector');
     if (themeSelector) themeSelector.value = savedTheme;
     
-    // Load motivational content
     loadMotivationalQuote();
     loadInspiringStories();
     
-    // Set name in form fields
     const nameField = document.getElementById('studentName');
     if (nameField && currentUserName) nameField.value = currentUserName;
     
     const profileNameField = document.getElementById('profileName');
     if (profileNameField && currentUserName) profileNameField.value = currentUserName;
     
-    // Show current section
     showSection(currentSection);
     
     console.log("🎨 UI initialized with theme:", savedTheme);
@@ -6340,7 +6511,6 @@ function setupEventListeners() {
 }
 
 function loadAllData() {
-    // FIXED: Use renderTasks() and renderDashboardTasks()
     renderTasks();
     renderDashboardTasks();
     renderAssignments();
@@ -6386,6 +6556,7 @@ function showNotification(message, type = 'info') {
     if (type === 'success') icon = '✅';
     if (type === 'error') icon = '❌';
     if (type === 'warning') icon = '⚠️';
+    if (type === 'info') icon = 'ℹ️';
     
     toast.innerHTML = `
         <span style="font-size: 1.5rem;">${icon}</span>
@@ -6445,7 +6616,7 @@ function changeTheme(theme) {
 function exportData() {
     const allData = {
         exportDate: new Date().toISOString(),
-        version: "2.2",
+        version: "2.4",
         user: {
             id: currentUserId,
             name: currentUserName,
