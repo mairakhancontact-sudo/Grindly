@@ -2663,15 +2663,430 @@ textarea {
         font-size: 0.875rem;
     }
 }
+/* ===== MOBILE NAVIGATION WITH CONTROLS BAR ===== */
+@media (max-width: 767px) {
+  /* Move controls bar to mobile nav */
+  .controls-bar {
+    display: none !important; /* Hide from main content on mobile */
+  }
+  
+  /* New container for controls in mobile nav */
+  .mobile-nav-controls {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    padding: 8px 12px;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+    max-width: 100vw;
+    overflow: hidden;
+  }
+  
+  /* Style the mobile controls buttons */
+  .mobile-nav-controls .btn {
+    padding: 6px 4px;
+    font-size: 11px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+  }
+  
+  /* Add mobile nav controls to existing top nav structure */
+  .top-nav {
+    flex-direction: column;
+    padding: 0;
+    min-height: 60px;
+    align-items: stretch;
+  }
+  
+  .top-nav-header {
+    padding: 8px 12px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  /* Adjust main content margin to account for the combined nav height */
+  .main-content {
+    margin-top: 100px !important; /* 60px (top nav) + 40px (controls) */
+  }
+  
+  /* Adjust sidebar position for the taller nav */
+  .sidebar {
+    top: 100px !important;
+    height: calc(100vh - 100px) !important;
+  }
+  
+  /* Floating feedback button adjustment */
+  .feedback-btn {
+    bottom: 80px;
+    right: 12px;
+  }
+}
+
+/* Small Mobile (below 480px) */
+@media (max-width: 479px) {
+  .mobile-nav-controls .btn {
+    font-size: 10px;
+    padding: 5px 3px;
+    min-height: 36px;
+  }
+  
+  .main-content {
+    margin-top: 96px !important; /* Adjusted for smaller controls */
+  }
+  
+  .sidebar {
+    top: 96px !important;
+    height: calc(100vh - 96px) !important;
+  }
+}
+
+/* Landscape mode adjustments */
+@media (max-height: 600px) and (orientation: landscape) {
+  .mobile-nav-controls {
+    position: sticky;
+    top: 60px;
+  }
+  
+  .mobile-nav-controls .btn {
+    min-height: 32px;
+    font-size: 9px;
+    padding: 4px 2px;
+  }
+  
+  .main-content {
+    margin-top: 92px !important; /* Smaller in landscape */
+  }
+  
+  .sidebar {
+    top: 92px !important;
+    height: calc(100vh - 92px) !important;
+  }
+}
+
+/* Ensure the mobile controls don't appear on desktop */
+@media (min-width: 768px) {
+  .mobile-nav-controls {
+    display: none !important;
+  }
+}
+
+
+
+
+
+
+/* ===== MOBILE TOP NAV WITH INLINE CONTROLS ===== */
+@media (max-width: 767px) {
+  /* Hide the original controls bar in main content on mobile */
+  .controls-bar {
+    display: none !important;
+  }
+  
+  /* Update top nav structure */
+  .top-nav {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+    padding: 0;
+    height: 52px;
+  }
+  
+  .top-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    gap: 6px;
+    height: 52px;
+    width: 100%;
+  }
+  
+  .top-nav-header h2 {
+    font-size: 1rem;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+    flex-shrink: 0;
+  }
+  
+  /* Mobile controls container - inline with title */
+  .mobile-nav-controls {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    gap: 4px;
+    overflow-x: visible;
+    padding: 0;
+    margin: 0 6px;
+    min-width: 0;
+  }
+  
+  /* Style the inline control buttons - all visible */
+  .mobile-nav-controls .btn {
+    padding: 5px 6px;
+    font-size: 11px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+  }
+  
+  /* Button text styling */
+  .mobile-nav-controls .btn span {
+    display: inline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Mobile menu toggle */
+  .mobile-menu-toggle {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin: 0;
+  }
+  
+  /* Adjust main content position */
+  .main-content {
+    margin-top: 52px !important;
+    padding-top: var(--spacing-sm) !important;
+  }
+  
+  /* Adjust sidebar position */
+  .sidebar {
+    top: 52px !important;
+    height: calc(100vh - 52px) !important;
+  }
+  
+  /* Adjust floating feedback button */
+  .feedback-btn {
+    bottom: 70px;
+    right: 10px;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+}
+
+/* Tablet adjustments (480px - 767px) */
+@media (min-width: 480px) and (max-width: 767px) {
+  .top-nav-header h2 {
+    max-width: 150px;
+  }
+  
+  .mobile-nav-controls .btn {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+}
+
+/* Small Mobile (below 480px) */
+@media (max-width: 479px) {
+  .top-nav-header {
+    padding: 4px 6px;
+    height: 48px;
+  }
+  
+  .top-nav-header h2 {
+    font-size: 0.875rem;
+    max-width: 100px;
+  }
+  
+  .mobile-nav-controls {
+    gap: 3px;
+    margin: 0 4px;
+  }
+  
+  .mobile-nav-controls .btn {
+    padding: 4px 5px;
+    font-size: 10px;
+    height: 30px;
+  }
+  
+  .mobile-menu-toggle {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .main-content {
+    margin-top: 48px !important;
+  }
+  
+  .sidebar {
+    top: 48px !important;
+    height: calc(100vh - 48px) !important;
+  }
+}
+
+/* Extra small screens (below 360px) */
+@media (max-width: 359px) {
+  .top-nav-header {
+    height: 46px;
+    padding: 3px 4px;
+  }
+  
+  .top-nav-header h2 {
+    font-size: 0.75rem;
+    max-width: 80px;
+  }
+  
+  .mobile-nav-controls {
+    gap: 2px;
+    margin: 0 3px;
+  }
+  
+  .mobile-nav-controls .btn {
+    padding: 3px 4px;
+    font-size: 9px;
+    height: 28px;
+  }
+  
+  /* Show only icons on very small screens */
+  .mobile-nav-controls .btn span {
+    display: none;
+  }
+  
+  .mobile-nav-controls .btn::before {
+    font-size: 12px;
+  }
+  
+  .mobile-nav-controls .btn:nth-child(1)::before {
+    content: "🏠";
+  }
+  
+  .mobile-nav-controls .btn:nth-child(2)::before {
+    content: "🎓";
+  }
+  
+  .mobile-nav-controls .btn:nth-child(3)::before {
+    content: "🔄";
+  }
+  
+  .mobile-nav-controls .btn:nth-child(4)::before {
+    content: "📤";
+  }
+  
+  .mobile-menu-toggle {
+    width: 30px;
+    height: 30px;
+    font-size: 0.875rem;
+  }
+  
+  .main-content {
+    margin-top: 46px !important;
+  }
+  
+  .sidebar {
+    top: 46px !important;
+    height: calc(100vh - 46px) !important;
+  }
+}
+
+/* Landscape mode adjustments */
+@media (max-height: 600px) and (orientation: landscape) {
+  .top-nav-header {
+    height: 44px;
+    padding: 3px 5px;
+  }
+  
+  .mobile-nav-controls .btn {
+    height: 28px;
+    padding: 3px 5px;
+    font-size: 10px;
+  }
+  
+  .mobile-menu-toggle {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .main-content {
+    margin-top: 44px !important;
+  }
+  
+  .sidebar {
+    top: 44px !important;
+    height: calc(100vh - 44px) !important;
+  }
+}
+
+/* Hide mobile controls on desktop */
+@media (min-width: 768px) {
+  .mobile-nav-controls {
+    display: none !important;
+  }
+}
+
+/* Ensure no horizontal scroll on mobile */
+@media (max-width: 767px) {
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  
+  .app-layout {
+    overflow-x: hidden;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<!-- Top Navigation for Mobile -->
+    
+  <!-- Top Navigation for Mobile -->
 <nav class="top-nav" id="topNav">
   <div class="top-nav-header">
-    <h2 style="font-size: 1.25rem; font-weight: 700; margin: 0;">Student Dashboard</h2>
+    <h2>Student Dashboard</h2>
+    
+    <!-- Mobile controls - all buttons in one line -->
+    <div class="mobile-nav-controls" id="mobileNavControls">
+      <button class="btn btn-success" onclick="window.location.href='index.html'">
+        <span>🏠 Home</span>
+      </button>
+      <button class="btn btn-success" onclick="showSection('myclasses')">
+        <span>🎓 Classes</span>
+      </button>
+      <button class="btn btn-secondary" onclick="refreshData()">
+        <span>🔄 Refresh</span>
+      </button>
+      <button class="btn btn-warning" onclick="exportData()">
+        <span>📤 Export</span>
+      </button>
+    </div>
+    
     <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
   </div>
 </nav>
