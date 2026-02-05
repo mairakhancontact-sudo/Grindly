@@ -5180,6 +5180,7 @@ const REFERRAL_KEY = 'studentPremiumReferrals';
 const REFERRAL_REFERRER_KEY = 'studentReferralReferrer';
 const REFERRAL_CREDITED_KEY = 'studentReferralCredited';
 const REFERRAL_TARGET = 3;
+const REFERRAL_NOTIFS_SEEN_KEY = 'studentReferralNotifsSeen';
 
 function getReferralCount() {
     return parseInt(localStorage.getItem(REFERRAL_KEY) || '0', 10);
@@ -5204,8 +5205,7 @@ function updateReferralUI() {
 }
 
 function copyReferralLink() {
-    const base = window.location.origin;
-    const link = `${base}/studentmode.html?ref=${encodeURIComponent(currentUserId || '')}`;
+    const link = `https://grindlylearn.netlify.app/studentmode.html?ref=${encodeURIComponent(currentUserId || '')}`;
     navigator.clipboard.writeText(link).then(() => {
         showNotification("Referral link copied!", "success");
     }).catch(() => {
@@ -5295,6 +5295,10 @@ async function maybeCreditReferral() {
         const current = await firebaseGet(path);
         const next = Math.min((parseInt(current || 0, 10) || 0) + 1, REFERRAL_TARGET);
         await firebaseSet(path, next);
+        await firebaseSet(`users/${referrerId}/referralNotifications/${currentUserId}`, {
+            name: currentUserName || 'A friend',
+            joinedAt: new Date().toISOString()
+        });
         localStorage.setItem(REFERRAL_CREDITED_KEY, 'true');
     } catch (e) {
         console.warn("Failed to credit referral:", e);
@@ -5311,6 +5315,46 @@ async function syncReferralCountFromFirebase() {
     } catch (e) {
         console.warn("Failed to sync referral count:", e);
     }
+}
+
+function loadSeenReferralNotifs() {
+    try {
+        const raw = localStorage.getItem(REFERRAL_NOTIFS_SEEN_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch {
+        return [];
+    }
+}
+
+function saveSeenReferralNotifs(list) {
+    try {
+        localStorage.setItem(REFERRAL_NOTIFS_SEEN_KEY, JSON.stringify(list));
+    } catch (e) {
+        console.warn("Failed to save seen referral notifications:", e);
+    }
+}
+
+function setupReferralNotifications() {
+    if (!database || !currentUser) return;
+    if (!currentUserId) return;
+
+    const seen = new Set(loadSeenReferralNotifs());
+    const ref = database.ref(`users/${currentUserId}/referralNotifications`);
+
+    ref.on('child_added', (snap) => {
+        if (!snap || !snap.key) return;
+        if (seen.has(snap.key)) return;
+
+        const data = snap.val() || {};
+        const name = data.name || 'A friend';
+
+        showNotification(`${name} has joined thanks to you`, "success");
+        seen.add(snap.key);
+        saveSeenReferralNotifs(Array.from(seen));
+
+        // Keep local count in sync as soon as a referral is detected
+        syncReferralCountFromFirebase().then(updateReferralUI);
+    });
 }
 
 // ========== INSPIRING STORIES DATABASE ==========
@@ -5685,6 +5729,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         await syncReferralCountFromFirebase();
+        setupReferralNotifications();
         
         // Initialize the app
         initUI();
