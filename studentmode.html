@@ -5292,9 +5292,8 @@ async function maybeCreditReferral() {
 
     try {
         const path = `users/${referrerId}/referralCount`;
-        const current = await firebaseGet(path);
-        const next = Math.min((parseInt(current || 0, 10) || 0) + 1, REFERRAL_TARGET);
-        await firebaseSet(path, next);
+        const next = await firebaseIncrement(path, REFERRAL_TARGET);
+        if (next === null || next === undefined) return;
         await firebaseSet(`users/${referrerId}/referralNotifications/${currentUserId}`, {
             name: currentUserName || 'A friend',
             joinedAt: new Date().toISOString()
@@ -5657,6 +5656,27 @@ async function firebaseUpdate(refPath, data) {
     }
 }
 
+async function firebaseIncrement(refPath, maxVal = null) {
+    if (!database || !currentUser) {
+        console.log("⚠️ Firebase not available or user not authenticated");
+        return null;
+    }
+
+    return new Promise((resolve, reject) => {
+        const ref = getDatabaseRef(refPath);
+        ref.transaction((current) => {
+            const base = parseInt(current || 0, 10) || 0;
+            let next = base + 1;
+            if (maxVal !== null) next = Math.min(next, maxVal);
+            return next;
+        }, (error, committed, snapshot) => {
+            if (error) return reject(error);
+            if (!committed) return resolve(snapshot ? snapshot.val() : null);
+            return resolve(snapshot ? snapshot.val() : null);
+        });
+    });
+}
+
 async function firebaseRemove(refPath) {
     if (!database || !currentUser) {
         console.log("⚠️ Firebase not available or user not authenticated");
@@ -5736,7 +5756,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         await syncReferralCountFromFirebase();
-        setupReferralNotifications();
         setupReferralNotifications();
         
         // Initialize the app
