@@ -5340,6 +5340,13 @@ function setupReferralNotifications() {
 
     const seen = new Set(loadSeenReferralNotifs());
     const ref = database.ref(`users/${currentUserId}/referralNotifications`);
+    const countRef = database.ref(`users/${currentUserId}/referralCount`);
+
+    countRef.on('value', (snap) => {
+        const val = Math.min(parseInt(snap.val() || 0, 10) || 0, REFERRAL_TARGET);
+        setReferralCount(val);
+        updateReferralUI();
+    });
 
     ref.on('child_added', (snap) => {
         if (!snap || !snap.key) return;
@@ -5729,6 +5736,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         await syncReferralCountFromFirebase();
+        setupReferralNotifications();
         setupReferralNotifications();
         
         // Initialize the app
@@ -8981,9 +8989,12 @@ function updateDashboardHeader(sectionId) {
 // ========== UTILITY FUNCTIONS ==========
 function initUI() {
     const savedTheme = localStorage.getItem('studentTheme') || 'light';
-    document.body.className = savedTheme;
+    const isPremiumUnlocked = getReferralCount() >= REFERRAL_TARGET;
+    const appliedTheme = (savedTheme === 'premium' && isPremiumUnlocked) ? 'premium' : 'light';
+    document.body.className = appliedTheme;
     const themeSelector = document.querySelector('.theme-selector');
-    if (themeSelector) themeSelector.value = savedTheme;
+    if (themeSelector) themeSelector.value = appliedTheme;
+    localStorage.setItem('studentTheme', appliedTheme);
     
     loadMotivationalQuote();
     loadInspiringStories();
