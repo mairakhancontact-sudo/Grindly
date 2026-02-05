@@ -5181,6 +5181,7 @@ const REFERRAL_REFERRER_KEY = 'studentReferralReferrer';
 const REFERRAL_CREDITED_KEY = 'studentReferralCredited';
 const REFERRAL_TARGET = 3;
 const REFERRAL_NOTIFS_SEEN_KEY = 'studentReferralNotifsSeen';
+const REFERRAL_PENDING_KEY = 'studentReferralPending';
 
 function getReferralCount() {
     return parseInt(localStorage.getItem(REFERRAL_KEY) || '0', 10);
@@ -5283,6 +5284,51 @@ function captureReferralFromUrl() {
     }
 }
 
+function queuePendingReferral(referrerId) {
+    try {
+        localStorage.setItem(REFERRAL_PENDING_KEY, JSON.stringify({
+            referrerId,
+            userId: currentUserId,
+            name: currentUserName || 'A friend',
+            ts: Date.now()
+        }));
+    } catch (e) {
+        console.warn("Failed to queue pending referral:", e);
+    }
+}
+
+async function creditReferralForReferrer(referrerId) {
+    const path = `users/${referrerId}/referralCount`;
+    const next = await firebaseIncrement(path, REFERRAL_TARGET);
+    if (next === null || next === undefined) return false;
+    await firebaseSet(`users/${referrerId}/referralNotifications/${currentUserId}`, {
+        name: currentUserName || 'A friend',
+        joinedAt: new Date().toISOString()
+    });
+    return true;
+}
+
+async function processPendingReferral() {
+    try {
+        const raw = localStorage.getItem(REFERRAL_PENDING_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (!data || !data.referrerId || data.referrerId === currentUserId) {
+            localStorage.removeItem(REFERRAL_PENDING_KEY);
+            return;
+        }
+        if (!database || !currentUser) return;
+
+        const ok = await creditReferralForReferrer(data.referrerId);
+        if (ok) {
+            localStorage.setItem(REFERRAL_CREDITED_KEY, 'true');
+            localStorage.removeItem(REFERRAL_PENDING_KEY);
+        }
+    } catch (e) {
+        console.warn("Failed to process pending referral:", e);
+    }
+}
+
 async function maybeCreditReferral() {
     const credited = localStorage.getItem(REFERRAL_CREDITED_KEY);
     if (credited === 'true') return;
@@ -5291,14 +5337,15 @@ async function maybeCreditReferral() {
     if (!referrerId || referrerId === currentUserId) return;
 
     try {
-        const path = `users/${referrerId}/referralCount`;
-        const next = await firebaseIncrement(path, REFERRAL_TARGET);
-        if (next === null || next === undefined) return;
-        await firebaseSet(`users/${referrerId}/referralNotifications/${currentUserId}`, {
-            name: currentUserName || 'A friend',
-            joinedAt: new Date().toISOString()
-        });
-        localStorage.setItem(REFERRAL_CREDITED_KEY, 'true');
+        if (!database || !currentUser) {
+            queuePendingReferral(referrerId);
+            return;
+        }
+
+        const ok = await creditReferralForReferrer(referrerId);
+        if (ok) {
+            localStorage.setItem(REFERRAL_CREDITED_KEY, 'true');
+        }
     } catch (e) {
         console.warn("Failed to credit referral:", e);
     }
@@ -5748,6 +5795,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.log("📝 Our Student ID:", currentUserId);
             
             localStorage.setItem('studentFirebaseUid', currentUser.uid);
+            await processPendingReferral();
             
         } catch (authError) {
             console.error("❌ Anonymous sign-in failed:", authError);
