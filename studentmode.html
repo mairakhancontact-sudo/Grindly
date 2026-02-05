@@ -5204,7 +5204,8 @@ function updateReferralUI() {
 }
 
 function copyReferralLink() {
-    const link = `https://grindlylearn.netlify.app/?ref=${encodeURIComponent(currentUserId || '')}`;
+    const base = window.location.origin;
+    const link = `${base}/studentmode.html?ref=${encodeURIComponent(currentUserId || '')}`;
     navigator.clipboard.writeText(link).then(() => {
         showNotification("Referral link copied!", "success");
     }).catch(() => {
@@ -5216,7 +5217,7 @@ async function markReferral() {
     copyReferralLink();
 
     if (!currentUserId) {
-        showNotification("stp lying bro", "warning");
+        showNotification("stop lying bro", "warning");
         return;
     }
 
@@ -5230,11 +5231,11 @@ async function markReferral() {
             updateReferralUI();
             showNotification("Referral counted! ✅", "success");
         } else {
-            showNotification("stp lying bro", "warning");
+            showNotification("stop lying bro", "warning");
         }
     } catch (e) {
         console.warn("Failed to verify referral count:", e);
-        showNotification("stp lying bro", "warning");
+        showNotification("stop lying bro", "warning");
     }
 }
 
