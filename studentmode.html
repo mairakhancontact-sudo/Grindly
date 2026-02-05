@@ -3,12 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <title>Grindly | Student Mode</title>
+<meta name="viewport">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <!-- Chart.js for Statistics -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 
 <style>
 /* ===== CSS VARIABLES ===== */
@@ -3060,6 +3063,148 @@ textarea {
     overflow-x: hidden;
   }
 }
+
+/* ===== DAILY GOAL TRACKER ===== */
+.goal-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+.goal-text {
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.goal-progress {
+  height: 12px;
+  background: var(--accent-light);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: var(--spacing-sm);
+}
+
+.goal-progress-fill {
+  height: 100%;
+  background: var(--gradient-success);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.goal-stats {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-sm);
+}
+
+.goal-message {
+  font-weight: 600;
+  color: var(--success);
+}
+
+.goal-input {
+  margin-top: var(--spacing-sm);
+}
+
+.goal-input label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+/* ===== CONFETTI LAYER ===== */
+#confettiLayer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2000; /* Above everything */
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  top: -10px;
+  width: 10px;
+  height: 14px;
+  opacity: 0.95;
+  border-radius: 2px;
+  animation: confettiFall 4.2s linear forwards;
+}
+
+.confetti.burst {
+  top: 50%;
+  left: 50%;
+  animation: confettiBurst 1.8s ease-out forwards;
+}
+
+@keyframes confettiFall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  75%  { transform: translateY(95vh) rotate(620deg); opacity: 1; }
+  90%  { transform: translateY(105vh) rotate(700deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes confettiBurst {
+  0% {
+    transform: translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) translate(var(--x), var(--y)) rotate(720deg) scale(0.9);
+    opacity: 0;
+  }
+}
+
+/* ===== CELEBRATE BUTTON ===== */
+.celebrate-btn {
+  margin-top: var(--spacing-md);
+  width: 100%;
+  background: var(--gradient-success);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+}
+
+.celebrate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+}
+
+.celebrate-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.35), transparent 80%);
+  transform: translateX(-120%);
+  transition: transform 0.8s ease;
+}
+
+.celebrate-btn:hover::after {
+  transform: translateX(120%);
+}
+
+.celebrate-btn.pulse {
+  animation: celebratePulse 1.6s ease-in-out infinite;
+}
+
+@keyframes celebratePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  50% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+}
+
+.confetti.sparkle {
+  border-radius: 50%;
+}
+
 </style>
 </head>
 
@@ -3322,8 +3467,37 @@ textarea {
               <div id="streakReward" style="margin-top: var(--spacing-sm); font-size: 0.75rem; opacity: 0.7; position: relative; z-index: 1;">
                 Next milestone: <span id="nextMilestone">7 days</span>
               </div>
+             <!-- Streak Share (no file chooser) -->
+<div id="streakShare" class="streak-share">
+  <button id="shareStreakBtn" class="streak-btn">📤 Share Streak</button>
+  <div id="streakShareMsg" class="streak-share-msg"></div>
+ 
+</div>
+
             </div>
-            
+           <!-- Daily Goal Tracker Card -->
+<div class="form-card goal-card">
+  <h2>🎯 Daily Goal Tracker</h2>
+  <div class="goal-text">Today's goal: <span id="dailyGoalText">3</span> study sessions</div>
+
+  <div class="goal-progress">
+    <div class="goal-progress-fill" id="dailyGoalFill" style="width: 0%"></div>
+  </div>
+
+  <div class="goal-stats">
+    <span id="dailyGoalCount">0</span> / <span id="dailyGoalTarget">3</span> sessions
+  </div>
+
+  <div id="dailyGoalMessage" class="goal-message"></div>
+  <button id="celebrateGoalBtn" class="celebrate-btn" style="display: none;" onclick="triggerConfettiBurst()">
+    🎉 Celebrate
+  </button>
+  <div class="goal-input">
+  <label for="dailyGoalInput">Set daily goal</label>
+  <input type="number" id="dailyGoalInput" min="1" max="20" step="1" value="3">
+</div>
+
+</div>
             <!-- Motivation Card -->
             <div class="form-card motivation-card">
               <h2 style="color: white; position: relative; z-index: 1;">💫 Daily Inspiration</h2>
@@ -4145,6 +4319,42 @@ const firebaseConfig = {
     messagingSenderId: "737621420458",
     appId: "1:737621420458:web:74c873869a1a47c2ce23d3"
 };
+const IMGBB_API_KEY = "PASTE_YOUR_IMGBB_KEY_HERE";
+
+
+
+async function uploadImageToImgBB(blob) {
+    const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const result = reader.result;
+            resolve(result.split(',')[1]); // base64 only
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+
+    const form = new FormData();
+    form.append('image', base64);
+
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+        method: 'POST',
+        body: form
+    });
+
+    const data = await res.json();
+    if (!data || !data.success) {
+        throw new Error('ImgBB upload failed');
+    }
+
+    return data.data.url; // direct image URL
+}
+
+async function shortenUrl(longUrl) {
+    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+    const shortUrl = await res.text();
+    return shortUrl;
+}
 
 // ========== GLOBAL VARIABLES ==========
 let currentUser = null;
@@ -4932,7 +5142,8 @@ async function markStudyToday() {
             date: todayKey,
             score: consistencyScore
         });
-        
+        updateDailyGoalUI();
+
         // Keep only last 30 days
         if (studyData.dailyStats.length > 30) {
             studyData.dailyStats = studyData.dailyStats.slice(0, 30);
@@ -4943,6 +5154,8 @@ async function markStudyToday() {
         if (studyData.consistencyScores.length > 30) {
             studyData.consistencyScores = studyData.consistencyScores.slice(0, 30);
         }
+        updateDailyGoalUI();
+
     }
     
     // Update total hours
@@ -5015,6 +5228,252 @@ function updateStreakButton() {
             }
         }
     }
+}
+
+
+// ========== DAILY GOAL TRACKER ==========
+
+function getTodaySessionsCount() {
+    const todayKey = new Date().toDateString();
+    if (!studyData.dailyStats) return 0;
+    const todayStats = studyData.dailyStats.find(s => s.date === todayKey);
+    return todayStats ? (todayStats.sessions || 0) : 0;
+}
+
+function updateDailyGoalUI() {
+    const count = getTodaySessionsCount();
+
+    const goalText = document.getElementById('dailyGoalText');
+    const goalTarget = document.getElementById('dailyGoalTarget');
+    const goalCount = document.getElementById('dailyGoalCount');
+    const goalFill = document.getElementById('dailyGoalFill');
+    const goalMsg = document.getElementById('dailyGoalMessage');
+    const celebrateBtn = document.getElementById('celebrateGoalBtn');
+
+    if (!goalText || !goalTarget || !goalCount || !goalFill || !goalMsg || !celebrateBtn) return;
+
+    const target = getDailyGoalTarget();
+    goalText.textContent = target;
+    goalTarget.textContent = target;
+    goalCount.textContent = count;
+
+    const progress = Math.min(100, (count / target) * 100);
+    goalFill.style.width = `${progress}%`;
+
+    if (count >= target) {
+        goalMsg.textContent = "🎉 Goal achieved! Amazing work!";
+        celebrateBtn.style.display = 'block';
+        celebrateBtn.classList.add('pulse');
+    } else {
+goalMsg.textContent = `You're doing great! ${target - count} to go 🚀`;
+
+        celebrateBtn.style.display = 'none';
+        celebrateBtn.classList.remove('pulse');
+            }
+}
+
+
+function maybeCelebrateGoal() {
+    const todayKey = new Date().toDateString();
+    const storageKey = `dailyGoalCelebrated_${todayKey}`;
+
+    if (localStorage.getItem(storageKey)) return;
+
+    localStorage.setItem(storageKey, "true");
+    triggerConfetti();
+}
+
+function triggerConfetti() {
+    const layer = document.getElementById('confettiLayer');
+    if (!layer) return;
+
+    const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#22c55e'];
+
+    for (let i = 0; i < 120; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        confetti.style.width = (6 + Math.random() * 6) + 'px';
+        confetti.style.height = (10 + Math.random() * 8) + 'px';
+
+        layer.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 3000);
+    }
+}
+
+function triggerConfettiBurst() {
+    const layer = document.getElementById('confettiLayer');
+    if (!layer) return;
+
+    const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#22c55e'];
+
+    playCelebrateSound();
+
+    // Big center burst
+    for (let i = 0; i < 160; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti burst';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = (Math.random() * 0.05) + 's';
+        confetti.style.width = (6 + Math.random() * 8) + 'px';
+        confetti.style.height = (10 + Math.random() * 10) + 'px';
+        confetti.style.animationDuration = (1.6 + Math.random() * 0.8) + 's';
+        confetti.style.setProperty('--x', `${(Math.random() * 2 - 1) * 420}px`);
+        confetti.style.setProperty('--y', `${(Math.random() * 2 - 1) * 380}px`);
+        if (Math.random() < 0.25) confetti.classList.add('sparkle');
+        layer.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 2500);
+    }
+
+    // Side bursts for extra impact
+    for (let i = 0; i < 80; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti burst';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = (Math.random() * 0.1) + 's';
+        confetti.style.width = (5 + Math.random() * 7) + 'px';
+        confetti.style.height = (8 + Math.random() * 9) + 'px';
+        confetti.style.animationDuration = (1.4 + Math.random() * 0.8) + 's';
+        confetti.style.left = '15%';
+        confetti.style.top = '55%';
+        confetti.style.setProperty('--x', `${(Math.random() * 2 - 1) * 260}px`);
+        confetti.style.setProperty('--y', `${(Math.random() * 2 - 1) * 260}px`);
+        if (Math.random() < 0.3) confetti.classList.add('sparkle');
+        layer.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 2200);
+    }
+
+    for (let i = 0; i < 80; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti burst';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = (Math.random() * 0.1) + 's';
+        confetti.style.width = (5 + Math.random() * 7) + 'px';
+        confetti.style.height = (8 + Math.random() * 9) + 'px';
+        confetti.style.animationDuration = (1.4 + Math.random() * 0.8) + 's';
+        confetti.style.left = '85%';
+        confetti.style.top = '55%';
+        confetti.style.setProperty('--x', `${(Math.random() * 2 - 1) * 260}px`);
+        confetti.style.setProperty('--y', `${(Math.random() * 2 - 1) * 260}px`);
+        if (Math.random() < 0.3) confetti.classList.add('sparkle');
+        layer.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 2200);
+    }
+
+    // Light rain after burst
+    for (let i = 0; i < 80; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = (0.1 + Math.random() * 0.4) + 's';
+        confetti.style.width = (4 + Math.random() * 6) + 'px';
+        confetti.style.height = (7 + Math.random() * 8) + 'px';
+        confetti.style.animationDuration = (4.5 + Math.random() * 2) + 's';
+        if (Math.random() < 0.2) confetti.classList.add('sparkle');
+        layer.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 6500);
+    }
+}
+
+function playCelebrateSound() {
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const now = ctx.currentTime;
+
+        const master = ctx.createGain();
+        master.gain.value = 0.2;
+        master.connect(ctx.destination);
+
+        // Burst noise (confetti pop)
+        const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.25, ctx.sampleRate);
+        const data = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+        }
+        const noise = ctx.createBufferSource();
+        noise.buffer = noiseBuffer;
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.0, now);
+        noiseGain.gain.linearRampToValueAtTime(0.7, now + 0.02);
+        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+        noise.connect(noiseGain);
+        noiseGain.connect(master);
+        noise.start(now);
+
+        // Low boom
+        const boom = ctx.createOscillator();
+        const boomGain = ctx.createGain();
+        boom.type = 'sine';
+        boom.frequency.value = 90;
+        boomGain.gain.setValueAtTime(0.0, now);
+        boomGain.gain.linearRampToValueAtTime(0.6, now + 0.02);
+        boomGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+        boom.connect(boomGain);
+        boomGain.connect(master);
+        boom.start(now);
+        boom.stop(now + 0.4);
+
+        const tones = [
+            { freq: 523.25, time: 0.0 },  // C5
+            { freq: 659.25, time: 0.08 }, // E5
+            { freq: 783.99, time: 0.16 }, // G5
+            { freq: 1046.5, time: 0.24 }  // C6
+        ];
+
+        tones.forEach(t => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = t.freq;
+            gain.gain.setValueAtTime(0, now + t.time);
+            gain.gain.linearRampToValueAtTime(0.4, now + t.time + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + t.time + 0.22);
+            osc.connect(gain);
+            gain.connect(master);
+            osc.start(now + t.time);
+            osc.stop(now + t.time + 0.26);
+        });
+
+        setTimeout(() => ctx.close(), 1200);
+    } catch (e) {
+        console.warn("Audio playback blocked or unavailable:", e);
+    }
+}
+
+
+const DAILY_GOAL_KEY = 'dailyGoalTarget';
+
+function getDailyGoalTarget() {
+    return parseInt(localStorage.getItem(DAILY_GOAL_KEY) || '3', 10);
+}
+
+function setDailyGoalTarget(value) {
+    localStorage.setItem(DAILY_GOAL_KEY, String(value));
+}
+
+function initDailyGoalInput() {
+    const input = document.getElementById('dailyGoalInput');
+    if (!input) return;
+
+    input.value = getDailyGoalTarget();
+
+    input.addEventListener('change', () => {
+        let val = parseInt(input.value, 10);
+        if (!val || val < 1) val = 1;
+        if (val > 20) val = 20;
+
+        input.value = val;
+        setDailyGoalTarget(val);
+        updateDailyGoalUI();
+        showNotification(`Daily goal set to ${val} sessions`, "success");
+    });
 }
 
 // ========== STUDY DATA MANAGEMENT ==========
@@ -5173,6 +5632,8 @@ async function addStudyHours() {
     setTimeout(() => {
         updateSyncStatus("Saved to all classes!", "success");
     }, 1500);
+    updateDailyGoalUI();
+
 }
 
 // ========== TASK MANAGEMENT WITH PRIORITIES ==========
@@ -5645,7 +6106,8 @@ function markStudySession() {
     persistData();
     updateCharts();
     updateAllStatistics();
-    
+    updateDailyGoalUI();
+
     showNotification(`Study session recorded! ${hours} hours studied.`, "success");
 }
 
@@ -7217,6 +7679,8 @@ function updateUI() {
     
     updateSidebarStats();
     updateStreakUI();
+    updateDailyGoalUI();
+
 }
 
 function updateSidebarStats() {
@@ -7485,6 +7949,8 @@ function loadAllData() {
         document.getElementById('profileBio').value = profile.bio || '';
         currentUserName = profile.name || 'Student';
     }
+    initDailyGoalInput();
+
 }
 
 // ========== MOTIVATIONAL QUOTES ==========
@@ -7676,9 +8142,71 @@ function refreshData() {
 function openFeedbackForm() {
     window.open('https://docs.google.com/forms/d/e/1FAIpQLScJMM1dwIx3HvSu9mxyZm3HgZ7UO7QwLX673JKellaKLSM7EQ/viewform?usp=publish-editor', '_blank');
 }
+
+// ========== STREAK SHARE (capture full streak card) ==========
+async function captureStreakCard() {
+    const card = document.querySelector('.streak-card');
+    if (!card) throw new Error('Streak card not found');
+
+    const canvas = await html2canvas(card, {
+        backgroundColor: null,
+        scale: 2
+    });
+
+    return new Promise((resolve) => {
+        canvas.toBlob((blob) => resolve(blob), 'image/png', 1.0);
+    });
+}
+
+// Placeholder: replace with work.ink shortener once you provide endpoint/token
+async function shortenUrl(longUrl) {
+    return longUrl;
+}
+
+async function shareStreak() {
+    const msg = document.getElementById('streakShareMsg');
+    const shareBtn = document.getElementById('shareStreakBtn');
+
+    if (!msg || !shareBtn) return;
+
+    showNotification("Generating your streak image… please wait", "info");
+    msg.textContent = 'Generating your streak image...';
+    shareBtn.disabled = true;
+
+    try {
+        const card = document.querySelector('.streak-card');
+        if (!card) throw new Error('Streak card not found');
+
+        const canvas = await html2canvas(card, { backgroundColor: null, scale: 2 });
+        const dataUrl = canvas.toDataURL('image/png');
+
+        await navigator.clipboard.writeText(dataUrl);
+
+        showNotification("URL copied! Paste it into a browser or chat to share.", "success");
+        msg.textContent = 'URL copied! Paste into a browser or message.';
+    } catch (err) {
+        console.error(err);
+        showNotification("Could not generate URL. Try again.", "error");
+        msg.textContent = 'Could not generate the URL. Try again.';
+    } finally {
+        shareBtn.disabled = false;
+    }
+}
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const shareBtn = document.getElementById('shareStreakBtn');
+    if (shareBtn) shareBtn.addEventListener('click', shareStreak);
+});
+
+
 // ========== INITIALIZATION COMPLETE ==========
 console.log("✅ Student Mode initialized successfully!");
+// Add to all pages
+firebase.analytics().logEvent('page_view', {page_location: window.location.href});
 </script>
+<div id="confettiLayer" aria-hidden="true"></div>
 
 </body>
 </html>
