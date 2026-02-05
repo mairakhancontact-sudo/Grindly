@@ -123,6 +123,232 @@ body.purple {
   --accent-light: rgba(139, 92, 246, 0.2);
 }
 
+body.premium {
+  --bg: #0b1228;
+  --card: #111b3a;
+  --text: #f3f6ff;
+  --text-muted: #a7b5e0;
+  --border: rgba(255, 215, 0, 0.22);
+  --accent: #ffd700;
+  --accent-dark: #e6c200;
+  --accent-light: rgba(255, 215, 0, 0.16);
+  --success: #22c55e;
+  --warning: #ffd700;
+  --danger: #ef4444;
+  --info: #60a5fa;
+  --purple: #ffd700;
+  --gradient-primary: linear-gradient(135deg, #1e3a8a, #ffd700);
+  --gradient-success: linear-gradient(135deg, #22c55e, #16a34a);
+  --gradient-warning: linear-gradient(135deg, #ffd700, #e6c200);
+  --gradient-danger: linear-gradient(135deg, #ef4444, #dc2626);
+  --gradient-info: linear-gradient(135deg, #60a5fa, #1e3a8a);
+  --gradient-purple: linear-gradient(135deg, #1e3a8a, #ffd700);
+  --shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  --shadow-md: 0 16px 30px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 22px 44px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 32px 70px rgba(0, 0, 0, 0.65);
+}
+
+body.premium {
+  background:
+    radial-gradient(900px 420px at 10% -5%, rgba(255, 215, 0, 0.22), transparent 60%),
+    radial-gradient(900px 420px at 90% 0%, rgba(30, 58, 138, 0.28), transparent 60%),
+    repeating-linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0 12px, rgba(30, 58, 138, 0.08) 12px 24px),
+    linear-gradient(135deg, #0a1024 0%, #0f1936 55%, #0b1228 100%);
+}
+
+body.premium .content-card,
+body.premium .form-card,
+body.premium .stats-overview-card,
+body.premium .metric-card,
+body.premium .class-card,
+body.premium .leaderboard-item,
+body.premium .study-partner-card,
+body.premium .badges-card {
+  border-color: rgba(255, 215, 0, 0.28);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.55);
+  background:
+    linear-gradient(180deg, rgba(255, 215, 0, 0.06), rgba(0, 0, 0, 0.08)),
+    #111b3a;
+  position: relative;
+}
+
+body.premium .sidebar {
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  box-shadow: none;
+  min-height: 100vh;
+}
+
+body.premium .main-content,
+body.premium .sidebar {
+  scrollbar-color: #ffd700 #0b1228;
+  scrollbar-width: thin;
+}
+
+body.premium ::-webkit-scrollbar-track {
+  background: #0b1228;
+}
+
+body.premium ::-webkit-scrollbar-thumb {
+  background: #ffd700;
+  border: 2px solid #0b1228;
+}
+
+body.premium ::-webkit-scrollbar-thumb:hover {
+  background: #e6c200;
+}
+
+body.premium {
+  scrollbar-color: #ffd700 #0b1228;
+  scrollbar-width: thin;
+}
+
+body.premium .content-card::before,
+body.premium .form-card::before,
+body.premium .stats-overview-card::before,
+body.premium .metric-card::before,
+body.premium .class-card::before,
+body.premium .leaderboard-item::before,
+body.premium .badges-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.95), rgba(30, 58, 138, 0.85));
+  opacity: 0.85;
+}
+
+body.premium .content-card::after,
+body.premium .form-card::after,
+body.premium .stats-overview-card::after,
+body.premium .metric-card::after,
+body.premium .class-card::after,
+body.premium .leaderboard-item::after,
+body.premium .badges-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 215, 0, 0.08);
+  border-radius: inherit;
+}
+
+body.premium .controls-bar {
+  background: rgba(17, 27, 58, 0.75);
+  border-color: rgba(255, 215, 0, 0.35);
+  backdrop-filter: blur(10px);
+}
+
+body.premium .btn-primary {
+  box-shadow: 0 10px 24px rgba(255, 215, 0, 0.25);
+}
+
+body.premium .pro-tip {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.18), rgba(30, 58, 138, 0.12));
+  border-left-color: #ffd700;
+}
+
+body.premium .pro-tip strong {
+  color: #0f1c3f;
+}
+
+body.premium .stat-icon {
+  background: var(--gradient-primary);
+}
+
+body.premium .dashboard-header h1 {
+  background: linear-gradient(135deg, #8fb3ff, #ffd700, #1e3a8a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body.premium .nav-item {
+  border: 1px solid transparent;
+}
+
+body.premium .nav-item:hover {
+  background: rgba(30, 58, 138, 0.08);
+  border-color: rgba(30, 58, 138, 0.4);
+}
+
+body.premium .nav-item.active {
+  background: linear-gradient(135deg, #1e3a8a, #ffd700);
+  color: #ffffff;
+}
+
+body.premium .content-card,
+body.premium .form-card,
+body.premium .stats-overview-card,
+body.premium .metric-card,
+body.premium .class-card,
+body.premium .leaderboard-item,
+body.premium .badges-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.08)),
+    var(--card);
+}
+
+body.premium .btn-primary,
+body.premium .btn-success,
+body.premium .btn-warning,
+body.premium .btn-danger {
+  color: #ffffff;
+}
+
+body.premium .btn-secondary {
+  background: rgba(30, 58, 138, 0.08);
+  border-color: rgba(30, 58, 138, 0.35);
+}
+
+body.premium .btn-secondary:hover {
+  background: rgba(30, 58, 138, 0.12);
+}
+
+body.premium .streak-card {
+  background: linear-gradient(135deg, #1e3a8a 0%, #162556 45%, #ffd700 100%);
+}
+
+body.premium .motivation-card {
+  background: linear-gradient(135deg, #1e3a8a 0%, #162556 60%, #ffd700 100%);
+}
+
+body.premium .class-code-display {
+  background: linear-gradient(135deg, #1e3a8a, #ffd700);
+}
+
+body.premium .stats-badge {
+  background: rgba(255, 215, 0, 0.16);
+  border-color: rgba(255, 215, 0, 0.3);
+  color: #0b1228;
+}
+
+body.premium .leaderboard-item.you {
+  background: linear-gradient(135deg, #1e3a8a, #ffd700);
+  color: #0b1228;
+}
+
+body.premium .leaderboard-item.you .leaderboard-subtitle {
+  color: rgba(15, 28, 63, 0.75);
+}
+
+body.premium .story-item {
+  background: rgba(30, 58, 138, 0.06);
+}
+
+body.premium .story-item:hover {
+  background: rgba(255, 215, 0, 0.2);
+}
+
+body.premium .chart-card {
+  background:
+    radial-gradient(240px 120px at 20% 10%, rgba(255, 215, 0, 0.08), transparent 70%),
+    var(--card);
+}
+
 /* ===== BASE STYLES ===== */
 * {
   margin: 0;
@@ -540,6 +766,104 @@ body {
   color: var(--accent-light);
 }
 
+/* ===== AI CHATBOT ===== */
+.chatbot-fab {
+  position: fixed;
+  right: 18px;
+  bottom: 96px;
+  z-index: 900;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.chatbot-bubble {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 10px 14px;
+  max-width: 260px;
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all var(--transition);
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 12px);
+  box-shadow: var(--shadow-md);
+}
+
+.chatbot-bubble.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chatbot-btn {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: none;
+  transition: transform var(--transition);
+  animation: botFloat 3s ease-in-out infinite;
+}
+
+.chatbot-btn:hover {
+  transform: translateY(-6px) scale(1.02);
+}
+
+.chatbot-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 0;
+  object-fit: cover;
+  background: transparent;
+  box-shadow: none;
+  animation: botLook 5.5s ease-in-out infinite, botNod 4.2s ease-in-out infinite;
+}
+
+@keyframes botFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes botLook {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(-3px, -1px) rotate(-1deg); }
+  40% { transform: translate(3px, -2px) rotate(1deg); }
+  60% { transform: translate(2px, 2px) rotate(0.5deg); }
+  80% { transform: translate(-2px, 1px) rotate(-0.5deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes botNod {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(2px); }
+}
+
+@media (max-width: 767px) {
+  .chatbot-fab {
+    right: 12px;
+    bottom: 120px;
+  }
+  .chatbot-btn,
+  .chatbot-img {
+    width: 120px;
+    height: 120px;
+  }
+  .chatbot-bubble {
+    max-width: 220px;
+    font-size: 0.85rem;
+  }
+}
+
 /* ===== DASHBOARD GRID ===== */
 .dashboard-grid {
   display: grid;
@@ -843,6 +1167,57 @@ textarea {
   padding: var(--spacing-xl);
   max-height: 400px;
   overflow-y: auto;
+}
+
+/* Profile section should not clip content */
+.profile-content-body {
+  max-height: none;
+  overflow: visible;
+}
+
+/* ===== REFERRAL MODAL ===== */
+.referral-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
+  padding: var(--spacing-lg);
+}
+
+.referral-modal.show {
+  display: flex;
+}
+
+.referral-modal-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 520px;
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+.referral-modal-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: var(--spacing-sm);
+}
+
+.referral-modal-text {
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-lg);
+}
+
+.referral-modal-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 /* Task List */
@@ -1757,6 +2132,168 @@ textarea {
   text-align: center;
   padding: var(--spacing-2xl);
   color: var(--text-muted);
+}
+
+/* ===== ACHIEVEMENT BADGES ===== */
+.badges-card .content-body {
+  max-height: none;
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.badge-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--spacing-md);
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: var(--spacing-md);
+  align-items: center;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.badge-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.2), transparent 80%);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.badge-item:hover::after {
+  opacity: 1;
+}
+
+.badge-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+
+.badge-info {
+  min-width: 0;
+}
+
+.badge-title {
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+  white-space: normal;
+}
+
+.badge-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.badge-tag {
+  margin-top: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.35);
+  color: #0f172a;
+}
+
+.badge-item[data-tone="sunrise"] {
+  background: linear-gradient(135deg, rgba(251,146,60,0.15), rgba(253,186,116,0.35));
+  border-color: rgba(251,146,60,0.5);
+}
+.badge-item[data-tone="weekend"] {
+  background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(147,197,253,0.35));
+  border-color: rgba(59,130,246,0.5);
+}
+.badge-item[data-tone="focus"] {
+  background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(110,231,183,0.35));
+  border-color: rgba(16,185,129,0.5);
+}
+.badge-item[data-tone="time"] {
+  background: linear-gradient(135deg, rgba(234,88,12,0.12), rgba(253,186,116,0.35));
+  border-color: rgba(234,88,12,0.5);
+}
+.badge-item[data-tone="streak"] {
+  background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(216,180,254,0.35));
+  border-color: rgba(139,92,246,0.5);
+}
+.badge-item[data-tone="tasks"] {
+  background: linear-gradient(135deg, rgba(244,63,94,0.12), rgba(251,113,133,0.35));
+  border-color: rgba(244,63,94,0.5);
+}
+.badge-item[data-tone="assign"] {
+  background: linear-gradient(135deg, rgba(20,184,166,0.12), rgba(125,211,252,0.35));
+  border-color: rgba(20,184,166,0.5);
+}
+.badge-item[data-tone="consistency"] {
+  background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(253,230,138,0.35));
+  border-color: rgba(245,158,11,0.5);
+}
+.badge-item[data-tone="goal"] {
+  background: linear-gradient(135deg, rgba(14,165,233,0.12), rgba(186,230,253,0.35));
+  border-color: rgba(14,165,233,0.5);
+}
+
+@media (max-width: 767px) {
+  .badges-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+  .badge-item {
+    grid-template-columns: 40px 1fr;
+    padding: 0.65rem;
+  }
+  .badge-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+  .badge-title {
+    font-size: 0.85rem;
+  }
+  .badge-desc {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .badges-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--spacing-sm);
+  }
+  .badge-item {
+    grid-template-columns: 34px 1fr;
+    padding: 0.55rem;
+  }
+  .badge-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
+  .badge-title {
+    font-size: 0.8rem;
+  }
+  .badge-desc {
+    font-size: 0.7rem;
+  }
 }
 
 /* ===== UPDATED STATISTICS SECTION ===== */
@@ -3130,7 +3667,7 @@ textarea {
   height: 14px;
   opacity: 0.95;
   border-radius: 2px;
-  animation: confettiFall 4.2s linear forwards;
+  animation: confettiFall 5.5s linear forwards;
 }
 
 .confetti.burst {
@@ -3141,8 +3678,8 @@ textarea {
 
 @keyframes confettiFall {
   0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
-  75%  { transform: translateY(95vh) rotate(620deg); opacity: 1; }
-  90%  { transform: translateY(105vh) rotate(700deg); opacity: 1; }
+  80%  { transform: translateY(95vh) rotate(620deg); opacity: 1; }
+  95%  { transform: translateY(105vh) rotate(700deg); opacity: 1; }
   100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
 }
 
@@ -3324,6 +3861,7 @@ textarea {
         <option value="forest">🌲 Forest Theme</option>
         <option value="sunset">🌅 Sunset Theme</option>
         <option value="purple">💜 Purple Theme</option>
+        <option value="premium">👑 Premium Theme</option>
       </select>
     </div>
   </aside>
@@ -3380,7 +3918,7 @@ textarea {
           <strong>💡 Daily Habit Building</strong>
           Mark your study streak daily! Consistency beats intensity. Even 15 minutes of focused study each day builds a strong habit and improves retention by 60% compared to cramming.
         </div>
-        
+
         <!-- UPDATED: Compact Quick Stats -->
         <div class="quick-stats">
           <div class="stat-card">
@@ -3412,7 +3950,34 @@ textarea {
             </div>
           </div>
         </div>
+
+        <!-- Study Stats Compare -->
+        <div class="content-card" style="margin-top: var(--spacing-xl);">
+          <div class="content-header">
+            <h2>Study Stats Compare</h2>
+          </div>
+          <div class="content-body profile-content-body">
+            <div class="pro-tip" id="compareMsg1">You studied 20% more than average.</div>
+            <div class="pro-tip" id="compareMsg2">Top 10% of users this week.</div>
+          </div>
+        </div>
         
+        <!-- Achievement Badges -->
+        <div class="content-card badges-card" style="margin-top: var(--spacing-xl);">
+          <div class="content-header">
+            <h2>Achievement Badges</h2>
+            <span class="badge" id="badgeCount" style="background: var(--success); color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.875rem;">0/6</span>
+          </div>
+          <div class="content-body">
+            <div class="badges-grid" id="badgesGrid"></div>
+            <div id="badgesEmpty" class="empty-state" style="display: none;">
+              <div class="empty-state-icon">★</div>
+              <div class="empty-state-title">No badges yet</div>
+              <div class="empty-state-description">Start studying to unlock your first badge.</div>
+            </div>
+          </div>
+        </div>
+
         <!-- Main Content Area -->
         <div class="dashboard-grid" style="margin-top: var(--spacing-xl);">
           
@@ -4228,20 +4793,42 @@ textarea {
                 <label for="profileBio">Bio</label>
                 <textarea id="profileBio" placeholder="Tell us about yourself..." rows="4"></textarea>
               </div>
-              <div class="form-group">
-                <label>Study Preferences</label>
-                <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-top: var(--spacing-sm);">
-                  <label style="display: flex; align-items: center; gap: var(--spacing-xs);">
-                    <input type="checkbox" id="prefPomodoro"> Pomodoro Timer
-                  </label>
-                  <label style="display: flex; align-items: center; gap: var(--spacing-xs);">
-                    <input type="checkbox" id="prefReminders"> Study Reminders
-                  </label>
-                  <label style="display: flex; align-items: center; gap: var(--spacing-xs);">
-                    <input type="checkbox" id="prefLeaderboard"> Show Leaderboard
-                  </label>
-                </div>
-              </div>
+      <div class="form-group">
+        <label>Study Preferences</label>
+        <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-top: var(--spacing-sm);">
+          <label style="display: flex; align-items: center; gap: var(--spacing-xs);">
+            <input type="checkbox" id="prefPomodoro"> Pomodoro Timer
+          </label>
+          <label style="display: flex; align-items: center; gap: var(--spacing-xs);">
+            <input type="checkbox" id="prefReminders"> Study Reminders
+          </label>
+          <label style="display: flex; align-items: center; gap: var(--spacing-xs);">
+            <input type="checkbox" id="prefLeaderboard"> Show Leaderboard
+          </label>
+        </div>
+      </div>
+      <div class="content-card" style="margin-top: var(--spacing-lg);">
+        <div class="content-header">
+          <h2>👑 Premium Theme</h2>
+        </div>
+        <div class="content-body">
+          <div class="pro-tip">
+            <strong>💡 How To Unlock</strong>
+            Refer Grindly Learn to 3 friends and the Premium Theme unlocks automatically.
+          </div>
+          <div class="pro-tip" id="premiumStatusMsg">
+            Refer Grindly Learn to 3 friends to unlock the Premium Theme.
+          </div>
+          <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
+            <button class="btn btn-secondary" onclick="copyReferralLink()">📤 Copy Referral Link</button>
+            <button class="btn btn-success" onclick="markReferral()">✅ I Referred a Friend</button>
+            <button class="btn btn-warning" onclick="previewPremiumTheme()">👁️ Preview Premium</button>
+          </div>
+          <div style="margin-top: var(--spacing-md); font-weight: 600;">
+            Referrals: <span id="referralCount">0</span>/3
+          </div>
+        </div>
+      </div>
               <button class="btn-submit" onclick="saveProfileSettings()" style="margin-top: var(--spacing-lg);">
                 💾 Save Profile Settings
               </button>
@@ -4268,6 +4855,30 @@ textarea {
 <button class="feedback-btn" onclick="openFeedbackForm()">
     💬 Give Feedback
 </button>
+<!-- AI Chatbot -->
+<div class="chatbot-fab" aria-live="polite">
+    <div class="chatbot-bubble" id="chatbotBubble">You’ve got this.</div>
+    <button class="chatbot-btn" id="chatbotBtn" aria-label="Encouragement bot">
+        <img class="chatbot-img" src="ai-chatbot-transparent.png" alt="Chatbot">
+    </button>
+</div>
+<!-- Referral Modal -->
+<div class="referral-modal" id="referralModal">
+  <div class="referral-modal-card">
+    <div class="referral-modal-title">Unlock Premium Theme</div>
+    <div class="referral-modal-text">
+      Refer Grindly Learn to 3 friends. The theme unlocks when they log their first study session.
+    </div>
+    <div style="margin-bottom: var(--spacing-md); font-weight: 700;">
+      Referrals: <span id="referralCountModal">0</span>/3
+    </div>
+    <div class="referral-modal-actions">
+      <button class="btn btn-secondary" onclick="copyReferralLink()">📤 Copy Referral Link</button>
+      <button class="btn btn-success" onclick="markReferral()">✅ I Referred a Friend</button>
+      <button class="btn btn-warning" onclick="closeReferralModal()">Close</button>
+    </div>
+  </div>
+</div>
 <script>
 // ========== MOBILE MENU FUNCTIONALITY ==========
 function toggleMobileMenu() {
@@ -4453,6 +5064,253 @@ const inspiringQuotes = [
     { text: "Success is stumbling from failure to failure with no loss of enthusiasm.", author: "Winston Churchill" },
     { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis" }
 ];
+
+// ========== AI CHATBOT ==========
+const chatbotMessages = [
+    "You’ve got this. One step at a time.",
+    "Small progress is still progress.",
+    "Focus for five minutes — start now.",
+    "You’re building a powerful habit.",
+    "Be proud of showing up today.",
+    "Keep going. Future you will thank you.",
+    "You’re not alone — keep pushing.",
+    "Just one more task, you can do it.",
+    "Your effort matters more than perfection.",
+    "Deep breath. You are capable.",
+    "Consistency beats intensity.",
+    "Start messy. Finish strong.",
+    "Do the next small thing.",
+    "You’re making it happen.",
+    "Keep the streak alive.",
+    "Show up for yourself today.",
+    "Make today count.",
+    "Momentum starts now.",
+    "You’re stronger than distractions.",
+    "One focused hour can change a day.",
+    "Tiny steps, big results.",
+    "This is your time. Use it.",
+    "Stay steady. You are doing great.",
+    "Progress is a victory.",
+    "You’re learning fast.",
+    "Your focus is your superpower.",
+    "Don’t wait for perfect. Start.",
+    "You are in control.",
+    "Finish one task. Then another.",
+    "Keep the pace.",
+    "You’re closer than you think.",
+    "Today’s effort shapes tomorrow.",
+    "Keep your eyes on the goal.",
+    "You’re building mastery.",
+    "You can do hard things.",
+    "Stay with it.",
+    "One page at a time.",
+    "One problem at a time.",
+    "Keep calm and study on.",
+    "Breathe. Focus. Execute.",
+    "Your future self is cheering.",
+    "This is a good moment to start.",
+    "Every session counts.",
+    "You’re on the right track.",
+    "Your discipline is growing.",
+    "You’re doing better than you think.",
+    "It’s okay to go slow.",
+    "Choose progress today.",
+    "You’ve already begun — keep going.",
+    "The work will pay off.",
+    "Stay locked in.",
+    "You are capable of more.",
+    "Make it happen today.",
+    "Focus now, relax later.",
+    "Small wins matter.",
+    "Do it for your goals.",
+    "Keep your head up.",
+    "You’ve got momentum.",
+    "Trust the process.",
+    "You’re building something great."
+];
+
+const statsCompareMessages = [
+    "You studied 20% more than average.",
+    "Top 10% of users this week.",
+    "Your streak is ahead of 70% of students.",
+    "You’re in the top 25% for weekly focus.",
+    "You completed more sessions than most this week.",
+    "You’re above average for consistency.",
+    "You’re trending upward — keep it going.",
+    "Your study time beat last week by 15%.",
+    "You’re keeping a strong pace this week.",
+    "You’re ahead of your weekly goal."
+];
+
+function updateStatsCompare() {
+    const msg1 = document.getElementById('compareMsg1');
+    const msg2 = document.getElementById('compareMsg2');
+    if (!msg1 || !msg2) return;
+
+    const idx1 = Math.floor(Math.random() * statsCompareMessages.length);
+    let idx2 = Math.floor(Math.random() * statsCompareMessages.length);
+    if (idx2 === idx1) idx2 = (idx2 + 1) % statsCompareMessages.length;
+
+    msg1.textContent = statsCompareMessages[idx1];
+    msg2.textContent = statsCompareMessages[idx2];
+}
+
+let chatbotTimeoutId = null;
+
+function showChatbotMessage() {
+    const bubble = document.getElementById('chatbotBubble');
+    if (!bubble) return;
+    const msg = chatbotMessages[Math.floor(Math.random() * chatbotMessages.length)];
+    bubble.textContent = msg;
+    bubble.classList.add('show');
+    setTimeout(() => bubble.classList.remove('show'), 12000);
+}
+
+function scheduleChatbotMessage() {
+    if (chatbotTimeoutId) clearTimeout(chatbotTimeoutId);
+    const delay = Math.floor(Math.random() * 8000) + 7000; // 7-15s
+    chatbotTimeoutId = setTimeout(() => {
+        showChatbotMessage();
+        scheduleChatbotMessage();
+    }, delay);
+}
+
+// ========== PREMIUM THEME REFERRALS ==========
+const REFERRAL_KEY = 'studentPremiumReferrals';
+const REFERRAL_REFERRER_KEY = 'studentReferralReferrer';
+const REFERRAL_CREDITED_KEY = 'studentReferralCredited';
+const REFERRAL_TARGET = 3;
+
+function getReferralCount() {
+    return parseInt(localStorage.getItem(REFERRAL_KEY) || '0', 10);
+}
+
+function setReferralCount(val) {
+    localStorage.setItem(REFERRAL_KEY, String(val));
+}
+
+function updateReferralUI() {
+    const count = Math.min(getReferralCount(), REFERRAL_TARGET);
+    const countEl = document.getElementById('referralCount');
+    const countModalEl = document.getElementById('referralCountModal');
+    const statusEl = document.getElementById('premiumStatusMsg');
+    if (countEl) countEl.textContent = count;
+    if (countModalEl) countModalEl.textContent = count;
+    if (statusEl) {
+        statusEl.textContent = count >= REFERRAL_TARGET
+            ? "Premium Theme unlocked! Select it in the theme menu."
+            : `Refer Grindly Learn to ${REFERRAL_TARGET} friends to unlock the Premium Theme.`;
+    }
+}
+
+function copyReferralLink() {
+    const link = `https://grindlylearn.netlify.app/?ref=${encodeURIComponent(currentUserId || '')}`;
+    navigator.clipboard.writeText(link).then(() => {
+        showNotification("Referral link copied!", "success");
+    }).catch(() => {
+        showNotification("Could not copy link. Please copy manually.", "warning");
+    });
+}
+
+async function markReferral() {
+    copyReferralLink();
+
+    if (!currentUserId) {
+        showNotification("stp lying bro", "warning");
+        return;
+    }
+
+    try {
+        const serverCountRaw = await firebaseGet(`users/${currentUserId}/referralCount`);
+        const serverCount = Math.min(parseInt(serverCountRaw || 0, 10) || 0, REFERRAL_TARGET);
+        const localCount = getReferralCount();
+
+        if (serverCount > localCount) {
+            setReferralCount(serverCount);
+            updateReferralUI();
+            showNotification("Referral counted! ✅", "success");
+        } else {
+            showNotification("stp lying bro", "warning");
+        }
+    } catch (e) {
+        console.warn("Failed to verify referral count:", e);
+        showNotification("stp lying bro", "warning");
+    }
+}
+
+function previewPremiumTheme() {
+    const current = localStorage.getItem('studentTheme') || 'light';
+    document.body.className = 'premium';
+    showNotification("Previewing Premium Theme…", "info");
+    setTimeout(() => {
+        document.body.className = current;
+        const themeSelector = document.querySelector('.theme-selector');
+        if (themeSelector) themeSelector.value = current;
+    }, 8000);
+}
+
+function openReferralModal() {
+    const modal = document.getElementById('referralModal');
+    if (modal) modal.classList.add('show');
+    updateReferralUI();
+}
+
+function closeReferralModal() {
+    const modal = document.getElementById('referralModal');
+    if (modal) modal.classList.remove('show');
+    const referrals = getReferralCount();
+    if (referrals < REFERRAL_TARGET) {
+        const current = localStorage.getItem('studentTheme') || 'light';
+        if (current === 'premium') {
+            localStorage.setItem('studentTheme', 'light');
+            document.body.className = 'light';
+            const themeSelector = document.querySelector('.theme-selector');
+            if (themeSelector) themeSelector.value = 'light';
+        }
+    }
+}
+
+function captureReferralFromUrl() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const ref = params.get('ref');
+        if (ref && ref.startsWith('student_') && ref !== currentUserId) {
+            localStorage.setItem(REFERRAL_REFERRER_KEY, ref);
+        }
+    } catch (e) {
+        console.warn("Failed to parse referral URL:", e);
+    }
+}
+
+async function maybeCreditReferral() {
+    const credited = localStorage.getItem(REFERRAL_CREDITED_KEY);
+    if (credited === 'true') return;
+
+    const referrerId = localStorage.getItem(REFERRAL_REFERRER_KEY);
+    if (!referrerId || referrerId === currentUserId) return;
+
+    try {
+        const path = `users/${referrerId}/referralCount`;
+        const current = await firebaseGet(path);
+        const next = Math.min((parseInt(current || 0, 10) || 0) + 1, REFERRAL_TARGET);
+        await firebaseSet(path, next);
+        localStorage.setItem(REFERRAL_CREDITED_KEY, 'true');
+    } catch (e) {
+        console.warn("Failed to credit referral:", e);
+    }
+}
+
+async function syncReferralCountFromFirebase() {
+    if (!currentUserId) return;
+    try {
+        const count = await firebaseGet(`users/${currentUserId}/referralCount`);
+        if (count !== null && count !== undefined) {
+            setReferralCount(parseInt(count, 10) || 0);
+        }
+    } catch (e) {
+        console.warn("Failed to sync referral count:", e);
+    }
+}
 
 // ========== INSPIRING STORIES DATABASE ==========
 const inspiringStories = [
@@ -4804,6 +5662,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             streak: studyData.streak,
             hours: studyData.totalStudyHours
         });
+
+        captureReferralFromUrl();
         
         try {
             // Try anonymous authentication
@@ -4822,6 +5682,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.log("⚠️ Using offline mode only");
             showNotification("⚠️ Working in offline mode. Data saved locally.", "warning");
         }
+
+        await syncReferralCountFromFirebase();
         
         // Initialize the app
         initUI();
@@ -5163,6 +6025,7 @@ async function markStudyToday() {
     studyData.totalStudyHours = (studyData.totalMinutes / 60).toFixed(1);
     
     persistData();
+    await maybeCreditReferral();
     updateUI();
     updateSidebarStats();
     updateStreakUI();
@@ -5298,9 +6161,10 @@ function triggerConfetti() {
         confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
         confetti.style.width = (6 + Math.random() * 6) + 'px';
         confetti.style.height = (10 + Math.random() * 8) + 'px';
+        confetti.style.animationDuration = (5.5 + Math.random() * 1.5) + 's';
 
         layer.appendChild(confetti);
-        setTimeout(() => confetti.remove(), 3000);
+        setTimeout(() => confetti.remove(), 8000);
     }
 }
 
@@ -5373,10 +6237,10 @@ function triggerConfettiBurst() {
         confetti.style.animationDelay = (0.1 + Math.random() * 0.4) + 's';
         confetti.style.width = (4 + Math.random() * 6) + 'px';
         confetti.style.height = (7 + Math.random() * 8) + 'px';
-        confetti.style.animationDuration = (4.5 + Math.random() * 2) + 's';
+        confetti.style.animationDuration = (6 + Math.random() * 2) + 's';
         if (Math.random() < 0.2) confetti.classList.add('sparkle');
         layer.appendChild(confetti);
-        setTimeout(() => confetti.remove(), 6500);
+        setTimeout(() => confetti.remove(), 8500);
     }
 }
 
@@ -5388,7 +6252,7 @@ function playCelebrateSound() {
         const now = ctx.currentTime;
 
         const master = ctx.createGain();
-        master.gain.value = 0.2;
+        master.gain.value = 0.25;
         master.connect(ctx.destination);
 
         // Burst noise (confetti pop)
@@ -5401,8 +6265,8 @@ function playCelebrateSound() {
         noise.buffer = noiseBuffer;
         const noiseGain = ctx.createGain();
         noiseGain.gain.setValueAtTime(0.0, now);
-        noiseGain.gain.linearRampToValueAtTime(0.7, now + 0.02);
-        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+        noiseGain.gain.linearRampToValueAtTime(1.0, now + 0.01);
+        noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
         noise.connect(noiseGain);
         noiseGain.connect(master);
         noise.start(now);
@@ -5413,12 +6277,12 @@ function playCelebrateSound() {
         boom.type = 'sine';
         boom.frequency.value = 90;
         boomGain.gain.setValueAtTime(0.0, now);
-        boomGain.gain.linearRampToValueAtTime(0.6, now + 0.02);
-        boomGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+        boomGain.gain.linearRampToValueAtTime(0.9, now + 0.02);
+        boomGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
         boom.connect(boomGain);
         boomGain.connect(master);
         boom.start(now);
-        boom.stop(now + 0.4);
+        boom.stop(now + 0.45);
 
         const tones = [
             { freq: 523.25, time: 0.0 },  // C5
@@ -5603,6 +6467,7 @@ async function addStudyHours() {
     }
     
     persistData();
+    await maybeCreditReferral();
     updateUI();
     updateSidebarStats();
     updateAllStatistics();
@@ -6052,7 +6917,7 @@ function hideAssignmentForm() {
 }
 
 // ========== UPDATED STATISTICS SECTION ==========
-function markStudySession() {
+async function markStudySession() {
     const today = new Date().toDateString();
     
     const hours = parseFloat(prompt("How many hours did you study? (e.g., 2.5)", "1"));
@@ -6104,6 +6969,7 @@ function markStudySession() {
     studyData.totalStudyHours = (studyData.totalMinutes / 60).toFixed(1);
     
     persistData();
+    await maybeCreditReferral();
     updateCharts();
     updateAllStatistics();
     updateDailyGoalUI();
@@ -7646,11 +8512,206 @@ async function refreshClassroom() {
     }, 500);
 }
 
+// ========== ACHIEVEMENT BADGES ==========
+const BADGES_STORAGE_KEY = 'studentEarnedBadges';
+
+function loadEarnedBadges() {
+    try {
+        const raw = localStorage.getItem(BADGES_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        console.warn("Failed to load earned badges:", e);
+        return [];
+    }
+}
+
+function saveEarnedBadges(badges) {
+    try {
+        localStorage.setItem(BADGES_STORAGE_KEY, JSON.stringify(badges));
+    } catch (e) {
+        console.warn("Failed to save earned badges:", e);
+    }
+}
+
+function getAchievementBadges() {
+    const sessions = studyData.studySessions || [];
+    const totalMinutes = studyData.totalMinutes || (parseFloat(studyData.totalStudyHours || 0) * 60) || 0;
+    const todayKey = new Date().toDateString();
+    const todayStats = (studyData.dailyStats || []).find(s => s.date === todayKey);
+    const todaySessions = todayStats ? (todayStats.sessions || 0) : 0;
+    const goalTarget = getDailyGoalTarget();
+    const completedTimers = sessions.length;
+    const totalHours = totalMinutes / 60;
+    const completedTasks = tasks.filter(t => t.completed).length;
+    const completedAssignments = assignments.filter(a => a.completed).length;
+    const last7Days = (studyData.dailyStats || []).slice(0, 7);
+    const daysStudiedLast7 = last7Days.filter(d => (d.sessions || 0) > 0).length;
+
+    const hasEarlyBird = sessions.some(s => {
+        const d = new Date(s.date);
+        return !isNaN(d) && d.getHours() < 8;
+    });
+
+    const hasWeekendWarrior = sessions.some(s => {
+        const d = new Date(s.date);
+        if (isNaN(d)) return false;
+        const day = d.getDay();
+        return day === 0 || day === 6;
+    });
+
+    const hasFocusMaster = completedTimers >= 10;
+    const hasTwoHours = totalMinutes >= 120;
+    const hasGoalGetter = todaySessions >= goalTarget;
+    const hasStreakStarter = (studyData.streak || 0) >= 3;
+    const hasStreakBuilder = (studyData.streak || 0) >= 7;
+    const hasStreakChampion = (studyData.streak || 0) >= 14;
+    const hasTaskCrusher = completedTasks >= 10;
+    const hasAssignmentAce = completedAssignments >= 5;
+    const hasConsistencyKing = daysStudiedLast7 >= 5;
+    const hasStudyMarathon = totalHours >= 10;
+
+    return [
+        {
+            id: "early-bird",
+            title: "Early Bird",
+            desc: "Study before 8 AM",
+            icon: "&#9728;",
+            tone: "sunrise",
+            earned: hasEarlyBird
+        },
+        {
+            id: "weekend-warrior",
+            title: "Weekend Warrior",
+            desc: "Study on Saturday or Sunday",
+            icon: "&#128197;",
+            tone: "weekend",
+            earned: hasWeekendWarrior
+        },
+        {
+            id: "focus-master",
+            title: "Focus Master",
+            desc: "Complete 10 timers",
+            icon: "&#127919;",
+            tone: "focus",
+            earned: hasFocusMaster
+        },
+        {
+            id: "two-hour-club",
+            title: "2-Hour Club",
+            desc: "Time: 2 hours",
+            icon: "&#9201;",
+            tone: "time",
+            earned: hasTwoHours
+        },
+        {
+            id: "goal-getter",
+            title: "Goal Getter",
+            desc: "Hit today's daily goal",
+            icon: "&#127881;",
+            tone: "goal",
+            earned: hasGoalGetter
+        },
+        {
+            id: "streak-starter",
+            title: "Streak Starter",
+            desc: "Reach a 3-day streak",
+            icon: "&#128293;",
+            tone: "streak",
+            earned: hasStreakStarter
+        },
+        {
+            id: "streak-builder",
+            title: "Streak Builder",
+            desc: "Reach a 7-day streak",
+            icon: "&#128293;",
+            tone: "streak",
+            earned: hasStreakBuilder
+        },
+        {
+            id: "streak-champion",
+            title: "Streak Champion",
+            desc: "Reach a 14-day streak",
+            icon: "&#127942;",
+            tone: "streak",
+            earned: hasStreakChampion
+        },
+        {
+            id: "task-crusher",
+            title: "Task Crusher",
+            desc: "Complete 10 tasks",
+            icon: "&#9989;",
+            tone: "tasks",
+            earned: hasTaskCrusher
+        },
+        {
+            id: "assignment-ace",
+            title: "Assignment Ace",
+            desc: "Complete 5 assignments",
+            icon: "&#128218;",
+            tone: "assign",
+            earned: hasAssignmentAce
+        },
+        {
+            id: "consistency-king",
+            title: "Consistency",
+            desc: "Study 5 of the last 7 days",
+            icon: "&#128200;",
+            tone: "consistency",
+            earned: hasConsistencyKing
+        },
+        {
+            id: "study-marathon",
+            title: "Study Marathon",
+            desc: "Reach 10 total study hours",
+            icon: "&#9200;",
+            tone: "time",
+            earned: hasStudyMarathon
+        }
+    ];
+}
+
+function renderBadges() {
+    const grid = document.getElementById('badgesGrid');
+    const empty = document.getElementById('badgesEmpty');
+    const countEl = document.getElementById('badgeCount');
+    if (!grid || !empty || !countEl) return;
+
+    const stored = loadEarnedBadges();
+    const badges = getAchievementBadges().map(b => ({
+        ...b,
+        earned: b.earned || stored.includes(b.id)
+    }));
+    const earnedIds = badges.filter(b => b.earned).map(b => b.id);
+    saveEarnedBadges(Array.from(new Set(earnedIds)));
+
+    const earnedBadges = badges.filter(b => b.earned);
+    countEl.textContent = `${earnedBadges.length} earned`;
+
+    if (earnedBadges.length === 0) {
+        grid.innerHTML = '';
+        empty.style.display = 'flex';
+        return;
+    }
+
+    empty.style.display = 'none';
+    grid.innerHTML = earnedBadges.map(b => `
+        <div class="badge-item" data-tone="${b.tone || 'goal'}">
+            <div class="badge-icon">${b.icon}</div>
+            <div class="badge-info">
+                <div class="badge-title">${b.title}</div>
+                <div class="badge-desc">${b.desc}</div>
+                <div class="badge-tag">Achieved</div>
+            </div>
+        </div>
+    `).join('');
+}
+
 // ========== STATISTICS & UI UPDATES ==========
 function updateAllStatistics() {
     updateUI();
     updateTaskStats();
     updateSidebarStats();
+    renderBadges();
     
     if (currentSection === 'statistics') {
         updateCharts();
@@ -7889,6 +8950,16 @@ function initUI() {
     
     showSection(currentSection);
     
+    updateReferralUI();
+    setInterval(syncReferralCountFromFirebase, 30000);
+
+    const chatbotBtn = document.getElementById('chatbotBtn');
+    if (chatbotBtn) {
+        chatbotBtn.addEventListener('click', showChatbotMessage);
+    }
+    scheduleChatbotMessage();
+    updateStatsCompare();
+
     console.log("🎨 UI initialized with theme:", savedTheme);
 }
 
@@ -8026,7 +9097,14 @@ function updateSyncStatus(text, type = "info") {
 
 // ========== THEME MANAGEMENT ==========
 function changeTheme(theme) {
-    document.body.className = theme;
+    const current = localStorage.getItem('studentTheme') || 'light';
+    const referrals = getReferralCount();
+    if (theme === 'premium' && referrals < REFERRAL_TARGET) {
+        document.body.className = 'premium';
+        openReferralModal();
+    } else {
+        document.body.className = theme;
+    }
     localStorage.setItem('studentTheme', theme);
     
     // Recreate charts with new theme colors
