@@ -90,6 +90,15 @@ body.ocean {
   --accent-light: rgba(8, 145, 178, 0.2);
 }
 
+body.ocean .pro-tip {
+  background: linear-gradient(135deg, rgba(8, 145, 178, 0.25), rgba(14, 116, 144, 0.2));
+  border-color: rgba(125, 211, 252, 0.35);
+}
+
+body.ocean .pro-tip strong {
+  color: #e0f2fe;
+}
+
 body.forest {
   --bg: #064e3b;
   --card: #047857;
@@ -99,6 +108,15 @@ body.forest {
   --accent: #059669;
   --accent-dark: #047857;
   --accent-light: rgba(5, 150, 105, 0.2);
+}
+
+body.forest .pro-tip {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.18));
+  border-color: rgba(110, 231, 183, 0.4);
+}
+
+body.forest .pro-tip strong {
+  color: #ecfdf5;
 }
 
 body.sunset {
@@ -112,6 +130,15 @@ body.sunset {
   --accent-light: rgba(234, 88, 12, 0.2);
 }
 
+body.sunset .pro-tip {
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.25), rgba(234, 88, 12, 0.18));
+  border-color: rgba(253, 186, 116, 0.45);
+}
+
+body.sunset .pro-tip strong {
+  color: #fff7ed;
+}
+
 body.purple {
   --bg: #1e1b4b;
   --card: #312e81;
@@ -121,6 +148,15 @@ body.purple {
   --accent: #8b5cf6;
   --accent-dark: #7c3aed;
   --accent-light: rgba(139, 92, 246, 0.2);
+}
+
+body.purple .pro-tip {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.22), rgba(76, 29, 149, 0.2));
+  border-color: rgba(167, 139, 250, 0.4);
+}
+
+body.purple .pro-tip strong {
+  color: #ede9fe;
 }
 
 body.premium {
@@ -153,8 +189,167 @@ body.premium {
   background:
     radial-gradient(900px 420px at 10% -5%, rgba(255, 215, 0, 0.22), transparent 60%),
     radial-gradient(900px 420px at 90% 0%, rgba(30, 58, 138, 0.28), transparent 60%),
+    radial-gradient(620px 360px at 50% 10%, rgba(96, 165, 250, 0.18), transparent 70%),
     repeating-linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0 12px, rgba(30, 58, 138, 0.08) 12px 24px),
     linear-gradient(135deg, #0a1024 0%, #0f1936 55%, #0b1228 100%);
+}
+
+body.premium {
+  font-family: 'Playfair Display', 'Iowan Old Style', 'Palatino Linotype', 'Times New Roman', serif;
+  letter-spacing: 0.1px;
+}
+
+body.premium h1,
+body.premium h2,
+body.premium h3 {
+  font-family: 'Playfair Display', 'Iowan Old Style', 'Palatino Linotype', 'Times New Roman', serif;
+  letter-spacing: 0.3px;
+}
+
+body.premium .content-card,
+body.premium .form-card,
+body.premium .stats-overview-card,
+body.premium .metric-card,
+body.premium .class-card,
+body.premium .leaderboard-item,
+body.premium .badges-card {
+  position: relative;
+  overflow: hidden;
+}
+
+body.premium .content-card::before,
+body.premium .form-card::before,
+body.premium .stats-overview-card::before,
+body.premium .metric-card::before,
+body.premium .class-card::before,
+body.premium .leaderboard-item::before,
+body.premium .badges-card::before {
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.95), rgba(30, 58, 138, 0.85), rgba(255, 215, 0, 0.85));
+}
+
+body.premium .content-card::after,
+body.premium .form-card::after,
+body.premium .stats-overview-card::after,
+body.premium .metric-card::after,
+body.premium .class-card::after,
+body.premium .leaderboard-item::after,
+body.premium .badges-card::after {
+  background: linear-gradient(120deg, transparent 10%, rgba(255, 215, 0, 0.06), transparent 80%);
+  opacity: 0.6;
+}
+
+body.premium .content-card:hover,
+body.premium .form-card:hover,
+body.premium .stats-overview-card:hover,
+body.premium .metric-card:hover,
+body.premium .class-card:hover,
+body.premium .leaderboard-item:hover,
+body.premium .badges-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.55);
+}
+
+body.premium .btn {
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-weight: 700;
+}
+
+body.premium .btn-primary,
+body.premium .btn-success,
+body.premium .btn-warning,
+body.premium .btn-danger {
+  box-shadow: 0 14px 30px rgba(255, 215, 0, 0.22);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  backdrop-filter: blur(8px);
+}
+
+body.premium .btn-primary:hover,
+body.premium .btn-success:hover,
+body.premium .btn-warning:hover,
+body.premium .btn-danger:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 18px 36px rgba(255, 215, 0, 0.35);
+}
+
+body.premium .btn-secondary {
+  background: rgba(15, 23, 42, 0.45);
+  border-color: rgba(255, 215, 0, 0.28);
+  color: #f8fafc;
+}
+
+body.premium .stat-icon {
+  box-shadow: 0 10px 24px rgba(255, 215, 0, 0.2);
+}
+
+body.premium .chart-card {
+  background:
+    radial-gradient(240px 120px at 20% 10%, rgba(255, 215, 0, 0.12), transparent 70%),
+    radial-gradient(200px 120px at 80% 0%, rgba(96, 165, 250, 0.12), transparent 70%),
+    var(--card);
+}
+
+body.premium .toast {
+  border-left-color: #ffd700;
+  background: linear-gradient(135deg, rgba(17, 27, 58, 0.92), rgba(11, 18, 40, 0.95));
+}
+
+.premium-badge {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(30, 58, 138, 0.2));
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  color: #ffd700;
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.35);
+}
+
+body.premium .premium-badge {
+  display: inline-flex;
+}
+
+.premium-sparkle-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2500;
+  overflow: hidden;
+}
+
+.premium-sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 215, 0, 0.75));
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.9);
+  animation: sparkleFloat 2.6s ease-out forwards;
+}
+
+@keyframes sparkleFloat {
+  0% {
+    transform: translateY(0) scale(0.6);
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-120px) scale(1.2);
+    opacity: 0;
+  }
+}
+
+@keyframes premiumShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 body.premium .content-card,
@@ -168,8 +363,9 @@ body.premium .badges-card {
   border-color: rgba(255, 215, 0, 0.28);
   box-shadow: 0 16px 34px rgba(0, 0, 0, 0.55);
   background:
-    linear-gradient(180deg, rgba(255, 215, 0, 0.06), rgba(0, 0, 0, 0.08)),
-    #111b3a;
+    linear-gradient(180deg, rgba(255, 215, 0, 0.08), rgba(0, 0, 0, 0.12)),
+    rgba(17, 27, 58, 0.82);
+  backdrop-filter: blur(14px);
   position: relative;
 }
 
@@ -247,12 +443,20 @@ body.premium .btn-primary {
 }
 
 body.premium .pro-tip {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.18), rgba(30, 58, 138, 0.12));
+  background:
+    linear-gradient(135deg, rgba(255, 215, 0, 0.22), rgba(30, 58, 138, 0.18));
+  border-color: rgba(255, 215, 0, 0.45);
   border-left-color: #ffd700;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
 }
 
 body.premium .pro-tip strong {
-  color: #0f1c3f;
+  background: linear-gradient(90deg, #fff7cc, #ffd700, #8fb3ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
 }
 
 body.premium .stat-icon {
@@ -264,6 +468,8 @@ body.premium .dashboard-header h1 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  background-size: 200% 200%;
+  animation: premiumShimmer 6s ease-in-out infinite;
 }
 
 body.premium .nav-item {
@@ -723,17 +929,20 @@ body {
 
 /* ===== PRO TIPS - MATCHING TEACHER MODE ===== */
 .pro-tip {
-  background: var(--accent-light);
+  background:
+    linear-gradient(135deg, rgba(79, 70, 229, 0.14), rgba(59, 130, 246, 0.1));
+  border: 1px solid rgba(79, 70, 229, 0.28);
   border-left: 4px solid var(--accent);
   padding: var(--spacing-md);
   border-radius: var(--radius);
   margin: var(--spacing-md) 0;
   font-size: 0.875rem;
   position: relative;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
 
 .pro-tip strong {
-  color: var(--accent);
+  color: var(--accent-dark);
   display: block;
   margin-bottom: var(--spacing-xs);
   font-size: 0.9375rem;
@@ -758,12 +967,15 @@ body {
 }
 
 .dark .pro-tip {
-  background: rgba(79, 70, 229, 0.15);
+  background:
+    linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(14, 116, 144, 0.18));
+  border-color: rgba(148, 163, 184, 0.25);
   border-left-color: var(--accent);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
 }
 
 .dark .pro-tip strong {
-  color: var(--accent-light);
+  color: #e2e8f0;
 }
 
 /* ===== AI CHATBOT ===== */
@@ -3781,6 +3993,7 @@ textarea {
     <div class="sidebar-header">
       <div class="student-emoji">👨‍🎓</div>
       <h2>Student Dashboard</h2>
+      <span class="premium-badge">👑 Premium</span>
       <p class="sidebar-subtitle">Track Your Learning Journey</p>
     </div>
     
@@ -4810,6 +5023,7 @@ textarea {
       <div class="content-card" style="margin-top: var(--spacing-lg);">
         <div class="content-header">
           <h2>👑 Premium Theme</h2>
+          <span class="premium-badge">Premium</span>
         </div>
         <div class="content-body">
           <div class="pro-tip">
@@ -5182,6 +5396,7 @@ const REFERRAL_CREDITED_KEY_PREFIX = 'studentReferralCredited_';
 const REFERRAL_PENDING_KEY = 'studentReferralPending';
 const REFERRAL_TARGET = 3;
 const REFERRAL_NOTIFS_SEEN_KEY = 'studentReferralNotifsSeen';
+const REFERRAL_UNLOCKED_KEY = 'studentReferralUnlocked';
 
 function getReferralCount() {
     return parseInt(localStorage.getItem(REFERRAL_KEY) || '0', 10);
@@ -5202,6 +5417,19 @@ function updateReferralUI() {
         statusEl.textContent = count >= REFERRAL_TARGET
             ? "Premium Theme unlocked! Select it in the theme menu."
             : `Refer Grindly Learn to ${REFERRAL_TARGET} friends to unlock the Premium Theme.`;
+    }
+
+    if (count >= REFERRAL_TARGET) {
+        const unlocked = localStorage.getItem(REFERRAL_UNLOCKED_KEY) === 'true';
+        localStorage.setItem('studentTheme', 'premium');
+        document.body.className = 'premium';
+        const themeSelector = document.querySelector('.theme-selector');
+        if (themeSelector) themeSelector.value = 'premium';
+        if (!unlocked) {
+            localStorage.setItem(REFERRAL_UNLOCKED_KEY, 'true');
+            showNotification("Premium unlocked! Enjoy the new look ✨", "success");
+            triggerPremiumSparkles();
+        }
     }
 }
 
@@ -5330,6 +5558,24 @@ function retryPendingReferralCredit() {
     maybeCreditReferral();
 }
 
+function triggerPremiumSparkles() {
+    const layer = document.getElementById('premiumSparkleLayer');
+    if (!layer) return;
+
+    const sparkleCount = 80;
+    for (let i = 0; i < sparkleCount; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'premium-sparkle';
+        sparkle.style.left = `${Math.random() * 100}vw`;
+        sparkle.style.top = `${50 + Math.random() * 40}vh`;
+        sparkle.style.animationDelay = `${Math.random() * 0.4}s`;
+        sparkle.style.width = `${4 + Math.random() * 6}px`;
+        sparkle.style.height = sparkle.style.width;
+        layer.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 3000);
+    }
+}
+
 async function syncReferralCountFromFirebase() {
     if (!currentUserId) return;
     try {
@@ -5380,7 +5626,7 @@ function setupReferralNotifications() {
         const data = snap.val() || {};
         const name = data.name || 'A friend';
 
-        showNotification(`${name} has joined thanks to you`, "success");
+        showNotification(`${name} is studying because of you!`, "success");
         seen.add(snap.key);
         saveSeenReferralNotifs(Array.from(seen));
 
@@ -9388,6 +9634,7 @@ console.log("✅ Student Mode initialized successfully!");
 firebase.analytics().logEvent('page_view', {page_location: window.location.href});
 </script>
 <div id="confettiLayer" aria-hidden="true"></div>
+<div id="premiumSparkleLayer" class="premium-sparkle-layer" aria-hidden="true"></div>
 
 </body>
 </html>
