@@ -1353,6 +1353,41 @@ body {
   transform: translateY(0);
 }
 
+.chatbot-bubble.challenge {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.clap-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2400;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.clap-overlay.show {
+  opacity: 1;
+}
+
+.clap-video {
+  display: none;
+}
+
+.clap-canvas {
+  width: 50vw;
+  height: 50vh;
+  object-fit: contain;
+  background: transparent;
+  opacity: 0.65;
+}
+
 .chatbot-btn {
   width: 150px;
   height: 150px;
@@ -1781,6 +1816,34 @@ textarea {
   padding: var(--spacing-xl);
   text-align: center;
   color: #ffffff;
+}
+
+.forest-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 20, 12, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1600;
+  padding: var(--spacing-lg);
+  backdrop-filter: blur(4px);
+}
+
+.forest-modal.show {
+  display: flex;
+}
+
+.forest-modal-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(4, 54, 35, 0.9));
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 520px;
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: #ecfdf5;
 }
 
 .referral-modal-title {
@@ -4565,6 +4628,20 @@ textarea {
             <div class="pro-tip" id="compareMsg2">Top 10% of users this week.</div>
           </div>
         </div>
+
+        <!-- Daily Challenge -->
+        <div class="content-card" id="dailyChallengeCard" style="margin-top: var(--spacing-xl); display: none;">
+          <div class="content-header">
+            <h2>🏅 Daily Challenge</h2>
+          </div>
+          <div class="content-body">
+            <div class="pro-tip" style="margin: 0 0 var(--spacing-lg) 0;">
+              <strong>Tip:</strong> Complete one small challenge each day to build momentum.
+            </div>
+            <div id="dailyChallengeText" style="font-weight: 700; margin-bottom: var(--spacing-md);"></div>
+            <button class="btn btn-success" id="dailyChallengeDoneBtn" onclick="completeDailyChallenge()">✅ I am done</button>
+          </div>
+        </div>
         
         <!-- Achievement Badges -->
         <div class="content-card badges-card" style="margin-top: var(--spacing-xl);">
@@ -5488,6 +5565,11 @@ textarea {
         <img class="chatbot-img" src="ai-chatbot-transparent.png" alt="Chatbot">
     </button>
 </div>
+<audio id="applauseAudio" src="applause.mp3" preload="auto"></audio>
+<div class="clap-overlay" id="clapOverlay" aria-hidden="true">
+  <video class="clap-video" id="clapVideo" src="clapping.mp4" playsinline muted></video>
+  <canvas class="clap-canvas" id="clapCanvas"></canvas>
+</div>
 <!-- Referral Modal -->
 <div class="referral-modal" id="referralModal">
   <div class="referral-modal-card">
@@ -5517,6 +5599,21 @@ textarea {
     </div>
     <div class="referral-modal-actions">
       <button class="btn btn-warning" onclick="closeRainbowModal()">Close</button>
+    </div>
+  </div>
+</div>
+<!-- Forest Preview Modal -->
+<div class="forest-modal" id="forestModal">
+  <div class="forest-modal-card">
+    <div class="referral-modal-title">🌲 Forest Theme</div>
+    <div class="referral-modal-text" id="forestModalText" style="color: #d1fae5;">
+      Hit a 7‑day streak to unlock the Forest Theme.
+    </div>
+    <div style="margin-bottom: var(--spacing-md); font-weight: 700;">
+      Streak: <span id="forestModalCount">0</span>/7
+    </div>
+    <div class="referral-modal-actions">
+      <button class="btn btn-warning" onclick="closeForestModal()">Close</button>
     </div>
   </div>
 </div>
@@ -5770,6 +5867,140 @@ const chatbotMessages = [
     "You’re building something great."
 ];
 
+const dailyChallenges = [
+    "Finish one focused 25‑minute study session.",
+    "Review notes for 10 minutes without distractions.",
+    "Complete one pending task from your list.",
+    "Summarize one lesson in 3 bullet points.",
+    "Do 10 practice questions in a row.",
+    "Study for 20 minutes and take a 5‑minute break.",
+    "Organize your tasks for tomorrow.",
+    "Rewrite a concept in your own words.",
+    "Teach a concept out loud for 3 minutes.",
+    "Clear one small assignment step today."
+];
+
+const DAILY_CHALLENGE_KEY = 'studentDailyChallenge';
+const DAILY_CHALLENGE_DATE_KEY = 'studentDailyChallengeDate';
+const DAILY_CHALLENGE_DONE_KEY = 'studentDailyChallengeDone';
+const DAILY_CHALLENGE_SHOWN_KEY = 'studentDailyChallengeShown';
+
+function getTodayKeySimple() {
+    return new Date().toDateString();
+}
+
+function getDailyChallenge() {
+    const today = getTodayKeySimple();
+    const savedDate = localStorage.getItem(DAILY_CHALLENGE_DATE_KEY);
+    if (savedDate === today) {
+        return localStorage.getItem(DAILY_CHALLENGE_KEY);
+    }
+    const challenge = dailyChallenges[Math.floor(Math.random() * dailyChallenges.length)];
+    localStorage.setItem(DAILY_CHALLENGE_DATE_KEY, today);
+    localStorage.setItem(DAILY_CHALLENGE_KEY, challenge);
+    localStorage.setItem(DAILY_CHALLENGE_DONE_KEY, 'false');
+    localStorage.setItem(DAILY_CHALLENGE_SHOWN_KEY, '');
+    return challenge;
+}
+
+function renderDailyChallenge() {
+    const card = document.getElementById('dailyChallengeCard');
+    const textEl = document.getElementById('dailyChallengeText');
+    const btn = document.getElementById('dailyChallengeDoneBtn');
+    if (!card || !textEl || !btn) return;
+    const challenge = getDailyChallenge() || "Complete today’s focus block.";
+    textEl.textContent = challenge;
+    const done = localStorage.getItem(DAILY_CHALLENGE_DONE_KEY) === 'true';
+    btn.disabled = done;
+    btn.textContent = done ? "✅ Completed today" : "✅ I am done";
+    card.style.display = done ? 'none' : 'block';
+}
+
+function playApplauseSound() {
+    try {
+        const audio = document.getElementById('applauseAudio') || new Audio('applause.mp3');
+        audio.currentTime = 0;
+        audio.volume = 0.9;
+        audio.play().catch((e) => console.warn("Audio playback blocked:", e));
+        return audio;
+    } catch (e) {
+        console.warn("Audio playback blocked or unavailable:", e);
+        return null;
+    }
+}
+
+function playClappingVideo() {
+    const overlay = document.getElementById('clapOverlay');
+    const video = document.getElementById('clapVideo');
+    const canvas = document.getElementById('clapCanvas');
+    if (!overlay || !video) return;
+    overlay.style.display = 'flex';
+    requestAnimationFrame(() => overlay.classList.add('show'));
+    video.currentTime = 0;
+    const ctx = canvas ? canvas.getContext('2d') : null;
+    const drawFrame = () => {
+        if (!ctx || video.paused || video.ended) return;
+        const vw = video.videoWidth || 0;
+        const vh = video.videoHeight || 0;
+        if (vw && vh) {
+            canvas.width = vw;
+            canvas.height = vh;
+            ctx.drawImage(video, 0, 0, vw, vh);
+            const frame = ctx.getImageData(0, 0, vw, vh);
+            const data = frame.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                if (g > 100 && g > r * 1.2 && g > b * 1.2) {
+                    data[i + 3] = 0;
+                }
+            }
+            ctx.putImageData(frame, 0, 0);
+        }
+        requestAnimationFrame(drawFrame);
+    };
+    video.play().then(() => {
+        requestAnimationFrame(drawFrame);
+    }).catch((e) => console.warn("Video playback blocked:", e));
+    video.onended = () => {
+        stopClappingVideo();
+    };
+}
+
+function stopClappingVideo() {
+    const overlay = document.getElementById('clapOverlay');
+    const video = document.getElementById('clapVideo');
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+    }
+    if (overlay) {
+        overlay.classList.remove('show');
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 250);
+    }
+}
+
+function completeDailyChallenge() {
+    localStorage.setItem(DAILY_CHALLENGE_DONE_KEY, 'true');
+    renderDailyChallenge();
+    const audio = playApplauseSound();
+    playClappingVideo();
+    if (audio) {
+        audio.onended = () => stopClappingVideo();
+    }
+    showNotification("Challenge completed! 🎉", "success");
+}
+
+function showDailyChallengeFromChatbot() {
+    renderDailyChallenge();
+    const card = document.getElementById('dailyChallengeCard');
+    if (card) card.style.display = 'block';
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 const statsCompareMessages = [
     "You studied 20% more than average.",
     "Top 10% of users this week.",
@@ -5798,10 +6029,50 @@ function updateStatsCompare() {
 
 let chatbotTimeoutId = null;
 
+function showChatbotGreetingThenChallenge() {
+    const bubble = document.getElementById('chatbotBubble');
+    if (!bubble) return;
+    bubble.classList.remove('challenge');
+    bubble.textContent = "Hi! Ready to grind?";
+    bubble.classList.add('show');
+    setTimeout(() => {
+        bubble.classList.remove('show');
+        setTimeout(showChallengeBubble, 600);
+    }, 2000);
+}
+
+function showChallengeBubble() {
+    const bubble = document.getElementById('chatbotBubble');
+    if (!bubble) return;
+    const today = getTodayKeySimple();
+    const shownDate = localStorage.getItem(DAILY_CHALLENGE_SHOWN_KEY);
+    if (shownDate !== today && localStorage.getItem(DAILY_CHALLENGE_DONE_KEY) !== 'true') {
+        const challenge = getDailyChallenge();
+        bubble.textContent = `Today's challenge: ${challenge}`;
+        bubble.classList.add('challenge');
+        localStorage.setItem(DAILY_CHALLENGE_SHOWN_KEY, today);
+        showDailyChallengeFromChatbot();
+        bubble.classList.add('show');
+        setTimeout(() => bubble.classList.remove('show'), 12000);
+    }
+}
+
 function showChatbotMessage() {
     const bubble = document.getElementById('chatbotBubble');
     if (!bubble) return;
-    const msg = chatbotMessages[Math.floor(Math.random() * chatbotMessages.length)];
+    const today = getTodayKeySimple();
+    const shownDate = localStorage.getItem(DAILY_CHALLENGE_SHOWN_KEY);
+    let msg = "";
+    if (shownDate !== today && localStorage.getItem(DAILY_CHALLENGE_DONE_KEY) !== 'true') {
+        const challenge = getDailyChallenge();
+        msg = `Today's challenge: ${challenge}`;
+        bubble.classList.add('challenge');
+        localStorage.setItem(DAILY_CHALLENGE_SHOWN_KEY, today);
+        showDailyChallengeFromChatbot();
+    } else {
+        msg = chatbotMessages[Math.floor(Math.random() * chatbotMessages.length)];
+        bubble.classList.remove('challenge');
+    }
     bubble.textContent = msg;
     bubble.classList.add('show');
     setTimeout(() => bubble.classList.remove('show'), 12000);
@@ -5825,6 +6096,7 @@ const REFERRAL_TARGET = 3;
 const REFERRAL_NOTIFS_SEEN_KEY = 'studentReferralNotifsSeen';
 const REFERRAL_UNLOCKED_KEY = 'studentReferralUnlocked';
 const RAINBOW_UNLOCKED_KEY = 'studentRainbowUnlocked';
+const FOREST_UNLOCKED_KEY = 'studentForestUnlocked';
 
 function getReferralCount() {
     return parseInt(localStorage.getItem(REFERRAL_KEY) || '0', 10);
@@ -5945,6 +6217,34 @@ function previewRainbowTheme() {
     const current = localStorage.getItem('studentTheme') || 'light';
     document.body.className = 'rainbow';
     openRainbowModal();
+}
+
+function openForestModal() {
+    const modal = document.getElementById('forestModal');
+    if (modal) modal.classList.add('show');
+    const countEl = document.getElementById('forestModalCount');
+    if (countEl) countEl.textContent = Math.min(studyData.streak || 0, 7);
+    const textEl = document.getElementById('forestModalText');
+    if (textEl) {
+        textEl.textContent = (studyData.streak || 0) >= 7
+            ? "Forest Theme unlocked! Select it in the theme menu."
+            : "Hit a 7‑day streak to unlock the Forest Theme.";
+    }
+}
+
+function closeForestModal() {
+    const modal = document.getElementById('forestModal');
+    if (modal) modal.classList.remove('show');
+    const current = localStorage.getItem('studentTheme') || 'light';
+    document.body.className = current;
+    const themeSelector = document.querySelector('.theme-selector');
+    if (themeSelector) themeSelector.value = current;
+}
+
+function previewForestTheme() {
+    const current = localStorage.getItem('studentTheme') || 'light';
+    document.body.className = 'forest';
+    openForestModal();
 }
 
 function openReferralModal() {
@@ -6712,6 +7012,14 @@ function updateStreakUI() {
         if (!unlocked) {
             localStorage.setItem(RAINBOW_UNLOCKED_KEY, 'true');
             showNotification("🌈 Rainbow theme unlocked for your 30‑day streak!", "success");
+        }
+    }
+
+    if ((studyData.streak || 0) >= 7) {
+        const forestUnlocked = localStorage.getItem(FOREST_UNLOCKED_KEY) === 'true';
+        if (!forestUnlocked) {
+            localStorage.setItem(FOREST_UNLOCKED_KEY, 'true');
+            showNotification("🌲 Forest theme unlocked for your 7‑day streak!", "success");
         }
     }
 
@@ -9814,11 +10122,15 @@ function initUI() {
     const savedTheme = localStorage.getItem('studentTheme') || 'light';
     const isPremiumUnlocked = getReferralCount() >= REFERRAL_TARGET;
     const isRainbowUnlocked = (studyData.streak || 0) >= 30 || localStorage.getItem(RAINBOW_UNLOCKED_KEY) === 'true';
+    const isForestUnlocked = (studyData.streak || 0) >= 7 || localStorage.getItem(FOREST_UNLOCKED_KEY) === 'true';
     let appliedTheme = savedTheme;
     if (savedTheme === 'premium' && !isPremiumUnlocked) {
         appliedTheme = 'light';
     }
     if (savedTheme === 'rainbow' && !isRainbowUnlocked) {
+        appliedTheme = 'light';
+    }
+    if (savedTheme === 'forest' && !isForestUnlocked) {
         appliedTheme = 'light';
     }
     document.body.className = appliedTheme;
@@ -9840,6 +10152,7 @@ function initUI() {
     
     updateReferralUI();
     updateRainbowUI();
+    renderDailyChallenge();
     setInterval(syncReferralCountFromFirebase, 30000);
 
     updateTimeGreeting();
@@ -9850,6 +10163,7 @@ function initUI() {
     if (chatbotBtn) {
         chatbotBtn.addEventListener('click', showChatbotMessage);
     }
+    showChatbotGreetingThenChallenge();
     scheduleChatbotMessage();
     updateStatsCompare();
 
@@ -9892,11 +10206,20 @@ function setupEventListeners() {
             }
         });
     }
+    const forestModal = document.getElementById('forestModal');
+    if (forestModal) {
+        forestModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeForestModal();
+            }
+        });
+    }
     
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeStoryModal();
             closeRainbowModal();
+            closeForestModal();
         }
     });
 }
@@ -10036,6 +10359,12 @@ function changeTheme(theme) {
     if (theme === 'premium' && referrals < REFERRAL_TARGET) {
         document.body.className = 'premium';
         openReferralModal();
+        return;
+    }
+    if (theme === 'forest' && (studyData.streak || 0) < 7 && localStorage.getItem(FOREST_UNLOCKED_KEY) !== 'true') {
+        previewForestTheme();
+        const themeSelector = document.querySelector('.theme-selector');
+        if (themeSelector) themeSelector.value = current;
         return;
     }
     if (theme === 'rainbow' && (studyData.streak || 0) < 30) {
