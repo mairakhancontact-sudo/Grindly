@@ -160,6 +160,41 @@ body.purple .pro-tip strong {
   color: #ede9fe;
 }
 
+body.rainbow {
+  --bg: #0b1020;
+  --card: rgba(255, 255, 255, 0.08);
+  --text: #ffffff;
+  --text-muted: #e5e7ff;
+  --border: rgba(255, 255, 255, 0.2);
+  --accent: #ff7ad9;
+  --accent-dark: #c026d3;
+  --accent-light: rgba(255, 122, 217, 0.2);
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --purple: #8b5cf6;
+  --gradient-primary: linear-gradient(135deg, #ff7ad9, #7c3aed, #3b82f6, #22c55e, #f59e0b, #ef4444);
+  --gradient-success: linear-gradient(135deg, #22c55e, #16a34a);
+  --gradient-warning: linear-gradient(135deg, #f59e0b, #d97706);
+  --gradient-danger: linear-gradient(135deg, #ef4444, #dc2626);
+  --gradient-info: linear-gradient(135deg, #3b82f6, #2563eb);
+  --gradient-purple: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+body.rainbow {
+  background:
+    radial-gradient(800px 420px at 10% -5%, rgba(255, 122, 217, 0.25), transparent 60%),
+    radial-gradient(900px 420px at 90% 0%, rgba(59, 130, 246, 0.22), transparent 60%),
+    radial-gradient(700px 380px at 50% 10%, rgba(34, 197, 94, 0.2), transparent 70%),
+    linear-gradient(135deg, #0b1020 0%, #111b3a 55%, #0b1020 100%);
+}
+
+body.rainbow .pro-tip {
+  background: linear-gradient(135deg, rgba(255, 122, 217, 0.2), rgba(59, 130, 246, 0.18));
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
 body.premium {
   --bg: #0b0d17;
   --card: rgba(12, 14, 24, 0.9);
@@ -501,7 +536,7 @@ body.premium .badges-card {
   background:
     linear-gradient(180deg, rgba(255, 238, 200, 0.12), rgba(255, 215, 116, 0.06)),
     linear-gradient(140deg, rgba(26, 30, 50, 0.78), rgba(12, 15, 30, 0.9));
-  backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(160%);
   position: relative;
 }
 
@@ -937,6 +972,73 @@ body {
   overflow-y: auto;
 }
 
+.heatmap-section {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+}
+
+.heatmap-section h3 {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.heatmap-cell {
+  width: 100%;
+  padding-top: 100%;
+  border-radius: 4px;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.heatmap-cell .heatmap-value {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.heatmap-cell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.heatmap-cell.level-0 { background: rgba(148, 163, 184, 0.25); }
+.heatmap-cell.level-1 { background: rgba(16, 185, 129, 0.25); }
+.heatmap-cell.level-2 { background: rgba(16, 185, 129, 0.5); }
+.heatmap-cell.level-3 { background: rgba(16, 185, 129, 0.75); }
+.heatmap-cell.level-4 { background: rgba(16, 185, 129, 0.95); }
+
+.heatmap-legend {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--spacing-sm);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
 .stories-section h3 {
   font-size: 0.875rem;
   text-transform: uppercase;
@@ -1062,6 +1164,13 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.time-greeting {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-sm);
+  letter-spacing: 0.3px;
 }
 
 .dashboard-subtitle {
@@ -1610,6 +1719,7 @@ textarea {
   justify-content: center;
   z-index: 1500;
   padding: var(--spacing-lg);
+  backdrop-filter: blur(6px);
 }
 
 .referral-modal.show {
@@ -1625,6 +1735,34 @@ textarea {
   box-shadow: var(--shadow-xl);
   padding: var(--spacing-xl);
   text-align: center;
+}
+
+.rainbow-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 20, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1600;
+  padding: var(--spacing-lg);
+  backdrop-filter: blur(4px);
+}
+
+.rainbow-modal.show {
+  display: flex;
+}
+
+.rainbow-modal-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(15, 18, 35, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 520px;
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: #ffffff;
 }
 
 .referral-modal-title {
@@ -2696,6 +2834,12 @@ textarea {
   }
   .badge-desc {
     font-size: 0.75rem;
+  }
+
+  .toast {
+    min-width: 220px;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
   }
 }
 
@@ -4278,6 +4422,20 @@ textarea {
         <!-- Stories will be loaded here -->
       </div>
     </div>
+
+    <!-- Study Heatmap -->
+    <div class="heatmap-section">
+      <h3>🗓️ Study Heatmap</h3>
+      <div class="pro-tip" style="margin: 0 0 var(--spacing-md) 0;">
+        <strong>💡 Heatmap Tip</strong>
+        Each square represents a day. Higher numbers and brighter squares mean more study sessions.
+      </div>
+      <div class="heatmap-grid" id="studyHeatmap"></div>
+      <div class="heatmap-legend">
+        <span>Less</span>
+        <span>More</span>
+      </div>
+    </div>
     
     <div style="margin-top: var(--spacing-xl);">
       <select class="theme-selector" onchange="changeTheme(this.value)" style="width: 100%; padding: 0.875rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text);">
@@ -4287,6 +4445,7 @@ textarea {
         <option value="forest">🌲 Forest Theme</option>
         <option value="sunset">🌅 Sunset Theme</option>
         <option value="purple">💜 Purple Theme</option>
+        <option value="rainbow">🌈 Rainbow Theme</option>
         <option value="premium">👑 Premium Theme</option>
       </select>
     </div>
@@ -4311,6 +4470,7 @@ textarea {
     <!-- Dashboard Header -->
     <div class="dashboard-header" id="dashboardHeader">
       <h1>Welcome to Your Learning Dashboard</h1>
+      <p class="time-greeting" id="timeGreeting"></p>
       <p class="dashboard-subtitle" id="dashboardSubtitle">Track your progress, manage tasks, and achieve your study goals</p>
       
       <!-- UPDATED: Compact Controls Bar -->
@@ -5256,6 +5416,27 @@ textarea {
           </div>
         </div>
       </div>
+      <div class="content-card" style="margin-top: var(--spacing-lg);">
+        <div class="content-header">
+          <h2>🌈 Rainbow Theme</h2>
+          <span class="premium-badge" id="rainbowBadge">🔒 Locked</span>
+        </div>
+        <div class="content-body">
+          <div class="pro-tip">
+            <strong>💡 How To Unlock</strong>
+            Hit a 30‑day streak to unlock the Rainbow Theme.
+          </div>
+          <div class="pro-tip" id="rainbowStatusMsg">
+            Reach a 30‑day streak to unlock the Rainbow Theme.
+          </div>
+          <div style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
+            <button class="btn btn-warning" onclick="previewRainbowTheme()">👁️ Preview Rainbow</button>
+          </div>
+          <div style="margin-top: var(--spacing-md); font-weight: 600;">
+            Streak: <span id="rainbowStreakCount">0</span>/30
+          </div>
+        </div>
+      </div>
               <button class="btn-submit" onclick="saveProfileSettings()" style="margin-top: var(--spacing-lg);">
                 💾 Save Profile Settings
               </button>
@@ -5303,6 +5484,21 @@ textarea {
       <button class="btn btn-secondary" onclick="copyReferralLink()">📤 Copy Referral Link</button>
       <button class="btn btn-success" onclick="markReferral()">✅ I Referred a Friend</button>
       <button class="btn btn-warning" onclick="closeReferralModal()">Close</button>
+    </div>
+  </div>
+</div>
+<!-- Rainbow Preview Modal -->
+<div class="rainbow-modal" id="rainbowModal">
+  <div class="rainbow-modal-card">
+    <div class="referral-modal-title">🌈 Rainbow Theme</div>
+    <div class="referral-modal-text" id="rainbowModalText" style="color: #e5e7ff;">
+      Hit a 30‑day streak to unlock the Rainbow Theme.
+    </div>
+    <div style="margin-bottom: var(--spacing-md); font-weight: 700;">
+      Streak: <span id="rainbowModalCount">0</span>/30
+    </div>
+    <div class="referral-modal-actions">
+      <button class="btn btn-warning" onclick="closeRainbowModal()">Close</button>
     </div>
   </div>
 </div>
@@ -5610,6 +5806,7 @@ const REFERRAL_PENDING_KEY = 'studentReferralPending';
 const REFERRAL_TARGET = 3;
 const REFERRAL_NOTIFS_SEEN_KEY = 'studentReferralNotifsSeen';
 const REFERRAL_UNLOCKED_KEY = 'studentReferralUnlocked';
+const RAINBOW_UNLOCKED_KEY = 'studentRainbowUnlocked';
 
 function getReferralCount() {
     return parseInt(localStorage.getItem(REFERRAL_KEY) || '0', 10);
@@ -5683,13 +5880,53 @@ async function markReferral() {
 
 function previewPremiumTheme() {
     const current = localStorage.getItem('studentTheme') || 'light';
+    document.body.dataset.previewTheme = current;
     document.body.className = 'premium';
     showNotification("Previewing Premium Theme…", "info");
-    setTimeout(() => {
-        document.body.className = current;
-        const themeSelector = document.querySelector('.theme-selector');
-        if (themeSelector) themeSelector.value = current;
-    }, 8000);
+    openReferralModal();
+}
+
+function updateRainbowUI() {
+    const streak = studyData.streak || 0;
+    const unlocked = streak >= 30 || localStorage.getItem(RAINBOW_UNLOCKED_KEY) === 'true';
+    const statusEl = document.getElementById('rainbowStatusMsg');
+    const countEl = document.getElementById('rainbowStreakCount');
+    const badgeEl = document.getElementById('rainbowBadge');
+    if (countEl) countEl.textContent = Math.min(streak, 30);
+    if (badgeEl) badgeEl.textContent = unlocked ? '🌈 Unlocked' : '🔒 Locked';
+    if (statusEl) {
+        statusEl.textContent = unlocked
+            ? "Rainbow Theme unlocked! Select it in the theme menu."
+            : "Reach a 30‑day streak to unlock the Rainbow Theme.";
+    }
+}
+
+function openRainbowModal() {
+    const modal = document.getElementById('rainbowModal');
+    if (modal) modal.classList.add('show');
+    const countEl = document.getElementById('rainbowModalCount');
+    if (countEl) countEl.textContent = Math.min(studyData.streak || 0, 30);
+    const textEl = document.getElementById('rainbowModalText');
+    if (textEl) {
+        textEl.textContent = (studyData.streak || 0) >= 30
+            ? "Rainbow Theme unlocked! Select it in the theme menu."
+            : "Hit a 30‑day streak to unlock the Rainbow Theme.";
+    }
+}
+
+function closeRainbowModal() {
+    const modal = document.getElementById('rainbowModal');
+    if (modal) modal.classList.remove('show');
+    const current = localStorage.getItem('studentTheme') || 'light';
+    document.body.className = current;
+    const themeSelector = document.querySelector('.theme-selector');
+    if (themeSelector) themeSelector.value = current;
+}
+
+function previewRainbowTheme() {
+    const current = localStorage.getItem('studentTheme') || 'light';
+    document.body.className = 'rainbow';
+    openRainbowModal();
 }
 
 function openReferralModal() {
@@ -5702,14 +5939,20 @@ function closeReferralModal() {
     const modal = document.getElementById('referralModal');
     if (modal) modal.classList.remove('show');
     const referrals = getReferralCount();
+    const previewTheme = document.body.dataset.previewTheme;
+    if (previewTheme) {
+        document.body.className = previewTheme;
+        localStorage.setItem('studentTheme', previewTheme);
+        const themeSelector = document.querySelector('.theme-selector');
+        if (themeSelector) themeSelector.value = previewTheme;
+        delete document.body.dataset.previewTheme;
+        return;
+    }
     if (referrals < REFERRAL_TARGET) {
-        const current = localStorage.getItem('studentTheme') || 'light';
-        if (current === 'premium') {
-            localStorage.setItem('studentTheme', 'light');
-            document.body.className = 'light';
-            const themeSelector = document.querySelector('.theme-selector');
-            if (themeSelector) themeSelector.value = 'light';
-        }
+        localStorage.setItem('studentTheme', 'dark');
+        document.body.className = 'dark';
+        const themeSelector = document.querySelector('.theme-selector');
+        if (themeSelector) themeSelector.value = 'dark';
     }
 }
 
@@ -6445,6 +6688,16 @@ function updateStreakUI() {
     }
     
     updateStreakButton();
+
+    if ((studyData.streak || 0) >= 30) {
+        const unlocked = localStorage.getItem(RAINBOW_UNLOCKED_KEY) === 'true';
+        if (!unlocked) {
+            localStorage.setItem(RAINBOW_UNLOCKED_KEY, 'true');
+            showNotification("🌈 Rainbow theme unlocked for your 30‑day streak!", "success");
+        }
+    }
+
+    updateRainbowUI();
 }
 
 function getTodayKey() {
@@ -9265,12 +9518,59 @@ function renderBadges() {
     `).join('');
 }
 
+// ========== STUDY HEATMAP ==========
+function renderStudyHeatmap() {
+    const grid = document.getElementById('studyHeatmap');
+    if (!grid) return;
+
+    const daysToShow = 84; // 12 weeks
+    const today = new Date();
+    const dayStats = new Map();
+    const daily = studyData.dailyStats || [];
+    if (daily.length > 0) {
+        daily.forEach(stat => {
+            if (stat?.date) {
+                dayStats.set(stat.date, stat.sessions || 0);
+            }
+        });
+    } else {
+        // Fallback: aggregate from studySessions if dailyStats is empty
+        (studyData.studySessions || []).forEach(session => {
+            if (!session?.date) return;
+            const key = new Date(session.date).toDateString();
+            dayStats.set(key, (dayStats.get(key) || 0) + 1);
+        });
+    }
+
+    const cells = [];
+    for (let i = daysToShow - 1; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const key = d.toDateString();
+        const sessions = dayStats.get(key) || 0;
+        const level =
+            sessions >= 4 ? 4 :
+            sessions === 3 ? 3 :
+            sessions === 2 ? 2 :
+            sessions === 1 ? 1 : 0;
+        const title = `${d.toLocaleDateString()}: ${sessions} session${sessions === 1 ? '' : 's'}`;
+        cells.push(
+            `<div class="heatmap-cell level-${level}" title="${title}">` +
+            `<span class="heatmap-value">${sessions}</span>` +
+            `</div>`
+        );
+    }
+
+    grid.innerHTML = cells.join('');
+}
+
 // ========== STATISTICS & UI UPDATES ==========
 function updateAllStatistics() {
     updateUI();
     updateTaskStats();
     updateSidebarStats();
     renderBadges();
+    renderStudyHeatmap();
     
     if (currentSection === 'statistics') {
         updateCharts();
@@ -9495,7 +9795,14 @@ function updateDashboardHeader(sectionId) {
 function initUI() {
     const savedTheme = localStorage.getItem('studentTheme') || 'light';
     const isPremiumUnlocked = getReferralCount() >= REFERRAL_TARGET;
-    const appliedTheme = (savedTheme === 'premium' && isPremiumUnlocked) ? 'premium' : 'light';
+    const isRainbowUnlocked = (studyData.streak || 0) >= 30 || localStorage.getItem(RAINBOW_UNLOCKED_KEY) === 'true';
+    let appliedTheme = savedTheme;
+    if (savedTheme === 'premium' && !isPremiumUnlocked) {
+        appliedTheme = 'light';
+    }
+    if (savedTheme === 'rainbow' && !isRainbowUnlocked) {
+        appliedTheme = 'light';
+    }
     document.body.className = appliedTheme;
     const themeSelector = document.querySelector('.theme-selector');
     if (themeSelector) themeSelector.value = appliedTheme;
@@ -9503,6 +9810,7 @@ function initUI() {
     
     loadMotivationalQuote();
     loadInspiringStories();
+    renderStudyHeatmap();
     
     const nameField = document.getElementById('studentName');
     if (nameField && currentUserName) nameField.value = currentUserName;
@@ -9513,7 +9821,12 @@ function initUI() {
     showSection(currentSection);
     
     updateReferralUI();
+    updateRainbowUI();
     setInterval(syncReferralCountFromFirebase, 30000);
+
+    updateTimeGreeting();
+    applyTimeTheme();
+    setInterval(updateTimeGreeting, 600000);
 
     const chatbotBtn = document.getElementById('chatbotBtn');
     if (chatbotBtn) {
@@ -9552,10 +9865,20 @@ function setupEventListeners() {
             closeStoryModal();
         }
     });
+
+    const rainbowModal = document.getElementById('rainbowModal');
+    if (rainbowModal) {
+        rainbowModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRainbowModal();
+            }
+        });
+    }
     
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeStoryModal();
+            closeRainbowModal();
         }
     });
 }
@@ -9591,6 +9914,37 @@ function loadMotivationalQuote() {
     const randomQuote = inspiringQuotes[Math.floor(Math.random() * inspiringQuotes.length)];
     document.getElementById('dailyQuote').textContent = `"${randomQuote.text}"`;
     document.getElementById('quoteAuthor').textContent = `— ${randomQuote.author}`;
+}
+
+// ========== TIME OF DAY THEMING + GREETING ==========
+function getTimeGreeting() {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return "Good morning! Ready to grind?";
+    if (hour >= 12 && hour < 18) return "Good afternoon! Keep the momentum going.";
+    if (hour >= 18 && hour < 22) return "Good evening! Time to make progress.";
+    return "Late night study session?";
+}
+
+function isDaytime() {
+    const hour = new Date().getHours();
+    return hour >= 6 && hour < 18;
+}
+
+function updateTimeGreeting() {
+    const el = document.getElementById('timeGreeting');
+    if (el) el.textContent = getTimeGreeting();
+}
+
+function applyTimeTheme() {
+    const savedTheme = localStorage.getItem('studentTheme') || 'light';
+    if (savedTheme !== 'light' && savedTheme !== 'dark') return;
+    const nextTheme = isDaytime() ? 'light' : 'dark';
+    if (savedTheme !== nextTheme) {
+        document.body.className = nextTheme;
+        localStorage.setItem('studentTheme', nextTheme);
+        const themeSelector = document.querySelector('.theme-selector');
+        if (themeSelector) themeSelector.value = nextTheme;
+    }
 }
 
 function newQuote() {
@@ -9664,6 +10018,13 @@ function changeTheme(theme) {
     if (theme === 'premium' && referrals < REFERRAL_TARGET) {
         document.body.className = 'premium';
         openReferralModal();
+        return;
+    }
+    if (theme === 'rainbow' && (studyData.streak || 0) < 30) {
+        previewRainbowTheme();
+        const themeSelector = document.querySelector('.theme-selector');
+        if (themeSelector) themeSelector.value = current;
+        return;
     } else {
         document.body.className = theme;
     }
