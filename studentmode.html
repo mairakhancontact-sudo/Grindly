@@ -5178,10 +5178,10 @@ function scheduleChatbotMessage() {
 // ========== PREMIUM THEME REFERRALS ==========
 const REFERRAL_KEY = 'studentPremiumReferrals';
 const REFERRAL_REFERRER_KEY = 'studentReferralReferrer';
-const REFERRAL_CREDITED_KEY = 'studentReferralCredited';
+const REFERRAL_CREDITED_KEY_PREFIX = 'studentReferralCredited_';
+const REFERRAL_PENDING_KEY = 'studentReferralPending';
 const REFERRAL_TARGET = 3;
 const REFERRAL_NOTIFS_SEEN_KEY = 'studentReferralNotifsSeen';
-const REFERRAL_PENDING_KEY = 'studentReferralPending';
 
 function getReferralCount() {
     return parseInt(localStorage.getItem(REFERRAL_KEY) || '0', 10);
@@ -5218,7 +5218,7 @@ async function markReferral() {
     copyReferralLink();
 
     if (!currentUserId) {
-        showNotification("stop lying bro", "warning");
+        showNotification("Referral not available yet. Try again in a moment.", "warning");
         return;
     }
 
@@ -5230,13 +5230,13 @@ async function markReferral() {
         if (serverCount > localCount) {
             setReferralCount(serverCount);
             updateReferralUI();
-            showNotification("Referral counted! ✅", "success");
+            showNotification("Referral counted!", "success");
         } else {
-            showNotification("stop lying bro", "warning");
+            showNotification("Referral not verified yet. Your friend must open your link and log a study session.", "warning");
         }
     } catch (e) {
         console.warn("Failed to verify referral count:", e);
-        showNotification("stop lying bro", "warning");
+        showNotification("Could not verify referral yet. Please try again soon.", "warning");
     }
 }
 
@@ -5278,77 +5278,56 @@ function captureReferralFromUrl() {
         const ref = params.get('ref');
         if (ref && ref.startsWith('student_') && ref !== currentUserId) {
             localStorage.setItem(REFERRAL_REFERRER_KEY, ref);
+            localStorage.setItem(REFERRAL_PENDING_KEY, 'true');
         }
     } catch (e) {
         console.warn("Failed to parse referral URL:", e);
     }
 }
 
-function queuePendingReferral(referrerId) {
-    try {
-        localStorage.setItem(REFERRAL_PENDING_KEY, JSON.stringify({
-            referrerId,
-            userId: currentUserId,
-            name: currentUserName || 'A friend',
-            ts: Date.now()
-        }));
-    } catch (e) {
-        console.warn("Failed to queue pending referral:", e);
-    }
+function getReferralCreditedKey(referrerId) {
+    return `${REFERRAL_CREDITED_KEY_PREFIX}${referrerId}`;
 }
 
-async function creditReferralForReferrer(referrerId) {
-    const path = `users/${referrerId}/referralCount`;
-    const next = await firebaseIncrement(path, REFERRAL_TARGET);
-    if (next === null || next === undefined) return false;
-    await firebaseSet(`users/${referrerId}/referralNotifications/${currentUserId}`, {
-        name: currentUserName || 'A friend',
-        joinedAt: new Date().toISOString()
-    });
-    return true;
-}
-
-async function processPendingReferral() {
-    try {
-        const raw = localStorage.getItem(REFERRAL_PENDING_KEY);
-        if (!raw) return;
-        const data = JSON.parse(raw);
-        if (!data || !data.referrerId || data.referrerId === currentUserId) {
-            localStorage.removeItem(REFERRAL_PENDING_KEY);
-            return;
-        }
-        if (!database || !currentUser) return;
-
-        const ok = await creditReferralForReferrer(data.referrerId);
-        if (ok) {
-            localStorage.setItem(REFERRAL_CREDITED_KEY, 'true');
-            localStorage.removeItem(REFERRAL_PENDING_KEY);
-        }
-    } catch (e) {
-        console.warn("Failed to process pending referral:", e);
-    }
+function hasStudyActivity() {
+    return ((studyData?.studySessions || []).length > 0) ||
+        ((studyData?.totalMinutes || 0) > 0) ||
+        !!studyData?.lastStudyDate;
 }
 
 async function maybeCreditReferral() {
-    const credited = localStorage.getItem(REFERRAL_CREDITED_KEY);
-    if (credited === 'true') return;
-
     const referrerId = localStorage.getItem(REFERRAL_REFERRER_KEY);
     if (!referrerId || referrerId === currentUserId) return;
 
-    try {
-        if (!database || !currentUser) {
-            queuePendingReferral(referrerId);
-            return;
-        }
+    const creditedKey = getReferralCreditedKey(referrerId);
+    const credited = localStorage.getItem(creditedKey);
+    if (credited === 'true') return;
 
-        const ok = await creditReferralForReferrer(referrerId);
-        if (ok) {
-            localStorage.setItem(REFERRAL_CREDITED_KEY, 'true');
-        }
+    if (!hasStudyActivity()) return;
+
+    if (!database || !currentUser) {
+        localStorage.setItem(REFERRAL_PENDING_KEY, 'true');
+        return;
+    }
+
+    try {
+        const path = `users/${referrerId}/referralCount`;
+        const next = await firebaseIncrement(path, REFERRAL_TARGET);
+        if (next === null || next === undefined) return;
+        await firebaseSet(`users/${referrerId}/referralNotifications/${currentUserId}`, {
+            name: currentUserName || 'A friend',
+            joinedAt: new Date().toISOString()
+        });
+        localStorage.setItem(creditedKey, 'true');
+        localStorage.removeItem(REFERRAL_PENDING_KEY);
     } catch (e) {
         console.warn("Failed to credit referral:", e);
     }
+}
+
+function retryPendingReferralCredit() {
+    if (localStorage.getItem(REFERRAL_PENDING_KEY) !== 'true') return;
+    maybeCreditReferral();
 }
 
 async function syncReferralCountFromFirebase() {
@@ -5795,7 +5774,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.log("📝 Our Student ID:", currentUserId);
             
             localStorage.setItem('studentFirebaseUid', currentUser.uid);
-            await processPendingReferral();
+            retryPendingReferralCredit();
             
         } catch (authError) {
             console.error("❌ Anonymous sign-in failed:", authError);
@@ -9412,3 +9391,4 @@ firebase.analytics().logEvent('page_view', {page_location: window.location.href}
 
 </body>
 </html>
+
