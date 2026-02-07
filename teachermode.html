@@ -7840,7 +7840,7 @@ function exportAnalytics() {
 // ========== PAGE INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', function() {
   console.log("👩‍🏫 Teacher Mode loaded");
-  
+  setTimeout(setupInsightChatbot, 2000);
   // Ensure clean separation first
   ensureBrowserSeparation();
   
@@ -8004,6 +8004,658 @@ function openFeedbackForm() {
 // Add to all pages (guard analytics when SDK isn't loaded)
 if (firebase.analytics) {
   firebase.analytics().logEvent('page_view', { page_location: window.location.href });
+}
+
+// ========== TEACHER MODE AI CHATBOT (Real Student Analysis) ==========
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(createTeacherChatbot, 2000); // Wait a bit longer for data to load
+});
+
+async function createTeacherChatbot() {
+    if (document.getElementById('teacherChatbotBtn')) return;
+    
+    const feedbackBtn = document.querySelector('.feedback-btn');
+    let feedbackBottom = 20;
+    
+    if (feedbackBtn) {
+        const rect = feedbackBtn.getBoundingClientRect();
+        feedbackBottom = window.innerHeight - rect.top + 15;
+    }
+    
+    const chatbotContainer = document.createElement('div');
+    chatbotContainer.className = 'teacher-chatbot-fab';
+    chatbotContainer.innerHTML = `
+        <div class="teacher-chatbot-bubble" id="teacherChatbotBubble">
+            <div class="bubble-header">
+                <span class="bubble-icon">🤖</span>
+                <span class="bubble-title">AI Teaching Assistant</span>
+            </div>
+            <div class="bubble-message">Analyzing student data...</div>
+            <div class="bubble-stats" id="chatbotStats"></div>
+        </div>
+        <button class="teacher-chatbot-btn" id="teacherChatbotBtn" aria-label="AI Teaching Assistant">
+            <img class="teacher-chatbot-img" src="ai-chatbot-transparent.png" alt="AI Teaching Assistant">
+        </button>
+    `;
+    
+    document.body.appendChild(chatbotContainer);
+    
+    const styles = `
+        /* Teacher Mode Chatbot - Bottom Right - BIG IMAGE */
+        .teacher-chatbot-fab {
+            position: fixed !important;
+            right: 30px !important;
+            bottom: ${feedbackBottom + 20}px !important;
+            z-index: 9998 !important;
+            display: flex !important;
+            flex-direction: column-reverse !important;
+            align-items: flex-end !important;
+            gap: 20px !important;
+        }
+        
+        .teacher-chatbot-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            border: 3px solid rgba(255, 255, 255, 0.3) !important;
+            border-radius: 22px !important;
+            padding: 20px !important;
+            width: 380px !important;
+            max-width: 380px !important;
+            min-height: 160px !important;
+            opacity: 0 !important;
+            transform: translateX(30px) scale(0.95) !important;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3), 
+                        0 0 0 1px rgba(255, 255, 255, 0.15) inset !important;
+            font-family: 'Poppins', sans-serif !important;
+            pointer-events: none !important;
+            margin-bottom: 15px !important;
+            overflow: hidden !important;
+        }
+        
+        .teacher-chatbot-bubble.show {
+            opacity: 1 !important;
+            transform: translateX(0) scale(1) !important;
+        }
+        
+        .bubble-header {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            margin-bottom: 10px !important;
+            position: relative !important;
+            z-index: 1 !important;
+        }
+        
+        .bubble-icon {
+            font-size: 28px !important;
+            animation: pulse 2s infinite !important;
+        }
+        
+        .bubble-title {
+            font-size: 18px !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.5px !important;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+        }
+        
+        .bubble-message {
+            font-size: 15px !important;
+            font-weight: 500 !important;
+            line-height: 1.6 !important;
+            position: relative !important;
+            z-index: 1 !important;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+            margin-bottom: 10px !important;
+        }
+        
+        .bubble-stats {
+            font-size: 13px !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+            padding-top: 8px !important;
+            margin-top: 8px !important;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* BIGGER CHATBOT IMAGE */
+        .teacher-chatbot-btn {
+            width: 200px !important;
+            height: 200px !important;
+            border: none !important;
+            background: transparent !important;
+            cursor: pointer !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.3s ease !important;
+            order: 1 !important;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4)) !important;
+        }
+        
+        .teacher-chatbot-btn:hover {
+            transform: scale(1.1) rotate(3deg) !important;
+            filter: drop-shadow(0 10px 20px rgba(102, 126, 234, 0.5)) !important;
+        }
+        
+        .teacher-chatbot-img {
+            width: 200px !important;
+            height: 200px !important;
+            object-fit: contain !important;
+            border-radius: 0 !important;
+            animation: floatAnimation 3s ease-in-out infinite !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .teacher-chatbot-btn:hover .teacher-chatbot-img {
+            filter: brightness(1.15) saturate(1.4) !important;
+        }
+        
+        @keyframes floatAnimation {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg); 
+            }
+            33% { 
+                transform: translateY(-15px) rotate(-1deg); 
+            }
+            66% { 
+                transform: translateY(8px) rotate(1deg); 
+            }
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .teacher-chatbot-fab {
+                right: 15px !important;
+                bottom: ${feedbackBottom + 15}px !important;
+            }
+            
+            .teacher-chatbot-bubble {
+                width: 320px !important;
+                max-width: 320px !important;
+                min-height: 140px !important;
+            }
+            
+            .teacher-chatbot-btn {
+                width: 160px !important;
+                height: 160px !important;
+            }
+            
+            .teacher-chatbot-img {
+                width: 160px !important;
+                height: 160px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .teacher-chatbot-fab {
+                right: 10px !important;
+                bottom: ${feedbackBottom + 10}px !important;
+            }
+            
+            .teacher-chatbot-bubble {
+                width: 280px !important;
+                max-width: 280px !important;
+                min-height: 130px !important;
+            }
+            
+            .teacher-chatbot-btn {
+                width: 140px !important;
+                height: 140px !important;
+            }
+            
+            .teacher-chatbot-img {
+                width: 140px !important;
+                height: 140px !important;
+            }
+        }
+    `;
+    
+    const styleElement = document.createElement('style');
+    styleElement.textContent = styles;
+    document.head.appendChild(styleElement);
+    
+    // ========== REAL STUDENT DATA ANALYSIS ==========
+    let currentTeacherId = null;
+    let teacherClasses = [];
+    
+    // Get current teacher ID from localStorage or Firebase auth
+    async function getTeacherData() {
+        try {
+            // Try to get from Firebase auth first
+            if (firebase.auth().currentUser) {
+                currentTeacherId = firebase.auth().currentUser.uid;
+            }
+            
+            // Fallback to localStorage
+            if (!currentTeacherId) {
+                const saved = localStorage.getItem('teacherId');
+                if (saved && saved.startsWith('teacher_')) {
+                    currentTeacherId = saved;
+                }
+            }
+            
+            return currentTeacherId;
+        } catch (error) {
+            console.error("Error getting teacher data:", error);
+            return null;
+        }
+    }
+    
+    // Get all classes for this teacher
+    async function getTeacherClasses() {
+        if (!currentTeacherId) return [];
+        
+        try {
+            const classesRef = firebase.database().ref('classes');
+            const snapshot = await classesRef.once('value');
+            const allClasses = snapshot.val() || {};
+            
+            // Filter classes where teacherId matches
+            teacherClasses = [];
+            for (const [classCode, classData] of Object.entries(allClasses)) {
+                if (classData.teacherId === currentTeacherId) {
+                    teacherClasses.push({
+                        code: classCode,
+                        name: classData.name || `Class ${classCode}`,
+                        studentCount: classData.students ? Object.keys(classData.students).length : 0
+                    });
+                }
+            }
+            
+            return teacherClasses;
+        } catch (error) {
+            console.error("Error getting teacher classes:", error);
+            return [];
+        }
+    }
+    
+    // Get detailed student data for a specific class
+    async function getClassStudents(classCode) {
+        try {
+            const studentsRef = firebase.database().ref(`classes/${classCode}/students`);
+            const snapshot = await studentsRef.once('value');
+            const studentsData = snapshot.val() || {};
+            
+            const students = [];
+            for (const [studentId, studentData] of Object.entries(studentsData)) {
+                if (!studentData.isTeacherAccount) { // Filter out teacher accounts
+                    students.push({
+                        id: studentId,
+                        name: studentData.name || `Student ${studentId.substring(0, 6)}`,
+                        streak: studentData.streak || 0,
+                        totalHours: studentData.totalStudyHours || (studentData.totalMinutes / 60).toFixed(1) || 0,
+                        lastActive: studentData.lastActive || null,
+                        points: studentData.points || 0,
+                        isActive: isStudentActive(studentData.lastActive)
+                    });
+                }
+            }
+            
+            return students;
+        } catch (error) {
+            console.error(`Error getting students for class ${classCode}:`, error);
+            return [];
+        }
+    }
+    
+    // Check if student is active (studied in last 3 days)
+    function isStudentActive(lastActiveDate) {
+        if (!lastActiveDate) return false;
+        
+        const lastActive = new Date(lastActiveDate);
+        const now = new Date();
+        const diffDays = Math.floor((now - lastActive) / (1000 * 60 * 60 * 24));
+        
+        return diffDays <= 3;
+    }
+    
+    // Analyze students and generate insights
+    async function analyzeStudents() {
+        if (teacherClasses.length === 0) return null;
+        
+        const analysis = {
+            totalStudents: 0,
+            activeStudents: 0,
+            strugglingStudents: [],
+            excellingStudents: [],
+            averageStreak: 0,
+            averageHours: 0,
+            classStats: [],
+            trends: []
+        };
+        
+        let totalStreak = 0;
+        let totalHours = 0;
+        let studentCount = 0;
+        
+        // Analyze each class
+        for (const classInfo of teacherClasses) {
+            const students = await getClassStudents(classInfo.code);
+            const classAnalysis = {
+                classCode: classInfo.code,
+                className: classInfo.name,
+                totalStudents: students.length,
+                activeCount: 0,
+                avgStreak: 0,
+                avgHours: 0,
+                struggling: [],
+                excelling: []
+            };
+            
+            let classStreak = 0;
+            let classHours = 0;
+            
+            for (const student of students) {
+                // Count active students
+                if (student.isActive) classAnalysis.activeCount++;
+                
+                // Track averages
+                classStreak += student.streak;
+                classHours += parseFloat(student.totalHours);
+                
+                // Identify struggling students (streak < 2 and not active)
+                if (student.streak < 2 && !student.isActive) {
+                    classAnalysis.struggling.push(student);
+                    analysis.strugglingStudents.push({
+                        ...student,
+                        className: classInfo.name
+                    });
+                }
+                
+                // Identify excelling students (streak > 7 and active)
+                if (student.streak > 7 && student.isActive) {
+                    classAnalysis.excelling.push(student);
+                    analysis.excellingStudents.push({
+                        ...student,
+                        className: classInfo.name
+                    });
+                }
+            }
+            
+            // Calculate class averages
+            if (students.length > 0) {
+                classAnalysis.avgStreak = (classStreak / students.length).toFixed(1);
+                classAnalysis.avgHours = (classHours / students.length).toFixed(1);
+                
+                totalStreak += classStreak;
+                totalHours += classHours;
+                studentCount += students.length;
+            }
+            
+            analysis.classStats.push(classAnalysis);
+            analysis.totalStudents += students.length;
+            analysis.activeStudents += classAnalysis.activeCount;
+        }
+        
+        // Calculate overall averages
+        if (studentCount > 0) {
+            analysis.averageStreak = (totalStreak / studentCount).toFixed(1);
+            analysis.averageHours = (totalHours / studentCount).toFixed(1);
+        }
+        
+        // Generate trends
+        if (analysis.strugglingStudents.length > 0) {
+            analysis.trends.push({
+                type: 'concern',
+                message: `${analysis.strugglingStudents.length} students are struggling (low streak, inactive)`
+            });
+        }
+        
+        if (analysis.excellingStudents.length > 0) {
+            analysis.trends.push({
+                type: 'positive',
+                message: `${analysis.excellingStudents.length} students are excelling (streak > 7, active)`
+            });
+        }
+        
+        if (analysis.activeStudents / analysis.totalStudents < 0.5) {
+            analysis.trends.push({
+                type: 'concern',
+                message: `Only ${Math.round((analysis.activeStudents / analysis.totalStudents) * 100)}% of students are active`
+            });
+        }
+        
+        return analysis;
+    }
+    
+    // Generate insight message based on real analysis
+    function generateInsightFromAnalysis(analysis) {
+        if (!analysis) {
+            return {
+                icon: '🤔',
+                message: "No student data available yet. Check back when students start studying.",
+                type: 'info'
+            };
+        }
+        
+        // Randomly pick what type of insight to show
+        const insightTypes = ['struggling', 'excelling', 'trend', 'recommendation'];
+        const selectedType = insightTypes[Math.floor(Math.random() * insightTypes.length)];
+        
+        switch(selectedType) {
+            case 'struggling':
+                if (analysis.strugglingStudents.length > 0) {
+                    const student = analysis.strugglingStudents[Math.floor(Math.random() * analysis.strugglingStudents.length)];
+                    return {
+                        icon: '⚠️',
+                        message: `${student.name} in ${student.className} hasn't studied in a while (streak: ${student.streak}). Consider checking in.`,
+                        type: 'concern'
+                    };
+                }
+                // Fall through if no struggling students
+                
+            case 'excelling':
+                if (analysis.excellingStudents.length > 0) {
+                    const student = analysis.excellingStudents[Math.floor(Math.random() * analysis.excellingStudents.length)];
+                    return {
+                        icon: '🌟',
+                        message: `${student.name} in ${student.className} is doing great! ${student.streak}-day streak and ${student.totalHours} hours studied.`,
+                        type: 'positive'
+                    };
+                }
+                // Fall through if no excelling students
+                
+            case 'trend':
+                if (analysis.trends.length > 0) {
+                    const trend = analysis.trends[Math.floor(Math.random() * analysis.trends.length)];
+                    return {
+                        icon: trend.type === 'positive' ? '📈' : '📉',
+                        message: trend.message,
+                        type: trend.type
+                    };
+                }
+                // Fall through if no trends
+                
+            case 'recommendation':
+                const recommendations = [
+                    `Send a motivational message to students with streaks below 2 (${analysis.strugglingStudents.length} students)`,
+                    `Recognize top performers in your next announcement (${analysis.excellingStudents.length} students excelling)`,
+                    `Consider creating study groups - average streak is ${analysis.averageStreak} days`,
+                    `Schedule office hours - ${analysis.totalStudents - analysis.activeStudents} students haven't been active recently`,
+                    `Try a class-wide challenge - average study time is ${analysis.averageHours} hours per student`
+                ];
+                
+                const recommendation = recommendations[Math.floor(Math.random() * recommendations.length)];
+                return {
+                    icon: '💡',
+                    message: recommendation,
+                    type: 'recommendation'
+                };
+                
+            default:
+                return {
+                    icon: '📊',
+                    message: `You have ${analysis.totalStudents} students across ${teacherClasses.length} classes. ${analysis.activeStudents} are active recently.`,
+                    type: 'info'
+                };
+        }
+    }
+    
+    // Get current date for time-based messages
+    function getTimeBasedMessage() {
+        const hour = new Date().getHours();
+        
+        if (hour < 12) {
+            return "Good morning! Time to check on your students' progress.";
+        } else if (hour < 17) {
+            return "Good afternoon! Perfect time for class announcements.";
+        } else if (hour < 21) {
+            return "Good evening! Many students study during these hours.";
+        } else {
+            return "Late night? Some students might be cramming. Consider morning review.";
+        }
+    }
+    
+    // Main function to show insight
+    async function showRealInsight() {
+        const bubbleMessage = document.querySelector('.bubble-message');
+        const bubbleIcon = document.querySelector('.bubble-icon');
+        const chatbotStats = document.getElementById('chatbotStats');
+        
+        // Show analyzing message
+        bubbleIcon.textContent = '🔍';
+        bubbleMessage.textContent = "Analyzing student data...";
+        chatbotStats.innerHTML = '<div style="text-align: center;">Fetching latest student progress...</div>';
+        
+        const bubble = document.getElementById('teacherChatbotBubble');
+        bubble.classList.add('show');
+        
+        // Get teacher data if needed
+        if (!currentTeacherId) {
+            await getTeacherData();
+        }
+        
+        // Get classes if needed
+        if (teacherClasses.length === 0) {
+            await getTeacherClasses();
+        }
+        
+        // Analyze students
+        const analysis = await analyzeStudents();
+        
+        // Generate insight
+        let insight;
+        if (analysis && analysis.totalStudents > 0) {
+            insight = generateInsightFromAnalysis(analysis);
+            
+            // Update stats display
+            chatbotStats.innerHTML = `
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 5px;">
+                    <span>👥 ${analysis.totalStudents} students</span>
+                    <span>🔥 ${analysis.averageStreak} avg streak</span>
+                    <span>⏰ ${analysis.averageHours}h avg</span>
+                </div>
+                <div style="font-size: 11px; margin-top: 4px; text-align: center;">
+                    ${analysis.activeStudents} active • ${teacherClasses.length} classes
+                </div>
+            `;
+        } else {
+            // No data yet
+            insight = {
+                icon: '👋',
+                message: getTimeBasedMessage(),
+                type: 'welcome'
+            };
+            
+            chatbotStats.innerHTML = `
+                <div style="text-align: center; font-size: 12px;">
+                    Waiting for student data...
+                </div>
+            `;
+        }
+        
+        // Update bubble with insight
+        bubbleIcon.textContent = insight.icon;
+        bubbleMessage.textContent = insight.message;
+        
+        // Show for 12 seconds
+        setTimeout(() => {
+            bubble.classList.remove('show');
+        }, 12000);
+        
+        return insight;
+    }
+    
+    // Add click event
+    const chatbotBtn = document.getElementById('teacherChatbotBtn');
+    if (chatbotBtn) {
+        chatbotBtn.addEventListener('click', showRealInsight);
+    }
+    
+    // Show welcome message
+    setTimeout(async () => {
+        bubbleIcon.textContent = '👋';
+        bubbleMessage.textContent = "Hi Teacher! I analyze your real student data. Let me check your classes...";
+        chatbotStats.innerHTML = '<div style="text-align: center;">Loading student information...</div>';
+        document.getElementById('teacherChatbotBubble').classList.add('show');
+        
+        // Initialize data in background
+        setTimeout(async () => {
+            await getTeacherData();
+            await getTeacherClasses();
+            
+            // Update welcome message with real data
+            if (teacherClasses.length > 0) {
+                bubbleMessage.textContent = `Found ${teacherClasses.length} classes! I'll monitor ${teacherClasses.reduce((sum, c) => sum + c.studentCount, 0)} students.`;
+                chatbotStats.innerHTML = `<div style="text-align: center;">Ready to analyze student progress</div>`;
+            }
+        }, 1000);
+        
+        setTimeout(() => document.getElementById('teacherChatbotBubble').classList.remove('show'), 6000);
+    }, 3000);
+    
+    // AUTOMATED MESSAGES - Analyze and send insights every 3-5 minutes
+    setInterval(async () => {
+        if (Math.random() < 0.4 && document.visibilityState === 'visible') {
+            await showRealInsight();
+        }
+    }, 180000 + Math.random() * 120000);
+    
+    // Force an analysis every 6 minutes
+    setInterval(async () => {
+        if (document.visibilityState === 'visible') {
+            await showRealInsight();
+        }
+    }, 360000);
+    
+    console.log("🤖 REAL Student Analysis Chatbot initialized. Image: 200px");
+}
+
+// Handle window resize
+let resizeTimeout;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+        const chatbot = document.querySelector('.teacher-chatbot-fab');
+        if (chatbot) {
+            const feedbackBtn = document.querySelector('.feedback-btn');
+            let feedbackBottom = 20;
+            
+            if (feedbackBtn) {
+                const rect = feedbackBtn.getBoundingClientRect();
+                feedbackBottom = window.innerHeight - rect.top + 15;
+            }
+            
+            chatbot.style.bottom = `${feedbackBottom + 20}px`;
+        }
+    }, 250);
+});
+
+// Initialize
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(createTeacherChatbot, 2000);
+    });
+} else {
+    setTimeout(createTeacherChatbot, 2000);
 }
 </script>
 </body>
