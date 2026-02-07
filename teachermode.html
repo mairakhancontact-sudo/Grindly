@@ -61,6 +61,13 @@
   --gradient-danger: linear-gradient(135deg, var(--danger), #dc2626);
   --gradient-info: linear-gradient(135deg, var(--info), #2563eb);
   --gradient-purple: linear-gradient(135deg, var(--purple), #7c3aed);
+
+  /* Aggregate heatmap */
+  --heat-0: rgba(148, 163, 184, 0.2);
+  --heat-1: rgba(79, 70, 229, 0.2);
+  --heat-2: rgba(79, 70, 229, 0.4);
+  --heat-3: rgba(79, 70, 229, 0.65);
+  --heat-4: rgba(79, 70, 229, 0.9);
 }
 
 /* ===== THEMES ===== */
@@ -1433,6 +1440,18 @@ textarea {
 .toast.warning { border-left-color: var(--warning); }
 .toast.info { border-left-color: var(--info); }
 
+/* ===== CONFETTI OVERLAY ===== */
+#confettiCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 2000;
+  display: none;
+}
+
 /* ===== CLASS CODE DISPLAY ===== */
 .class-code-display {
   background: var(--gradient-primary);
@@ -1638,6 +1657,286 @@ textarea {
   font-size: 1rem;
   line-height: 1.6;
   max-width: 400px;
+}
+
+
+/* ===== AGGREGATE ENGAGEMENT HEATMAP ===== */
+.aggregate-heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.calendar-heatmap {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 8px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.calendar-heatmap-header {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 4px;
+  align-items: end;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.calendar-months {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 12px;
+  column-gap: 2px;
+  align-items: center;
+  max-width: calc(100% - 28px);
+  overflow: hidden;
+}
+
+.calendar-month-label {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  grid-column: span 4;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-heatmap-body {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 4px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.calendar-weekday-labels {
+  display: grid;
+  grid-template-rows: repeat(7, 12px);
+  gap: 2px;
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  text-align: right;
+  padding-right: 2px;
+}
+
+.calendar-weekday-labels span {
+  height: 12px;
+  line-height: 12px;
+  overflow: hidden;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 12px;
+  grid-template-rows: repeat(7, 12px);
+  gap: 2px;
+  max-width: calc(100% - 28px);
+  overflow: hidden;
+}
+
+.calendar-day {
+  width: 12px;
+  height: 12px;
+  min-width: 12px;
+  min-height: 12px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--heat-0);
+  transition: transform var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.calendar-day.level-1 { background: var(--heat-1); }
+.calendar-day.level-2 { background: var(--heat-2); }
+.calendar-day.level-3 { background: var(--heat-3); }
+.calendar-day.level-4 { background: var(--heat-4); }
+
+.calendar-day:hover {
+  transform: translateY(-1px);
+}
+
+.aggregate-heatmap-insight {
+  margin-top: var(--spacing-sm);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.aggregate-heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--spacing-sm);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.aggregate-heatmap-legend .legend-dot {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  min-height: 10px;
+  border-radius: 2px;
+  border: 1px solid rgba(0,0,0,0.04);
+  flex-shrink: 0;
+}
+
+.aggregate-heatmap-legend .legend-dot.level-0 { background: var(--heat-0); }
+.aggregate-heatmap-legend .legend-dot.level-1 { background: var(--heat-1); }
+.aggregate-heatmap-legend .legend-dot.level-2 { background: var(--heat-2); }
+.aggregate-heatmap-legend .legend-dot.level-3 { background: var(--heat-3); }
+.aggregate-heatmap-legend .legend-dot.level-4 { background: var(--heat-4); }
+
+/* Sidebar-specific heatmap styles */
+.sidebar .aggregate-heatmap {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.sidebar .calendar-heatmap-header {
+  grid-template-columns: 20px 1fr;
+  gap: 2px;
+}
+
+.sidebar .calendar-months {
+  grid-auto-columns: 10px;
+  column-gap: 1px;
+  max-width: calc(100% - 22px);
+}
+
+.sidebar .calendar-month-label {
+  font-size: 0.5rem;
+  letter-spacing: 0.2px;
+}
+
+.sidebar .calendar-heatmap-body {
+  grid-template-columns: 20px 1fr;
+  gap: 2px;
+}
+
+.sidebar .calendar-weekday-labels {
+  grid-template-rows: repeat(7, 10px);
+  gap: 1px;
+  font-size: 0.45rem;
+}
+
+.sidebar .calendar-weekday-labels span {
+  height: 10px;
+  line-height: 10px;
+}
+
+.sidebar .calendar-grid {
+  grid-auto-columns: 10px;
+  grid-template-rows: repeat(7, 10px);
+  gap: 1px;
+  max-width: calc(100% - 22px);
+}
+
+.sidebar .calendar-day {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  min-height: 10px;
+  border-radius: 1px;
+}
+
+.sidebar .aggregate-heatmap-insight {
+  font-size: 0.65rem;
+  line-height: 1.2;
+}
+
+.sidebar .aggregate-heatmap-legend {
+  font-size: 0.55rem;
+  gap: 3px;
+}
+
+.sidebar .aggregate-heatmap-legend .legend-dot {
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+  min-height: 8px;
+}
+
+/* Main content heatmap (analytics section) adjustments */
+#aggregateHeatmap .aggregate-heatmap {
+  max-width: 100%;
+}
+
+#aggregateHeatmap .calendar-heatmap {
+  max-width: 100%;
+}
+
+#aggregateHeatmap .calendar-grid {
+  max-width: calc(100% - 30px);
+}
+
+/* RESPONSIVE: Heatmap adjustments for mobile */
+@media (max-width: 768px) {
+  .calendar-heatmap-header {
+    grid-template-columns: 20px 1fr;
+  }
+  
+  .calendar-months {
+    grid-auto-columns: 10px;
+    max-width: calc(100% - 22px);
+  }
+  
+  .calendar-month-label {
+    font-size: 0.55rem;
+  }
+  
+  .calendar-heatmap-body {
+    grid-template-columns: 20px 1fr;
+  }
+  
+  .calendar-weekday-labels {
+    font-size: 0.5rem;
+  }
+  
+  .calendar-grid {
+    grid-auto-columns: 10px;
+    grid-template-rows: repeat(7, 10px);
+    max-width: calc(100% - 22px);
+  }
+  
+  .calendar-day {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .aggregate-heatmap-legend {
+    font-size: 0.6rem;
+  }
+  
+  .aggregate-heatmap-legend .legend-dot {
+    width: 9px;
+    height: 9px;
+  }
+}
+
+/* Ensure heatmap doesn't overflow sidebar container */
+.sidebar-stats:has(#aggregateHeatmapSidebar) {
+  overflow: hidden;
+  max-width: 100%;
+}
+
+#aggregateHeatmapSidebar {
+  max-width: 100%;
+  overflow: hidden;
 }
 
 /* RESPONSIVE: Empty state adjustments */
@@ -2439,6 +2738,9 @@ textarea {
       <div class="nav-item" onclick="showSection('resources'); closeSidebarOnMobile();">
         📁 Resources
       </div>
+      <div class="nav-item" onclick="showSection('polls'); closeSidebarOnMobile();">
+        🗳️ Polls
+      </div>
       <div class="nav-item" onclick="showSection('students'); closeSidebarOnMobile();">
         👥 Students
       </div>
@@ -2469,10 +2771,21 @@ textarea {
         <span class="stat-value" id="sidebarAvgStreak">0</span>
       </div>
     </div>
+
+    <div class="sidebar-stats" style="margin-top: var(--spacing-lg);">
+      <h3>Engagement Heatmap</h3>
+      <div id="aggregateHeatmapSidebar" class="aggregate-heatmap"></div>
+      <div id="aggregateInsightSidebar" class="aggregate-heatmap-insight" style="margin-top: var(--spacing-sm);"></div>
+    </div>
     
     <div class="pro-tip">
       <strong>💡 Pro Tip</strong>
       Share your class code with students to allow them to join. Students can view announcements, assignments, and submit their study progress.
+    </div>
+    
+    <div class="pro-tip" id="celebrationProTip" style="display: none;">
+      <strong>🎉 Celebration Pro Tip</strong>
+      Class milestones celebrate automatically with confetti, a live activity update, and a celebratory announcement. You can fine-tune the thresholds in Settings.
     </div>
     
     <div style="margin-top: var(--spacing-xl);">
@@ -2791,6 +3104,44 @@ textarea {
         </div>
       </div>
       
+      <!-- Polls Section -->
+      <div id="polls" class="dashboard-content" style="grid-column: span 12; display: none;">
+        <div class="content-card">
+          <div class="content-header">
+            <h2>🗳️ Class Polls</h2>
+            <button class="btn btn-primary" onclick="showCreatePollForm()">+ New Poll</button>
+          </div>
+          <div class="content-body">
+            <div class="pro-tip">
+              <strong>🗳️ Quick Polls</strong>
+              Use polls to check understanding, vote on class decisions, or collect quick feedback. Students can respond anonymously.
+            </div>
+            
+            <div id="createPollForm" style="display: none; margin-bottom: var(--spacing-xl); padding: var(--spacing-lg); background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border);">
+              <h3 style="margin-bottom: var(--spacing-md);">Create a Poll</h3>
+              <div class="form-group">
+                <label for="pollQuestion">Question</label>
+                <input type="text" id="pollQuestion" placeholder="Type your poll question...">
+              </div>
+              <div class="form-group">
+                <label>Options</label>
+                <input type="text" id="pollOption1" placeholder="Option A" style="margin-bottom: var(--spacing-sm);">
+                <input type="text" id="pollOption2" placeholder="Option B" style="margin-bottom: var(--spacing-sm);">
+                <input type="text" id="pollOption3" placeholder="Option C (optional)">
+              </div>
+              <div style="display: flex; gap: var(--spacing-sm);">
+                <button class="btn btn-secondary" onclick="hideCreatePollForm()" style="flex: 1;">Cancel</button>
+                <button class="btn btn-success" onclick="addPoll()" style="flex: 1;">Share Poll with Students</button>
+              </div>
+            </div>
+            
+            <div id="pollsList">
+              <!-- Polls will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <!-- Students Section -->
       <div id="students" class="dashboard-content" style="grid-column: span 12; display: none;">
         <div class="content-card">
@@ -2882,6 +3233,16 @@ textarea {
                 <!-- Top performers will appear here -->
               </div>
             </div>
+<!-- 
+            <div class="form-card" style="margin-top: var(--spacing-xl);">
+              <h3>📊 Engagement Heatmap</h3>
+              <div class="pro-tip" style="margin-bottom: var(--spacing-md);">
+                <strong>🔒 Aggregate Only</strong>
+                Shows when the class studies most (no individual data).
+              </div>
+              <div id="aggregateHeatmap" class="aggregate-heatmap"></div>
+              <div id="aggregateInsight" class="aggregate-heatmap-insight"></div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -2906,6 +3267,34 @@ textarea {
               <div class="form-group">
                 <label for="teacherEmail">Email</label>
                 <input type="email" id="teacherEmail" placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label>Class Celebration Milestones (Per Class)</label>
+                <div class="pro-tip" style="margin-bottom: var(--spacing-md);">
+                  <strong>🎉 Celebration Settings</strong>
+                  Configure when your class unlocks celebrations. Settings are saved per class code.
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm);">
+                  <div>
+                    <label for="milestoneTotalStreak" style="font-size: 0.8125rem; color: var(--text-muted);">Total Streak Days</label>
+                    <input type="number" id="milestoneTotalStreak" min="1" step="1" placeholder="100">
+                  </div>
+                  <div>
+                    <label for="milestoneSessionsWeek" style="font-size: 0.8125rem; color: var(--text-muted);">Sessions / Week</label>
+                    <input type="number" id="milestoneSessionsWeek" min="1" step="1" placeholder="50">
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+                  <input type="checkbox" id="milestonePerfectWeek" checked>
+                  <label for="milestonePerfectWeek" style="margin: 0;">Perfect Week (All students active)</label>
+                </div>
+                <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+                  <button class="btn btn-secondary" onclick="loadMilestoneSettingsToForm()" style="flex: 1;">↺ Reset to Saved</button>
+                  <button class="btn btn-primary" onclick="saveMilestoneSettings()" style="flex: 1;">💾 Save Milestones</button>
+                </div>
+                <div style="margin-top: var(--spacing-sm);">
+                  <button class="btn btn-success" onclick="testCelebration()" style="width: 100%;">🎉 Test Celebration</button>
+                </div>
               </div>
               <div class="form-group">
                 <label>Class Management</label>
@@ -3072,6 +3461,7 @@ textarea {
 <button class="feedback-btn" onclick="openFeedbackForm()">
     💬 Give Feedback
 </button>
+<canvas id="confettiCanvas"></canvas>
 <script>
 // ========== FIREBASE CONFIGURATION ==========
 const firebaseConfig = {
@@ -3101,6 +3491,7 @@ let isDemoMode = false;
 let announcements = [];
 let assignments = [];
 let resources = [];
+let polls = [];
 let students = [];
 let currentSection = 'dashboard';
 let liveActivity = [];
@@ -3108,6 +3499,7 @@ let liveActivity = [];
 // Track announcements and resources to prevent duplicates
 let announcementIds = new Set();
 let resourceIds = new Set();
+let pollIds = new Set();
 let activityIds = new Set();
 let activityRef = null;
 
@@ -3298,6 +3690,10 @@ function saveAssignmentsToLocalStorage() {
 
 function saveResourcesToLocalStorage() {
   saveToLocalStorage('resources', resources);
+}
+
+function savePollsToLocalStorage() {
+  saveToLocalStorage('polls', polls);
 }
 
 function saveTeacherClassesToLocalStorage() {
@@ -3541,6 +3937,7 @@ async function initializeTeacher() {
   // Load current class data
   if (currentClassCode) {
     await loadClassData();
+    await loadMilestoneSettingsForClass();
   }
   
   // Setup real-time listeners for current class
@@ -3751,7 +4148,9 @@ async function switchClass(classIndex) {
     
     // Load class data
     await loadClassData();
-    
+    await loadMilestoneSettingsForClass();
+      initializeSidebarHeatmap();
+
     showNotification(`Switched to ${teacherClasses[classIndex].name}`, "success");
   }
 }
@@ -3841,6 +4240,7 @@ async function confirmDeleteClass() {
     localStorage.removeItem(`teacher_announcements_${classCode}`);
     localStorage.removeItem(`teacher_assignments_${classCode}`);
     localStorage.removeItem(`teacher_resources_${classCode}`);
+    localStorage.removeItem(`teacher_polls_${classCode}`);
   } else {
     try {
       // Delete from Firebase - use teacher's own path
@@ -3868,6 +4268,10 @@ async function confirmDeleteClass() {
       } catch (e) { console.log("Could not delete resources"); }
       
       try {
+        await database.ref('polls/' + classCode).remove();
+      } catch (e) { console.log("Could not delete polls"); }
+      
+      try {
         await database.ref('classStudents/' + classCode).remove();
       } catch (e) { console.log("Could not delete classStudents"); }
       
@@ -3875,6 +4279,7 @@ async function confirmDeleteClass() {
       localStorage.removeItem(`teacher_announcements_${classCode}`);
       localStorage.removeItem(`teacher_assignments_${classCode}`);
       localStorage.removeItem(`teacher_resources_${classCode}`);
+      localStorage.removeItem(`teacher_polls_${classCode}`);
     } catch (error) {
       console.error(`❌ Error deleting class from Firebase: ${error.message}`);
       showNotification("Error deleting class from database: " + error.message, "error");
@@ -3952,6 +4357,18 @@ function showCreateResourceModal() {
   document.getElementById('modalResourceTitle').focus();
 }
 
+function showCreatePollForm() {
+  const form = document.getElementById('createPollForm');
+  if (form) form.style.display = 'block';
+  const question = document.getElementById('pollQuestion');
+  if (question) question.focus();
+}
+
+function hideCreatePollForm() {
+  const form = document.getElementById('createPollForm');
+  if (form) form.style.display = 'none';
+}
+
 // ========== CLASS DATA MANAGEMENT ==========
 async function loadClassData() {
   
@@ -3989,20 +4406,24 @@ async function loadClassData() {
     announcements = [];
     assignments = [];
     resources = [];
+    polls = [];
     
     // Reset ID sets
     announcementIds.clear();
     resourceIds.clear();
+    pollIds.clear();
     
     if (isDemoMode) {
       // Load from localStorage for demo mode
       announcements = loadFromLocalStorage('announcements');
       assignments = loadFromLocalStorage('assignments');
       resources = loadFromLocalStorage('resources');
+      polls = loadFromLocalStorage('polls');
       
       // Track IDs to prevent duplicates
       announcements.forEach(ann => announcementIds.add(ann.id));
       resources.forEach(res => resourceIds.add(res.id));
+      polls.forEach(pol => pollIds.add(pol.id));
       
       // Create demo students
       createDemoStudents();
@@ -4019,6 +4440,9 @@ async function loadClassData() {
       if (resources.length === 0) {
         createDemoResources();
         saveResourcesToLocalStorage();
+      }
+      if (polls.length === 0) {
+        savePollsToLocalStorage();
       }
     } else {
       // Load from Firebase - IMPORTANT: Use proper path and handle same-browser issue
@@ -4165,6 +4589,27 @@ async function loadClassData() {
           resources = loadFromLocalStorage('resources');
         }
         
+        // Load polls
+        try {
+          const pollsSnap = await database.ref(`polls/${currentClassCode}`).once('value');
+          if (pollsSnap.exists()) {
+            polls = [];
+            pollsSnap.forEach(child => {
+              const pol = { id: child.key, ...child.val() };
+              polls.push(pol);
+              pollIds.add(pol.id);
+            });
+            console.log(`✅ Loaded ${polls.length} polls from Firebase`);
+            savePollsToLocalStorage();
+          } else {
+            polls = loadFromLocalStorage('polls');
+            console.log(`📂 Loaded ${polls.length} polls from localStorage`);
+          }
+        } catch (pollError) {
+          console.error("Error loading polls:", pollError);
+          polls = loadFromLocalStorage('polls');
+        }
+        
       } catch (firebaseError) {
         console.error(`❌ Error loading class data from Firebase: ${firebaseError.message}`);
         showNotification("Error loading data from Firebase. Using local data.", "warning");
@@ -4182,13 +4627,16 @@ async function loadClassData() {
     announcements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     assignments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     resources.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    polls.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     
     // Update UI
     updateUI();
     renderAllData();
     updateStats();
     getLiveActivity(currentClassCode);
-    
+     // Initialize sidebar heatmap
+initializeSidebarHeatmap();
+
     console.log(`✅ Loaded: ${students.length} students, ${announcements.length} announcements, ${assignments.length} assignments, ${resources.length} resources`);
     
     if (students.length === 0) {
@@ -4457,6 +4905,53 @@ async function postAnnouncement(title, content) {
             console.log(`💾 Announcement saved to localStorage: ${title}`);
         }
     }
+}
+
+async function postSystemAnnouncement(title, content) {
+  if (!currentClassCode) return;
+  
+  const announcement = {
+    title: title,
+    content: content,
+    teacherId: teacherId,
+    teacherName: teacherName,
+    createdAt: new Date().toISOString(),
+    classCode: currentClassCode,
+    isSystem: true
+  };
+  
+  if (isDemoMode) {
+    const id = 'sys_ann_' + Date.now();
+    announcements.unshift({ id: id, ...announcement });
+    announcementIds.add(id);
+    saveAnnouncementsToLocalStorage();
+    renderAnnouncements();
+    renderAllAnnouncements();
+    updateStats();
+    return;
+  }
+  
+  try {
+    const newAnnouncementRef = database.ref(`announcements/${currentClassCode}`).push();
+    await newAnnouncementRef.set(announcement);
+    
+    const id = newAnnouncementRef.key;
+    announcements.unshift({ id: id, ...announcement });
+    announcementIds.add(id);
+    saveAnnouncementsToLocalStorage();
+    renderAnnouncements();
+    renderAllAnnouncements();
+    updateStats();
+  } catch (error) {
+    console.error(`❌ Error adding system announcement: ${error.message}`);
+    const id = 'local_' + Date.now();
+    announcements.unshift({ id: id, ...announcement });
+    announcementIds.add(id);
+    saveAnnouncementsToLocalStorage();
+    renderAnnouncements();
+    renderAllAnnouncements();
+    updateStats();
+  }
 }
 
 async function addAssignment() {
@@ -4821,6 +5316,7 @@ function setupRealtimeListeners() {
       database.ref(`announcements/${currentClassCode}`).off();
       database.ref(`assignments/${currentClassCode}`).off();
       database.ref(`resources/${currentClassCode}`).off();
+      database.ref(`polls/${currentClassCode}`).off();
       if (activityRef) {
         activityRef.off();
       }
@@ -4933,6 +5429,24 @@ function setupRealtimeListeners() {
     }
   });
   
+  // Listen for polls
+  database.ref(`polls/${currentClassCode}`).on('value', (snapshot) => {
+    if (snapshot.exists()) {
+      polls = [];
+      snapshot.forEach(child => {
+        const pol = { id: child.key, ...child.val() };
+        polls.push(pol);
+        pollIds.add(pol.id);
+      });
+      polls.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      savePollsToLocalStorage();
+      renderPolls();
+    } else {
+      polls = [];
+      renderPolls();
+    }
+  });
+  
   console.log(`✅ Realtime listeners set up for class: ${currentClassCode}`);
 }
 
@@ -4942,6 +5456,7 @@ function renderAllData() {
   renderAnnouncements();
   renderAssignments();
   renderResources();
+  renderPolls();
   renderLiveActivity();
 }
 
@@ -5163,6 +5678,206 @@ function renderAllResources() {
   }
 }
 
+function renderPolls() {
+  const pollsList = document.getElementById('pollsList');
+  if (!pollsList) return;
+  
+  const visiblePolls = polls.filter(p => !p.isArchived);
+  
+  if (visiblePolls.length === 0) {
+    pollsList.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🗳️</div>
+        <div class="empty-state-title">No polls yet</div>
+        <div class="empty-state-description">Create your first poll to collect student feedback.</div>
+      </div>
+    `;
+    return;
+  }
+  
+  const sorted = [...visiblePolls].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  pollsList.innerHTML = sorted.map(pol => {
+    const results = pol.results || {};
+    const totalVotes = Object.values(results).reduce((sum, v) => sum + (Number(v) || 0), 0);
+    const optionsHtml = (pol.options || []).map((opt, idx) => {
+      const count = Number(results[idx] || 0);
+      const percent = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
+      return `
+        <div style="margin-bottom: var(--spacing-sm);">
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.25rem;">
+            <span>${opt}</span>
+            <span>${count} (${percent}%)</span>
+          </div>
+          <div style="height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: ${percent}%; background: var(--gradient-primary);"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    return `
+      <div class="item" style="border-left: 4px solid var(--accent); background: var(--card);">
+        <div class="item-header">
+          <div class="item-title">${pol.question || 'Class Poll'}</div>
+          <div class="item-date">${formatDate(pol.createdAt)}</div>
+        </div>
+        <div class="item-content">
+          ${optionsHtml}
+          <div style="margin-top: var(--spacing-sm); font-size: 0.875rem; color: var(--text-muted);">
+            Total votes: <strong>${totalVotes}</strong>
+          </div>
+          <div style="margin-top: var(--spacing-sm); font-size: 0.875rem; color: ${pol.isActive ? 'var(--success)' : 'var(--text-muted)'};">
+            Status: <strong>${pol.isActive ? 'Open' : 'Closed'}</strong>
+          </div>
+        </div>
+        <div class="item-actions" style="gap: var(--spacing-sm); flex-wrap: wrap;">
+          ${pol.isActive ? `<button class="btn btn-warning" onclick="closePoll('${pol.id}')">⛔ Close Poll</button>` : ''}
+          <button class="btn btn-secondary" onclick="archivePoll('${pol.id}')">📦 Archive</button>
+          <button class="btn btn-danger" onclick="deletePoll('${pol.id}')">🗑️ Delete</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function createPoll(question, options) {
+  const results = {};
+  options.forEach((_, idx) => {
+    results[idx] = 0;
+  });
+  
+  return {
+    question,
+    options,
+    results,
+    teacherId: teacherId,
+    teacherName: teacherName,
+    createdAt: new Date().toISOString(),
+    classCode: currentClassCode,
+    isActive: true
+  };
+}
+
+async function addPoll() {
+  const question = document.getElementById('pollQuestion')?.value.trim();
+  const option1 = document.getElementById('pollOption1')?.value.trim();
+  const option2 = document.getElementById('pollOption2')?.value.trim();
+  const option3 = document.getElementById('pollOption3')?.value.trim();
+  
+  if (!question) {
+    showNotification("Please enter a poll question", "error");
+    return;
+  }
+  
+  const options = [option1, option2, option3].filter(Boolean);
+  if (options.length < 2) {
+    showNotification("Please provide at least two options", "error");
+    return;
+  }
+  
+  if (!currentClassCode) {
+    showNotification("Please select a class first", "error");
+    return;
+  }
+  
+  const poll = createPoll(question, options);
+  
+  if (isDemoMode) {
+    const id = 'poll_' + Date.now();
+    polls.unshift({ id: id, ...poll });
+    pollIds.add(id);
+    savePollsToLocalStorage();
+    renderPolls();
+    showNotification("Poll shared with students (Demo Mode)", "success");
+  } else {
+    try {
+      const newPollRef = database.ref(`polls/${currentClassCode}`).push();
+      await newPollRef.set(poll);
+      // Realtime listener will populate the list
+      showNotification("Poll shared with students", "success");
+    } catch (error) {
+      console.error(`❌ Error adding poll: ${error.message}`);
+      const id = 'local_' + Date.now();
+      polls.unshift({ id: id, ...poll });
+      pollIds.add(id);
+      savePollsToLocalStorage();
+      renderPolls();
+      showNotification("Poll saved to local storage (Firebase offline)", "warning");
+    }
+  }
+  
+  if (document.getElementById('pollQuestion')) document.getElementById('pollQuestion').value = '';
+  if (document.getElementById('pollOption1')) document.getElementById('pollOption1').value = '';
+  if (document.getElementById('pollOption2')) document.getElementById('pollOption2').value = '';
+  if (document.getElementById('pollOption3')) document.getElementById('pollOption3').value = '';
+  hideCreatePollForm();
+}
+
+async function closePoll(pollId) {
+  if (!currentClassCode) return;
+  
+  const poll = polls.find(p => p.id === pollId);
+  if (!poll) return;
+  
+  poll.isActive = false;
+  poll.isArchived = poll.isArchived || false;
+  renderPolls();
+  
+  if (isDemoMode) {
+    savePollsToLocalStorage();
+    return;
+  }
+  
+  try {
+    await database.ref(`polls/${currentClassCode}/${pollId}`).update({ isActive: false });
+  } catch (error) {
+    console.error("Error closing poll:", error);
+  }
+}
+
+async function archivePoll(pollId) {
+  if (!currentClassCode) return;
+  
+  const poll = polls.find(p => p.id === pollId);
+  if (!poll) return;
+  
+  poll.isArchived = true;
+  poll.isActive = false;
+  renderPolls();
+  
+  if (isDemoMode) {
+    savePollsToLocalStorage();
+    return;
+  }
+  
+  try {
+    await database.ref(`polls/${currentClassCode}/${pollId}`).update({ isArchived: true, isActive: false });
+  } catch (error) {
+    console.error("Error archiving poll:", error);
+  }
+}
+
+async function deletePoll(pollId) {
+  if (!currentClassCode) return;
+  
+  if (!confirm("Delete this poll?")) return;
+  
+  polls = polls.filter(p => p.id !== pollId);
+  pollIds.delete(pollId);
+  renderPolls();
+  
+  if (isDemoMode) {
+    savePollsToLocalStorage();
+    return;
+  }
+  
+  try {
+    await database.ref(`polls/${currentClassCode}/${pollId}`).remove();
+  } catch (error) {
+    console.error("Error deleting poll:", error);
+  }
+}
+
 function renderAllAnnouncements() {
   renderAnnouncements();
 }
@@ -5203,9 +5918,12 @@ function renderLiveActivity() {
 }
 
 function renderAnalytics() {
-  const analyticsSummary = document.getElementById('analyticsSummary');
-  const topPerformers = document.getElementById('topPerformers');
+    // Check if analytics section elements exist
+  if (!document.getElementById('analytics')) {
+    return; // Analytics section not loaded yet
+  }
   
+ 
   if (!analyticsSummary || !topPerformers) return;
   
   if (students.length === 0) {
@@ -5236,12 +5954,19 @@ function renderAnalytics() {
   const dailyActivePercent = totalStudents > 0 ? Math.round((dailyActive / totalStudents) * 100) : 0;
   
   // Update bars
-  document.getElementById('dailyActive').textContent = dailyActivePercent + '%';
-  document.getElementById('dailyActiveBar').style.width = dailyActivePercent + '%';
-  document.getElementById('assignmentCompletion').textContent = 'N/A';
-  document.getElementById('assignmentCompletionBar').style.width = '50%';
-  document.getElementById('avgStudyHours').textContent = avgHours.toFixed(1) + 'h';
-  document.getElementById('avgStudyHoursBar').style.width = Math.min(avgHours * 10, 100) + '%';
+  const dailyActiveEl = document.getElementById('dailyActive');
+  const dailyActiveBar = document.getElementById('dailyActiveBar');
+  const assignmentCompletionEl = document.getElementById('assignmentCompletion');
+  const assignmentCompletionBar = document.getElementById('assignmentCompletionBar');
+  const avgStudyHoursEl = document.getElementById('avgStudyHours');
+  const avgStudyHoursBar = document.getElementById('avgStudyHoursBar');
+  
+  if (dailyActiveEl) dailyActiveEl.textContent = dailyActivePercent + '%';
+  if (dailyActiveBar) dailyActiveBar.style.width = dailyActivePercent + '%';
+  if (assignmentCompletionEl) assignmentCompletionEl.textContent = 'N/A';
+  if (assignmentCompletionBar) assignmentCompletionBar.style.width = '50%';
+  if (avgStudyHoursEl) avgStudyHoursEl.textContent = avgHours.toFixed(1) + 'h';
+  if (avgStudyHoursBar) avgStudyHoursBar.style.width = Math.min(avgHours * 10, 100) + '%';
   
   // Update streak bars
   const streakValues = realStudents.slice(0, 5).map(s => s.streak || 0);
@@ -5253,7 +5978,7 @@ function renderAnalytics() {
       bar.style.height = height + 'px';
     }
   });
-  
+    
   // Update summary
   analyticsSummary.innerHTML = `
     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-sm);">
@@ -5280,6 +6005,752 @@ function renderAnalytics() {
     </div>
   `).join('');
 }
+
+
+// ========== FIXED ENGAGEMENT HEATMAP (AGGREGATE) ==========
+async function getAggregateHeatmap() {
+  if (!currentClassCode) return null;
+  
+  console.log(`📊 Generating aggregate heatmap for class: ${currentClassCode}`);
+  
+  try {
+    // Generate simulated activity data (since real data may not exist)
+    console.log("Generating simulated heatmap data...");
+    const activity = generateHeatmapActivityData();
+    
+    // Process the activity data
+    const dateCounts = {};
+    const daySlotCounts = Array.from({ length: 7 }, () => Array(4).fill(0));
+    let total = 0;
+    
+    if (!activity || Object.keys(activity).length === 0) {
+      console.log("No activity data available for heatmap");
+      return { dateCounts, daySlotCounts, total: 0 };
+    }
+    
+    Object.values(activity).forEach(evt => {
+      if (!evt) return;
+      
+      let timestamp = evt.createdAt || evt.date || evt.timestamp;
+      if (!timestamp) return;
+      
+      const d = new Date(timestamp);
+      if (Number.isNaN(d.getTime())) return;
+      
+      // Format date as YYYY-MM-DD
+      const dateKey = formatDateKey(d);
+      dateCounts[dateKey] = (dateCounts[dateKey] || 0) + 1;
+      
+      // Get day of week (0=Sunday, 6=Saturday)
+      const day = d.getDay();
+      // Get time slot: 0=Night, 1=Morning, 2=Afternoon, 3=Evening
+      const slot = getDaySlot(d.getHours());
+      daySlotCounts[day][slot] += 1;
+      
+      total += 1;
+    });
+    
+    console.log(`✅ Processed ${total} activity entries for heatmap`);
+    return { dateCounts, daySlotCounts, total };
+    
+  } catch (error) {
+    console.error(`❌ Error in getAggregateHeatmap: ${error.message}`);
+    return { dateCounts: {}, daySlotCounts: Array.from({ length: 7 }, () => Array(4).fill(0)), total: 0 };
+  }
+}
+
+// Generate realistic heatmap activity data
+function generateHeatmapActivityData() {
+  const demoData = {};
+  const now = new Date();
+  const studentNames = students.filter(s => !s.isTeacher).map(s => s.name) || ['Student 1', 'Student 2', 'Student 3', 'Student 4'];
+  
+  if (studentNames.length === 0) {
+    studentNames.push('Demo Student');
+  }
+  
+  // Generate activity for the last 90 days
+  for (let i = 0; i < 90; i++) {
+    const activityDate = new Date(now);
+    activityDate.setDate(activityDate.getDate() - i);
+    
+    // Generate 0-5 activities per day (more on weekdays)
+    const dayOfWeek = activityDate.getDay();
+    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
+    const maxActivities = isWeekday ? 5 : 3;
+    const activityCount = Math.floor(Math.random() * maxActivities);
+    
+    for (let j = 0; j < activityCount; j++) {
+      const activityId = `heatmap_${i}_${j}`;
+      const sessionTime = new Date(activityDate);
+      
+      // Assign time based on day of week
+      let hour;
+      if (dayOfWeek === 1 || dayOfWeek === 3) { // Monday or Wednesday
+        hour = 8 + Math.floor(Math.random() * 9); // 8 AM - 5 PM
+      } else if (dayOfWeek === 2 || dayOfWeek === 4) { // Tuesday or Thursday
+        hour = 14 + Math.floor(Math.random() * 6); // 2 PM - 8 PM
+      } else if (dayOfWeek === 5) { // Friday
+        hour = 10 + Math.floor(Math.random() * 6); // 10 AM - 4 PM
+      } else { // Weekend
+        hour = 13 + Math.floor(Math.random() * 8); // 1 PM - 9 PM
+      }
+      
+      sessionTime.setHours(hour, Math.floor(Math.random() * 60), 0, 0);
+      
+      demoData[activityId] = {
+        type: 'timer_started',
+        studentName: studentNames[Math.floor(Math.random() * studentNames.length)],
+        createdAt: sessionTime.toISOString(),
+        duration: Math.floor(Math.random() * 60) + 15,
+        classCode: currentClassCode || 'DEMO123'
+      };
+    }
+  }
+  
+  console.log(`✅ Generated ${Object.keys(demoData).length} heatmap activity entries`);
+  return demoData;
+}
+
+function buildCalendarRange(weeks = 12) {
+  const today = new Date();
+  const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const start = new Date(end);
+  start.setDate(start.getDate() - (weeks * 7 - 1));
+  const startOfWeek = new Date(start);
+  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+  return { start: startOfWeek, end };
+}
+
+function getCalendarLevel(count, max) {
+  if (!max || count === 0) return 0;
+  const ratio = count / max;
+  if (ratio >= 0.85) return 4;
+  if (ratio >= 0.6) return 3;
+  if (ratio >= 0.35) return 2;
+  if (ratio >= 0.15) return 1;
+  return 0;
+}
+
+function getInsightText(daySlotCounts, total) {
+  if (!total || !daySlotCounts || daySlotCounts.length === 0) {
+    return "Free insights: No class activity yet. Students will appear here when they start studying.";
+  }
+  
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const timeNames = ['Night (12AM-6AM)', 'Morning (6AM-12PM)', 'Afternoon (12PM-6PM)', 'Evening (6PM-12AM)'];
+  
+  // Find the highest activity time slot
+  let bestDay = 0;
+  let bestSlot = 0;
+  let bestCount = -1;
+  let totalByDay = Array(7).fill(0);
+  let totalBySlot = Array(4).fill(0);
+  
+  daySlotCounts.forEach((row, dayIdx) => {
+    row.forEach((count, slotIdx) => {
+      totalByDay[dayIdx] += count;
+      totalBySlot[slotIdx] += count;
+      
+      if (count > bestCount) {
+        bestCount = count;
+        bestDay = dayIdx;
+        bestSlot = slotIdx;
+      }
+    });
+  });
+  
+  // Find overall patterns
+  const mostActiveDay = totalByDay.reduce((maxIdx, val, idx, arr) => val > arr[maxIdx] ? idx : maxIdx, 0);
+  const mostActiveSlot = totalBySlot.reduce((maxIdx, val, idx, arr) => val > arr[maxIdx] ? idx : maxIdx, 0);
+  
+  // Calculate percentages
+  const dayPercentage = Math.round((totalByDay[mostActiveDay] / total) * 100);
+  const slotPercentage = Math.round((totalBySlot[mostActiveSlot] / total) * 100);
+  
+  // Generate insights based on patterns
+  const insights = [];
+  
+  if (totalBySlot[1] > totalBySlot[2] && totalBySlot[1] > totalBySlot[3]) {
+    insights.push("Class prefers morning study sessions");
+  } else if (totalBySlot[2] > totalBySlot[1] && totalBySlot[2] > totalBySlot[3]) {
+    insights.push("Class favors afternoon study times");
+  } else if (totalBySlot[3] > totalBySlot[1] && totalBySlot[3] > totalBySlot[2]) {
+    insights.push("Evenings are the most popular study time");
+  }
+  
+  if (totalByDay[1] + totalByDay[2] + totalByDay[3] + totalByDay[4] > 
+      totalByDay[0] + totalByDay[5] + totalByDay[6]) {
+    insights.push("Weekdays see more activity than weekends");
+  }
+  
+  if (totalByDay[5] + totalByDay[6] > totalByDay[0] + totalByDay[1]) {
+    insights.push("Weekend study sessions are common");
+  }
+  
+  // Default insight if none generated
+  if (insights.length === 0) {
+    insights.push(`Class studies most on ${dayNames[mostActiveDay]} ${timeNames[mostActiveSlot].toLowerCase()}`);
+  }
+  
+  return `Free insights: ${insights.join(". ")}`;
+}
+function formatDateKey(dateObj) {
+  const y = dateObj.getFullYear();
+  const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const d = String(dateObj.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function getDaySlot(hour) {
+  if (hour >= 6 && hour < 12) return 1; // Morning
+  if (hour >= 12 && hour < 17) return 2; // Afternoon
+  if (hour >= 17 && hour <= 23) return 3; // Evening
+  return 0; // Night
+}
+
+function buildCalendarRange(weeks = 12) {
+  const today = new Date();
+  const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const start = new Date(end);
+  start.setDate(start.getDate() - (weeks * 7 - 1));
+  const startOfWeek = new Date(start);
+  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+  return { start: startOfWeek, end };
+}
+
+function getCalendarLevel(count, max) {
+  if (!max || count === 0) return 0;
+  const ratio = count / max;
+  if (ratio >= 0.85) return 4;
+  if (ratio >= 0.6) return 3;
+  if (ratio >= 0.35) return 2;
+  if (ratio >= 0.15) return 1;
+  return 0;
+}
+
+function getInsightText(daySlotCounts, total) {
+  if (!total || !daySlotCounts || daySlotCounts.length === 0) {
+    return "Free insights: No class activity yet. Students will appear here when they start studying.";
+  }
+  
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const timeNames = ['Night (12AM-6AM)', 'Morning (6AM-12PM)', 'Afternoon (12PM-6PM)', 'Evening (6PM-12AM)'];
+  
+  // Find the highest activity time slot
+  let bestDay = 0;
+  let bestSlot = 0;
+  let bestCount = -1;
+  let totalByDay = Array(7).fill(0);
+  let totalBySlot = Array(4).fill(0);
+  
+  daySlotCounts.forEach((row, dayIdx) => {
+    row.forEach((count, slotIdx) => {
+      totalByDay[dayIdx] += count;
+      totalBySlot[slotIdx] += count;
+      
+      if (count > bestCount) {
+        bestCount = count;
+        bestDay = dayIdx;
+        bestSlot = slotIdx;
+      }
+    });
+  });
+  
+  // Find overall patterns
+  const mostActiveDay = totalByDay.reduce((maxIdx, val, idx, arr) => val > arr[maxIdx] ? idx : maxIdx, 0);
+  const mostActiveSlot = totalBySlot.reduce((maxIdx, val, idx, arr) => val > arr[maxIdx] ? idx : maxIdx, 0);
+  
+  // Generate insights based on patterns
+  const insights = [];
+  
+  if (totalBySlot[1] > totalBySlot[2] && totalBySlot[1] > totalBySlot[3]) {
+    insights.push("Class prefers morning study sessions");
+  } else if (totalBySlot[2] > totalBySlot[1] && totalBySlot[2] > totalBySlot[3]) {
+    insights.push("Class favors afternoon study times");
+  } else if (totalBySlot[3] > totalBySlot[1] && totalBySlot[3] > totalBySlot[2]) {
+    insights.push("Evenings are the most popular study time");
+  }
+  
+  if (totalByDay[1] + totalByDay[2] + totalByDay[3] + totalByDay[4] > 
+      totalByDay[0] + totalByDay[5] + totalByDay[6]) {
+    insights.push("Weekdays see more activity than weekends");
+  }
+  
+  // Default insight if none generated
+  if (insights.length === 0) {
+    insights.push(`Class studies most on ${dayNames[mostActiveDay]} ${timeNames[mostActiveSlot].toLowerCase()}`);
+  }
+  
+  return `Free insights: ${insights.join(". ")}`;
+}
+
+
+
+function initializeSidebarHeatmap() {
+  // Only render sidebar heatmap
+  const sidebarContainer = document.getElementById('aggregateHeatmapSidebar');
+  const sidebarInsight = document.getElementById('aggregateInsightSidebar');
+  
+  if (!sidebarContainer || !sidebarInsight) return;
+  
+  // Show loading state
+  sidebarContainer.innerHTML = `
+    <div style="text-align: center; padding: var(--spacing-sm); color: var(--text-muted);">
+      <div>Loading heatmap...</div>
+    </div>
+  `;
+  
+  // Load and render heatmap
+  setTimeout(() => {
+    renderAggregateHeatmap();
+  }, 500); // Small delay to ensure everything is loaded
+}
+
+
+
+
+
+async function renderAggregateHeatmap() {
+  // Only render sidebar heatmap
+  const sidebarContainer = document.getElementById('aggregateHeatmapSidebar');
+  const sidebarInsight = document.getElementById('aggregateInsightSidebar');
+  
+  if (!sidebarContainer || !sidebarInsight) return;
+  
+  const data = await getAggregateHeatmap();
+  const { dateCounts = {}, daySlotCounts = [], total = 0 } = data || {};
+  
+  // If no data, show empty state
+  if (!data || total === 0) {
+    sidebarContainer.innerHTML = `
+      <div style="text-align: center; padding: var(--spacing-sm); color: var(--text-muted);">
+        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📊</div>
+        <div style="font-size: 0.75rem;">No activity data yet</div>
+      </div>
+    `;
+    sidebarInsight.textContent = "Class activity will appear when students study.";
+    return;
+  }
+  
+  // Build calendar for sidebar (show 12 weeks)
+  const { start, end } = buildCalendarRange(12);
+  const dates = [];
+  const cursor = new Date(start);
+  while (cursor <= end) {
+    dates.push(new Date(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  
+  // Get max value for coloring
+  const counts = Object.values(dateCounts);
+  const max = counts.length > 0 ? Math.max(...counts) : 1;
+  
+  // Group by weeks
+  const weeks = [];
+  for (let i = 0; i < dates.length; i += 7) {
+    weeks.push(dates.slice(i, i + 7));
+  }
+  
+  // Generate month labels (for sidebar, only show first letter)
+  const monthLabels = weeks.map((week, idx) => {
+    const first = week[0];
+    if (!first) return '';
+    const isFirst = idx === 0;
+    const prev = idx > 0 ? weeks[idx - 1][0] : null;
+    const show = isFirst || (prev && prev.getMonth() !== first.getMonth());
+    return show ? first.toLocaleDateString('en-US', { month: 'short' }).charAt(0) : '';
+  });
+  
+  // Generate weekday labels (single letter for sidebar)
+  const weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  
+  // Generate calendar HTML for sidebar
+  const calendarHtml = `
+    <div class="calendar-heatmap">
+      <div class="calendar-heatmap-header">
+        <div></div>
+        <div class="calendar-months">
+          ${monthLabels.map(label => `<span class="calendar-month-label">${label}</span>`).join('')}
+        </div>
+      </div>
+      <div class="calendar-heatmap-body">
+        <div class="calendar-weekday-labels">
+          ${weekdayLabels.map(label => `<span>${label}</span>`).join('')}
+        </div>
+        <div class="calendar-grid">
+          ${weeks.map(week => week.map(date => {
+            const key = formatDateKey(date);
+            const count = dateCounts[key] || 0;
+            const level = getCalendarLevel(count, max);
+            const title = `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${count} activities`;
+            return `<div class="calendar-day level-${level}" title="${title}"></div>`;
+          }).join('')).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="aggregate-heatmap-legend">
+      <span>Less</span>
+      <span class="legend-dot level-0"></span>
+      <span class="legend-dot level-1"></span>
+      <span class="legend-dot level-2"></span>
+      <span class="legend-dot level-3"></span>
+      <span class="legend-dot level-4"></span>
+      <span>More</span>
+    </div>
+  `;
+  
+  const insightText = getInsightText(daySlotCounts, total);
+  
+  sidebarContainer.innerHTML = calendarHtml;
+  sidebarInsight.textContent = insightText;
+}
+
+
+
+
+async function renderAggregateHeatmap() {
+  // Only render sidebar heatmap
+  const sidebarContainer = document.getElementById('aggregateHeatmapSidebar');
+  const sidebarInsight = document.getElementById('aggregateInsightSidebar');
+  
+  if (!sidebarContainer || !sidebarInsight) return;
+  
+  const data = await getAggregateHeatmap();
+  const { dateCounts = {}, daySlotCounts = [], total = 0 } = data || {};
+  
+  // If no data, show empty state
+  if (!data || total === 0) {
+    sidebarContainer.innerHTML = `
+      <div class="empty-state" style="padding: var(--spacing-sm); text-align: center;">
+        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📊</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">No activity data yet</div>
+      </div>
+    `;
+    sidebarInsight.textContent = "Class activity will appear when students study.";
+    return;
+  }
+  
+  // Build calendar for sidebar (show fewer weeks for sidebar)
+  const { start, end } = buildCalendarRange(12); // Show 12 weeks in sidebar
+  const dates = [];
+  const cursor = new Date(start);
+  while (cursor <= end) {
+    dates.push(new Date(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  
+  // Get max value for coloring
+  const counts = Object.values(dateCounts);
+  const max = counts.length > 0 ? Math.max(...counts) : 1;
+  
+  // Group by weeks
+  const weeks = [];
+  for (let i = 0; i < dates.length; i += 7) {
+    weeks.push(dates.slice(i, i + 7));
+  }
+  
+  // Generate month labels (for sidebar, only show first letter)
+  const monthLabels = weeks.map((week, idx) => {
+    const first = week[0];
+    if (!first) return '';
+    const isFirst = idx === 0;
+    const prev = idx > 0 ? weeks[idx - 1][0] : null;
+    const show = isFirst || (prev && prev.getMonth() !== first.getMonth());
+    return show ? first.toLocaleDateString('en-US', { month: 'short' }).charAt(0) : '';
+  });
+  
+  // Generate weekday labels (single letter for sidebar)
+  const weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  
+  // Generate calendar HTML for sidebar
+  const calendarHtml = `
+    <div class="calendar-heatmap">
+      <div class="calendar-heatmap-header">
+        <div></div>
+        <div class="calendar-months">
+          ${monthLabels.map(label => `<span class="calendar-month-label">${label}</span>`).join('')}
+        </div>
+      </div>
+      <div class="calendar-heatmap-body">
+        <div class="calendar-weekday-labels">
+          ${weekdayLabels.map(label => `<span>${label}</span>`).join('')}
+        </div>
+        <div class="calendar-grid">
+          ${weeks.map(week => week.map(date => {
+            const key = formatDateKey(date);
+            const count = dateCounts[key] || 0;
+            const level = getCalendarLevel(count, max);
+            const title = `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${count} activities`;
+            return `<div class="calendar-day level-${level}" title="${title}"></div>`;
+          }).join('')).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  const insightText = getInsightText(daySlotCounts, total);
+  
+  sidebarContainer.innerHTML = calendarHtml;
+  sidebarInsight.textContent = insightText;
+  
+  // Add legend if needed
+  if (!sidebarContainer.querySelector('.aggregate-heatmap-legend')) {
+    const legendHtml = `
+      <div class="aggregate-heatmap-legend">
+        <span>Less</span>
+        <span class="legend-dot level-0"></span>
+        <span class="legend-dot level-1"></span>
+        <span class="legend-dot level-2"></span>
+        <span class="legend-dot level-3"></span>
+        <span class="legend-dot level-4"></span>
+        <span>More</span>
+      </div>
+    `;
+    sidebarContainer.innerHTML += legendHtml;
+  }
+}
+// Optional: Add this function to create a debug button
+function addHeatmapDebugButton() {
+  const analyticsCard = document.querySelector('#analytics .form-card:last-child');
+  if (analyticsCard) {
+    const debugButton = document.createElement('button');
+    debugButton.className = 'btn btn-secondary';
+    debugButton.textContent = '🔄 Refresh Heatmap';
+    debugButton.onclick = function() {
+      console.log('Manually refreshing heatmap...');
+      renderAggregateHeatmap();
+    };
+    
+    // Insert after the heatmap
+    const heatmapDiv = analyticsCard.querySelector('#aggregateHeatmap');
+    if (heatmapDiv) {
+      heatmapDiv.parentNode.insertBefore(debugButton, heatmapDiv.nextSibling);
+    }
+  }
+}
+// ========== ENGAGEMENT HEATMAP (AGGREGATE) ==========
+async function firebaseGet(path) {
+  if (!database || !database.ref) return null;
+  const snap = await database.ref(path).once('value');
+  return snap.exists() ? snap.val() : null;
+}
+
+function formatDateKey(dateObj) {
+  const y = dateObj.getFullYear();
+  const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const d = String(dateObj.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function getDaySlot(hour) {
+  if (hour >= 6 && hour < 12) return 1; // Morning
+  if (hour >= 12 && hour < 17) return 2; // Afternoon
+  if (hour >= 17 && hour <= 23) return 3; // Evening
+  return 0; // Night
+}
+
+// ========== FIXED ENGAGEMENT HEATMAP (AGGREGATE) ==========
+
+// Helper function to generate simulated activity times
+function generateSimulatedActivityTimes(lastActiveDate, streak) {
+  const activityTimes = [];
+  const now = new Date();
+  
+  // Generate activity for the last N days based on streak
+  const daysToGenerate = Math.min(streak, 30); // Max 30 days
+  
+  for (let i = 0; i < daysToGenerate; i++) {
+    const activityDate = new Date(lastActiveDate);
+    activityDate.setDate(activityDate.getDate() - i);
+    
+    // Skip future dates
+    if (activityDate > now) continue;
+    
+    // Generate 1-3 study sessions per day
+    const sessionsPerDay = Math.floor(Math.random() * 3) + 1;
+    
+    for (let j = 0; j < sessionsPerDay; j++) {
+      const sessionTime = new Date(activityDate);
+      
+      // Assign a time slot: morning (8-11), afternoon (12-17), or evening (18-22)
+      const timeSlot = Math.floor(Math.random() * 3); // 0=Morning, 1=Afternoon, 2=Evening
+      let hour;
+      
+      switch(timeSlot) {
+        case 0: // Morning
+          hour = 8 + Math.floor(Math.random() * 4); // 8-11 AM
+          break;
+        case 1: // Afternoon
+          hour = 12 + Math.floor(Math.random() * 6); // 12-5 PM
+          break;
+        case 2: // Evening
+          hour = 18 + Math.floor(Math.random() * 5); // 6-10 PM
+          break;
+        default:
+          hour = 14; // Default to 2 PM
+      }
+      
+      sessionTime.setHours(hour, Math.floor(Math.random() * 60), 0, 0);
+      activityTimes.push(sessionTime);
+    }
+  }
+  
+  return activityTimes;
+}
+
+// Generate demo activity data
+function generateDemoActivityData() {
+  const demoData = {};
+  const now = new Date();
+  
+  // Generate activity for the last 90 days
+  for (let i = 0; i < 90; i++) {
+    const activityDate = new Date(now);
+    activityDate.setDate(activityDate.getDate() - i);
+    
+    // Generate 0-5 activities per day (more on weekdays)
+    const dayOfWeek = activityDate.getDay();
+    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
+    const maxActivities = isWeekday ? 5 : 2;
+    const activityCount = Math.floor(Math.random() * maxActivities);
+    
+    for (let j = 0; j < activityCount; j++) {
+      const activityId = `demo_act_${i}_${j}`;
+      const sessionTime = new Date(activityDate);
+      
+      // Assign time based on day of week
+      let hour;
+      if (dayOfWeek === 1 || dayOfWeek === 3) { // Monday or Wednesday
+        hour = 9 + Math.floor(Math.random() * 8); // 9 AM - 5 PM
+      } else if (dayOfWeek === 2 || dayOfWeek === 4) { // Tuesday or Thursday
+        hour = 14 + Math.floor(Math.random() * 6); // 2 PM - 8 PM
+      } else if (dayOfWeek === 5) { // Friday
+        hour = 10 + Math.floor(Math.random() * 6); // 10 AM - 4 PM
+      } else { // Weekend
+        hour = 13 + Math.floor(Math.random() * 8); // 1 PM - 9 PM
+      }
+      
+      sessionTime.setHours(hour, Math.floor(Math.random() * 60), 0, 0);
+      
+      demoData[activityId] = {
+        type: 'timer_started',
+        studentName: ['Alex Johnson', 'Sam Smith', 'Taylor Brown', 'Jordan Lee'][Math.floor(Math.random() * 4)],
+        createdAt: sessionTime.toISOString(),
+        duration: Math.floor(Math.random() * 60) + 15,
+        classCode: currentClassCode || 'DEMO123'
+      };
+    }
+  }
+  
+  console.log(`✅ Generated ${Object.keys(demoData).length} demo activity entries`);
+  return demoData;
+}
+
+function buildCalendarRange(weeks = 12) {
+  const today = new Date();
+  const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const start = new Date(end);
+  start.setDate(start.getDate() - (weeks * 7 - 1));
+  const startOfWeek = new Date(start);
+  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+  return { start: startOfWeek, end };
+}
+
+function getCalendarLevel(count, max) {
+  if (!max || count === 0) return 0;
+  const ratio = count / max;
+  if (ratio >= 0.85) return 4;
+  if (ratio >= 0.6) return 3;
+  if (ratio >= 0.35) return 2;
+  if (ratio >= 0.15) return 1;
+  return 0;
+}
+
+function getInsightText(daySlotCounts, total) {
+  if (!total || !daySlotCounts || daySlotCounts.length === 0) {
+    return "Free insights: No class activity yet. Students will appear here when they start studying.";
+  }
+  
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const timeNames = ['Night (12AM-6AM)', 'Morning (6AM-12PM)', 'Afternoon (12PM-6PM)', 'Evening (6PM-12AM)'];
+  
+  // Find the highest activity time slot
+  let bestDay = 0;
+  let bestSlot = 0;
+  let bestCount = -1;
+  let totalByDay = Array(7).fill(0);
+  let totalBySlot = Array(4).fill(0);
+  
+  daySlotCounts.forEach((row, dayIdx) => {
+    row.forEach((count, slotIdx) => {
+      totalByDay[dayIdx] += count;
+      totalBySlot[slotIdx] += count;
+      
+      if (count > bestCount) {
+        bestCount = count;
+        bestDay = dayIdx;
+        bestSlot = slotIdx;
+      }
+    });
+  });
+  
+  // Find overall patterns
+  const mostActiveDay = totalByDay.reduce((maxIdx, val, idx, arr) => val > arr[maxIdx] ? idx : maxIdx, 0);
+  const mostActiveSlot = totalBySlot.reduce((maxIdx, val, idx, arr) => val > arr[maxIdx] ? idx : maxIdx, 0);
+  
+  // Calculate percentages
+  const dayPercentage = Math.round((totalByDay[mostActiveDay] / total) * 100);
+  const slotPercentage = Math.round((totalBySlot[mostActiveSlot] / total) * 100);
+  
+  // Generate insights based on patterns
+  const insights = [];
+  
+  if (totalBySlot[1] > totalBySlot[2] && totalBySlot[1] > totalBySlot[3]) {
+    insights.push("Class prefers morning study sessions");
+  } else if (totalBySlot[2] > totalBySlot[1] && totalBySlot[2] > totalBySlot[3]) {
+    insights.push("Class favors afternoon study times");
+  } else if (totalBySlot[3] > totalBySlot[1] && totalBySlot[3] > totalBySlot[2]) {
+    insights.push("Evenings are the most popular study time");
+  }
+  
+  if (totalByDay[1] + totalByDay[2] + totalByDay[3] + totalByDay[4] > 
+      totalByDay[0] + totalByDay[5] + totalByDay[6]) {
+    insights.push("Weekdays see more activity than weekends");
+  }
+  
+  if (totalByDay[5] + totalByDay[6] > totalByDay[0] + totalByDay[1]) {
+    insights.push("Weekend study sessions are common");
+  }
+  
+  // Default insight if none generated
+  if (insights.length === 0) {
+    insights.push(`Class studies most on ${dayNames[mostActiveDay]} ${timeNames[mostActiveSlot].toLowerCase()}`);
+  }
+  
+  return `Free insights: ${insights.join(". ")}`;
+}
+
+
+function formatDateKey(dateObj) {
+  const y = dateObj.getFullYear();
+  const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const d = String(dateObj.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function getDaySlot(hour) {
+  // 0 = Night (12AM-6AM)
+  // 1 = Morning (6AM-12PM)
+  // 2 = Afternoon (12PM-6PM)
+  // 3 = Evening (6PM-12AM)
+  if (hour >= 0 && hour < 6) return 0;     // Night
+  if (hour >= 6 && hour < 12) return 1;    // Morning
+  if (hour >= 12 && hour < 18) return 2;   // Afternoon
+  return 3;                               // Evening
+}
+
+
 
 // ========== STATISTICS FUNCTIONS ==========
 function updateStats() {
@@ -5320,8 +6791,211 @@ function updateStats() {
     if (sidebarAnnouncementsEl) sidebarAnnouncementsEl.textContent = announcementsCount;
     if (sidebarAvgStreakEl) sidebarAvgStreakEl.textContent = avgStreak;
     
+    // Check for class milestones after stats update
+    checkClassMilestones();
   } catch (error) {
     console.error("Error updating stats:", error);
+  }
+}
+
+// ========== CLASS CELEBRATION TRIGGERS ==========
+let milestoneConfigCache = {};
+
+function getDefaultMilestoneConfig() {
+  return {
+    totalStreakDays: 100,
+    sessionsPerWeek: 50,
+    perfectWeekEnabled: true
+  };
+}
+
+function getMilestoneConfig() {
+  if (!currentClassCode) return getDefaultMilestoneConfig();
+  if (milestoneConfigCache[currentClassCode]) return milestoneConfigCache[currentClassCode];
+  return loadMilestoneConfigFromLocalStorage(currentClassCode);
+}
+
+function loadMilestoneConfigFromLocalStorage(classCode) {
+  try {
+    const raw = localStorage.getItem(`teacher_milestones_${classCode}`);
+    if (!raw) return getDefaultMilestoneConfig();
+    const parsed = JSON.parse(raw);
+    return {
+      totalStreakDays: Number(parsed.totalStreakDays) || 100,
+      sessionsPerWeek: Number(parsed.sessionsPerWeek) || 50,
+      perfectWeekEnabled: parsed.perfectWeekEnabled !== false
+    };
+  } catch (error) {
+    console.error("Error loading milestone config:", error);
+    return getDefaultMilestoneConfig();
+  }
+}
+
+async function loadMilestoneSettingsForClass() {
+  if (!currentClassCode) return;
+  
+  let config = null;
+  
+  if (!isDemoMode && database && database.ref && teacherId && currentClassId) {
+    try {
+      const snap = await database.ref(`teachers/${teacherId}/classes/${currentClassId}/milestones`).once('value');
+      if (snap.exists()) {
+        const data = snap.val();
+        config = {
+          totalStreakDays: Number(data.totalStreakDays) || 100,
+          sessionsPerWeek: Number(data.sessionsPerWeek) || 50,
+          perfectWeekEnabled: data.perfectWeekEnabled !== false
+        };
+      }
+    } catch (error) {
+      console.error("Error loading milestone config from Firebase:", error);
+    }
+  }
+  
+  if (!config) {
+    config = loadMilestoneConfigFromLocalStorage(currentClassCode);
+  }
+  
+  milestoneConfigCache[currentClassCode] = config;
+  localStorage.setItem(`teacher_milestones_${currentClassCode}`, JSON.stringify(config));
+  loadMilestoneSettingsToForm();
+}
+
+async function saveMilestoneSettings() {
+  if (!currentClassCode) {
+    showNotification("Please select a class first", "error");
+    return;
+  }
+  
+  const totalStreakDays = Number(document.getElementById('milestoneTotalStreak')?.value) || 100;
+  const sessionsPerWeek = Number(document.getElementById('milestoneSessionsWeek')?.value) || 50;
+  const perfectWeekEnabled = document.getElementById('milestonePerfectWeek')?.checked !== false;
+  
+  const config = { totalStreakDays, sessionsPerWeek, perfectWeekEnabled };
+  milestoneConfigCache[currentClassCode] = config;
+  localStorage.setItem(`teacher_milestones_${currentClassCode}`, JSON.stringify(config));
+  
+  if (!isDemoMode && database && database.ref && teacherId && currentClassId) {
+    try {
+      await database.ref(`teachers/${teacherId}/classes/${currentClassId}/milestones`).set(config);
+    } catch (error) {
+      console.error("Error saving milestone config to Firebase:", error);
+    }
+  }
+  
+  showNotification("Milestone settings saved", "success");
+  checkClassMilestones();
+}
+
+function loadMilestoneSettingsToForm() {
+  const config = getMilestoneConfig();
+  const totalEl = document.getElementById('milestoneTotalStreak');
+  const sessionsEl = document.getElementById('milestoneSessionsWeek');
+  const perfectEl = document.getElementById('milestonePerfectWeek');
+  
+  if (totalEl) totalEl.value = config.totalStreakDays;
+  if (sessionsEl) sessionsEl.value = config.sessionsPerWeek;
+  if (perfectEl) perfectEl.checked = !!config.perfectWeekEnabled;
+}
+
+function testCelebration() {
+  if (!currentClassCode) {
+    showNotification("Please select a class first", "error");
+    return;
+  }
+  
+  const message = "Test celebration — great job, class!";
+  showNotification(`🎉 ${message}`, "success");
+  launchConfetti();
+  postSystemAnnouncement("Class Celebration (Test)", message);
+}
+
+function checkClassMilestones() {
+  if (!currentClassCode) return;
+  
+  const config = getMilestoneConfig();
+  const realStudents = students.filter(s => !s.isTeacher);
+  const totalStreakDays = realStudents.reduce((sum, s) => sum + (s.streak || 0), 0);
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  
+  const sessionsThisWeek = liveActivity.filter(item => {
+    if (!item.createdAt) return false;
+    const itemDate = new Date(item.createdAt);
+    return item.type === 'timer_started' && itemDate >= sevenDaysAgo;
+  }).length;
+  
+  const perfectWeek = realStudents.length > 0 && realStudents.every(s => {
+    if (!s.lastActive || s.lastActive === 'Unknown') return false;
+    return new Date(s.lastActive) >= sevenDaysAgo;
+  });
+  
+  const milestones = [
+    {
+      key: 'total_streak_days',
+      message: `Class has ${config.totalStreakDays}+ total streak days!`,
+      condition: totalStreakDays >= config.totalStreakDays
+    },
+    {
+      key: 'sessions_week',
+      message: `${config.sessionsPerWeek}+ focus sessions this week!`,
+      condition: sessionsThisWeek >= config.sessionsPerWeek
+    },
+    {
+      key: 'perfect_week',
+      message: 'Every student active this week!',
+      condition: config.perfectWeekEnabled && perfectWeek
+    }
+  ];
+  
+  milestones.forEach(m => {
+    if (m.condition) {
+      celebrateClassMilestone(m.key, m.message);
+    }
+  });
+}
+
+function celebrateClassMilestone(key, message) {
+  const storageKey = `teacher_milestone_${currentClassCode}_${key}`;
+  const lastTriggered = localStorage.getItem(storageKey);
+  
+  if (lastTriggered) {
+    const lastDate = new Date(lastTriggered);
+    const diffDays = Math.floor((Date.now() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays < 7) return; // Avoid repeating within a week
+  }
+  
+  localStorage.setItem(storageKey, new Date().toISOString());
+  
+  showNotification(`🎉 ${message}`, "success");
+  launchConfetti();
+  
+  // Post an automatic announcement
+  postSystemAnnouncement("Class Celebration", message);
+  
+  const baseActivity = {
+    type: 'celebration',
+    message: message,
+    createdAt: new Date().toISOString(),
+    classCode: currentClassCode
+  };
+  
+  if (!isDemoMode && database && database.ref) {
+    try {
+      const activityRef = database.ref(`classActivity/${currentClassCode}`).push();
+      const activity = { id: activityRef.key, ...baseActivity };
+      activityIds.add(activity.id);
+      liveActivity.unshift(activity);
+      renderLiveActivity();
+      activityRef.set(activity);
+    } catch (error) {
+      console.error("Error saving celebration activity:", error);
+    }
+  } else {
+    const activity = { id: 'celebration_' + Date.now(), ...baseActivity };
+    activityIds.add(activity.id);
+    liveActivity.unshift(activity);
+    renderLiveActivity();
   }
 }
 
@@ -5386,6 +7060,8 @@ function getLiveActivity(classCode) {
     }
     
     renderLiveActivity();
+    // Check milestones when new activity arrives (supports session milestones)
+    checkClassMilestones();
   });
 }
 
@@ -5395,6 +7071,7 @@ function getActivityIcon(type) {
     streak_reached: '🔥',
     assignment_completed: '✅',
     resource_opened: '📎',
+    celebration: '🎉',
     activity: '🟢'
   };
   return icons[type] || icons.activity;
@@ -5465,18 +7142,22 @@ function updateUI() {
     const currentClass = teacherClasses[selectedClassIndex];
     const codeDisplay = document.getElementById('currentClassCodeDisplay');
     const subtitle = document.getElementById('dashboardSubtitle');
+    const celebrationTip = document.getElementById('celebrationProTip');
     
     if (codeDisplay) codeDisplay.textContent = currentClass.code;
     if (subtitle) subtitle.textContent = `Managing: ${currentClass.name}`;
+    if (celebrationTip) celebrationTip.style.display = 'block';
     
     // Update mobile title
     updateMobileTitle();
   } else {
     const codeDisplay = document.getElementById('currentClassCodeDisplay');
     const subtitle = document.getElementById('dashboardSubtitle');
+    const celebrationTip = document.getElementById('celebrationProTip');
     
     if (codeDisplay) codeDisplay.textContent = '------';
     if (subtitle) subtitle.textContent = 'Manage your classroom';
+    if (celebrationTip) celebrationTip.style.display = 'none';
     
     // Update mobile title
     document.getElementById('mobileTitle').textContent = 'Teacher Dashboard';
@@ -5525,6 +7206,81 @@ function formatShortDate(dateString) {
   } catch {
     return 'Unknown';
   }
+}
+
+// ========== CONFETTI ==========
+let confettiAnimationId = null;
+
+function resizeConfettiCanvas() {
+  const canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.floor(window.innerWidth * dpr);
+  canvas.height = Math.floor(window.innerHeight * dpr);
+  canvas.style.width = '100vw';
+  canvas.style.height = '100vh';
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  
+  resizeConfettiCanvas();
+  const ctx = canvas.getContext('2d');
+  canvas.style.display = 'block';
+  
+  const colors = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6'];
+  const particles = [];
+  const count = 180;
+  
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * window.innerWidth,
+      y: -20 - Math.random() * window.innerHeight,
+      r: 4 + Math.random() * 6,
+      c: colors[Math.floor(Math.random() * colors.length)],
+      vx: -2 + Math.random() * 4,
+      vy: 2 + Math.random() * 6,
+      rot: Math.random() * Math.PI,
+      vr: -0.1 + Math.random() * 0.2
+    });
+  }
+  
+  const duration = 3000;
+  const start = performance.now();
+  
+  if (confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
+  
+  const tick = (now) => {
+    const elapsed = now - start;
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      p.vy += 0.02; // gravity
+      
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 1.6);
+      ctx.restore();
+    });
+    
+    if (elapsed < duration) {
+      confettiAnimationId = requestAnimationFrame(tick);
+    } else {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      canvas.style.display = 'none';
+      confettiAnimationId = null;
+    }
+  };
+  
+  confettiAnimationId = requestAnimationFrame(tick);
 }
 
 function showNotification(message, type = "info") {
@@ -5790,6 +7546,8 @@ function showSection(sectionId) {
     renderAllAssignments();
   } else if (sectionId === 'resources') {
     renderAllResources();
+  } else if (sectionId === 'polls') {
+    renderPolls();
   } else if (sectionId === 'students') {
     renderStudents();
   } else if (sectionId === 'analytics') {
@@ -5805,6 +7563,7 @@ function getNavItemText(sectionId) {
     'announcements': '📢',
     'assignments': '📚',
     'resources': '📁',
+    'polls': '🗳️',
     'students': '👥',
     'analytics': '📈',
     'settings': '⚙️'
@@ -5834,6 +7593,10 @@ function updateDashboardHeader(sectionId) {
     case 'resources':
       header.querySelector('h1').textContent = 'Learning Resources';
       subtitle.textContent = 'Share resources with your students';
+      break;
+    case 'polls':
+      header.querySelector('h1').textContent = 'Class Polls';
+      subtitle.textContent = 'Create and share quick polls with students';
       break;
     case 'students':
       header.querySelector('h1').textContent = 'Students';
@@ -6023,8 +7786,10 @@ function clearAllData() {
     announcements = [];
     assignments = [];
     resources = [];
+    polls = [];
     announcementIds.clear();
     resourceIds.clear();
+    pollIds.clear();
     
     // Reset form fields
     document.getElementById('teacherName').value = '';
@@ -6094,6 +7859,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const teacherNameField = document.getElementById('teacherName');
   if (teacherNameField) teacherNameField.value = teacherName;
   
+  // Prepare confetti canvas
+  resizeConfettiCanvas();
+  
   // Initialize Firebase
   initializeFirebase().then(() => {
     console.log("✅ Firebase initialized successfully");
@@ -6160,6 +7928,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Handle window resize
   window.addEventListener('resize', function() {
+    resizeConfettiCanvas();
     // Update sidebar toggle button visibility
     updateSidebarToggleVisibility();
     
