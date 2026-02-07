@@ -6739,6 +6739,38 @@ async function firebaseRemove(refPath) {
     }
 }
 
+// ========== LIVE ACTIVITY FEED (STUDENT -> TEACHER) ==========
+async function logLiveActivity(type, payload = {}) {
+    if (!database || !currentUser || !currentUserId) return;
+
+    const classCodes = [];
+    if (currentClassCode) {
+        classCodes.push(currentClassCode);
+    } else if (userClasses && userClasses.length > 0) {
+        userClasses.forEach(c => c.code && classCodes.push(c.code));
+    }
+
+    if (classCodes.length === 0) return;
+
+    const activity = {
+        type: type || 'activity',
+        studentId: currentUserId,
+        studentName: currentUserName || 'Student',
+        firebaseUid: currentUser.uid || null,
+        createdAt: new Date().toISOString(),
+        ...payload
+    };
+
+    try {
+        await Promise.all(classCodes.map(code => {
+            const ref = database.ref(`classActivity/${code}`).push();
+            return ref.set(activity);
+        }));
+    } catch (e) {
+        console.warn("Live activity write failed:", e);
+    }
+}
+
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', async function() {
     console.log("🎓 Student Mode initializing...");
@@ -7161,6 +7193,10 @@ async function markStudyToday() {
     // Update total hours
     studyData.totalMinutes = (studyData.totalMinutes || 0) + sessionHours * 60;
     studyData.totalStudyHours = (studyData.totalMinutes / 60).toFixed(1);
+
+    await logLiveActivity('streak_reached', {
+        streak: studyData.streak || 0
+    });
     
     persistData();
     await maybeCreditReferral();
@@ -7549,6 +7585,10 @@ async function addStudyHours() {
     
     studyData.totalMinutes = (studyData.totalMinutes || 0) + totalHours * 60;
     studyData.totalStudyHours = (studyData.totalMinutes / 60).toFixed(1);
+
+    await logLiveActivity('timer_started', {
+        duration: Math.round(totalHours * 60)
+    });
     
     if (!studyData.studySessions) studyData.studySessions = [];
     studyData.studySessions.push({
@@ -8028,6 +8068,11 @@ function toggleAssignment(assignmentId) {
         saveAssignments();
         renderAssignments();
         renderDashboardAssignments();
+        if (assignment.completed) {
+            logLiveActivity('assignment_completed', {
+                assignmentTitle: assignment.name || 'Assignment'
+            });
+        }
         showNotification(assignment.completed ? "Assignment marked as completed!" : "Assignment marked as incomplete", "success");
     }
 }
@@ -8105,6 +8150,10 @@ async function markStudySession() {
     // Update total hours
     studyData.totalMinutes = (studyData.totalMinutes || 0) + hours * 60;
     studyData.totalStudyHours = (studyData.totalMinutes / 60).toFixed(1);
+
+    await logLiveActivity('timer_started', {
+        duration: Math.round(hours * 60)
+    });
     
     persistData();
     await maybeCreditReferral();
@@ -10551,8 +10600,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ========== INITIALIZATION COMPLETE ==========
 console.log("✅ Student Mode initialized successfully!");
-// Add to all pages
-firebase.analytics().logEvent('page_view', {page_location: window.location.href});
+// Add to all pages (guard analytics when SDK isn't loaded)
+if (firebase.analytics) {
+  firebase.analytics().logEvent('page_view', { page_location: window.location.href });
+}
 </script>
 <div id="confettiLayer" aria-hidden="true"></div>
 <div id="premiumSparkleLayer" class="premium-sparkle-layer" aria-hidden="true"></div>
