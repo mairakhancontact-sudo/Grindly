@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Grindly | Teacher Mode</title>
+<meta name="viewport">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -1171,6 +1172,63 @@ textarea {
 .item-actions {
   display: flex;
   justify-content: flex-end;
+}
+
+/* Live Activity Feed */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.activity-item {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: var(--spacing-md);
+  align-items: start;
+  padding: var(--spacing-md);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all var(--transition);
+}
+
+.activity-item:hover {
+  border-color: var(--accent);
+  transform: translateX(4px);
+  box-shadow: var(--shadow);
+}
+
+.activity-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-light);
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+.activity-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.activity-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.activity-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 /* RESPONSIVE: Item adjustments */
@@ -2613,9 +2671,22 @@ textarea {
                 <h2>📚 Recent Assignments</h2>
                 <button class="btn btn-primary" onclick="showSection('assignments'); closeSidebarOnMobile();">View All</button>
               </div>
-              <div class="content-body">
+          <div class="content-body">
                 <div class="items-list" id="assignmentsList">
                   <!-- Assignments will appear here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Activity Feed -->
+            <div class="content-card">
+              <div class="content-header">
+                <h2>🟢 Live Activity</h2>
+                <button class="btn btn-secondary" onclick="getLiveActivity(currentClassCode)">Refresh</button>
+              </div>
+              <div class="content-body">
+                <div class="activity-list" id="activityFeed">
+                  <!-- Live activity will appear here -->
                 </div>
               </div>
             </div>
@@ -3032,10 +3103,13 @@ let assignments = [];
 let resources = [];
 let students = [];
 let currentSection = 'dashboard';
+let liveActivity = [];
 
 // Track announcements and resources to prevent duplicates
 let announcementIds = new Set();
 let resourceIds = new Set();
+let activityIds = new Set();
+let activityRef = null;
 
 // Modal state
 let classToDelete = null;
@@ -4113,6 +4187,7 @@ async function loadClassData() {
     updateUI();
     renderAllData();
     updateStats();
+    getLiveActivity(currentClassCode);
     
     console.log(`✅ Loaded: ${students.length} students, ${announcements.length} announcements, ${assignments.length} assignments, ${resources.length} resources`);
     
@@ -4746,6 +4821,9 @@ function setupRealtimeListeners() {
       database.ref(`announcements/${currentClassCode}`).off();
       database.ref(`assignments/${currentClassCode}`).off();
       database.ref(`resources/${currentClassCode}`).off();
+      if (activityRef) {
+        activityRef.off();
+      }
     } catch (e) {
       console.log("No existing listeners to remove");
     }
@@ -4864,6 +4942,7 @@ function renderAllData() {
   renderAnnouncements();
   renderAssignments();
   renderResources();
+  renderLiveActivity();
 }
 
 function renderStudents() {
@@ -5088,6 +5167,41 @@ function renderAllAnnouncements() {
   renderAnnouncements();
 }
 
+function renderLiveActivity() {
+  const activityFeed = document.getElementById('activityFeed');
+  if (!activityFeed) return;
+  
+  if (!liveActivity.length) {
+    activityFeed.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🟢</div>
+        <div class="empty-state-title">No live activity yet</div>
+        <div class="empty-state-description">Activity will appear as students study, complete assignments, or build streaks.</div>
+      </div>
+    `;
+    return;
+  }
+  
+  activityFeed.innerHTML = liveActivity.map(item => {
+    const icon = getActivityIcon(item.type);
+    const message = item.message || buildActivityMessage(item);
+    const timeLabel = formatActivityTime(item.createdAt);
+    
+    return `
+      <div class="activity-item">
+        <div class="activity-icon">${icon}</div>
+        <div class="activity-content">
+          <div class="activity-title">${message}</div>
+          <div class="activity-meta">
+            <span>${timeLabel}</span>
+            ${item.classCode ? `<span>• ${item.classCode}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 function renderAnalytics() {
   const analyticsSummary = document.getElementById('analyticsSummary');
   const topPerformers = document.getElementById('topPerformers');
@@ -5209,6 +5323,141 @@ function updateStats() {
   } catch (error) {
     console.error("Error updating stats:", error);
   }
+}
+
+// ========== LIVE ACTIVITY FEED ==========
+function getLiveActivity(classCode) {
+  const activityFeed = document.getElementById('activityFeed');
+  if (!activityFeed) return;
+  
+  if (!classCode) {
+    liveActivity = [];
+    activityIds.clear();
+    renderLiveActivity();
+    return;
+  }
+  
+  if (isDemoMode) {
+    if (liveActivity.length === 0) {
+      createDemoActivity();
+    }
+    renderLiveActivity();
+    return;
+  }
+  
+  if (!database || !database.ref) return;
+  
+  // Reset and detach any existing listener
+  if (activityRef) {
+    try {
+      activityRef.off();
+    } catch (e) {
+      console.log("No existing activity listener to remove");
+    }
+  }
+  
+  liveActivity = [];
+  activityIds.clear();
+  renderLiveActivity();
+  
+  activityRef = database.ref(`classActivity/${classCode}`).limitToLast(30);
+  activityRef.on('child_added', (snapshot) => {
+    const id = snapshot.key;
+    if (activityIds.has(id)) return;
+    
+    const data = snapshot.val() || {};
+    activityIds.add(id);
+    
+    liveActivity.unshift({
+      id: id,
+      type: data.type || 'activity',
+      message: data.message || '',
+      studentName: data.studentName || data.name || 'Student',
+      duration: data.duration || data.minutes || null,
+      streak: data.streak || null,
+      assignmentTitle: data.assignmentTitle || data.assignment || '',
+      createdAt: data.createdAt || data.timestamp || new Date().toISOString(),
+      classCode: classCode
+    });
+    
+    // Keep the list short for performance
+    if (liveActivity.length > 50) {
+      liveActivity = liveActivity.slice(0, 50);
+    }
+    
+    renderLiveActivity();
+  });
+}
+
+function getActivityIcon(type) {
+  const icons = {
+    timer_started: '⏱️',
+    streak_reached: '🔥',
+    assignment_completed: '✅',
+    resource_opened: '📎',
+    activity: '🟢'
+  };
+  return icons[type] || icons.activity;
+}
+
+function buildActivityMessage(item) {
+  if (item.type === 'timer_started') {
+    const minutes = item.duration ? `${item.duration}-min` : 'a study';
+    return `${item.studentName} started ${minutes} timer`;
+  }
+  if (item.type === 'streak_reached') {
+    return `${item.studentName} reached a ${item.streak || 0}-day streak`;
+  }
+  if (item.type === 'assignment_completed') {
+    const assignment = item.assignmentTitle ? ` "${item.assignmentTitle}"` : '';
+    return `${item.studentName} completed${assignment}`;
+  }
+  return item.message || `${item.studentName} has new activity`;
+}
+
+function formatActivityTime(dateString) {
+  if (!dateString) return 'Just now';
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMinutes = Math.floor(diffMs / 60000);
+    if (diffMinutes < 1) return 'Just now';
+    if (diffMinutes < 60) return `${diffMinutes}m ago`;
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  } catch {
+    return 'Just now';
+  }
+}
+
+function createDemoActivity() {
+  liveActivity = [
+    {
+      id: 'demo_act_1',
+      type: 'timer_started',
+      studentName: 'Alex Johnson',
+      duration: 25,
+      createdAt: new Date(Date.now() - 2 * 60000).toISOString()
+    },
+    {
+      id: 'demo_act_2',
+      type: 'streak_reached',
+      studentName: 'Taylor Brown',
+      streak: 5,
+      createdAt: new Date(Date.now() - 15 * 60000).toISOString()
+    },
+    {
+      id: 'demo_act_3',
+      type: 'assignment_completed',
+      studentName: 'Jordan Lee',
+      assignmentTitle: 'Math Chapter 5 Exercises',
+      createdAt: new Date(Date.now() - 60 * 60000).toISOString()
+    }
+  ];
+  
+  liveActivity.forEach(item => activityIds.add(item.id));
 }
 
 function updateUI() {
@@ -5982,6 +6231,10 @@ async function cleanupTeacherFromStudents() {
 // ========== FEEDBACK FORM ==========
 function openFeedbackForm() {
     window.open('https://docs.google.com/forms/d/e/1FAIpQLScJMM1dwIx3HvSu9mxyZm3HgZ7UO7QwLX673JKellaKLSM7EQ/viewform?usp=publish-editor', '_blank');
+}
+// Add to all pages (guard analytics when SDK isn't loaded)
+if (firebase.analytics) {
+  firebase.analytics().logEvent('page_view', { page_location: window.location.href });
 }
 </script>
 </body>
