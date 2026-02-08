@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+
+  
+</body>
+</html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -2663,6 +2667,877 @@ textarea {
     display: none !important;
   }
 }
+
+
+
+
+/* ===== STUDY STREAK CHAIN ===== */
+.streak-chain-container {
+    grid-column: span 12;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    margin: var(--spacing-xl) 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.streak-chain-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.streak-chain-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.streak-chain-count {
+    background: var(--gradient-primary);
+    color: white;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: 2rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.streak-chain-wrapper {
+    position: relative;
+    min-height: 120px;
+    overflow-x: auto;
+    padding: var(--spacing-md) 0;
+}
+
+.streak-chain {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: nowrap;
+    padding: var(--spacing-sm);
+    min-width: min-content;
+}
+
+.chain-link {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    position: relative;
+    transition: all var(--transition);
+    animation: pulse-glow 2s infinite alternate;
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); }
+    100% { box-shadow: 0 0 0 5px rgba(79, 70, 229, 0); }
+}
+
+.chain-link.completed {
+    background: var(--gradient-primary);
+    color: white;
+    border: 2px solid var(--accent);
+    box-shadow: var(--shadow-md);
+}
+
+.chain-link.pending {
+    background: var(--bg);
+    border: 2px dashed var(--border);
+    color: var(--text-muted);
+}
+
+.chain-link.active {
+    background: var(--gradient-warning);
+    color: white;
+    border: 2px solid var(--warning);
+    transform: scale(1.1);
+    animation: none;
+}
+
+.chain-link::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 8px;
+    height: 2px;
+    background: var(--border);
+    transform: translateY(-50%);
+}
+
+.chain-link:last-child::after {
+    display: none;
+}
+
+.chain-link.completed::after {
+    background: var(--accent);
+}
+
+.streak-chain-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.streak-chain-milestone {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    padding: var(--spacing-md);
+    border-radius: var(--radius);
+    margin-top: var(--spacing-md);
+    font-size: 0.875rem;
+}
+
+.streak-chain-milestone strong {
+    color: var(--accent);
+    display: block;
+    margin-bottom: var(--spacing-xs);
+}
+
+.streak-chain-empty {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+}
+
+.streak-chain-empty-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .streak-chain-container {
+        padding: var(--spacing-lg);
+        margin: var(--spacing-lg) 0;
+    }
+    
+    .chain-link {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        font-size: 0.75rem;
+    }
+    
+    .streak-chain-count {
+        font-size: 1rem;
+        padding: var(--spacing-xs) var(--spacing-md);
+    }
+}
+
+/* Animation for adding new links */
+@keyframes chain-grow {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.chain-link.new-link {
+    animation: chain-grow 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+
+/* ===== FRIENDLY CLASS COMPETITION ===== */
+.challenges-section {
+    margin-top: var(--spacing-xl);
+    border-top: 1px solid var(--border);
+    padding-top: var(--spacing-xl);
+}
+
+.challenges-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: var(--spacing-md);
+}
+
+.challenge-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--spacing-sm);
+    transition: all var(--transition);
+}
+
+.challenge-item:hover {
+    border-color: var(--accent);
+    transform: translateX(3px);
+}
+
+.challenge-item.active {
+    border-left: 4px solid var(--accent);
+}
+
+.challenge-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text);
+    margin-bottom: 2px;
+}
+
+.challenge-details {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+}
+
+.challenge-stats {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
+}
+
+.challenge-stat {
+    flex: 1;
+    text-align: center;
+    padding: var(--spacing-xs);
+    background: var(--card);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+}
+
+.challenge-stat.winning {
+    background: var(--gradient-success);
+    color: white;
+}
+
+.challenge-stat.losing {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+}
+
+.btn-challenge {
+    width: 100%;
+    margin-top: var(--spacing-md);
+    background: var(--gradient-info);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: var(--spacing-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.btn-challenge:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Challenges Modal */
+#challengeModal .modal-content {
+    max-width: 500px;
+}
+
+.challenge-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.challenge-type-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.challenge-type-option {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--spacing-md);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.challenge-type-option:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+.challenge-type-option.selected {
+    border-color: var(--accent);
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.challenge-type-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.challenge-type-label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+}
+
+.challenge-type-desc {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.duration-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.duration-option {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--spacing-sm);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.duration-option:hover {
+    border-color: var(--accent);
+}
+
+.duration-option.selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+.class-selector {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--spacing-sm);
+}
+
+.class-option {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition);
+    margin-bottom: var(--spacing-xs);
+}
+
+.class-option:hover {
+    background: var(--accent-light);
+}
+
+.class-option.selected {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+/* Challenge Details Modal */
+.challenge-details-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.challenge-header {
+    text-align: center;
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border);
+}
+
+.challenge-metrics {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--spacing-lg);
+    align-items: center;
+}
+
+.challenge-class {
+    text-align: center;
+}
+
+.class-name {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.class-code {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: var(--bg);
+    padding: 2px 8px;
+    border-radius: 1rem;
+    display: inline-block;
+}
+
+.class-score {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: var(--spacing-sm) 0;
+}
+
+.class-score.winning {
+    color: var(--success);
+}
+
+.class-score.losing {
+    color: var(--danger);
+}
+
+.vs-label {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--accent);
+    text-align: center;
+}
+
+.challenge-progress {
+    height: 8px;
+    background: var(--bg);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: var(--spacing-md) 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--gradient-primary);
+    transition: width 0.5s ease;
+}
+
+.challenge-time {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.challenge-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+}
+
+/* Challenges Dashboard Section */
+.challenge-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.challenge-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    transition: all var(--transition);
+    position: relative;
+}
+
+.challenge-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent);
+}
+
+.challenge-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-md);
+}
+
+.challenge-card-type {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.challenge-card-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: var(--spacing-xs);
+}
+
+.challenge-card-time {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-md);
+}
+
+.challenge-card-progress {
+    margin: var(--spacing-md) 0;
+}
+
+.challenge-card-stats {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--spacing-md);
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.challenge-card-class {
+    text-align: center;
+}
+
+.challenge-card-score {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-top: var(--spacing-xs);
+}
+
+.challenge-card-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+
+
+/* Create Challenge Page Styles */
+.challenge-type-option {
+    cursor: pointer;
+    padding: var(--spacing-lg);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--card);
+    transition: all var(--transition);
+    text-align: center;
+}
+
+.challenge-type-option:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent);
+}
+
+.challenge-type-option.selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    box-shadow: var(--shadow);
+}
+
+.duration-option {
+    cursor: pointer;
+    padding: var(--spacing-md);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+    transition: all var(--transition);
+    text-align: center;
+}
+
+.duration-option:hover {
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
+
+.duration-option.selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.form-step {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .challenge-type-selector {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .duration-selector {
+        flex-direction: column;
+    }
+    
+    .duration-option {
+        min-width: 100% !important;
+    }
+}
+
+
+
+
+
+
+/* ===== CREATE CHALLENGE PAGE ===== */
+.create-challenge-form {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.form-step {
+    animation: fadeIn 0.5s ease;
+    min-height: 400px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.challenge-type-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin: var(--spacing-xl) 0;
+}
+
+.challenge-type-option {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.challenge-type-option:hover {
+    border-color: var(--accent);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.challenge-type-option.selected {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, var(--accent-light), transparent);
+}
+
+.challenge-type-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.challenge-type-label {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text);
+}
+
+.challenge-type-desc {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-md);
+}
+
+.duration-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    margin: var(--spacing-xl) 0;
+}
+
+.duration-option {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.duration-option:hover {
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
+
+.duration-option.selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+.duration-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: var(--spacing-xs);
+}
+
+.duration-label {
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.duration-subtext {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.challenge-preview {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin: var(--spacing-xl) 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.challenge-preview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+}
+
+.step-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--border);
+}
+
+.step-indicator {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.step-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all var(--transition);
+}
+
+.step-dot.active {
+    background: var(--accent);
+    transform: scale(1.2);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .challenge-type-selector {
+        grid-template-columns: 1fr;
+    }
+    
+    .duration-selector {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    .challenge-type-option {
+        min-height: 180px;
+        padding: var(--spacing-lg);
+    }
+}
+
+/* Notifications */
+.notification-item {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.notification-item:hover {
+    background: var(--accent-light);
+}
+
+.notification-item.unread {
+    background: rgba(59, 130, 246, 0.1);
+    border-left: 4px solid var(--info);
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-xs);
+}
+
+.notification-title {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.notification-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.notification-content {
+    font-size: 0.875rem;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.notification-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+/* Notification bell in header */
+.notification-bell {
+    position: relative;
+}
+
+.notification-bell .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--danger);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -2674,6 +3549,11 @@ textarea {
   <div class="mobile-actions">
     <button class="btn-icon btn-secondary" onclick="refreshStudents()" title="Refresh">🔄</button>
     <button class="btn-icon btn-primary" onclick="window.location.href='index.html'" title="Home">🏠</button>
+    <!-- Add to mobile header -->
+<button class="btn-icon btn-secondary notification-bell" onclick="showNotifications()" style="position: relative;">
+    🔔
+    <span id="notificationCount" class="badge" style="display: none;">0</span>
+</button>
   </div>
 </div>
 
@@ -2729,6 +3609,10 @@ textarea {
       <div class="nav-item active" onclick="showSection('dashboard'); closeSidebarOnMobile();">
         📊 Dashboard
       </div>
+      
+ <button class="btn-challenge" onclick="navigateToCreateChallenge()">
+    ⚔️ New Challenge
+</button>
       <div class="nav-item" onclick="showSection('announcements'); closeSidebarOnMobile();">
         📢 Announcements
       </div>
@@ -2750,6 +3634,12 @@ textarea {
       <div class="nav-item" onclick="showSection('settings'); closeSidebarOnMobile();">
         ⚙️ Settings
       </div>
+      <!-- Add this in your dashboard section for testing -->
+<div style="text-align: center; margin: 20px 0;">
+    <button class="btn btn-primary" onclick="showCreateChallengePage()">
+        🧪 Test Create Challenge
+    </button>
+</div>
     </nav>
     
     <div class="sidebar-stats">
@@ -2771,6 +3661,36 @@ textarea {
         <span class="stat-value" id="sidebarAvgStreak">0</span>
       </div>
     </div>
+
+
+
+
+<!-- Friendly Class Competition -->
+<div class="challenges-section">
+    <h3 style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: var(--spacing-md);">🏆 Class Challenges</h3>
+    
+    <div class="challenges-list" id="challengesList">
+        <!-- Challenges will appear here -->
+    </div>
+    
+    <div class="challenge-stats" id="challengeStats" style="margin-top: var(--spacing-md); font-size: 0.75rem; color: var(--text-muted);">
+        <div style="display: flex; justify-content: space-between;">
+            <span>Wins: <strong id="challengeWins">0</strong></span>
+            <span>Active: <strong id="activeChallenges">0</strong></span>
+            <span>Total: <strong id="totalChallenges">0</strong></span>
+        </div>
+    </div>
+    
+    <button class="btn-challenge" onclick="showCreateChallengeModal()">
+        ⚔️ New Challenge
+    </button>
+    
+    <div class="nav-item" onclick="showSection('challenges'); closeSidebarOnMobile();" style="margin-top: var(--spacing-md);">
+        📊 View All Challenges
+    </div>
+</div>
+
+
 
     <div class="sidebar-stats" style="margin-top: var(--spacing-lg);">
       <h3>Engagement Heatmap</h3>
@@ -2821,6 +3741,11 @@ textarea {
           <button class="btn btn-primary" onclick="refreshStudents()">🔄 Refresh</button>
           <button class="btn btn-primary" onclick="window.location.href='index.html'">
     Home
+</button>
+<!-- Or add to desktop controls bar -->
+<button class="btn btn-secondary notification-bell" onclick="showNotifications()" style="position: relative;">
+    🔔 Notifications
+    <span id="notificationCountDesktop" class="badge" style="display: none;">0</span>
 </button>
           <button class="btn btn-warning" onclick="toggleDemoMode()" id="demoModeBtn" style="background: var(--gradient-warning);">🌐 Demo Mode: ON</button>
         </div>
@@ -3005,6 +3930,32 @@ textarea {
             </div>
           </div>
         </div>
+
+        <!-- Study Streak Chain -->
+<div class="streak-chain-container">
+    <div class="streak-chain-header">
+        <h2>🏆 Class Streak Chain</h2>
+        <div class="streak-chain-count" id="chainCount">
+            <span>🔥</span>
+            <span id="totalChainLinks">0</span> links
+        </div>
+    </div>
+    <div class="streak-chain-wrapper">
+        <div class="streak-chain" id="streakChain">
+            <!-- Chain links will be dynamically generated here -->
+        </div>
+    </div>
+    <div class="streak-chain-info">
+        <span>Each link = 1 day of combined student streaks</span>
+        <span id="chainProgress">Current progress: 0%</span>
+    </div>
+    <div class="streak-chain-milestone" id="chainMilestone">
+        <strong>🎯 Next Milestone</strong>
+        <span id="milestoneText">Reach 10 links to unlock a class celebration!</span>
+    </div>
+</div>
+
+
          <div class="footer">
           <p>© 2024 Student Learning Dashboard. All rights reserved. Made with ❤️ for students everywhere.</p>
           <p style="margin-top: var(--spacing-sm); font-size: 0.75rem; opacity: 0.7;">
@@ -3247,7 +4198,288 @@ textarea {
         </div>
       </div>
       
-      <!-- Settings Section -->
+
+      <!-- Challenges Section -->
+<div id="challenges" class="dashboard-content" style="grid-column: span 12; display: none;">
+    <div class="content-card">
+        <div class="content-header">
+            <h2>⚔️ Class Challenges</h2>
+            <button class="btn btn-primary" onclick="showCreateChallengeModal()">+ New Challenge</button>
+        </div>
+        <div class="content-body">
+            <div class="pro-tip">
+                <strong>⚔️ Friendly Competition</strong>
+                Challenge other teachers' classes to compete in study hours or streak counts. Track progress in real-time and celebrate winners with class celebrations!
+            </div>
+            
+            <div id="challengesFilter" style="margin: var(--spacing-lg) 0; display: flex; gap: var(--spacing-sm); flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="filterChallenges('all')" id="filterAll">All</button>
+                <button class="btn btn-secondary" onclick="filterChallenges('active')" id="filterActive">Active</button>
+                <button class="btn btn-secondary" onclick="filterChallenges('pending')" id="filterPending">Pending</button>
+                <button class="btn btn-secondary" onclick="filterChallenges('completed')" id="filterCompleted">Completed</button>
+                <button class="btn btn-secondary" onclick="filterChallenges('won')" id="filterWon">Won</button>
+                <button class="btn btn-secondary" onclick="filterChallenges('lost')" id="filterLost">Lost</button>
+            </div>
+            
+            <div class="challenge-cards" id="allChallengesList">
+                <!-- All challenges will appear here -->
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+
+<!-- Create Challenge Section -->
+<div id="create-challenge" class="dashboard-content" style="grid-column: span 12; display: none;">
+    <div class="content-card">
+        <div class="content-header">
+            <h2>⚔️ Create New Challenge</h2>
+            <button class="btn btn-secondary" onclick="showSection('challenges')">
+                ← Back to Challenges
+            </button>
+        </div>
+        
+        <div class="content-body">
+            <div class="pro-tip">
+                <strong>🏆 Friendly Competition</strong>
+                Challenge another teacher's class! Choose between study hours or streak count competitions. The other teacher will receive a notification to accept.
+            </div>
+            
+            <div class="create-challenge-form">
+                <!-- Step 1: Challenge Type -->
+                <div class="form-step active" id="step1">
+                    <h3 style="margin-bottom: var(--spacing-lg); color: var(--accent);">Step 1: Choose Your Competition</h3>
+                    <p style="color: var(--text-muted); margin-bottom: var(--spacing-xl);">
+                        What would you like to compete on? Each student's progress counts!
+                    </p>
+                    
+                    <div class="challenge-type-selector">
+                        <div class="challenge-type-option" onclick="selectChallengeType('total_study_hours')" id="typeStudyHours">
+                            <div class="challenge-type-icon">⏱️</div>
+                            <div class="challenge-type-label">Total Study Hours</div>
+                            <div class="challenge-type-desc">
+                                Add up all hours studied by every student in the class. Perfect for encouraging consistent study habits.
+                            </div>
+                            <div style="margin-top: auto; font-size: 0.875rem; color: var(--success); font-weight: 600;">
+                                Most Popular
+                            </div>
+                        </div>
+                        
+                        <div class="challenge-type-option" onclick="selectChallengeType('streak_count')" id="typeStreakCount">
+                            <div class="challenge-type-icon">🔥</div>
+                            <div class="challenge-type-label">Average Streak</div>
+                            <div class="challenge-type-desc">
+                                Compete on the average streak days across all students. Great for building daily consistency.
+                            </div>
+                            <div style="margin-top: auto; font-size: 0.875rem; color: var(--warning); font-weight: 600;">
+                                Consistency Challenge
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-navigation">
+                        <div class="step-indicator">
+                            <div class="step-dot active"></div>
+                            <div class="step-dot"></div>
+                            <div class="step-dot"></div>
+                            <div style="margin-left: var(--spacing-sm); font-size: 0.875rem; color: var(--text-muted);">
+                                Step 1 of 3
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="goToStep(2)">
+                            Next: Set Duration →
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Duration & Details -->
+                <div class="form-step" id="step2" style="display: none;">
+                    <h3 style="margin-bottom: var(--spacing-lg); color: var(--accent);">Step 2: Set Duration & Name</h3>
+                    <p style="color: var(--text-muted); margin-bottom: var(--spacing-xl);">
+                        How long should the challenge run? Give it a fun name!
+                    </p>
+                    
+                    <div style="margin-bottom: var(--spacing-xl);">
+                        <label style="display: block; margin-bottom: var(--spacing-md); font-weight: 600; color: var(--text);">
+                            Challenge Duration
+                        </label>
+                        <div class="duration-selector">
+                            <div class="duration-option" onclick="selectDuration(1)" id="duration1">
+                                <div class="duration-number">1</div>
+                                <div class="duration-label">Day</div>
+                                <div class="duration-subtext">Quick competition</div>
+                            </div>
+                            <div class="duration-option" onclick="selectDuration(3)" id="duration3">
+                                <div class="duration-number">3</div>
+                                <div class="duration-label">Days</div>
+                                <div class="duration-subtext">Weekend challenge</div>
+                            </div>
+                            <div class="duration-option" onclick="selectDuration(7)" id="duration7">
+                                <div class="duration-number">7</div>
+                                <div class="duration-label">Week</div>
+                                <div class="duration-subtext">Full week battle</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: var(--spacing-xl);">
+                        <label for="challengeName" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text);">
+                            Challenge Name
+                        </label>
+                        <input type="text" id="challengeName" 
+                               placeholder="e.g., 'Math vs Science Showdown' or 'Weekend Study Marathon'" 
+                               style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); font-size: 1rem;">
+                        <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: var(--spacing-xs);">
+                            Make it fun! Students will see this name.
+                        </div>
+                    </div>
+                    
+                    <div class="step-navigation">
+                        <button class="btn btn-secondary" onclick="goToStep(1)">
+                            ← Back
+                        </button>
+                        <div class="step-indicator">
+                            <div class="step-dot"></div>
+                            <div class="step-dot active"></div>
+                            <div class="step-dot"></div>
+                            <div style="margin-left: var(--spacing-sm); font-size: 0.875rem; color: var(--text-muted);">
+                                Step 2 of 3
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="goToStep(3)">
+                            Next: Add Opponent →
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Opponent & Message -->
+                <div class="form-step" id="step3" style="display: none;">
+                    <h3 style="margin-bottom: var(--spacing-lg); color: var(--accent);">Step 3: Choose Opponent</h3>
+                    <p style="color: var(--text-muted); margin-bottom: var(--spacing-xl);">
+                        Who are you challenging? Add a friendly message!
+                    </p>
+                    
+                    <div style="margin-bottom: var(--spacing-xl);">
+                        <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text);">
+                            Opponent's Class Code
+                        </label>
+                        <input type="text" id="otherClassCode" 
+                               placeholder="Enter 6-digit code (e.g., ABC123)" 
+                               maxlength="6"
+                               style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; font-size: 1.5rem; letter-spacing: 3px; text-align: center;">
+                        <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: var(--spacing-xs);">
+                            Ask the other teacher for their class code from their Teacher Dashboard
+                        </div>
+                        
+                        <div id="classCodeValidation" style="margin-top: var(--spacing-md);">
+                            <!-- Validation messages will appear here -->
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: var(--spacing-xl);">
+                        <label for="challengeMessage" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text);">
+                            Friendly Message (Optional)
+                        </label>
+                        <textarea id="challengeMessage" 
+                                  placeholder="Add a friendly message for the other teacher... e.g., 'May the best class win! 🏆' or 'Ready for some friendly competition?'"
+                                  rows="3"
+                                  style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); resize: vertical;"></textarea>
+                        <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: var(--spacing-xs);">
+                            This message will be sent with the challenge invitation
+                        </div>
+                    </div>
+                    
+                    <!-- Challenge Preview -->
+                    <div class="challenge-preview">
+                        <h4 style="margin-bottom: var(--spacing-lg); color: var(--accent);">📋 Challenge Preview</h4>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: var(--spacing-lg); align-items: center; margin-bottom: var(--spacing-xl);">
+                            <div style="text-align: center;">
+                                <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--spacing-xs); color: var(--accent);">Your Class</div>
+                                <div style="font-size: 0.875rem; color: var(--text-muted); background: var(--bg); padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--radius); display: inline-block;">
+                                    ${currentClassCode || 'YOURCODE'}
+                                </div>
+                            </div>
+                            
+                            <div style="font-size: 2rem; font-weight: 900; color: var(--accent); padding: var(--spacing-sm); background: var(--accent-light); border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                VS
+                            </div>
+                            
+                            <div style="text-align: center;">
+                                <div style="font-weight: 700; font-size: 1.125rem; margin-bottom: var(--spacing-xs); color: var(--accent);">Opponent</div>
+                                <div id="previewOpponentCode" style="font-size: 0.875rem; color: var(--text-muted); background: var(--bg); padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--radius); display: inline-block;">
+                                    Enter code
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-md);">
+                            <div>
+                                <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 4px;">Challenge Type</div>
+                                <div id="previewType" style="font-weight: 600; font-size: 1rem;">Not selected</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 4px;">Duration</div>
+                                <div id="previewDuration" style="font-weight: 600; font-size: 1rem;">Not selected</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 4px;">Challenge Name</div>
+                                <div id="previewName" style="font-weight: 600; font-size: 1rem;">Not named yet</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 4px;">Status</div>
+                                <div style="font-weight: 600; font-size: 1rem; color: var(--warning);">Ready to send</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-navigation">
+                        <button class="btn btn-secondary" onclick="goToStep(2)">
+                            ← Back
+                        </button>
+                        <div class="step-indicator">
+                            <div class="step-dot"></div>
+                            <div class="step-dot"></div>
+                            <div class="step-dot active"></div>
+                            <div style="margin-left: var(--spacing-sm); font-size: 0.875rem; color: var(--text-muted);">
+                                Step 3 of 3
+                            </div>
+                        </div>
+                        <button class="btn btn-success" onclick="submitChallenge()" id="submitChallengeBtn">
+                            🚀 Send Challenge
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Success -->
+                <div class="form-step" id="step4" style="display: none; text-align: center;">
+                    <div style="font-size: 5rem; margin-bottom: var(--spacing-lg); color: var(--success);">🎉</div>
+                    <h3 style="margin-bottom: var(--spacing-md); color: var(--success);">Challenge Created Successfully!</h3>
+                    <p style="color: var(--text-muted); margin-bottom: var(--spacing-xl); max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                        Your challenge invitation has been sent! The other teacher will receive a notification and can choose to accept or decline. You'll be notified when they respond.
+                    </p>
+                    
+                    <div id="createdChallengeDetails" style="background: var(--card); border-radius: var(--radius-lg); padding: var(--spacing-xl); margin-bottom: var(--spacing-xl); max-width: 500px; margin-left: auto; margin-right: auto; border: 2px solid var(--success);">
+                        <h4 style="margin-bottom: var(--spacing-lg); color: var(--success);">📬 Challenge Sent</h4>
+                        <!-- Details will appear here -->
+                    </div>
+                    
+                    <div style="display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="showSection('challenges')" style="min-width: 200px;">
+                            📋 View All Challenges
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetChallengeForm()" style="min-width: 200px;">
+                            ✨ Create Another
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+   <!-- Settings Section -->
       <div id="settings" class="dashboard-content" style="grid-column: span 12; display: none;">
         <div class="content-card">
           <div class="content-header">
@@ -3325,10 +4557,33 @@ textarea {
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </main>
+        </div>
+      </main>
 </div>
+
+
+</div>
+
+<!-- Notifications Modal -->
+<div id="notificationsModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <button class="modal-close" onclick="hideModal('notificationsModal')">×</button>
+        <div class="modal-header">
+            <h3>📬 Notifications</h3>
+            <button class="btn btn-secondary" onclick="markAllAsRead()" style="font-size: 0.875rem;">
+                Mark all as read
+            </button>
+        </div>
+        <div class="content-body">
+            <div id="notificationsList" style="max-height: 400px; overflow-y: auto;">
+                <!-- Notifications will appear here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+  
+
 
 <!-- Modals -->
 <div id="createClassModal" class="modal">
@@ -3929,7 +5184,7 @@ async function initializeTeacher() {
     selectedClassIndex = 0;
     console.log(`📝 Current class set to: ${teacherClasses[0].name}`);
   }
-  
+   
   // Update UI
   updateClassSelector();
   updateUI();
@@ -3960,6 +5215,17 @@ async function initializeTeacher() {
   
   // Update mobile title
   updateMobileTitle();
+
+
+   // Initialize challenges system
+    setTimeout(() => {
+        initializeChallenges();
+    }, 1000);
+
+     // Initialize challenges (which loads notifications)
+    setTimeout(() => {
+        initializeChallenges();
+    }, 1000);
 }
 
 async function loadClassesFromFirebase() {
@@ -4681,7 +5947,12 @@ function createDemoStudents() {
       lastActive: new Date().toISOString()
     });
   });
+
+    setTimeout(() => {
+        updateClassStreakChain();
+    }, 500);
 }
+
 
 function createDemoAnnouncements() {
   const demoAnnouncements = [
@@ -4792,6 +6063,28 @@ function createDemoResources() {
     resourceIds.add(id);
   });
 }
+
+
+function showCreateChallengePage() {
+    console.log("showCreateChallengePage called");
+    
+    if (!currentClassCode) {
+        showNotification("Please select a class first", "error");
+        return;
+    }
+    
+    // First reset the form
+    resetChallengeForm();
+    
+    // Then show the create-challenge section
+    showSection('create-challenge');
+    
+    // Force scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    console.log("Create challenge section should be visible now");
+}
+
 
 // ========== DATA MANAGEMENT FUNCTIONS ==========
 async function addAnnouncement() {
@@ -6793,6 +8086,8 @@ function updateStats() {
     
     // Check for class milestones after stats update
     checkClassMilestones();
+    // Update the streak chain
+    updateClassStreakChain(); // Add this line
   } catch (error) {
     console.error("Error updating stats:", error);
   }
@@ -7162,7 +8457,212 @@ function updateUI() {
     // Update mobile title
     document.getElementById('mobileTitle').textContent = 'Teacher Dashboard';
   }
+  // Update the streak chain
+    updateClassStreakChain();
 }
+
+
+
+// ========== STUDY STREAK CHAIN FUNCTIONS ==========
+
+function updateClassStreakChain() {
+    if (!currentClassCode || students.length === 0) {
+        renderEmptyStreakChain();
+        return;
+    }
+    
+    // Calculate total streak days from all students (excluding teacher)
+    const realStudents = students.filter(s => !s.isTeacher);
+    const totalStreakDays = realStudents.reduce((sum, student) => sum + (student.streak || 0), 0);
+    
+    // Update chain count display
+    document.getElementById('totalChainLinks').textContent = totalStreakDays;
+    
+    // Render the chain
+    renderStreakChain(totalStreakDays);
+    
+    // Calculate and show progress
+    updateChainProgress(totalStreakDays);
+    
+    // Check and update milestone
+    updateChainMilestone(totalStreakDays);
+}
+
+function renderStreakChain(totalStreakDays) {
+    const chainContainer = document.getElementById('streakChain');
+    if (!chainContainer) return;
+    
+    const linksToShow = 50; // Show maximum 50 links
+    const chainLinks = [];
+    
+    // Create completed links
+    for (let i = 1; i <= Math.min(totalStreakDays, linksToShow); i++) {
+        const isActive = i === totalStreakDays; // Last link is active
+        chainLinks.push(createChainLink(i, 'completed', isActive));
+    }
+    
+    // Add next pending link if we haven't reached the limit
+    if (totalStreakDays < linksToShow) {
+        chainLinks.push(createChainLink(totalStreakDays + 1, 'pending', false));
+    }
+    
+    chainContainer.innerHTML = chainLinks.join('');
+    
+    // If chain is empty, show message
+    if (totalStreakDays === 0) {
+        renderEmptyStreakChain();
+    }
+}
+
+function createChainLink(number, status, isActive) {
+    let className = `chain-link ${status}`;
+    if (isActive) className += ' active';
+    
+    // Add special styling for milestones
+    if (number % 10 === 0 && status === 'completed') {
+        className += ' milestone';
+    }
+    
+    let content = number;
+    if (number % 10 === 0 && status === 'completed') {
+        content = '⭐'; // Star for every 10th link
+    } else if (number % 5 === 0 && status === 'completed') {
+        content = '🔥'; // Fire for every 5th link
+    }
+    
+    return `
+        <div class="${className}" title="${status === 'completed' ? 'Day ' + number + ' complete!' : 'Day ' + number + ' pending'}" data-day="${number}">
+            ${content}
+        </div>
+    `;
+}
+
+function renderEmptyStreakChain() {
+    const chainContainer = document.getElementById('streakChain');
+    const chainCount = document.getElementById('chainCount');
+    
+    if (chainContainer) {
+        chainContainer.innerHTML = `
+            <div class="streak-chain-empty">
+                <div class="streak-chain-empty-icon">🔗</div>
+                <div>No streak chain yet!</div>
+                <div style="font-size: 0.875rem; margin-top: var(--spacing-xs);">
+                    Students need to build their streaks to add links to the chain.
+                </div>
+            </div>
+        `;
+    }
+    
+    if (chainCount) {
+        chainCount.querySelector('#totalChainLinks').textContent = '0';
+    }
+}
+
+function updateChainProgress(totalStreakDays) {
+    const progressElement = document.getElementById('chainProgress');
+    if (!progressElement) return;
+    
+    const milestone = Math.ceil(totalStreakDays / 10) * 10; // Next multiple of 10
+    const progress = Math.min(100, (totalStreakDays % 10) * 10);
+    
+    progressElement.textContent = `Progress to next milestone: ${progress}%`;
+    
+    // Add visual indicator if near milestone
+    if (progress >= 80) {
+        progressElement.style.color = 'var(--success)';
+        progressElement.style.fontWeight = '600';
+    } else {
+        progressElement.style.color = 'var(--text-muted)';
+        progressElement.style.fontWeight = '400';
+    }
+}
+
+function updateChainMilestone(totalStreakDays) {
+    const milestoneElement = document.getElementById('milestoneText');
+    if (!milestoneElement) return;
+    
+    const nextMilestone = Math.ceil(totalStreakDays / 10) * 10;
+    
+    if (nextMilestone === 0) {
+        milestoneElement.textContent = 'Get started! The first link will appear when a student completes Day 1.';
+    } else if (nextMilestone - totalStreakDays === 1) {
+        milestoneElement.textContent = `Almost there! Just 1 more day to reach ${nextMilestone} links!`;
+        milestoneElement.parentElement.style.borderLeftColor = 'var(--warning)';
+        milestoneElement.parentElement.style.background = 'rgba(245, 158, 11, 0.1)';
+    } else {
+        milestoneElement.textContent = `Reach ${nextMilestone} links to unlock a special class celebration!`;
+        milestoneElement.parentElement.style.borderLeftColor = 'var(--accent)';
+        milestoneElement.parentElement.style.background = 'var(--accent-light)';
+    }
+    
+    // Check if milestone reached
+    if (totalStreakDays > 0 && totalStreakDays % 10 === 0) {
+        celebrateChainMilestone(totalStreakDays);
+    }
+}
+
+function celebrateChainMilestone(totalStreakDays) {
+    const milestoneNumber = totalStreakDays / 10;
+    
+    // Only celebrate once per milestone
+    const storageKey = `chain_milestone_${currentClassCode}_${milestoneNumber}`;
+    if (localStorage.getItem(storageKey)) return;
+    
+    localStorage.setItem(storageKey, new Date().toISOString());
+    
+    // Show celebration
+    showNotification(`🎉 Class Milestone! ${totalStreakDays} links in the streak chain!`, 'success');
+    launchConfetti();
+    
+    // Post announcement
+    postSystemAnnouncement(
+        "Class Streak Chain Milestone!",
+        `Our class chain is now ${totalStreakDays} links long! Each link represents one day of student streaks. Keep up the great work! 🏆`
+    );
+    
+    // Add to activity feed
+    const activity = {
+        type: 'celebration',
+        message: `Class reached ${totalStreakDays} links in the streak chain!`,
+        createdAt: new Date().toISOString(),
+        classCode: currentClassCode
+    };
+    
+    if (!isDemoMode && database && database.ref) {
+        const activityRef = database.ref(`classActivity/${currentClassCode}`).push();
+        activityRef.set(activity);
+    } else {
+        activity.id = 'chain_milestone_' + Date.now();
+        activityIds.add(activity.id);
+        liveActivity.unshift(activity);
+        renderLiveActivity();
+    }
+}
+
+function simulateChainGrowth() {
+    // For demo purposes - simulate adding a new link
+    const chainContainer = document.getElementById('streakChain');
+    if (!chainContainer || !chainContainer.children.length) return;
+    
+    // Find the next pending link
+    const pendingLinks = chainContainer.querySelectorAll('.chain-link.pending');
+    if (pendingLinks.length > 0) {
+        const nextLink = pendingLinks[0];
+        nextLink.classList.remove('pending');
+        nextLink.classList.add('completed', 'new-link');
+        
+        // Update count
+        const currentCount = parseInt(document.getElementById('totalChainLinks').textContent);
+        document.getElementById('totalChainLinks').textContent = currentCount + 1;
+        
+        // Trigger progress update
+        setTimeout(() => {
+            updateClassStreakChain();
+        }, 600);
+    }
+}
+
+
 
 function updateMobileTitle() {
   const mobileTitle = document.getElementById('mobileTitle');
@@ -7515,7 +9015,9 @@ function showSection(sectionId) {
   document.querySelectorAll('.nav-item').forEach(item => {
     item.classList.remove('active');
   });
-  
+   if (sectionId === 'create-challenge') {
+        resetChallengeForm(); // Reset form when navigating to create page
+    }
   // Find the clicked nav item and activate it
   const navItems = document.querySelectorAll('.nav-item');
   for (let item of navItems) {
@@ -7552,7 +9054,9 @@ function showSection(sectionId) {
     renderStudents();
   } else if (sectionId === 'analytics') {
     renderAnalytics();
-  }
+  }else if (sectionId === 'challenges') { // Add this
+        filterChallenges('all');
+    }
   
   console.log(`📱 Switched to section: ${sectionId}`);
 }
@@ -7840,7 +9344,8 @@ function exportAnalytics() {
 // ========== PAGE INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', function() {
   console.log("👩‍🏫 Teacher Mode loaded");
-  setTimeout(setupInsightChatbot, 2000);
+ // setTimeout(setupInsightChatbot, 2000); // Remove or comment out this line
+setTimeout(createTeacherChatbot, 2000); // Use this instead if you want the chatbot
   // Ensure clean separation first
   ensureBrowserSeparation();
   
@@ -8521,8 +10026,10 @@ async function createTeacherChatbot() {
         const chatbotStats = document.getElementById('chatbotStats');
         
         // Show analyzing message
-        bubbleIcon.textContent = '🔍';
-        bubbleMessage.textContent = "Analyzing student data...";
+       const bubbleIconElement = document.querySelector('.bubble-icon');
+const bubbleMessageElement = document.querySelector('.bubble-message');
+if (bubbleIconElement) bubbleIconElement.textContent = '🔍';
+if (bubbleMessageElement) bubbleMessageElement.textContent = "Analyzing student data...";
         chatbotStats.innerHTML = '<div style="text-align: center;">Fetching latest student progress...</div>';
         
         const bubble = document.getElementById('teacherChatbotBubble');
@@ -8657,6 +10164,2174 @@ if (document.readyState === 'loading') {
 } else {
     setTimeout(createTeacherChatbot, 2000);
 }
+
+
+
+
+
+// ========== CREATE CHALLENGE PAGE FUNCTIONS ==========
+
+let currentStep = 1;
+let selectedChallengeType = '';
+let selectedDuration = 0;
+let selectedOpponentCode = '';
+
+// Navigation between steps
+function goToStep(stepNumber) {
+    console.log(`Going to step ${stepNumber} from step ${currentStep}`);
+    
+    // Validate before proceeding
+    if (stepNumber === 2 && !validateStep1()) {
+        showNotification("Please select a challenge type", "error");
+        return;
+    }
+    
+    if (stepNumber === 3 && !validateStep2()) {
+        showNotification("Please select duration and enter challenge name", "error");
+        return;
+    }
+    
+    // Hide current step
+    const currentStepEl = document.getElementById(`step${currentStep}`);
+    if (currentStepEl) {
+        currentStepEl.style.display = 'none';
+    }
+    
+    // Show new step
+    const newStepEl = document.getElementById(`step${stepNumber}`);
+    if (newStepEl) {
+        newStepEl.style.display = 'block';
+        currentStep = stepNumber;
+        
+        // Update step indicators
+        updateStepIndicators();
+        
+        // Update preview
+        updateChallengePreview();
+        
+        // Focus on first input if any
+        setTimeout(() => {
+            if (stepNumber === 2) {
+                document.getElementById('challengeName')?.focus();
+            } else if (stepNumber === 3) {
+                document.getElementById('otherClassCode')?.focus();
+            }
+        }, 100);
+    }
+}
+
+// Update step indicators
+function updateStepIndicators() {
+    const dots = document.querySelectorAll('.step-dot');
+    dots.forEach((dot, index) => {
+        if (index + 1 === currentStep) {
+            dot.classList.add('active');
+        } else {
+            dot.classList.remove('active');
+        }
+    });
+}
+
+// Select challenge type
+function selectChallengeType(type) {
+    console.log("Selected challenge type:", type);
+    selectedChallengeType = type;
+    
+    // Update UI
+    const typeOptions = document.querySelectorAll('.challenge-type-option');
+    typeOptions.forEach(option => {
+        if (option.id === 'type' + type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('')) {
+            option.classList.add('selected');
+            option.style.borderColor = 'var(--accent)';
+            option.style.background = 'linear-gradient(135deg, var(--accent-light), transparent)';
+        } else {
+            option.classList.remove('selected');
+            option.style.borderColor = '';
+            option.style.background = '';
+        }
+    });
+    
+    updateChallengePreview();
+}
+
+// Select duration
+function selectDuration(days) {
+    console.log("Selected duration:", days);
+    selectedDuration = days;
+    
+    // Update UI
+    const durationOptions = document.querySelectorAll('.duration-option');
+    durationOptions.forEach(option => {
+        if (option.id === 'duration' + days) {
+            option.classList.add('selected');
+            option.style.borderColor = 'var(--accent)';
+            option.style.background = 'var(--accent-light)';
+        } else {
+            option.classList.remove('selected');
+            option.style.borderColor = '';
+            option.style.background = '';
+        }
+    });
+    
+    updateChallengePreview();
+}
+
+// Validate step 1
+function validateStep1() {
+    return !!selectedChallengeType;
+}
+
+// Validate step 2
+function validateStep2() {
+    if (!selectedDuration) return false;
+    
+    const challengeName = document.getElementById('challengeName')?.value.trim();
+    if (!challengeName) return false;
+    
+    return true;
+}
+
+// Update challenge preview
+function updateChallengePreview() {
+    // Update opponent code preview
+    const opponentCode = document.getElementById('otherClassCode')?.value.trim().toUpperCase() || '';
+    const previewOpponent = document.getElementById('previewOpponentCode');
+    if (previewOpponent) {
+        previewOpponent.textContent = opponentCode || 'Enter code';
+        previewOpponent.style.color = opponentCode ? 'var(--accent)' : 'var(--text-muted)';
+    }
+    
+    // Update type preview
+    const previewType = document.getElementById('previewType');
+    if (previewType && selectedChallengeType) {
+        const typeInfo = CHALLENGE_TYPES[selectedChallengeType];
+        previewType.textContent = typeInfo ? typeInfo.name : 'Not selected';
+        previewType.style.color = 'var(--accent)';
+    }
+    
+    // Update duration preview
+    const previewDuration = document.getElementById('previewDuration');
+    if (previewDuration && selectedDuration) {
+        previewDuration.textContent = selectedDuration + ' day' + (selectedDuration > 1 ? 's' : '');
+        previewDuration.style.color = 'var(--accent)';
+    }
+    
+    // Update name preview
+    const challengeName = document.getElementById('challengeName')?.value.trim() || '';
+    const previewName = document.getElementById('previewName');
+    if (previewName) {
+        previewName.textContent = challengeName || 'Not named yet';
+        previewName.style.color = challengeName ? 'var(--accent)' : '';
+    }
+}
+
+// Validate opponent class code
+async function validateOpponentCode() {
+    const codeInput = document.getElementById('otherClassCode');
+    const code = codeInput?.value.trim().toUpperCase() || '';
+    const validationDiv = document.getElementById('classCodeValidation');
+    
+    if (!validationDiv) return false;
+    
+    if (!code) {
+        validationDiv.innerHTML = '';
+        validationDiv.style.display = 'none';
+        return false;
+    }
+    
+    // Basic validation
+    if (code.length !== 6) {
+        validationDiv.innerHTML = `
+            <div style="color: var(--danger); padding: var(--spacing-sm); background: rgba(239, 68, 68, 0.1); border-radius: var(--radius); display: flex; align-items: center; gap: var(--spacing-sm);">
+                ❌ Class code must be exactly 6 characters
+            </div>
+        `;
+        validationDiv.style.display = 'block';
+        return false;
+    }
+    
+    if (code === currentClassCode) {
+        validationDiv.innerHTML = `
+            <div style="color: var(--danger); padding: var(--spacing-sm); background: rgba(239, 68, 68, 0.1); border-radius: var(--radius); display: flex; align-items: center; gap: var(--spacing-sm);">
+                ❌ You cannot challenge your own class
+            </div>
+        `;
+        validationDiv.style.display = 'block';
+        return false;
+    }
+    
+    // Check if class exists
+    validationDiv.innerHTML = `
+        <div style="color: var(--info); padding: var(--spacing-sm); background: rgba(59, 130, 246, 0.1); border-radius: var(--radius); display: flex; align-items: center; gap: var(--spacing-sm);">
+            🔍 Checking class code...
+        </div>
+    `;
+    validationDiv.style.display = 'block';
+    
+    try {
+        const exists = await checkClassExists(code);
+        
+        if (exists) {
+            validationDiv.innerHTML = `
+                <div style="color: var(--success); padding: var(--spacing-sm); background: rgba(16, 185, 129, 0.1); border-radius: var(--radius); display: flex; align-items: center; gap: var(--spacing-sm);">
+                    ✅ Valid class found! Ready to challenge.
+                </div>
+            `;
+            selectedOpponentCode = code;
+            return true;
+        } else {
+            validationDiv.innerHTML = `
+                <div style="color: var(--danger); padding: var(--spacing-sm); background: rgba(239, 68, 68, 0.1); border-radius: var(--radius); display: flex; align-items: center; gap: var(--spacing-sm);">
+                    ❌ Class not found. Please check the code with the other teacher.
+                </div>
+            `;
+            return false;
+        }
+    } catch (error) {
+        console.error("Error validating class code:", error);
+        validationDiv.innerHTML = `
+            <div style="color: var(--warning); padding: var(--spacing-sm); background: rgba(245, 158, 11, 0.1); border-radius: var(--radius); display: flex; align-items: center; gap: var(--spacing-sm);">
+                ⚠️ Could not verify class. You can still send the challenge.
+            </div>
+        `;
+        selectedOpponentCode = code;
+        return true; // Allow sending anyway
+    }
+}
+
+// Check if class exists (simplified version)
+async function checkClassExists(classCode) {
+    if (!classCode || classCode.length !== 6) return false;
+    
+    // In demo mode, accept any 6-character code
+    if (isDemoMode) {
+        return true;
+    }
+    
+    // Check in Firebase
+    try {
+        const snapshot = await database.ref('classCodes/' + classCode).once('value');
+        return snapshot.exists();
+    } catch (error) {
+        console.error("Error checking class existence:", error);
+        return false;
+    }
+}
+
+// Submit challenge
+async function submitChallenge() {
+    console.log("Submitting challenge...");
+    
+    const challengeName = document.getElementById('challengeName')?.value.trim() || '';
+    const message = document.getElementById('challengeMessage')?.value.trim() || '';
+    const opponentCode = document.getElementById('otherClassCode')?.value.trim().toUpperCase() || '';
+    
+    // Validate everything
+    if (!selectedChallengeType) {
+        showNotification("Please select a challenge type", "error");
+        goToStep(1);
+        return;
+    }
+    
+    if (!selectedDuration) {
+        showNotification("Please select a duration", "error");
+        goToStep(2);
+        return;
+    }
+    
+    if (!challengeName) {
+        showNotification("Please enter a challenge name", "error");
+        goToStep(2);
+        return;
+    }
+    
+    if (!opponentCode || opponentCode.length !== 6) {
+        showNotification("Please enter a valid 6-digit class code", "error");
+        document.getElementById('otherClassCode')?.focus();
+        return;
+    }
+    
+    // Validate opponent code
+    const isValid = await validateOpponentCode();
+    if (!isValid && !isDemoMode) {
+        showNotification("Please fix the class code error", "error");
+        return;
+    }
+    
+    // Disable button and show loading
+    const submitBtn = document.getElementById('submitChallengeBtn');
+    if (submitBtn) {
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="loading-spinner"></span> Sending...';
+        
+        try {
+            // Create the challenge
+            const success = await createChallengeHelper(
+                selectedChallengeType,
+                selectedDuration,
+                opponentCode,
+                challengeName,
+                message
+            );
+            
+            if (success) {
+                // Show success step
+                goToStep(4);
+                
+                // Show challenge details
+                const typeInfo = CHALLENGE_TYPES[selectedChallengeType];
+                const detailsContainer = document.getElementById('createdChallengeDetails');
+                if (detailsContainer) {
+                    detailsContainer.innerHTML = `
+                        <div style="text-align: left;">
+                            <div style="display: grid; grid-template-columns: auto 1fr; gap: var(--spacing-sm); align-items: center; margin-bottom: var(--spacing-md);">
+                                <div style="font-weight: 600;">Challenge:</div>
+                                <div>${challengeName}</div>
+                                <div style="font-weight: 600;">Type:</div>
+                                <div>${typeInfo?.name || selectedChallengeType}</div>
+                                <div style="font-weight: 600;">Duration:</div>
+                                <div>${selectedDuration} day${selectedDuration > 1 ? 's' : ''}</div>
+                                <div style="font-weight: 600;">Opponent:</div>
+                                <div>${opponentCode}</div>
+                                <div style="font-weight: 600;">Status:</div>
+                                <div style="color: var(--warning);">Pending acceptance</div>
+                            </div>
+                            ${message ? `
+                            <div style="margin-top: var(--spacing-md); padding: var(--spacing-md); background: var(--accent-light); border-radius: var(--radius);">
+                                <div style="font-weight: 600; margin-bottom: var(--spacing-xs);">Your message:</div>
+                                <div>${message}</div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+                
+                showNotification("🎉 Challenge created successfully! The other teacher has been notified.", "success");
+            } else {
+                showNotification("Failed to create challenge", "error");
+            }
+        } catch (error) {
+            console.error("Error creating challenge:", error);
+            showNotification("Error: " + error.message, "error");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    }
+}
+
+// Create challenge helper (simplified)
+async function createChallengeHelper(challengeType, duration, opponentClassCode, challengeName, message) {
+    console.log("Creating challenge:", { challengeType, duration, opponentClassCode, challengeName });
+    
+    if (!currentClassCode) {
+        showNotification("No class selected", "error");
+        return false;
+    }
+    
+    // Create challenge object
+    const endsAt = new Date();
+    endsAt.setDate(endsAt.getDate() + duration);
+    
+    const challenge = {
+        name: challengeName,
+        type: challengeType,
+        challengerClass: currentClassCode,
+        challengerTeacherId: teacherId,
+        challengerTeacherName: teacherName,
+        opponentClass: opponentClassCode,
+        status: 'pending',
+        duration: duration,
+        createdAt: new Date().toISOString(),
+        endsAt: endsAt.toISOString(),
+        message: message || null,
+        challengerScore: 0,
+        opponentScore: 0
+    };
+    
+    // In demo mode, save to localStorage
+    if (isDemoMode) {
+        return createChallengeInDemoMode(challenge);
+    }
+    
+    // In Firebase mode, save to database
+    try {
+        const challengeRef = database.ref('challenges').push();
+        await challengeRef.set(challenge);
+        
+        // Also add to our local list
+        const enrichedChallenge = {
+            id: challengeRef.key,
+            ...challenge,
+            myScore: 0,
+            opponentScore: 0,
+            myWinning: false,
+            timeRemaining: `${duration} days`,
+            progress: 0
+        };
+        
+        pendingChallenges.push(enrichedChallenge);
+        allChallenges.push(enrichedChallenge);
+        updateChallengesUI();
+        
+        showNotification("✅ Challenge sent to " + opponentClassCode, "success");
+        return true;
+    } catch (error) {
+        console.error("Error creating challenge in Firebase:", error);
+        showNotification("Failed to save challenge: " + error.message, "error");
+        return false;
+    }
+}
+
+// Create challenge in demo mode
+function createChallengeInDemoMode(challenge) {
+    const challengeId = 'demo_challenge_' + Date.now();
+    const enrichedChallenge = {
+        id: challengeId,
+        ...challenge,
+        myScore: 0,
+        opponentScore: 0,
+        myWinning: false,
+        timeRemaining: `${challenge.duration} days`,
+        progress: 0
+    };
+    
+    pendingChallenges.push(enrichedChallenge);
+    allChallenges.push(enrichedChallenge);
+    saveChallengesToLocalStorage();
+    updateChallengesUI();
+    
+    console.log(`✅ Demo challenge created: ${challenge.name}`);
+    showNotification("✅ Challenge created (Demo Mode)", "success");
+    return true;
+}
+
+// Reset form
+function resetChallengeForm() {
+    console.log("Resetting challenge form");
+    
+    currentStep = 1;
+    selectedChallengeType = '';
+    selectedDuration = 0;
+    selectedOpponentCode = '';
+    
+    // Reset form fields
+    const challengeName = document.getElementById('challengeName');
+    const otherClassCode = document.getElementById('otherClassCode');
+    const challengeMessage = document.getElementById('challengeMessage');
+    
+    if (challengeName) challengeName.value = '';
+    if (otherClassCode) otherClassCode.value = '';
+    if (challengeMessage) challengeMessage.value = '';
+    
+    // Reset UI selections
+    document.querySelectorAll('.challenge-type-option').forEach(el => {
+        el.classList.remove('selected');
+        el.style.borderColor = '';
+        el.style.background = '';
+    });
+    
+    document.querySelectorAll('.duration-option').forEach(el => {
+        el.classList.remove('selected');
+        el.style.borderColor = '';
+        el.style.background = '';
+    });
+    
+    // Reset validation
+    const validationDiv = document.getElementById('classCodeValidation');
+    if (validationDiv) {
+        validationDiv.innerHTML = '';
+        validationDiv.style.display = 'none';
+    }
+    
+    // Go to step 1
+    document.getElementById('step4').style.display = 'none';
+    document.getElementById('step1').style.display = 'block';
+    updateStepIndicators();
+    updateChallengePreview();
+}
+
+// Initialize form when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Set up real-time validation for class code
+    const codeInput = document.getElementById('otherClassCode');
+    if (codeInput) {
+        codeInput.addEventListener('input', function() {
+            updateChallengePreview();
+        });
+    }
+    
+    // Set up real-time preview for challenge name
+    const nameInput = document.getElementById('challengeName');
+    if (nameInput) {
+        nameInput.addEventListener('input', function() {
+            updateChallengePreview();
+        });
+    }
+});
+
+
+// ========== NOTIFICATIONS SYSTEM ==========
+
+let notifications = [];
+
+// Load notifications
+async function loadNotifications() {
+    if (!teacherId) return;
+    
+    if (isDemoMode) {
+        loadNotificationsFromLocalStorage();
+    } else {
+        await loadNotificationsFromFirebase();
+    }
+    
+    updateNotificationBadge();
+}
+
+async function loadNotificationsFromFirebase() {
+    try {
+        const snapshot = await database.ref(`notifications/${teacherId}`).once('value');
+        if (snapshot.exists()) {
+            notifications = [];
+            snapshot.forEach(child => {
+                notifications.push({
+                    id: child.key,
+                    ...child.val()
+                });
+            });
+            console.log(`📬 Loaded ${notifications.length} notifications`);
+        }
+    } catch (error) {
+        console.error("Error loading notifications:", error);
+    }
+}
+
+function loadNotificationsFromLocalStorage() {
+    try {
+        const saved = localStorage.getItem(`teacher_notifications_${teacherId}`);
+        if (saved) {
+            notifications = JSON.parse(saved);
+        }
+    } catch (error) {
+        console.error("Error loading notifications from localStorage:", error);
+    }
+}
+
+function saveNotificationsToLocalStorage() {
+    try {
+        localStorage.setItem(`teacher_notifications_${teacherId}`, JSON.stringify(notifications));
+    } catch (error) {
+        console.error("Error saving notifications:", error);
+    }
+}
+
+// Create notification for opponent teacher
+async function sendChallengeNotification(challengeId, challengeData) {
+    try {
+        // Get opponent teacher ID
+        const opponentClassCode = challengeData.opponentClass;
+        const classSnapshot = await database.ref(`classCodes/${opponentClassCode}`).once('value');
+        
+        if (!classSnapshot.exists()) {
+            console.error("Opponent class not found:", opponentClassCode);
+            return false;
+        }
+        
+        const opponentTeacherId = classSnapshot.val().teacherId;
+        const opponentClassName = classSnapshot.val().name;
+        
+        // Create notification
+        const notification = {
+            type: 'challenge_invitation',
+            challengeId: challengeId,
+            challengerClass: challengeData.challengerClass,
+            challengerTeacherName: challengeData.challengerTeacherName,
+            opponentClass: opponentClassCode,
+            opponentClassName: opponentClassName,
+            challengeName: challengeData.name,
+            challengeType: challengeData.type,
+            duration: challengeData.duration,
+            message: challengeData.message || null,
+            createdAt: new Date().toISOString(),
+            status: 'unread',
+            isAccepted: false
+        };
+        
+        // Save to Firebase
+        await database.ref(`notifications/${opponentTeacherId}/${challengeId}`).set(notification);
+        
+        console.log(`📬 Sent challenge notification to teacher ${opponentTeacherId}`);
+        return true;
+    } catch (error) {
+        console.error("Error sending notification:", error);
+        return false;
+    }
+}
+
+// Update notification badge in UI
+function updateNotificationBadge() {
+    const unreadCount = notifications.filter(n => n.status === 'unread').length;
+    
+    // Update sidebar badge
+    const challengesNav = document.querySelector('.nav-item[onclick*="challenges"]');
+    if (challengesNav && unreadCount > 0) {
+        // Remove existing badge
+        const existingBadge = challengesNav.querySelector('.notification-badge');
+        if (existingBadge) existingBadge.remove();
+        
+        // Add new badge
+        const badge = document.createElement('span');
+        badge.className = 'notification-badge';
+        badge.textContent = unreadCount;
+        badge.style.cssText = `
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        `;
+        challengesNav.style.position = 'relative';
+        challengesNav.appendChild(badge);
+    }
+}
+
+// Mark notification as read
+async function markNotificationAsRead(notificationId) {
+    const notification = notifications.find(n => n.id === notificationId);
+    if (notification) {
+        notification.status = 'read';
+        
+        if (!isDemoMode) {
+            await database.ref(`notifications/${teacherId}/${notificationId}/status`).set('read');
+        } else {
+            saveNotificationsToLocalStorage();
+        }
+        
+        updateNotificationBadge();
+    }
+}
+
+
+// ========== FRIENDLY CLASS COMPETITION ==========
+
+// Global variables for challenges
+let activeChallenges = [];
+let pendingChallenges = [];
+let completedChallenges = [];
+let allChallenges = [];
+let selectedChallengeId = null;
+
+// Challenge types
+const CHALLENGE_TYPES = {
+    total_study_hours: {
+        name: 'Study Hours',
+        icon: '⏱️',
+        description: 'Total hours studied by all students',
+        calculate: calculateStudyHours,
+        unit: 'hours'
+    },
+    streak_count: {
+        name: 'Streak Count',
+        icon: '🔥',
+        description: 'Average streak across all students',
+        calculate: calculateAverageStreak,
+        unit: 'days'
+    }
+};
+
+// Challenge statuses
+const CHALLENGE_STATUS = {
+    PENDING: 'pending',
+    ACTIVE: 'active',
+    COMPLETED: 'completed',
+    CANCELLED: 'cancelled'
+};
+
+// Initialize challenges system
+async function initializeChallenges() {
+    console.log("⚔️ Initializing challenges system...");
+    
+    // Load notifications first
+    await loadNotifications();
+    
+    if (isDemoMode) {
+        loadChallengesFromLocalStorage();
+        createDemoChallenges();
+    } else {
+        await loadChallengesFromFirebase();
+    }
+    
+    updateChallengesUI();
+    startChallengeUpdates();
+    
+    console.log(`✅ Challenges system initialized: ${allChallenges.length} challenges, ${notifications.length} notifications`);
+}
+
+// Load challenges from Firebase
+async function loadChallengesFromFirebase() {
+    if (!teacherId || !currentClassCode) return;
+    
+    try {
+        // Load challenges where this class is either challenger or opponent
+        const snapshot = await database.ref('challenges').orderByChild('createdAt').once('value');
+        
+        if (snapshot.exists()) {
+            allChallenges = [];
+            activeChallenges = [];
+            pendingChallenges = [];
+            completedChallenges = [];
+            
+            snapshot.forEach(child => {
+                const challenge = child.val();
+                const challengeId = child.key;
+                
+                // Check if this class is involved in the challenge
+                if (challenge.challengerClass === currentClassCode || 
+                    challenge.opponentClass === currentClassCode) {
+                    
+                    const enrichedChallenge = {
+                        id: challengeId,
+                        ...challenge,
+                        // Add calculated fields
+                        myScore: calculateMyScore(challenge),
+                        opponentScore: calculateOpponentScore(challenge),
+                        myWinning: isMyClassWinning(challenge),
+                        timeRemaining: calculateTimeRemaining(challenge),
+                        progress: calculateChallengeProgress(challenge)
+                    };
+                    
+                    allChallenges.push(enrichedChallenge);
+                    
+                    // Categorize by status
+                    if (challenge.status === CHALLENGE_STATUS.ACTIVE) {
+                        activeChallenges.push(enrichedChallenge);
+                    } else if (challenge.status === CHALLENGE_STATUS.PENDING) {
+                        pendingChallenges.push(enrichedChallenge);
+                    } else if (challenge.status === CHALLENGE_STATUS.COMPLETED) {
+                        completedChallenges.push(enrichedChallenge);
+                    }
+                }
+            });
+            
+            console.log(`✅ Loaded ${allChallenges.length} challenges from Firebase`);
+        }
+    } catch (error) {
+        console.error(`❌ Error loading challenges: ${error.message}`);
+        loadChallengesFromLocalStorage();
+    }
+}
+
+// Load challenges from localStorage
+function loadChallengesFromLocalStorage() {
+    try {
+        const saved = localStorage.getItem(`teacher_challenges_${currentClassCode}`);
+        if (saved) {
+            const data = JSON.parse(saved);
+            allChallenges = data.allChallenges || [];
+            activeChallenges = data.activeChallenges || [];
+            pendingChallenges = data.pendingChallenges || [];
+            completedChallenges = data.completedChallenges || [];
+            console.log(`📂 Loaded ${allChallenges.length} challenges from localStorage`);
+        }
+    } catch (error) {
+        console.error("Error loading challenges from localStorage:", error);
+    }
+}
+
+// Save challenges to localStorage
+function saveChallengesToLocalStorage() {
+    try {
+        const data = {
+            allChallenges,
+            activeChallenges,
+            pendingChallenges,
+            completedChallenges,
+            lastUpdated: new Date().toISOString()
+        };
+        localStorage.setItem(`teacher_challenges_${currentClassCode}`, JSON.stringify(data));
+    } catch (error) {
+        console.error("Error saving challenges to localStorage:", error);
+    }
+}
+
+// Create demo challenges for testing
+function createDemoChallenges() {
+    if (allChallenges.length > 0) return;
+    
+    const demoChallenges = [
+        {
+            id: 'demo_challenge_1',
+            name: 'Math vs Science Showdown',
+            type: 'total_study_hours',
+            challengerClass: currentClassCode,
+            challengerTeacherId: teacherId,
+            challengerTeacherName: teacherName,
+            opponentClass: 'SCI789',
+            opponentTeacherName: 'Ms. Johnson',
+            status: CHALLENGE_STATUS.ACTIVE,
+            duration: 7, // days
+            createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+            endsAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+            message: 'May the best class win! Good luck!'
+        },
+        {
+            id: 'demo_challenge_2',
+            name: 'Study Streak Battle',
+            type: 'streak_count',
+            challengerClass: 'MATH456',
+            challengerTeacherName: 'Mr. Smith',
+            opponentClass: currentClassCode,
+            opponentTeacherId: teacherId,
+            opponentTeacherName: teacherName,
+            status: CHALLENGE_STATUS.PENDING,
+            duration: 3,
+            createdAt: new Date().toISOString(),
+            endsAt: null,
+            message: 'My students are ready to beat your streak record!'
+        },
+        {
+            id: 'demo_challenge_3',
+            name: 'Weekend Study Marathon',
+            type: 'total_study_hours',
+            challengerClass: currentClassCode,
+            challengerTeacherId: teacherId,
+            challengerTeacherName: teacherName,
+            opponentClass: 'ENG123',
+            opponentTeacherName: 'Dr. Williams',
+            status: CHALLENGE_STATUS.COMPLETED,
+            duration: 2,
+            createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+            endsAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+            result: {
+                winner: currentClassCode,
+                challengerScore: 45.2,
+                opponentScore: 38.7,
+                completedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            message: 'Great competition! Let\'s do this again sometime.'
+        }
+    ];
+    
+    demoChallenges.forEach(challenge => {
+        const enrichedChallenge = {
+            ...challenge,
+            myScore: calculateMyScore(challenge),
+            opponentScore: calculateOpponentScore(challenge),
+            myWinning: isMyClassWinning(challenge),
+            timeRemaining: calculateTimeRemaining(challenge),
+            progress: calculateChallengeProgress(challenge)
+        };
+        
+        allChallenges.push(enrichedChallenge);
+        
+        if (challenge.status === CHALLENGE_STATUS.ACTIVE) {
+            activeChallenges.push(enrichedChallenge);
+        } else if (challenge.status === CHALLENGE_STATUS.PENDING) {
+            pendingChallenges.push(enrichedChallenge);
+        } else if (challenge.status === CHALLENGE_STATUS.COMPLETED) {
+            completedChallenges.push(enrichedChallenge);
+        }
+    });
+    
+    saveChallengesToLocalStorage();
+    console.log(`✅ Created ${demoChallenges.length} demo challenges`);
+}
+
+
+// Keep this function for external API calls
+function setupFriendlyChallenge(challengeType, duration) {
+    console.log(`⚔️ Setting up ${challengeType} challenge for ${duration} days`);
+    
+    // Navigate to create challenge page
+    showSection('create-challenge');
+    
+    // Pre-select options
+    setTimeout(() => {
+        if (challengeType) selectChallengeType(challengeType);
+        if (duration) selectDuration(duration);
+    }, 100);
+    
+    return true;
+}
+
+
+// Main function to create a challenge
+function setupFriendlyChallenge(challengeType, duration) {
+    console.log(`⚔️ Setting up ${challengeType} challenge for ${duration} days`);
+    
+    // This is the main API function that can be called externally
+    return createChallengeHelper(challengeType, duration);
+}
+
+// Create challenge helper
+async function createChallengeHelper(challengeType, duration, opponentClassCode, challengeName, message) {
+    console.log("Creating challenge:", { challengeType, duration, opponentClassCode, challengeName });
+    
+    if (!currentClassCode) {
+        showNotification("No class selected", "error");
+        return false;
+    }
+    
+    if (opponentClassCode === currentClassCode) {
+        showNotification("You cannot challenge your own class", "error");
+        return false;
+    }
+    
+    // Create challenge object
+    const endsAt = new Date();
+    endsAt.setDate(endsAt.getDate() + duration);
+    
+    const challenge = {
+        name: challengeName,
+        type: challengeType,
+        challengerClass: currentClassCode,
+        challengerTeacherId: teacherId,
+        challengerTeacherName: teacherName,
+        opponentClass: opponentClassCode,
+        status: 'pending',
+        duration: duration,
+        createdAt: new Date().toISOString(),
+        endsAt: endsAt.toISOString(),
+        message: message || null,
+        challengerScore: 0,
+        opponentScore: 0,
+        isAccepted: false
+    };
+    
+    let challengeId;
+    
+    // Save challenge
+    if (isDemoMode) {
+        challengeId = 'demo_challenge_' + Date.now();
+        return createChallengeInDemoMode(challengeId, challenge);
+    } else {
+        try {
+            // Check if opponent class exists
+            const classSnapshot = await database.ref(`classCodes/${opponentClassCode}`).once('value');
+            if (!classSnapshot.exists()) {
+                showNotification("Class code not found. Please check with the other teacher.", "error");
+                return false;
+            }
+            
+            // Save challenge to Firebase
+            const challengeRef = database.ref('challenges').push();
+            challengeId = challengeRef.key;
+            await challengeRef.set(challenge);
+            
+            console.log(`✅ Challenge saved to Firebase: ${challengeId}`);
+            
+            // Send notification to opponent
+            const notificationSent = await sendChallengeNotification(challengeId, challenge);
+            if (!notificationSent) {
+                console.warn("Could not send notification, but challenge was saved");
+            }
+            
+            // Add to local challenges list
+            const enrichedChallenge = {
+                id: challengeId,
+                ...challenge,
+                myScore: 0,
+                opponentScore: 0,
+                myWinning: false,
+                timeRemaining: `${duration} days`,
+                progress: 0
+            };
+            
+            pendingChallenges.push(enrichedChallenge);
+            allChallenges.push(enrichedChallenge);
+            updateChallengesUI();
+            
+            showNotification("✅ Challenge sent! The other teacher will be notified.", "success");
+            return true;
+            
+        } catch (error) {
+            console.error("Error creating challenge in Firebase:", error);
+            showNotification("Failed to save challenge: " + error.message, "error");
+            return false;
+        }
+    }
+}
+
+// Real-time opponent code validation
+document.addEventListener('DOMContentLoaded', function() {
+    const codeInput = document.getElementById('otherClassCode');
+    if (codeInput) {
+        let validationTimeout;
+        
+        codeInput.addEventListener('input', function() {
+            clearTimeout(validationTimeout);
+            validationTimeout = setTimeout(async () => {
+                await validateOpponentCode();
+                updateChallengePreview();
+            }, 500);
+        });
+        
+        // Also validate on blur
+        codeInput.addEventListener('blur', function() {
+            validateOpponentCode();
+            updateChallengePreview();
+        });
+    }
+    
+    // Real-time name preview update
+    const nameInput = document.getElementById('challengeName');
+    if (nameInput) {
+        nameInput.addEventListener('input', function() {
+            updateChallengePreview();
+        });
+    }
+});
+
+// Create challenge in demo mode
+function createChallengeInDemoMode(challenge) {
+    const challengeId = 'demo_challenge_' + Date.now();
+    const enrichedChallenge = {
+        id: challengeId,
+        ...challenge,
+        myScore: 0,
+        opponentScore: 0,
+        myWinning: false,
+        timeRemaining: calculateTimeRemaining(challenge),
+        progress: 0
+    };
+    
+    pendingChallenges.push(enrichedChallenge);
+    allChallenges.push(enrichedChallenge);
+    saveChallengesToLocalStorage();
+    updateChallengesUI();
+    
+    console.log(`✅ Demo challenge created: ${challenge.name}`);
+    return true;
+}
+
+// Create challenge in Firebase
+async function createChallengeInFirebase(challenge) {
+    try {
+        const challengeRef = database.ref('challenges').push();
+        const challengeId = challengeRef.key;
+        
+        await challengeRef.set(challenge);
+        
+        // Also create notification for opponent
+        const notification = {
+            type: 'challenge_invitation',
+            challengeId: challengeId,
+            challengerClass: challenge.challengerClass,
+            challengerTeacherName: challenge.challengerTeacherName,
+            challengeName: challenge.name,
+            challengeType: challenge.type,
+            duration: challenge.duration,
+            message: challenge.message,
+            createdAt: new Date().toISOString(),
+            status: 'unread'
+        };
+        
+        // Find opponent teacher ID
+        const classSnap = await database.ref('classCodes/' + challenge.opponentClass).once('value');
+        if (classSnap.exists()) {
+            const opponentTeacherId = classSnap.val().teacherId;
+            await database.ref(`notifications/${opponentTeacherId}/${challengeId}`).set(notification);
+        }
+        
+        console.log(`✅ Challenge created in Firebase: ${challenge.name}`);
+        return true;
+    } catch (error) {
+        console.error("Error creating challenge in Firebase:", error);
+        return false;
+    }
+}
+
+// Update challenge scores
+async function updateChallengeScores() {
+    if (!currentClassCode) return;
+    
+    // For each active challenge involving this class
+    for (const challenge of activeChallenges) {
+        try {
+            const newChallengerScore = await calculateChallengeScore(challenge.challengerClass, challenge.type);
+            const newOpponentScore = await calculateChallengeScore(challenge.opponentClass, challenge.type);
+            
+            // Update challenge with new scores
+            challenge.challengerScore = newChallengerScore;
+            challenge.opponentScore = newOpponentScore;
+            challenge.myScore = calculateMyScore(challenge);
+            challenge.opponentScore = calculateOpponentScore(challenge);
+            challenge.myWinning = isMyClassWinning(challenge);
+            challenge.progress = calculateChallengeProgress(challenge);
+            
+            // Check if challenge has ended
+            if (new Date() >= new Date(challenge.endsAt)) {
+                completeChallenge(challenge.id);
+            }
+            
+            // Update in Firebase if not demo
+            if (!isDemoMode) {
+                await database.ref(`challenges/${challenge.id}`).update({
+                    challengerScore: newChallengerScore,
+                    opponentScore: newOpponentScore
+                });
+            }
+        } catch (error) {
+            console.error(`Error updating scores for challenge ${challenge.id}:`, error);
+        }
+    }
+    
+    // Update UI
+    updateChallengesUI();
+    
+    if (isDemoMode) {
+        saveChallengesToLocalStorage();
+    }
+}
+
+// Calculate score for a class based on challenge type
+async function calculateChallengeScore(classCode, challengeType) {
+    if (challengeType === 'total_study_hours') {
+        return await calculateStudyHours(classCode);
+    } else if (challengeType === 'streak_count') {
+        return await calculateAverageStreak(classCode);
+    }
+    return 0;
+}
+
+// Calculate total study hours for a class
+async function calculateStudyHours(classCode) {
+    if (isDemoMode) {
+        // Demo mode: generate random hours based on time
+        const baseHours = classCode === currentClassCode ? 25 : 20;
+        const randomHours = Math.random() * 10;
+        return parseFloat((baseHours + randomHours).toFixed(1));
+    }
+    
+    try {
+        // Get students for the class
+        const studentsSnap = await database.ref(`classes/${classCode}/students`).once('value');
+        let totalHours = 0;
+        
+        if (studentsSnap.exists()) {
+            studentsSnap.forEach(child => {
+                const student = child.val();
+                const hours = student.totalStudyHours || (student.totalMinutes / 60) || 0;
+                totalHours += parseFloat(hours);
+            });
+        }
+        
+        return parseFloat(totalHours.toFixed(1));
+    } catch (error) {
+        console.error(`Error calculating study hours for ${classCode}:`, error);
+        return 0;
+    }
+}
+
+// Calculate average streak for a class
+async function calculateAverageStreak(classCode) {
+    if (isDemoMode) {
+        // Demo mode: generate random streak
+        const baseStreak = classCode === currentClassCode ? 4.5 : 3.8;
+        const randomStreak = Math.random() * 2;
+        return parseFloat((baseStreak + randomStreak).toFixed(1));
+    }
+    
+    try {
+        const studentsSnap = await database.ref(`classes/${classCode}/students`).once('value');
+        let totalStreak = 0;
+        let studentCount = 0;
+        
+        if (studentsSnap.exists()) {
+            studentsSnap.forEach(child => {
+                const student = child.val();
+                totalStreak += student.streak || 0;
+                studentCount++;
+            });
+        }
+        
+        return studentCount > 0 ? parseFloat((totalStreak / studentCount).toFixed(1)) : 0;
+    } catch (error) {
+        console.error(`Error calculating average streak for ${classCode}:`, error);
+        return 0;
+    }
+}
+
+// Calculate my class score
+function calculateMyScore(challenge) {
+    return challenge.challengerClass === currentClassCode ? 
+           challenge.challengerScore : challenge.opponentScore;
+}
+
+// Calculate opponent score
+function calculateOpponentScore(challenge) {
+    return challenge.challengerClass === currentClassCode ? 
+           challenge.opponentScore : challenge.challengerScore;
+}
+
+// Check if my class is winning
+function isMyClassWinning(challenge) {
+    return calculateMyScore(challenge) > calculateOpponentScore(challenge);
+}
+
+// Calculate time remaining
+function calculateTimeRemaining(challenge) {
+    if (challenge.status !== CHALLENGE_STATUS.ACTIVE) {
+        return "Challenge not active";
+    }
+    
+    const endsAt = new Date(challenge.endsAt);
+    const now = new Date();
+    
+    if (now >= endsAt) {
+        return "Ended";
+    }
+    
+    const diffMs = endsAt - now;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    
+    return `${diffDays}d ${diffHours}h`;
+}
+
+// Calculate challenge progress (percentage complete)
+function calculateChallengeProgress(challenge) {
+    if (challenge.status !== CHALLENGE_STATUS.ACTIVE) {
+        return 100;
+    }
+    
+    const startAt = new Date(challenge.createdAt);
+    const endsAt = new Date(challenge.endsAt);
+    const now = new Date();
+    
+    const totalMs = endsAt - startAt;
+    const elapsedMs = now - startAt;
+    
+    return Math.min(100, Math.max(0, (elapsedMs / totalMs) * 100));
+}
+
+// Complete a challenge
+async function completeChallenge(challengeId) {
+    const challenge = allChallenges.find(c => c.id === challengeId);
+    if (!challenge || challenge.status !== CHALLENGE_STATUS.ACTIVE) return;
+    
+    // Determine winner
+    const winnerClass = challenge.challengerScore > challenge.opponentScore ? 
+                       challenge.challengerClass : challenge.opponentClass;
+    
+    const result = {
+        winner: winnerClass,
+        challengerScore: challenge.challengerScore,
+        opponentScore: challenge.opponentScore,
+        completedAt: new Date().toISOString()
+    };
+    
+    // Update challenge status
+    challenge.status = CHALLENGE_STATUS.COMPLETED;
+    challenge.result = result;
+    
+    // Move from active to completed
+    const activeIndex = activeChallenges.findIndex(c => c.id === challengeId);
+    if (activeIndex !== -1) {
+        activeChallenges.splice(activeIndex, 1);
+        completedChallenges.push(challenge);
+    }
+    
+    // Update in Firebase if not demo
+    if (!isDemoMode) {
+        try {
+            await database.ref(`challenges/${challengeId}`).update({
+                status: CHALLENGE_STATUS.COMPLETED,
+                result: result
+            });
+        } catch (error) {
+            console.error("Error completing challenge in Firebase:", error);
+        }
+    }
+    
+    // Send celebration notification to winner
+    if (winnerClass === currentClassCode) {
+        celebrateChallengeWin(challenge);
+    }
+    
+    // Update UI
+    updateChallengesUI();
+    
+    if (isDemoMode) {
+        saveChallengesToLocalStorage();
+    }
+    
+    console.log(`✅ Challenge completed: ${challenge.name}`);
+}
+
+// Celebrate challenge win
+function celebrateChallengeWin(challenge) {
+    const challengeType = CHALLENGE_TYPES[challenge.type];
+    
+    showNotification(`🏆 You won the "${challenge.name}" challenge!`, "success");
+    launchConfetti();
+    
+    // Post announcement
+    postSystemAnnouncement(
+        "Challenge Victory! 🏆",
+        `Our class won the "${challenge.name}" challenge against ${challenge.challengerClass === currentClassCode ? challenge.opponentClass : challenge.challengerClass}! We had ${challenge.myScore} ${challengeType.unit} vs their ${challenge.opponentScore} ${challengeType.unit}. Amazing work, class!`
+    );
+}
+
+// Update challenges UI
+function updateChallengesUI() {
+    // Update sidebar challenges list
+    updateSidebarChallenges();
+    
+    // Update challenges dashboard section
+    updateAllChallengesList();
+    
+    // Update challenge stats
+    updateChallengeStats();
+}
+
+// Update sidebar challenges list
+function updateSidebarChallenges() {
+    const challengesList = document.getElementById('challengesList');
+    if (!challengesList) return;
+    
+    // Show active challenges in sidebar (max 3)
+    const sidebarChallenges = activeChallenges.slice(0, 3);
+    
+    if (sidebarChallenges.length === 0) {
+        challengesList.innerHTML = `
+            <div style="text-align: center; padding: var(--spacing-md); color: var(--text-muted); font-size: 0.875rem;">
+                No active challenges
+            </div>
+        `;
+        return;
+    }
+    
+    challengesList.innerHTML = sidebarChallenges.map(challenge => {
+        const challengeType = CHALLENGE_TYPES[challenge.type];
+        const isWinning = challenge.myWinning;
+        const progress = Math.round(challenge.progress);
+        
+        return `
+            <div class="challenge-item ${challenge.status}" onclick="showChallengeDetails('${challenge.id}')">
+                <div class="challenge-title">${challenge.name}</div>
+                <div class="challenge-details">
+                    <span>${challengeType.icon} ${challengeType.name}</span>
+                    <span>${progress}%</span>
+                </div>
+                <div class="challenge-stats">
+                    <div class="challenge-stat ${isWinning ? 'winning' : ''}">
+                        Us: ${challenge.myScore}
+                    </div>
+                    <div class="challenge-stat ${!isWinning ? 'losing' : ''}">
+                        Them: ${challenge.opponentScore}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Update all challenges list in dashboard
+function updateAllChallengesList() {
+    const allChallengesList = document.getElementById('allChallengesList');
+    if (!allChallengesList) return;
+    
+    if (allChallenges.length === 0) {
+        allChallengesList.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">⚔️</div>
+                <div class="empty-state-title">No challenges yet</div>
+                <div class="empty-state-description">Create your first challenge with another teacher!</div>
+            </div>
+        `;
+        return;
+    }
+    
+    allChallengesList.innerHTML = allChallenges.map(challenge => {
+        const challengeType = CHALLENGE_TYPES[challenge.type];
+        const isActive = challenge.status === CHALLENGE_STATUS.ACTIVE;
+        const isPending = challenge.status === CHALLENGE_STATUS.PENDING;
+        const isCompleted = challenge.status === CHALLENGE_STATUS.COMPLETED;
+        const isWinning = challenge.myWinning;
+        const progress = Math.round(challenge.progress);
+        const opponentClass = challenge.challengerClass === currentClassCode ? 
+                            challenge.opponentClass : challenge.challengerClass;
+        
+        let statusBadge = '';
+        if (isActive) statusBadge = `<span style="background: var(--success); color: white; padding: 4px 12px; border-radius: 1rem; font-size: 0.75rem;">Active</span>`;
+        if (isPending) statusBadge = `<span style="background: var(--warning); color: white; padding: 4px 12px; border-radius: 1rem; font-size: 0.75rem;">Pending</span>`;
+        if (isCompleted) statusBadge = `<span style="background: var(--info); color: white; padding: 4px 12px; border-radius: 1rem; font-size: 0.75rem;">Completed</span>`;
+        
+        return `
+            <div class="challenge-card">
+                <div class="challenge-card-header">
+                    <div>
+                        <div class="challenge-card-title">${challenge.name}</div>
+                        <div class="challenge-card-time">
+                            vs ${opponentClass} • ${challenge.duration} days
+                        </div>
+                    </div>
+                    ${statusBadge}
+                </div>
+                
+                <div class="challenge-card-type">
+                    ${challengeType.icon} ${challengeType.name}
+                </div>
+                
+                ${isActive ? `
+                <div class="challenge-card-progress">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 4px;">
+                        <span>Progress</span>
+                        <span>${progress}%</span>
+                    </div>
+                    <div style="height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden;">
+                        <div style="height: 100%; width: ${progress}%; background: var(--gradient-primary);"></div>
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div class="challenge-card-stats">
+                    <div class="challenge-card-class">
+                        <div>Us</div>
+                        <div class="challenge-card-score ${isWinning && isActive ? 'winning' : ''}" style="color: ${isWinning && isActive ? 'var(--success)' : 'var(--text)'};">${challenge.myScore}</div>
+                    </div>
+                    
+                    <div style="text-align: center; font-weight: 900; color: var(--accent);">VS</div>
+                    
+                    <div class="challenge-card-class">
+                        <div>Them</div>
+                        <div class="challenge-card-score ${!isWinning && isActive ? 'losing' : ''}" style="color: ${!isWinning && isActive ? 'var(--danger)' : 'var(--text)'};">${challenge.opponentScore}</div>
+                    </div>
+                </div>
+                
+                ${isCompleted && challenge.result ? `
+                <div style="text-align: center; padding: var(--spacing-sm); background: ${challenge.result.winner === currentClassCode ? 'var(--gradient-success)' : 'rgba(239, 68, 68, 0.1)'}; border-radius: var(--radius); margin-bottom: var(--spacing-md);">
+                    ${challenge.result.winner === currentClassCode ? '🏆 You won!' : '😅 You lost'}
+                </div>
+                ` : ''}
+                
+                <div class="challenge-actions">
+                    <button class="btn btn-secondary" onclick="showChallengeDetails('${challenge.id}')" style="flex: 1;">Details</button>
+                    ${isPending && challenge.opponentClass === currentClassCode ? `
+                    <button class="btn btn-success" onclick="acceptChallenge('${challenge.id}')" style="flex: 1;">Accept</button>
+                    <button class="btn btn-danger" onclick="rejectChallenge('${challenge.id}')" style="flex: 1;">Decline</button>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Update challenge statistics
+function updateChallengeStats() {
+    const wins = completedChallenges.filter(c => c.result && c.result.winner === currentClassCode).length;
+    const activeCount = activeChallenges.length;
+    const totalCount = allChallenges.length;
+    
+    document.getElementById('challengeWins').textContent = wins;
+    document.getElementById('activeChallenges').textContent = activeCount;
+    document.getElementById('totalChallenges').textContent = totalCount;
+}
+
+// Show challenge details
+async function showChallengeDetails(challengeId) {
+    const challenge = allChallenges.find(c => c.id === challengeId);
+    if (!challenge) return;
+    
+    selectedChallengeId = challengeId;
+    
+    const challengeType = CHALLENGE_TYPES[challenge.type];
+    const isActive = challenge.status === CHALLENGE_STATUS.ACTIVE;
+    const isCompleted = challenge.status === CHALLENGE_STATUS.COMPLETED;
+    const isPending = challenge.status === CHALLENGE_STATUS.PENDING;
+    const isMyChallenge = challenge.challengerClass === currentClassCode;
+    
+    // Update modal content
+    document.getElementById('detailChallengeName').textContent = challenge.name;
+    document.getElementById('detailChallengeType').textContent = challengeType.name;
+    document.getElementById('detailChallengeStatus').textContent = isActive ? 'Active' : isPending ? 'Pending' : 'Completed';
+    
+    // My class info
+    document.getElementById('detailMyClassName').textContent = isMyChallenge ? 'You (Challenger)' : 'You';
+    document.getElementById('detailMyClassCode').textContent = currentClassCode;
+    document.getElementById('detailMyScore').textContent = challenge.myScore;
+    document.getElementById('detailMyScore').className = `class-score ${challenge.myWinning && isActive ? 'winning' : ''}`;
+    
+    // Opponent info
+    const opponentClass = isMyChallenge ? challenge.opponentClass : challenge.challengerClass;
+    const opponentName = isMyChallenge ? challenge.opponentTeacherName : challenge.challengerTeacherName;
+    document.getElementById('detailOpponentClassName').textContent = `${opponentName}'s Class`;
+    document.getElementById('detailOpponentClassCode').textContent = opponentClass;
+    document.getElementById('detailOpponentScore').textContent = challenge.opponentScore;
+    document.getElementById('detailOpponentScore').className = `class-score ${!challenge.myWinning && isActive ? 'losing' : ''}`;
+    
+    // Progress
+    const progress = Math.round(challenge.progress);
+    document.getElementById('detailProgressFill').style.width = `${progress}%`;
+    
+    // Time info
+    if (isActive) {
+        document.getElementById('detailTimeRemaining').textContent = `Ends in: ${challenge.timeRemaining}`;
+        document.getElementById('detailTimeStarted').textContent = `Started: ${formatDate(challenge.createdAt)}`;
+    } else if (isCompleted) {
+        document.getElementById('detailTimeRemaining').textContent = 'Challenge Completed';
+        document.getElementById('detailTimeStarted').textContent = `Ended: ${formatDate(challenge.result.completedAt)}`;
+    } else {
+        document.getElementById('detailTimeRemaining').textContent = 'Awaiting Response';
+        document.getElementById('detailTimeStarted').textContent = `Sent: ${formatDate(challenge.createdAt)}`;
+    }
+    
+    // Message
+    const messageContainer = document.getElementById('challengeMessageContainer');
+    if (challenge.message) {
+        messageContainer.style.display = 'block';
+        document.getElementById('detailChallengeMessage').textContent = challenge.message;
+    } else {
+        messageContainer.style.display = 'none';
+    }
+    
+    // Result
+    const resultContainer = document.getElementById('challengeResult');
+    if (isCompleted && challenge.result) {
+        resultContainer.style.display = 'block';
+        const won = challenge.result.winner === currentClassCode;
+        resultContainer.style.background = won ? 'var(--gradient-success)' : 'var(--gradient-danger)';
+        document.getElementById('detailResultText').textContent = won ? 
+            `You won! ${challenge.myScore} vs ${challenge.opponentScore} ${challengeType.unit}` :
+            `You lost! ${challenge.myScore} vs ${challenge.opponentScore} ${challengeType.unit}`;
+    } else {
+        resultContainer.style.display = 'none';
+    }
+    
+    // Cancel button (only show for my pending challenges)
+    const cancelBtn = document.getElementById('cancelChallengeBtn');
+    if (isPending && isMyChallenge) {
+        cancelBtn.style.display = 'block';
+    } else {
+        cancelBtn.style.display = 'none';
+    }
+    
+    showModal('challengeDetailsModal');
+}
+
+// Refresh challenge details
+async function refreshChallengeDetails() {
+    if (!selectedChallengeId) return;
+    
+    // Update scores
+    await updateChallengeScores();
+    
+    // Re-show details with updated info
+    showChallengeDetails(selectedChallengeId);
+    
+    showNotification("Challenge details refreshed", "info");
+}
+
+// Accept a challenge
+async function acceptChallenge(challengeId) {
+    const challenge = allChallenges.find(c => c.id === challengeId);
+    if (!challenge || challenge.status !== CHALLENGE_STATUS.PENDING) return;
+    
+    if (confirm("Accept this challenge? The competition will begin immediately!")) {
+        challenge.status = CHALLENGE_STATUS.ACTIVE;
+        
+        // Move from pending to active
+        const pendingIndex = pendingChallenges.findIndex(c => c.id === challengeId);
+        if (pendingIndex !== -1) {
+            pendingChallenges.splice(pendingIndex, 1);
+            activeChallenges.push(challenge);
+        }
+        
+        // Update in Firebase if not demo
+        if (!isDemoMode) {
+            try {
+                await database.ref(`challenges/${challengeId}`).update({
+                    status: CHALLENGE_STATUS.ACTIVE
+                });
+            } catch (error) {
+                console.error("Error accepting challenge in Firebase:", error);
+            }
+        }
+        
+        updateChallengesUI();
+        
+        if (isDemoMode) {
+            saveChallengesToLocalStorage();
+        }
+        
+        showNotification("Challenge accepted! Competition begins now!", "success");
+        
+        // Post announcement to class
+        postSystemAnnouncement(
+            "Challenge Accepted! ⚔️",
+            `We've accepted the "${challenge.name}" challenge from ${challenge.challengerTeacherName}! Let's show them what we're made of!`
+        );
+    }
+}
+
+// Reject a challenge
+async function rejectChallenge(challengeId) {
+    if (confirm("Reject this challenge? This cannot be undone.")) {
+        const challenge = allChallenges.find(c => c.id === challengeId);
+        if (!challenge) return;
+        
+        challenge.status = CHALLENGE_STATUS.CANCELLED;
+        
+        // Remove from pending
+        const pendingIndex = pendingChallenges.findIndex(c => c.id === challengeId);
+        if (pendingIndex !== -1) {
+            pendingChallenges.splice(pendingIndex, 1);
+        }
+        
+        // Update in Firebase if not demo
+        if (!isDemoMode) {
+            try {
+                await database.ref(`challenges/${challengeId}`).update({
+                    status: CHALLENGE_STATUS.CANCELLED
+                });
+            } catch (error) {
+                console.error("Error rejecting challenge in Firebase:", error);
+            }
+        }
+        
+        updateChallengesUI();
+        
+        if (isDemoMode) {
+            saveChallengesToLocalStorage();
+        }
+        
+        showNotification("Challenge rejected", "info");
+    }
+}
+
+// Cancel a challenge
+async function cancelChallenge() {
+    if (!selectedChallengeId) return;
+    
+    if (confirm("Cancel this challenge? This will notify the other teacher.")) {
+        const challenge = allChallenges.find(c => c.id === selectedChallengeId);
+        if (!challenge) return;
+        
+        challenge.status = CHALLENGE_STATUS.CANCELLED;
+        
+        // Remove from appropriate list
+        if (challenge.status === CHALLENGE_STATUS.PENDING) {
+            const pendingIndex = pendingChallenges.findIndex(c => c.id === selectedChallengeId);
+            if (pendingIndex !== -1) pendingChallenges.splice(pendingIndex, 1);
+        } else if (challenge.status === CHALLENGE_STATUS.ACTIVE) {
+            const activeIndex = activeChallenges.findIndex(c => c.id === selectedChallengeId);
+            if (activeIndex !== -1) activeChallenges.splice(activeIndex, 1);
+        }
+        
+        // Update in Firebase if not demo
+        if (!isDemoMode) {
+            try {
+                await database.ref(`challenges/${selectedChallengeId}`).update({
+                    status: CHALLENGE_STATUS.CANCELLED
+                });
+            } catch (error) {
+                console.error("Error cancelling challenge in Firebase:", error);
+            }
+        }
+        
+        updateChallengesUI();
+        hideModal('challengeDetailsModal');
+        
+        if (isDemoMode) {
+            saveChallengesToLocalStorage();
+        }
+        
+        showNotification("Challenge cancelled", "info");
+    }
+}
+
+// Filter challenges
+function filterChallenges(filterType) {
+    // Update active filter button
+    document.querySelectorAll('#challengesFilter button').forEach(btn => {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-secondary');
+    });
+    document.getElementById('filter' + filterType.charAt(0).toUpperCase() + filterType.slice(1)).classList.add('btn-primary');
+    
+    // Filter challenges
+    let filteredChallenges = [];
+    
+    switch(filterType) {
+        case 'all':
+            filteredChallenges = allChallenges;
+            break;
+        case 'active':
+            filteredChallenges = activeChallenges;
+            break;
+        case 'pending':
+            filteredChallenges = pendingChallenges;
+            break;
+        case 'completed':
+            filteredChallenges = completedChallenges;
+            break;
+        case 'won':
+            filteredChallenges = completedChallenges.filter(c => 
+                c.result && c.result.winner === currentClassCode
+            );
+            break;
+        case 'lost':
+            filteredChallenges = completedChallenges.filter(c => 
+                c.result && c.result.winner !== currentClassCode
+            );
+            break;
+    }
+    
+    // Update display
+    const allChallengesList = document.getElementById('allChallengesList');
+    if (filteredChallenges.length === 0) {
+        allChallengesList.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">🔍</div>
+                <div class="empty-state-title">No ${filterType} challenges</div>
+                <div class="empty-state-description">Try a different filter or create a new challenge</div>
+            </div>
+        `;
+    } else {
+        // Re-render with filtered challenges
+        // We'll just show/hide for simplicity
+        const challengeCards = allChallengesList.querySelectorAll('.challenge-card');
+        challengeCards.forEach(card => {
+            card.style.display = 'none';
+        });
+       
+        // This is a simplified approach - in a real implementation, 
+        // you'd want to re-render only the filtered challenges
+        allChallengesList.innerHTML = filteredChallenges.map(challenge => {
+            // Same rendering code as updateAllChallengesList, but filtered
+            return renderChallengeCard(challenge);
+            
+        }).join('');
+    }
+    
+}
+
+// Start periodic challenge updates
+function startChallengeUpdates() {
+    // Update scores every 30 seconds
+    setInterval(() => {
+        updateChallengeScores();
+    }, 30000);
+    
+    // Check for completed challenges every minute
+    setInterval(() => {
+        activeChallenges.forEach(challenge => {
+            if (new Date() >= new Date(challenge.endsAt)) {
+                completeChallenge(challenge.id);
+            }
+        });
+    }, 60000);
+}
+
+
+
+
+// Force initialize the New Challenge button
+function initializeChallengeButton() {
+    console.log("⚔️ Initializing challenge button...");
+    
+    // Try multiple times
+    const tryInitialize = (attempt = 1) => {
+        const buttons = document.querySelectorAll('.btn-challenge');
+        console.log(`Attempt ${attempt}: Found ${buttons.length} challenge buttons`);
+        
+        buttons.forEach(btn => {
+            if (!btn.hasAttribute('data-challenge-initialized')) {
+                console.log("✅ Setting up challenge button");
+                btn.setAttribute('data-challenge-initialized', 'true');
+                btn.onclick = function() {
+                    console.log("New Challenge clicked!");
+                    if (currentClassCode) {
+                        showSection('create-challenge');
+                    } else {
+                        showNotification("Please select a class first", "error");
+                    }
+                };
+            }
+        });
+        
+        // Try again if needed
+        if (attempt < 5) {
+            setTimeout(() => tryInitialize(attempt + 1), 1000);
+        }
+    };
+    
+    tryInitialize(1);
+}
+
+// Call it when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initializeChallengeButton, 2000);
+});
+
+// Show notifications
+function showNotifications() {
+    loadNotifications(); // Refresh notifications
+    renderNotifications();
+    showModal('notificationsModal');
+}
+
+// Render notifications list
+function renderNotifications() {
+    const container = document.getElementById('notificationsList');
+    if (!container) return;
+    
+    if (notifications.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state" style="padding: var(--spacing-xl);">
+                <div style="font-size: 3rem; margin-bottom: var(--spacing-md);">📭</div>
+                <div style="font-weight: 600; margin-bottom: var(--spacing-xs);">No notifications</div>
+                <div style="color: var(--text-muted);">You're all caught up!</div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Sort by date (newest first)
+    const sortedNotifications = [...notifications].sort((a, b) => 
+        new Date(b.createdAt) - new Date(a.createdAt)
+    );
+    
+    container.innerHTML = sortedNotifications.map(notification => {
+        const isUnread = notification.status === 'unread';
+        const timeAgo = getTimeAgo(notification.createdAt);
+        
+        let content = '';
+        let actions = '';
+        
+        if (notification.type === 'challenge_invitation') {
+            const typeInfo = CHALLENGE_TYPES[notification.challengeType] || { name: 'Challenge' };
+            
+            content = `
+                <div class="notification-content">
+                    <strong>${notification.challengerTeacherName}</strong> has challenged your class 
+                    <strong>${notification.opponentClassName || notification.opponentClass}</strong> to a 
+                    <strong>${typeInfo.name}</strong> competition!
+                    ${notification.message ? `<div style="margin-top: var(--spacing-sm); padding: var(--spacing-sm); background: var(--accent-light); border-radius: var(--radius); font-style: italic;">"${notification.message}"</div>` : ''}
+                    <div style="margin-top: var(--spacing-sm); font-size: 0.75rem; color: var(--text-muted);">
+                        Duration: ${notification.duration} day${notification.duration > 1 ? 's' : ''}
+                    </div>
+                </div>
+            `;
+            
+            if (!notification.isAccepted) {
+                actions = `
+                    <div class="notification-actions">
+                        <button class="btn btn-success" onclick="acceptChallengeFromNotification('${notification.challengeId}')" style="font-size: 0.75rem; padding: var(--spacing-xs) var(--spacing-sm);">
+                            ✅ Accept
+                        </button>
+                        <button class="btn btn-danger" onclick="rejectChallengeFromNotification('${notification.challengeId}')" style="font-size: 0.75rem; padding: var(--spacing-xs) var(--spacing-sm);">
+                            ❌ Decline
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        return `
+            <div class="notification-item ${isUnread ? 'unread' : ''}" onclick="viewNotification('${notification.id}')">
+                <div class="notification-header">
+                    <div class="notification-title">
+                        ${notification.type === 'challenge_invitation' ? '⚔️ New Challenge' : '📢 Notification'}
+                    </div>
+                    <div class="notification-time">${timeAgo}</div>
+                </div>
+                ${content}
+                ${actions}
+            </div>
+        `;
+    }).join('');
+    
+    // Update badge counts
+    updateNotificationBadges();
+}
+
+// Update notification badges
+function updateNotificationBadges() {
+    const unreadCount = notifications.filter(n => n.status === 'unread').length;
+    
+    const mobileBadge = document.getElementById('notificationCount');
+    const desktopBadge = document.getElementById('notificationCountDesktop');
+    
+    if (mobileBadge) {
+        mobileBadge.textContent = unreadCount;
+        mobileBadge.style.display = unreadCount > 0 ? 'flex' : 'none';
+    }
+    
+    if (desktopBadge) {
+        desktopBadge.textContent = unreadCount;
+        desktopBadge.style.display = unreadCount > 0 ? 'flex' : 'none';
+    }
+}
+
+// View notification
+function viewNotification(notificationId) {
+    const notification = notifications.find(n => n.id === notificationId);
+    if (!notification) return;
+    
+    markNotificationAsRead(notificationId);
+    
+    if (notification.type === 'challenge_invitation') {
+        // Navigate to challenges section
+        hideModal('notificationsModal');
+        showSection('challenges');
+        
+        // Highlight the specific challenge
+        setTimeout(() => {
+            const challengeCard = document.querySelector(`[data-challenge-id="${notification.challengeId}"]`);
+            if (challengeCard) {
+                challengeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                challengeCard.style.animation = 'pulse 2s';
+            }
+        }, 500);
+    }
+}
+
+// Accept challenge from notification
+async function acceptChallengeFromNotification(challengeId) {
+    const notification = notifications.find(n => n.challengeId === challengeId);
+    if (!notification) {
+        showNotification("Challenge not found", "error");
+        return;
+    }
+    
+    // Find the challenge
+    let challenge;
+    if (isDemoMode) {
+        challenge = allChallenges.find(c => c.id === challengeId);
+    } else {
+        try {
+            const snapshot = await database.ref(`challenges/${challengeId}`).once('value');
+            if (snapshot.exists()) {
+                challenge = { id: challengeId, ...snapshot.val() };
+            }
+        } catch (error) {
+            console.error("Error loading challenge:", error);
+        }
+    }
+    
+    if (!challenge) {
+        showNotification("Challenge not found", "error");
+        return;
+    }
+    
+    // Update challenge status
+    challenge.status = 'active';
+    challenge.isAccepted = true;
+    challenge.startedAt = new Date().toISOString();
+    
+    // Calculate end date based on duration
+    const endsAt = new Date();
+    endsAt.setDate(endsAt.getDate() + challenge.duration);
+    challenge.endsAt = endsAt.toISOString();
+    
+    // Update in database
+    if (isDemoMode) {
+        // Update in demo mode
+        const index = allChallenges.findIndex(c => c.id === challengeId);
+        if (index !== -1) {
+            allChallenges[index] = challenge;
+            saveChallengesToLocalStorage();
+        }
+    } else {
+        try {
+            await database.ref(`challenges/${challengeId}`).update({
+                status: 'active',
+                isAccepted: true,
+                startedAt: challenge.startedAt,
+                endsAt: challenge.endsAt
+            });
+            
+            // Update notification
+            await database.ref(`notifications/${teacherId}/${challengeId}/isAccepted`).set(true);
+        } catch (error) {
+            console.error("Error accepting challenge:", error);
+        }
+    }
+    
+    // Move from pending to active
+    const pendingIndex = pendingChallenges.findIndex(c => c.id === challengeId);
+    if (pendingIndex !== -1) {
+        pendingChallenges.splice(pendingIndex, 1);
+        activeChallenges.push(challenge);
+    }
+    
+    // Update notification
+    notification.isAccepted = true;
+    notification.status = 'read';
+    
+    // Update UI
+    updateChallengesUI();
+    renderNotifications();
+    updateNotificationBadges();
+    
+    showNotification("✅ Challenge accepted! Competition begins now!", "success");
+    
+    // Post announcement to class
+    postSystemAnnouncement(
+        "Challenge Accepted! ⚔️",
+        `We've accepted the "${challenge.name}" challenge from ${challenge.challengerTeacherName}! Let's show them what we're made of!`
+    );
+}
+
+// Reject challenge from notification
+async function rejectChallengeFromNotification(challengeId) {
+    if (!confirm("Decline this challenge? This cannot be undone.")) return;
+    
+    // Update challenge status
+    if (isDemoMode) {
+        const challenge = allChallenges.find(c => c.id === challengeId);
+        if (challenge) {
+            challenge.status = 'rejected';
+            
+            // Remove from pending
+            const pendingIndex = pendingChallenges.findIndex(c => c.id === challengeId);
+            if (pendingIndex !== -1) {
+                pendingChallenges.splice(pendingIndex, 1);
+            }
+            
+            saveChallengesToLocalStorage();
+        }
+    } else {
+        try {
+            await database.ref(`challenges/${challengeId}`).update({
+                status: 'rejected'
+            });
+            
+            // Update notification
+            await database.ref(`notifications/${teacherId}/${challengeId}`).update({
+                status: 'read',
+                isAccepted: false
+            });
+        } catch (error) {
+            console.error("Error rejecting challenge:", error);
+        }
+    }
+    
+    // Remove notification
+    const notifIndex = notifications.findIndex(n => n.challengeId === challengeId);
+    if (notifIndex !== -1) {
+        notifications.splice(notifIndex, 1);
+    }
+    
+    // Update UI
+    updateChallengesUI();
+    renderNotifications();
+    updateNotificationBadges();
+    
+    showNotification("Challenge declined", "info");
+}
+
+// Mark all as read
+async function markAllAsRead() {
+    notifications.forEach(notification => {
+        notification.status = 'read';
+    });
+    
+    if (!isDemoMode) {
+        try {
+            // Update all in Firebase
+            const updates = {};
+            notifications.forEach(notification => {
+                updates[`notifications/${teacherId}/${notification.id}/status`] = 'read';
+            });
+            await database.ref().update(updates);
+        } catch (error) {
+            console.error("Error marking all as read:", error);
+        }
+    } else {
+        saveNotificationsToLocalStorage();
+    }
+    
+    renderNotifications();
+    updateNotificationBadges();
+    showNotification("All notifications marked as read", "success");
+}
+
+// Helper function to get time ago
+function getTimeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMinutes = Math.floor(diffMs / 60000);
+    
+    if (diffMinutes < 1) return 'Just now';
+    if (diffMinutes < 60) return `${diffMinutes}m ago`;
+    
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays < 7) return `${diffDays}d ago`;
+    
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+
+function debugCreateChallenge() {
+    console.log("=== DEBUG CREATE CHALLENGE ===");
+    console.log("1. currentClassCode:", currentClassCode);
+    console.log("2. create-challenge element exists:", !!document.getElementById('create-challenge'));
+    console.log("3. create-challenge element display:", document.getElementById('create-challenge')?.style.display);
+    console.log("4. dashboard element display:", document.getElementById('dashboard')?.style.display);
+    console.log("5. showSection function exists:", typeof showSection);
+    
+    // Test showing the section directly
+    if (document.getElementById('create-challenge')) {
+        console.log("6. Testing showSection directly...");
+        showSection('create-challenge');
+    }
+}
+
+
+
+function navigateToCreateChallenge() {
+    // Hide all sections
+    document.querySelectorAll('.dashboard-content').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Show create-challenge section
+    const createChallengeSection = document.getElementById('create-challenge');
+    if (createChallengeSection) {
+        createChallengeSection.style.display = 'block';
+        
+        // Update active nav
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Find and activate the create challenge nav item
+        const navItems = document.querySelectorAll('.nav-item');
+        for (let item of navItems) {
+            if (item.textContent.includes('⚔️') || item.textContent.includes('Challenge')) {
+                item.classList.add('active');
+                break;
+            }
+        }
+        
+        // Reset form
+        resetChallengeForm();
+        
+        console.log("✅ Successfully navigated to create challenge");
+    } else {
+        console.error("❌ Create challenge section not found");
+        showNotification("Create challenge section not found", "error");
+    }
+}
 </script>
+
+
+
 </body>
 </html>
