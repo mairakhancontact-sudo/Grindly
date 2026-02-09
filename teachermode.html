@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+
+  
+</body>
+</html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -3534,6 +3538,58 @@ textarea {
     justify-content: center;
     font-weight: bold;
 }
+
+
+
+
+
+/* ===== ENHANCED CONFETTI STYLES ===== */
+#confettiCanvas {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    pointer-events: none !important;
+    z-index: 9999 !important;
+    display: none !important;
+    background: transparent !important;
+}
+
+/* Celebration animation for winning cards */
+.challenge-card.winning {
+    animation: celebration-pulse 2s infinite;
+    border-color: var(--success) !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5) !important;
+}
+
+@keyframes celebration-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+/* Celebration badge */
+.celebration-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: var(--gradient-warning);
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    animation: bounce 1s infinite;
+    z-index: 1;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
 </style>
 </head>
 <body>
@@ -3606,9 +3662,7 @@ textarea {
         📊 Dashboard
       </div>
       
- <button class="btn-challenge" onclick="navigateToCreateChallenge()">
-    ⚔️ New Challenge
-</button>
+ 
       <div class="nav-item" onclick="showSection('announcements'); closeSidebarOnMobile();">
         📢 Announcements
       </div>
@@ -3630,12 +3684,7 @@ textarea {
       <div class="nav-item" onclick="showSection('settings'); closeSidebarOnMobile();">
         ⚙️ Settings
       </div>
-      <!-- Add this in your dashboard section for testing -->
-<div style="text-align: center; margin: 20px 0;">
-    <button class="btn btn-primary" onclick="showCreateChallengePage()">
-        🧪 Test Create Challenge
-    </button>
-</div>
+     
     </nav>
     
     <div class="sidebar-stats">
@@ -4200,7 +4249,9 @@ textarea {
     <div class="content-card">
         <div class="content-header">
             <h2>⚔️ Class Challenges</h2>
-            <button class="btn btn-primary" onclick="showCreateChallengeModal()">+ New Challenge</button>
+            <button class="btn-challenge" onclick="showCreateChallengeModal()">
+        ⚔️ New Challenge
+    </button>
         </div>
         <div class="content-body">
             <div class="pro-tip">
@@ -8719,65 +8770,96 @@ function resizeConfettiCanvas() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
+// Simple, working confetti function
 function launchConfetti() {
-  const canvas = document.getElementById('confettiCanvas');
-  if (!canvas) return;
-  
-  resizeConfettiCanvas();
-  const ctx = canvas.getContext('2d');
-  canvas.style.display = 'block';
-  
-  const colors = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6'];
-  const particles = [];
-  const count = 180;
-  
-  for (let i = 0; i < count; i++) {
-    particles.push({
-      x: Math.random() * window.innerWidth,
-      y: -20 - Math.random() * window.innerHeight,
-      r: 4 + Math.random() * 6,
-      c: colors[Math.floor(Math.random() * colors.length)],
-      vx: -2 + Math.random() * 4,
-      vy: 2 + Math.random() * 6,
-      rot: Math.random() * Math.PI,
-      vr: -0.1 + Math.random() * 0.2
-    });
-  }
-  
-  const duration = 3000;
-  const start = performance.now();
-  
-  if (confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
-  
-  const tick = (now) => {
-    const elapsed = now - start;
-    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    console.log("🎉 Launching confetti...");
     
-    particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.rot += p.vr;
-      p.vy += 0.02; // gravity
-      
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot);
-      ctx.fillStyle = p.c;
-      ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 1.6);
-      ctx.restore();
-    });
-    
-    if (elapsed < duration) {
-      confettiAnimationId = requestAnimationFrame(tick);
-    } else {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      canvas.style.display = 'none';
-      confettiAnimationId = null;
+    const canvas = document.getElementById('confettiCanvas');
+    if (!canvas) {
+        console.error("❌ Confetti canvas not found!");
+        return;
     }
-  };
-  
-  confettiAnimationId = requestAnimationFrame(tick);
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas to full screen
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.width = '100vw';
+    canvas.style.height = '100vh';
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.zIndex = '99999';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.display = 'block';
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Create confetti particles
+    const confettiParticles = [];
+    const particleCount = 150;
+    const colors = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6'];
+    
+    for (let i = 0; i < particleCount; i++) {
+        confettiParticles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            r: Math.random() * 10 + 5,
+            d: Math.random() * particleCount + 10,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            tilt: Math.floor(Math.random() * 10) - 10,
+            tiltAngleIncremental: Math.random() * 0.07 + 0.05,
+            tiltAngle: 0
+        });
+    }
+    
+    let animationFrame;
+    let startTime = Date.now();
+    
+    function drawConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        let remainingParticles = 0;
+        
+        confettiParticles.forEach(p => {
+            // Update particle position
+            p.tiltAngle += p.tiltAngleIncremental;
+            p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+            p.x += Math.sin(p.d);
+            p.tilt = Math.sin(p.tiltAngle) * 15;
+            
+            // Draw particle
+            ctx.beginPath();
+            ctx.lineWidth = p.r / 2;
+            ctx.strokeStyle = p.color;
+            ctx.moveTo(p.x + p.tilt + p.r / 4, p.y);
+            ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 4);
+            ctx.stroke();
+            
+            // Check if particle is still on screen
+            if (p.y <= canvas.height) {
+                remainingParticles++;
+            }
+        });
+        
+        // Stop animation after 3 seconds or when all particles are gone
+        if (Date.now() - startTime < 3000 && remainingParticles > 0) {
+            animationFrame = requestAnimationFrame(drawConfetti);
+        } else {
+            cancelAnimationFrame(animationFrame);
+            setTimeout(() => {
+                canvas.style.display = 'none';
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }, 500);
+        }
+    }
+    
+    drawConfetti();
 }
+
+
 
 function showNotification(message, type = "info") {
   const container = document.getElementById('toastContainer');
@@ -12094,91 +12176,1538 @@ function viewNotification(notificationId) {
 }
 
 // Accept challenge from notification
+// ========== FIXED ACCEPT CHALLENGE FUNCTION ==========
+
+// Fix for accepting challenges from notifications
 async function acceptChallengeFromNotification(challengeId) {
-    const notification = notifications.find(n => n.challengeId === challengeId);
-    if (!notification) {
-        showNotification("Challenge not found", "error");
-        return;
+    console.log(`⚔️ Accepting challenge ${challengeId} from notification`);
+    
+    try {
+        // Get the challenge from the database or localStorage
+        let challenge;
+        
+        if (isDemoMode) {
+            // In demo mode, find in allChallenges
+            challenge = allChallenges.find(c => c.id === challengeId);
+            
+            if (!challenge) {
+                // If not found, create a new challenge object from notification
+                const notification = notifications.find(n => n.challengeId === challengeId);
+                if (!notification) {
+                    showNotification("Challenge not found", "error");
+                    return;
+                }
+                
+                challenge = {
+                    id: challengeId,
+                    name: notification.challengeName,
+                    type: notification.challengeType,
+                    challengerClass: notification.challengerClass,
+                    challengerTeacherId: '', // Will be filled from notification
+                    challengerTeacherName: notification.challengerTeacherName,
+                    opponentClass: currentClassCode,
+                    opponentTeacherId: teacherId,
+                    opponentTeacherName: teacherName,
+                    status: 'pending',
+                    duration: notification.duration,
+                    createdAt: notification.createdAt,
+                    endsAt: null,
+                    message: notification.message || null,
+                    challengerScore: 0,
+                    opponentScore: 0,
+                    isAccepted: false
+                };
+            }
+        } else {
+            // In Firebase mode, load from database
+            const snapshot = await database.ref(`challenges/${challengeId}`).once('value');
+            if (!snapshot.exists()) {
+                showNotification("Challenge not found in database", "error");
+                return;
+            }
+            challenge = { id: challengeId, ...snapshot.val() };
+        }
+        
+        // Update challenge status to ACTIVE
+        challenge.status = 'active';
+        challenge.isAccepted = true;
+        challenge.startedAt = new Date().toISOString();
+        
+        // Calculate end date
+        const endsAt = new Date();
+        endsAt.setDate(endsAt.getDate() + challenge.duration);
+        challenge.endsAt = endsAt.toISOString();
+        
+        // Add our teacher ID if missing
+        if (!challenge.opponentTeacherId) {
+            challenge.opponentTeacherId = teacherId;
+            challenge.opponentTeacherName = teacherName;
+        }
+        
+        // Add calculated fields for display
+        const enrichedChallenge = {
+            ...challenge,
+            myScore: calculateMyScore(challenge),
+            opponentScore: calculateOpponentScore(challenge),
+            myWinning: isMyClassWinning(challenge),
+            timeRemaining: calculateTimeRemaining(challenge),
+            progress: calculateChallengeProgress(challenge)
+        };
+        
+        console.log("Enriched challenge:", enrichedChallenge);
+        
+        // Check if challenge already exists in our lists
+        const existingIndex = allChallenges.findIndex(c => c.id === challengeId);
+        
+        if (existingIndex !== -1) {
+            // Update existing challenge
+            allChallenges[existingIndex] = enrichedChallenge;
+            
+            // Remove from pending if it's there
+            const pendingIndex = pendingChallenges.findIndex(c => c.id === challengeId);
+            if (pendingIndex !== -1) {
+                pendingChallenges.splice(pendingIndex, 1);
+            }
+        } else {
+            // Add as new challenge
+            allChallenges.push(enrichedChallenge);
+        }
+        
+        // Add to active challenges
+        const activeIndex = activeChallenges.findIndex(c => c.id === challengeId);
+        if (activeIndex === -1) {
+            activeChallenges.push(enrichedChallenge);
+        } else {
+            activeChallenges[activeIndex] = enrichedChallenge;
+        }
+        
+        // Update in database or localStorage
+        if (isDemoMode) {
+            saveChallengesToLocalStorage();
+        } else {
+            try {
+                await database.ref(`challenges/${challengeId}`).update({
+                    status: 'active',
+                    isAccepted: true,
+                    startedAt: challenge.startedAt,
+                    endsAt: challenge.endsAt,
+                    opponentTeacherId: teacherId,
+                    opponentTeacherName: teacherName
+                });
+                
+                // Mark notification as read
+                await database.ref(`notifications/${teacherId}/${challengeId}`).update({
+                    status: 'read',
+                    isAccepted: true
+                });
+            } catch (error) {
+                console.error("Error updating challenge in Firebase:", error);
+            }
+        }
+        
+        // Update notifications
+        const notifIndex = notifications.findIndex(n => n.challengeId === challengeId);
+        if (notifIndex !== -1) {
+            notifications[notifIndex].status = 'read';
+            notifications[notifIndex].isAccepted = true;
+            saveNotificationsToLocalStorage();
+        }
+        
+        // Update UI
+        updateChallengesUI();
+        updateNotificationBadges();
+        
+        showNotification(`✅ Challenge "${challenge.name}" accepted! Competition begins now!`, "success");
+        
+        // Post announcement to class
+        postSystemAnnouncement(
+            "Challenge Accepted! ⚔️",
+            `We've accepted the "${challenge.name}" challenge from ${challenge.challengerTeacherName}! \n\n` +
+            `Challenge: ${CHALLENGE_TYPES[challenge.type]?.name || 'Competition'} \n` +
+            `Duration: ${challenge.duration} days \n` +
+            `Get ready to compete!`
+        );
+        
+        // Close notification modal
+        hideModal('notificationsModal');
+        
+    } catch (error) {
+        console.error("Error accepting challenge:", error);
+        showNotification("Failed to accept challenge: " + error.message, "error");
     }
+}
+
+// Also update the simpler acceptChallenge function
+async function acceptChallenge(challengeId) {
+    console.log(`⚔️ Accepting challenge ${challengeId} from challenges page`);
     
     // Find the challenge
-    let challenge;
-    if (isDemoMode) {
-        challenge = allChallenges.find(c => c.id === challengeId);
-    } else {
-        try {
-            const snapshot = await database.ref(`challenges/${challengeId}`).once('value');
-            if (snapshot.exists()) {
-                challenge = { id: challengeId, ...snapshot.val() };
-            }
-        } catch (error) {
-            console.error("Error loading challenge:", error);
-        }
-    }
-    
-    if (!challenge) {
+    const challengeIndex = allChallenges.findIndex(c => c.id === challengeId);
+    if (challengeIndex === -1) {
         showNotification("Challenge not found", "error");
         return;
     }
     
-    // Update challenge status
-    challenge.status = 'active';
-    challenge.isAccepted = true;
-    challenge.startedAt = new Date().toISOString();
+    const challenge = allChallenges[challengeIndex];
     
-    // Calculate end date based on duration
-    const endsAt = new Date();
-    endsAt.setDate(endsAt.getDate() + challenge.duration);
-    challenge.endsAt = endsAt.toISOString();
-    
-    // Update in database
-    if (isDemoMode) {
-        // Update in demo mode
-        const index = allChallenges.findIndex(c => c.id === challengeId);
-        if (index !== -1) {
-            allChallenges[index] = challenge;
+    if (confirm(`Accept "${challenge.name}" challenge?\n\nDuration: ${challenge.duration} days\nType: ${CHALLENGE_TYPES[challenge.type]?.name || 'Competition'}`)) {
+        
+        // Update challenge status
+        challenge.status = 'active';
+        challenge.isAccepted = true;
+        challenge.startedAt = new Date().toISOString();
+        
+        // Calculate end date
+        const endsAt = new Date();
+        endsAt.setDate(endsAt.getDate() + challenge.duration);
+        challenge.endsAt = endsAt.toISOString();
+        
+        // Ensure our teacher info is included
+        challenge.opponentTeacherId = teacherId;
+        challenge.opponentTeacherName = teacherName;
+        
+        // Add calculated fields
+        challenge.myScore = calculateMyScore(challenge);
+        challenge.opponentScore = calculateOpponentScore(challenge);
+        challenge.myWinning = isMyClassWinning(challenge);
+        challenge.timeRemaining = calculateTimeRemaining(challenge);
+        challenge.progress = calculateChallengeProgress(challenge);
+        
+        // Move from pending to active
+        const pendingIndex = pendingChallenges.findIndex(c => c.id === challengeId);
+        if (pendingIndex !== -1) {
+            pendingChallenges.splice(pendingIndex, 1);
+        }
+        
+        const activeIndex = activeChallenges.findIndex(c => c.id === challengeId);
+        if (activeIndex === -1) {
+            activeChallenges.push(challenge);
+        }
+        
+        // Update in Firebase or localStorage
+        if (isDemoMode) {
             saveChallengesToLocalStorage();
+        } else {
+            try {
+                await database.ref(`challenges/${challengeId}`).update({
+                    status: 'active',
+                    isAccepted: true,
+                    startedAt: challenge.startedAt,
+                    endsAt: challenge.endsAt,
+                    opponentTeacherId: teacherId,
+                    opponentTeacherName: teacherName
+                });
+            } catch (error) {
+                console.error("Error accepting challenge in Firebase:", error);
+            }
         }
-    } else {
-        try {
-            await database.ref(`challenges/${challengeId}`).update({
-                status: 'active',
-                isAccepted: true,
-                startedAt: challenge.startedAt,
-                endsAt: challenge.endsAt
-            });
-            
-            // Update notification
-            await database.ref(`notifications/${teacherId}/${challengeId}/isAccepted`).set(true);
-        } catch (error) {
-            console.error("Error accepting challenge:", error);
-        }
+        
+        // Update UI
+        updateChallengesUI();
+        
+        showNotification(`✅ "${challenge.name}" challenge accepted! Competition begins now!`, "success");
+        
+        // Post announcement
+        postSystemAnnouncement(
+            "Challenge Accepted! ⚔️",
+            `We've accepted the "${challenge.name}" challenge from ${challenge.challengerTeacherName}! Let's show them what we're made of!`
+        );
+        
+        // Refresh the challenges view
+        filterChallenges('active');
+    }
+}
+
+
+
+// ========== ENHANCED CHALLENGE LOADING ==========
+
+// Replace or enhance your existing initializeChallenges function
+async function initializeChallenges() {
+    console.log("⚔️ Initializing challenges system...");
+    
+    // Load notifications first
+    await loadNotifications();
+    
+    // Load challenges from localStorage (for both demo and firebase modes)
+    loadChallengesFromLocalStorage();
+    
+    // If in demo mode, create demo challenges if none exist
+    if (isDemoMode && allChallenges.length === 0) {
+        createDemoChallenges();
     }
     
-    // Move from pending to active
-    const pendingIndex = pendingChallenges.findIndex(c => c.id === challengeId);
-    if (pendingIndex !== -1) {
-        pendingChallenges.splice(pendingIndex, 1);
-        activeChallenges.push(challenge);
+    // If in Firebase mode, also load from database
+    if (!isDemoMode && currentClassCode) {
+        await loadChallengesFromFirebase();
     }
     
-    // Update notification
-    notification.isAccepted = true;
-    notification.status = 'read';
+    // IMPORTANT: Filter challenges for current class
+    filterChallengesForCurrentClass();
     
     // Update UI
     updateChallengesUI();
-    renderNotifications();
-    updateNotificationBadges();
     
-    showNotification("✅ Challenge accepted! Competition begins now!", "success");
+    // Start periodic updates
+    startChallengeUpdates();
     
-    // Post announcement to class
-    postSystemAnnouncement(
-        "Challenge Accepted! ⚔️",
-        `We've accepted the "${challenge.name}" challenge from ${challenge.challengerTeacherName}! Let's show them what we're made of!`
-    );
+    console.log(`✅ Challenges initialized: ${allChallenges.length} total, ${activeChallenges.length} active, ${pendingChallenges.length} pending`);
 }
+
+// NEW FUNCTION: Filter challenges for current class
+function filterChallengesForCurrentClass() {
+    if (!currentClassCode) return;
+    
+    console.log(`🔍 Filtering challenges for class: ${currentClassCode}`);
+    
+    // Filter all arrays to only include challenges involving current class
+    allChallenges = allChallenges.filter(challenge => 
+        challenge.challengerClass === currentClassCode || 
+        challenge.opponentClass === currentClassCode
+    );
+    
+    activeChallenges = allChallenges.filter(challenge => 
+        challenge.status === 'active'
+    );
+    
+    pendingChallenges = allChallenges.filter(challenge => 
+        challenge.status === 'pending' && 
+        challenge.opponentClass === currentClassCode // Only show pending challenges where WE are the opponent
+    );
+    
+    completedChallenges = allChallenges.filter(challenge => 
+        challenge.status === 'completed'
+    );
+    
+    console.log(`📊 After filtering: ${activeChallenges.length} active, ${pendingChallenges.length} pending`);
+}
+
+// Update the renderNotifications function to ensure proper challenge display
+function renderNotifications() {
+    const container = document.getElementById('notificationsList');
+    if (!container) return;
+    
+    if (notifications.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state" style="padding: var(--spacing-xl);">
+                <div style="font-size: 3rem; margin-bottom: var(--spacing-md);">📭</div>
+                <div style="font-weight: 600; margin-bottom: var(--spacing-xs);">No notifications</div>
+                <div style="color: var(--text-muted);">You're all caught up!</div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Sort by date (newest first)
+    const sortedNotifications = [...notifications].sort((a, b) => 
+        new Date(b.createdAt) - new Date(a.createdAt)
+    );
+    
+    container.innerHTML = sortedNotifications.map(notification => {
+        const isUnread = notification.status === 'unread';
+        const timeAgo = getTimeAgo(notification.createdAt);
+        
+        let content = '';
+        let actions = '';
+        
+        if (notification.type === 'challenge_invitation') {
+            const typeInfo = CHALLENGE_TYPES[notification.challengeType] || { name: 'Challenge' };
+            
+            content = `
+                <div class="notification-content">
+                    <strong>${notification.challengerTeacherName}</strong> has challenged your class to a 
+                    <strong>${typeInfo.name}</strong> competition!
+                    <div style="margin-top: var(--spacing-sm); font-size: 0.9rem;">
+                        <strong>Challenge:</strong> ${notification.challengeName}<br>
+                        <strong>Duration:</strong> ${notification.duration} day${notification.duration > 1 ? 's' : ''}<br>
+                        ${notification.message ? `<strong>Message:</strong> "${notification.message}"` : ''}
+                    </div>
+                </div>
+            `;
+            
+            // Only show accept/decline if not already accepted
+            if (!notification.isAccepted) {
+                actions = `
+                    <div class="notification-actions">
+                        <button class="btn btn-success" onclick="acceptChallengeFromNotification('${notification.challengeId}')">
+                            ✅ Accept Challenge
+                        </button>
+                        <button class="btn btn-danger" onclick="rejectChallengeFromNotification('${notification.challengeId}')">
+                            ❌ Decline
+                        </button>
+                    </div>
+                `;
+            } else {
+                content += `<div style="margin-top: var(--spacing-sm); padding: var(--spacing-sm); background: var(--success-light); border-radius: var(--radius);">
+                    ✅ Challenge already accepted
+                </div>`;
+            }
+        }
+        
+        return `
+            <div class="notification-item ${isUnread ? 'unread' : ''}" onclick="viewNotification('${notification.id}')" style="cursor: pointer;">
+                <div class="notification-header">
+                    <div class="notification-title">
+                        ${notification.type === 'challenge_invitation' ? '⚔️ New Challenge' : '📢 Notification'}
+                    </div>
+                    <div class="notification-time">${timeAgo}</div>
+                </div>
+                ${content}
+                ${actions}
+            </div>
+        `;
+    }).join('');
+    
+    // Update badge counts
+    updateNotificationBadges();
+}
+
+// Also update the switchClass function to reload challenges
+const originalSwitchClass = switchClass;
+switchClass = async function(classIndex) {
+    await originalSwitchClass(classIndex);
+    
+    // Reload challenges for the new class
+    setTimeout(() => {
+        filterChallengesForCurrentClass();
+        updateChallengesUI();
+    }, 500);
+};
+
+
+
+
+
+
+// ========== QUICK FIX FOR CHALLENGES VISIBILITY ==========
+
+// Add this to make sure challenges show up
+function ensureChallengesVisible() {
+    console.log("🔍 Ensuring challenges are visible...");
+    
+    // Check if we have challenges but they're not showing
+    const challengesSection = document.getElementById('challenges');
+    const allChallengesList = document.getElementById('allChallengesList');
+    
+    if (challengesSection && allChallengesList) {
+        // Force render challenges
+        if (allChallenges.length > 0) {
+            console.log(`Displaying ${allChallenges.length} challenges`);
+            updateAllChallengesList();
+        } else {
+            console.log("No challenges to display");
+        }
+    }
+}
+
+// Call this when switching to challenges section
+const originalShowSection = showSection;
+showSection = function(sectionId) {
+    originalShowSection(sectionId);
+    
+    if (sectionId === 'challenges') {
+        // Ensure challenges are properly displayed
+        setTimeout(() => {
+            ensureChallengesVisible();
+            addDebugButton(); // Add debug button if needed
+        }, 300);
+    }
+};
+
+// Add visual indicator for empty challenges
+function updateAllChallengesList() {
+    const allChallengesList = document.getElementById('allChallengesList');
+    if (!allChallengesList) return;
+    
+    if (allChallenges.length === 0) {
+        allChallengesList.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">⚔️</div>
+                <div class="empty-state-title">No challenges yet</div>
+                <div class="empty-state-description">
+                    <p>Create your first challenge with another teacher!</p>
+                    <button class="btn btn-primary" onclick="showSection('create-challenge')" style="margin-top: 1rem;">
+                        + Create New Challenge
+                    </button>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Filter challenges for current class
+    const classChallenges = allChallenges.filter(challenge => 
+        challenge.challengerClass === currentClassCode || 
+        challenge.opponentClass === currentClassCode
+    );
+    
+    if (classChallenges.length === 0) {
+        allChallengesList.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">🔍</div>
+                <div class="empty-state-title">No challenges for this class</div>
+                <div class="empty-state-description">
+                    <p>You have challenges, but none for class ${currentClassCode}.</p>
+                    <p>Switch to the correct class or create a new challenge.</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Render the challenges
+    allChallengesList.innerHTML = classChallenges.map(challenge => {
+        // Your existing challenge card rendering code here
+        const challengeType = CHALLENGE_TYPES[challenge.type];
+        const isActive = challenge.status === 'active';
+        const isPending = challenge.status === 'pending';
+        const isCompleted = challenge.status === 'completed';
+        const isWinning = challenge.myWinning;
+        const progress = Math.round(challenge.progress);
+        const opponentClass = challenge.challengerClass === currentClassCode ? 
+                            challenge.opponentClass : challenge.challengerClass;
+        
+        let statusBadge = '';
+        if (isActive) statusBadge = `<span style="background: var(--success); color: white; padding: 4px 12px; border-radius: 1rem; font-size: 0.75rem;">Active</span>`;
+        if (isPending) statusBadge = `<span style="background: var(--warning); color: white; padding: 4px 12px; border-radius: 1rem; font-size: 0.75rem;">Pending</span>`;
+        if (isCompleted) statusBadge = `<span style="background: var(--info); color: white; padding: 4px 12px; border-radius: 1rem; font-size: 0.75rem;">Completed</span>`;
+        
+        return `
+            <div class="challenge-card" data-challenge-id="${challenge.id}">
+                <div class="challenge-card-header">
+                    <div>
+                        <div class="challenge-card-title">${challenge.name}</div>
+                        <div class="challenge-card-time">
+                            vs ${opponentClass} • ${challenge.duration} days • ${challengeType?.name || 'Challenge'}
+                        </div>
+                    </div>
+                    ${statusBadge}
+                </div>
+                
+                ${isActive ? `
+                <div class="challenge-card-progress">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 4px;">
+                        <span>Progress</span>
+                        <span>${progress}%</span>
+                    </div>
+                    <div style="height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden;">
+                        <div style="height: 100%; width: ${progress}%; background: var(--gradient-primary);"></div>
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div class="challenge-card-stats">
+                    <div class="challenge-card-class">
+                        <div>${challenge.challengerClass === currentClassCode ? 'You (Challenger)' : 'You'}</div>
+                        <div class="challenge-card-score ${isWinning && isActive ? 'winning' : ''}">
+                            ${challenge.myScore}
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; font-weight: 900; color: var(--accent); font-size: 1.2rem;">VS</div>
+                    
+                    <div class="challenge-card-class">
+                        <div>${challenge.challengerClass === currentClassCode ? 'Opponent' : 'Challenger'}</div>
+                        <div class="challenge-card-score ${!isWinning && isActive ? 'losing' : ''}">
+                            ${challenge.opponentScore}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="challenge-actions">
+                    <button class="btn btn-secondary" onclick="showChallengeDetails('${challenge.id}')" style="flex: 1;">
+                        Details
+                    </button>
+                    ${isPending && challenge.opponentClass === currentClassCode ? `
+                    <button class="btn btn-success" onclick="acceptChallenge('${challenge.id}')" style="flex: 1;">
+                        Accept
+                    </button>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+
+
+
+
+
+// ========== DIAGNOSTIC TOOL ==========
+function diagnoseChallengesIssue() {
+    console.log("=== CHALLENGES DIAGNOSTIC ===");
+    console.log("1. Current class code:", currentClassCode);
+    console.log("2. Is demo mode:", isDemoMode);
+    console.log("3. Teacher ID:", teacherId);
+    console.log("4. Challenges initialized:", window.challengesInitialized || false);
+    
+    // Check localStorage
+    const savedChallenges = localStorage.getItem(`class_${currentClassCode}_challenges_all`);
+    console.log("5. Challenges in localStorage:", savedChallenges ? JSON.parse(savedChallenges).length : 0);
+    
+    // Check allChallenges array
+    console.log("6. allChallenges array length:", allChallenges.length);
+    
+    // Filter for current class
+    const classChallenges = allChallenges.filter(c => 
+        c.challengerClass === currentClassCode || c.opponentClass === currentClassCode
+    );
+    console.log("7. Challenges for current class:", classChallenges.length);
+    
+    // Show each challenge
+    console.log("8. Individual challenges:");
+    classChallenges.forEach((c, i) => {
+        console.log(`   ${i+1}. ${c.name} (${c.id})`);
+        console.log(`      Status: ${c.status}, Challenger: ${c.challengerClass}, Opponent: ${c.opponentClass}`);
+        console.log(`      Created: ${c.createdAt}`);
+    });
+    
+    alert(`Challenges Diagnostic:\n\n` +
+          `Current class: ${currentClassCode}\n` +
+          `Total challenges in memory: ${allChallenges.length}\n` +
+          `For this class: ${classChallenges.length}\n` +
+          `Check console for details.`);
+}
+
+
+
+
+
+// ========== FIXED CHALLENGES DISPLAY FUNCTIONS ==========
+
+// 1. Add the missing renderChallengeCard function
+function renderChallengeCard(challenge) {
+    const challengeType = CHALLENGE_TYPES[challenge.type] || { name: 'Challenge', icon: '⚔️' };
+    const isActive = challenge.status === 'active';
+    const isPending = challenge.status === 'pending';
+    const isCompleted = challenge.status === 'completed';
+    const isWinning = challenge.myWinning;
+    const progress = Math.round(challenge.progress);
+    const opponentClass = challenge.challengerClass === currentClassCode ? 
+                        challenge.opponentClass : challenge.challengerClass;
+    
+    let statusBadge = '';
+    if (isActive) statusBadge = `<span style="background: var(--success); color: white; padding: 4px 12px; border-radius: 1rem; font-size: 0.75rem;">Active</span>`;
+    if (isPending) statusBadge = `<span style="background: var(--warning); color: white; padding: 4px 12px; border-radius: 1rem; font-size: 0.75rem;">Pending</span>`;
+    if (isCompleted) statusBadge = `<span style="background: var(--info); color: white; padding: 4px 12px; border-radius: 1rem; font-size: 0.75rem;">Completed</span>`;
+    
+    return `
+        <div class="challenge-card" data-challenge-id="${challenge.id}">
+            <div class="challenge-card-header">
+                <div>
+                    <div class="challenge-card-title">${challenge.name || 'Unnamed Challenge'}</div>
+                    <div class="challenge-card-time">
+                        vs ${opponentClass} • ${challenge.duration || 1} days • ${challengeType.name}
+                    </div>
+                </div>
+                ${statusBadge}
+            </div>
+            
+            <div class="challenge-card-type">
+                ${challengeType.icon} ${challengeType.name}
+            </div>
+            
+            ${isActive ? `
+            <div class="challenge-card-progress">
+                <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 4px;">
+                    <span>Progress</span>
+                    <span>${progress}%</span>
+                </div>
+                <div style="height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden;">
+                    <div style="height: 100%; width: ${progress}%; background: var(--gradient-primary);"></div>
+                </div>
+            </div>
+            ` : ''}
+            
+            <div class="challenge-card-stats">
+                <div class="challenge-card-class">
+                    <div>${challenge.challengerClass === currentClassCode ? 'You (Challenger)' : 'You'}</div>
+                    <div class="challenge-card-score ${isWinning && isActive ? 'winning' : ''}">
+                        ${challenge.myScore || 0}
+                    </div>
+                </div>
+                
+                <div style="text-align: center; font-weight: 900; color: var(--accent);">VS</div>
+                
+                <div class="challenge-card-class">
+                    <div>${challenge.challengerClass === currentClassCode ? 'Opponent' : 'Challenger'}</div>
+                    <div class="challenge-card-score ${!isWinning && isActive ? 'losing' : ''}">
+                        ${challenge.opponentScore || 0}
+                    </div>
+                </div>
+            </div>
+            
+            ${isCompleted && challenge.result ? `
+            <div style="text-align: center; padding: var(--spacing-sm); background: ${challenge.result.winner === currentClassCode ? 'var(--gradient-success)' : 'rgba(239, 68, 68, 0.1)'}; border-radius: var(--radius); margin-bottom: var(--spacing-md);">
+                ${challenge.result.winner === currentClassCode ? '🏆 You won!' : '😅 You lost'}
+            </div>
+            ` : ''}
+            
+            <div class="challenge-actions">
+                <button class="btn btn-secondary" onclick="showChallengeDetails('${challenge.id}')" style="flex: 1;">
+                    Details
+                </button>
+                ${isPending && challenge.opponentClass === currentClassCode ? `
+                <button class="btn btn-success" onclick="acceptChallenge('${challenge.id}')" style="flex: 1;">
+                    Accept
+                </button>
+                <button class="btn btn-danger" onclick="rejectChallenge('${challenge.id}')" style="flex: 1;">
+                    Decline
+                </button>
+                ` : ''}
+            </div>
+        </div>
+    `;
+    const actionsHTML = `
+        <div class="challenge-actions">
+            <button class="btn btn-secondary" onclick="showChallengeDetails('${challenge.id}')" style="flex: 1;">
+                Details
+            </button>
+            ${isCompleted && challenge.result && challenge.result.winner === currentClassCode ? `
+            <button class="btn btn-success" onclick="celebrateChallengeWin('${challenge.id}')" style="flex: 1;">
+                🎉 You Won!
+            </button>
+            ` : ''}
+            ${isPending && challenge.opponentClass === currentClassCode ? `
+            <button class="btn btn-success" onclick="acceptChallenge('${challenge.id}')" style="flex: 1;">
+                Accept
+            </button>
+            <button class="btn btn-danger" onclick="rejectChallenge('${challenge.id}')" style="flex: 1;">
+                Decline
+            </button>
+            ` : ''}
+        </div>
+    `;
+    
+    return `... ${actionsHTML} ...`;
+}
+
+
+
+
+
+
+function celebrateChallengeWin(challengeId) {
+    const challenge = allChallenges.find(c => c.id === challengeId);
+    if (!challenge || !challenge.result || challenge.result.winner !== currentClassCode) {
+        showNotification("This challenge wasn't won by your class", "error");
+        return;
+    }
+    
+    console.log(`🎉 Celebrating win for challenge: ${challenge.name}`);
+    
+    // 1. Launch confetti
+    launchConfetti();
+    
+    // 2. Play celebration sound
+    playCelebrationSound('win');
+    
+    // 3. Show celebration message
+    showNotification(`🎉 CELEBRATION! We won "${challenge.name}"!`, "success");
+    
+    // 4. Post celebration announcement (students will see this)
+    const celebrationMessage = `🎉 CELEBRATION TIME! 🎉\n\n` +
+        `Our class officially WON the "${challenge.name}" challenge!\n\n` +
+        `🏆 Final Score: ${challenge.result.challengerScore} vs ${challenge.result.opponentScore}\n` +
+        `Let's celebrate this amazing achievement!`;
+    
+    postSystemAnnouncement("🎉 Challenge Victory Celebration!", celebrationMessage);
+    
+    // 5. Add to activity feed
+    const celebrationActivity = {
+        type: 'celebration',
+        message: `🎉 Celebrating our victory in "${challenge.name}" challenge!`,
+        challengeName: challenge.name,
+        createdAt: new Date().toISOString(),
+        classCode: currentClassCode,
+        isCelebration: true,
+        visibleToStudents: true
+    };
+    
+    if (!isDemoMode && database && database.ref) {
+        database.ref(`classActivity/${currentClassCode}`).push().set(celebrationActivity);
+    }
+}
+
+
+
+// 2. Fix the filterChallenges function
+function filterChallenges(filterType) {
+    console.log(`🔍 Filtering challenges by: ${filterType}`);
+    
+    // Update active filter button
+    const filterButtons = document.querySelectorAll('#challengesFilter button');
+    if (filterButtons.length > 0) {
+        filterButtons.forEach(btn => {
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-secondary');
+        });
+        
+        const filterBtn = document.getElementById('filter' + filterType.charAt(0).toUpperCase() + filterType.slice(1));
+        if (filterBtn) {
+            filterBtn.classList.add('btn-primary');
+        }
+    }
+    
+    // Filter challenges for current class
+    const classChallenges = allChallenges.filter(challenge => 
+        (challenge.challengerClass === currentClassCode || 
+         challenge.opponentClass === currentClassCode)
+    );
+    
+    let filteredChallenges = [];
+    
+    switch(filterType) {
+        case 'all':
+            filteredChallenges = classChallenges;
+            break;
+        case 'active':
+            filteredChallenges = classChallenges.filter(c => c.status === 'active');
+            break;
+        case 'pending':
+            filteredChallenges = classChallenges.filter(c => c.status === 'pending' && c.opponentClass === currentClassCode);
+            break;
+        case 'completed':
+            filteredChallenges = classChallenges.filter(c => c.status === 'completed');
+            break;
+        case 'won':
+            filteredChallenges = classChallenges.filter(c => 
+                c.status === 'completed' && c.result && c.result.winner === currentClassCode
+            );
+            break;
+        case 'lost':
+            filteredChallenges = classChallenges.filter(c => 
+                c.status === 'completed' && c.result && c.result.winner !== currentClassCode
+            );
+            break;
+        default:
+            filteredChallenges = classChallenges;
+    }
+    
+    // Update display
+    const allChallengesList = document.getElementById('allChallengesList');
+    if (!allChallengesList) return;
+    
+    if (filteredChallenges.length === 0) {
+        allChallengesList.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">🔍</div>
+                <div class="empty-state-title">No ${filterType} challenges</div>
+                <div class="empty-state-description">
+                    ${filterType === 'all' ? 'Create your first challenge with another teacher!' : 
+                      filterType === 'pending' ? 'No pending challenge invitations.' :
+                      filterType === 'active' ? 'No active challenges. Accept or create one!' :
+                      filterType === 'completed' ? 'No completed challenges yet.' :
+                      filterType === 'won' ? 'No won challenges yet. Keep competing!' :
+                      'No lost challenges.'}
+                </div>
+                ${filterType === 'all' ? `
+                <button class="btn btn-primary" onclick="showSection('create-challenge')" style="margin-top: 1rem;">
+                    + Create New Challenge
+                </button>
+                ` : ''}
+            </div>
+        `;
+    } else {
+        // Use the renderChallengeCard function
+        allChallengesList.innerHTML = filteredChallenges.map(challenge => 
+            renderChallengeCard(challenge)
+        ).join('');
+    }
+    
+    console.log(`✅ Displaying ${filteredChallenges.length} ${filterType} challenges`);
+}
+
+// 3. Fix the showChallengeDetails function (safe version)
+function showChallengeDetails(challengeId) {
+    console.log(`📋 Showing details for challenge: ${challengeId}`);
+    
+    const challenge = allChallenges.find(c => c.id === challengeId);
+    if (!challenge) {
+        console.error("Challenge not found:", challengeId);
+        showNotification("Challenge not found", "error");
+        return;
+    }
+    
+    // Check if modal elements exist
+    const modalElements = [
+        'detailChallengeName', 'detailChallengeType', 'detailChallengeStatus',
+        'detailMyClassName', 'detailMyClassCode', 'detailMyScore',
+        'detailOpponentClassName', 'detailOpponentClassCode', 'detailOpponentScore',
+        'detailProgressFill', 'detailTimeRemaining', 'detailTimeStarted',
+        'detailChallengeMessage', 'detailResultText'
+    ];
+    
+    // If modal doesn't exist, show simple alert with details
+    if (!document.getElementById('detailChallengeName')) {
+        alert(`Challenge Details:\n\n` +
+              `Name: ${challenge.name}\n` +
+              `Type: ${CHALLENGE_TYPES[challenge.type]?.name || 'Challenge'}\n` +
+              `Status: ${challenge.status}\n` +
+              `Your Score: ${challenge.myScore || 0}\n` +
+              `Opponent Score: ${challenge.opponentScore || 0}\n` +
+              `Progress: ${Math.round(challenge.progress || 0)}%\n` +
+              `Time Remaining: ${challenge.timeRemaining || 'N/A'}`);
+        return;
+    }
+    
+    // Update modal content safely
+    try {
+        const challengeType = CHALLENGE_TYPES[challenge.type] || { name: 'Challenge' };
+        const isActive = challenge.status === 'active';
+        const isCompleted = challenge.status === 'completed';
+        const isMyChallenge = challenge.challengerClass === currentClassCode;
+        
+        // Update basic info
+        safeSetText('detailChallengeName', challenge.name || 'Unnamed Challenge');
+        safeSetText('detailChallengeType', challengeType.name);
+        safeSetText('detailChallengeStatus', isActive ? 'Active' : isCompleted ? 'Completed' : 'Pending');
+        
+        // My class info
+        safeSetText('detailMyClassName', isMyChallenge ? 'You (Challenger)' : 'You');
+        safeSetText('detailMyClassCode', currentClassCode || 'Unknown');
+        safeSetText('detailMyScore', challenge.myScore || 0);
+        safeSetClass('detailMyScore', `class-score ${challenge.myWinning && isActive ? 'winning' : ''}`);
+        
+        // Opponent info
+        const opponentClass = isMyChallenge ? challenge.opponentClass : challenge.challengerClass;
+        const opponentName = isMyChallenge ? challenge.opponentTeacherName : challenge.challengerTeacherName;
+        safeSetText('detailOpponentClassName', `${opponentName || 'Teacher'}'s Class`);
+        safeSetText('detailOpponentClassCode', opponentClass || 'Unknown');
+        safeSetText('detailOpponentScore', challenge.opponentScore || 0);
+        safeSetClass('detailOpponentScore', `class-score ${!challenge.myWinning && isActive ? 'losing' : ''}`);
+        
+        // Progress
+        const progressFill = document.getElementById('detailProgressFill');
+        if (progressFill) {
+            progressFill.style.width = `${Math.round(challenge.progress || 0)}%`;
+        }
+        
+        // Time info
+        if (isActive) {
+            safeSetText('detailTimeRemaining', `Ends in: ${challenge.timeRemaining || 'Calculating...'}`);
+            safeSetText('detailTimeStarted', `Started: ${formatDate(challenge.createdAt)}`);
+        } else if (isCompleted) {
+            safeSetText('detailTimeRemaining', 'Challenge Completed');
+            safeSetText('detailTimeStarted', `Ended: ${formatDate(challenge.result?.completedAt)}`);
+        } else {
+            safeSetText('detailTimeRemaining', 'Awaiting Response');
+            safeSetText('detailTimeStarted', `Sent: ${formatDate(challenge.createdAt)}`);
+        }
+        
+        // Message
+        const messageContainer = document.getElementById('challengeMessageContainer');
+        const messageElement = document.getElementById('detailChallengeMessage');
+        if (messageContainer && messageElement) {
+            if (challenge.message) {
+                messageContainer.style.display = 'block';
+                messageElement.textContent = challenge.message;
+            } else {
+                messageContainer.style.display = 'none';
+            }
+        }
+        
+        // Result
+        const resultContainer = document.getElementById('challengeResult');
+        const resultText = document.getElementById('detailResultText');
+        if (resultContainer && resultText) {
+            if (isCompleted && challenge.result) {
+                resultContainer.style.display = 'block';
+                const won = challenge.result.winner === currentClassCode;
+                resultContainer.style.background = won ? 'var(--gradient-success)' : 'var(--gradient-danger)';
+                resultText.textContent = won ? 
+                    `You won! ${challenge.myScore || 0} vs ${challenge.opponentScore || 0} ${challengeType.unit || 'points'}` :
+                    `You lost! ${challenge.myScore || 0} vs ${challenge.opponentScore || 0} ${challengeType.unit || 'points'}`;
+            } else {
+                resultContainer.style.display = 'none';
+            }
+        }
+        
+        // Show modal
+        showModal('challengeDetailsModal');
+        
+    } catch (error) {
+        console.error("Error showing challenge details:", error);
+        showNotification("Error loading challenge details", "error");
+    }
+}
+
+// Helper functions for safe DOM manipulation
+function safeSetText(elementId, text) {
+    const element = document.getElementById(elementId);
+    if (element) element.textContent = text;
+}
+
+function safeSetClass(elementId, className) {
+    const element = document.getElementById(elementId);
+    if (element) element.className = className;
+}
+
+// 4. Fix the bubbleIcon error in chatbot (quick fix)
+// Add this at the beginning of your showRealInsight function in the chatbot:
+const bubbleIconElement = document.querySelector('.bubble-icon');
+const bubbleMessageElement = document.querySelector('.bubble-message');
+if (bubbleIconElement && bubbleMessageElement) {
+    // Your existing chatbot code...
+}
+
+// 5. Fix the updateAllChallengesList function to use renderChallengeCard
+function updateAllChallengesList() {
+    const allChallengesList = document.getElementById('allChallengesList');
+    if (!allChallengesList) return;
+    
+    // Filter challenges for current class
+    const classChallenges = allChallenges.filter(challenge => 
+        (challenge.challengerClass === currentClassCode || 
+         challenge.opponentClass === currentClassCode)
+    );
+    
+    if (classChallenges.length === 0) {
+        allChallengesList.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">⚔️</div>
+                <div class="empty-state-title">No challenges for this class</div>
+                <div class="empty-state-description">
+                    <p>You have no challenges for class ${currentClassCode}.</p>
+                    <button class="btn btn-primary" onclick="showSection('create-challenge')" style="margin-top: 1rem;">
+                        + Create Your First Challenge
+                    </button>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Use renderChallengeCard for all challenges
+    allChallengesList.innerHTML = classChallenges.map(challenge => 
+        renderChallengeCard(challenge)
+    ).join('');
+    
+    console.log(`✅ Displayed ${classChallenges.length} challenges`);
+}
+
+// 6. Ensure challenges are visible when switching to challenges section
+showSection = function(sectionId) {
+    // Hide all sections
+    document.querySelectorAll('.dashboard-content').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Show selected section
+    const sectionElement = document.getElementById(sectionId);
+    if (sectionElement) {
+        sectionElement.style.display = 'block';
+    }
+    
+    // Update active nav item
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Find and activate the clicked nav item
+    const navItems = document.querySelectorAll('.nav-item');
+    for (let item of navItems) {
+        if (item.textContent.includes(getNavItemText(sectionId))) {
+            item.classList.add('active');
+            break;
+        }
+    }
+    
+    // Update header
+    updateDashboardHeader(sectionId);
+    
+    // Load specific data for section
+    switch(sectionId) {
+        case 'dashboard':
+            // Already loaded
+            break;
+        case 'announcements':
+            renderAllAnnouncements();
+            break;
+        case 'assignments':
+            renderAllAssignments();
+            break;
+        case 'resources':
+            renderAllResources();
+            break;
+        case 'polls':
+            renderPolls();
+            break;
+        case 'students':
+            renderStudents();
+            break;
+        case 'analytics':
+            renderAnalytics();
+            break;
+        case 'challenges':
+            // FIX: Always update challenges when visiting the section
+            setTimeout(() => {
+                filterChallenges('all');
+                console.log("🔄 Challenges section loaded");
+            }, 100);
+            break;
+        case 'settings':
+            // Settings
+            break;
+        case 'create-challenge':
+            // Reset form
+            resetChallengeForm();
+            break;
+    }
+    
+    console.log(`📱 Switched to section: ${sectionId}`);
+};
+
+// 7. Simple fix to make sure challenges filter buttons work
+document.addEventListener('DOMContentLoaded', function() {
+    // Ensure filter buttons work
+    setTimeout(() => {
+        const filterButtons = document.querySelectorAll('#challengesFilter button');
+        filterButtons.forEach(btn => {
+            const onclick = btn.getAttribute('onclick');
+            if (onclick) {
+                btn.onclick = function() {
+                    eval(onclick);
+                };
+            }
+        });
+        
+        // Default to showing all challenges
+        setTimeout(() => {
+            if (window.location.hash !== '#challenges') {
+                filterChallenges('all');
+            }
+        }, 1000);
+    }, 2000);
+});
+
+
+
+
+// ========== AUTOMATIC CHALLENGE COMPLETION SYSTEM ==========
+
+// Replace or enhance your existing startChallengeUpdates function
+function startChallengeUpdates() {
+    console.log("⏰ Starting challenge updates with automatic completion...");
+    
+    // Update scores every 30 seconds
+    setInterval(() => {
+        updateChallengeScores();
+    }, 30000);
+    
+    // Check for completed challenges EVERY 10 SECONDS
+    setInterval(() => {
+        checkAndCompleteExpiredChallenges();
+    }, 10000); // Every 10 seconds instead of 60 seconds
+    
+    // Also check immediately on page load
+    setTimeout(() => {
+        checkAndCompleteExpiredChallenges();
+    }, 2000);
+}
+
+// NEW: Function to check and complete expired challenges
+function checkAndCompleteExpiredChallenges() {
+    if (!currentClassCode || activeChallenges.length === 0) return;
+    
+    const now = new Date();
+    let completedAny = false;
+    
+    activeChallenges.forEach(challenge => {
+        // Check if challenge has ended
+        if (challenge.endsAt && new Date(challenge.endsAt) <= now) {
+            console.log(`⏰ Challenge "${challenge.name}" has ended, declaring winner...`);
+            completeChallengeWithWinner(challenge.id);
+            completedAny = true;
+        }
+    });
+    
+    if (completedAny) {
+        updateChallengesUI();
+    }
+}
+
+// NEW: Enhanced complete challenge function WITH WINNER DECLARATION
+async function completeChallengeWithWinner(challengeId) {
+    const challenge = allChallenges.find(c => c.id === challengeId);
+    if (!challenge || challenge.status !== 'active') return;
+    
+    console.log(`🏆 Completing challenge "${challenge.name}" and declaring winner...`);
+    
+    // Get final scores (ensure they're updated)
+    const finalChallengerScore = await calculateChallengeScore(challenge.challengerClass, challenge.type);
+    const finalOpponentScore = await calculateChallengeScore(challenge.opponentClass, challenge.type);
+    
+    // Determine winner
+    let winnerClass;
+    if (finalChallengerScore > finalOpponentScore) {
+        winnerClass = challenge.challengerClass;
+    } else if (finalOpponentScore > finalChallengerScore) {
+        winnerClass = challenge.opponentClass;
+    } else {
+        // Tie - first to reach score wins, or if still tie, challenger wins
+        winnerClass = challenge.challengerClass;
+    }
+    
+    // Create result object
+    const result = {
+        winner: winnerClass,
+        challengerScore: finalChallengerScore,
+        opponentScore: finalOpponentScore,
+        completedAt: new Date().toISOString(),
+        isTie: finalChallengerScore === finalOpponentScore
+    };
+    
+    // Update challenge status
+    challenge.status = 'completed';
+    challenge.result = result;
+    challenge.challengerScore = finalChallengerScore;
+    challenge.opponentScore = finalOpponentScore;
+    challenge.myScore = calculateMyScore(challenge);
+    challenge.opponentScore = calculateOpponentScore(challenge);
+    challenge.myWinning = isMyClassWinning(challenge);
+    challenge.progress = 100;
+    
+    // Move from active to completed
+    const activeIndex = activeChallenges.findIndex(c => c.id === challengeId);
+    if (activeIndex !== -1) {
+        activeChallenges.splice(activeIndex, 1);
+        completedChallenges.push(challenge);
+    }
+    
+    // Update in Firebase or localStorage
+    if (isDemoMode) {
+        saveChallengesToLocalStorage();
+    } else {
+        try {
+            await database.ref(`challenges/${challengeId}`).update({
+                status: 'completed',
+                result: result,
+                challengerScore: finalChallengerScore,
+                opponentScore: finalOpponentScore
+            });
+        } catch (error) {
+            console.error("Error completing challenge in Firebase:", error);
+        }
+    }
+    
+    // Send celebration notifications
+    sendChallengeCompletionNotifications(challenge, result);
+    
+    console.log(`✅ Challenge completed! Winner: ${winnerClass}`);
+    return true;
+}
+
+// NEW: Send notifications when challenge completes
+
+  function sendChallengeCompletionNotifications(challenge, result) {
+    const challengeType = CHALLENGE_TYPES[challenge.type] || { name: 'Challenge', unit: 'points' };
+    const isWinner = result.winner === currentClassCode;
+    
+    // Post announcement that STUDENTS can see
+    const announcementTitle = isWinner ? 
+        `🎉 We Won the "${challenge.name}" Challenge!` :
+        `😅 Challenge "${challenge.name}" Completed`;
+    
+    const announcementMessage = isWinner ? 
+        `CONGRATULATIONS! 🏆\n\nOur class WON the "${challenge.name}" challenge!\n\n` +
+        `🏁 Final Score: ${result.challengerScore} vs ${result.opponentScore} ${challengeType.unit}\n` +
+        `🎯 Challenge Type: ${challengeType.name}\n\n` +
+        `Amazing work, everyone!` :
+        `The "${challenge.name}" challenge has ended.\n\n` +
+        `🏁 Final Score: ${result.challengerScore} vs ${result.opponentScore} ${challengeType.unit}\n` +
+        `🎯 Challenge Type: ${challengeType.name}\n\n` +
+        `Great effort everyone!`;
+    
+    // This function should save where STUDENTS can access
+    postSystemAnnouncement(announcementTitle, announcementMessage);
+    
+    // Add to class activity feed (students can see this)
+    const activity = {
+        type: 'challenge_completed',
+        message: isWinner ? 
+            `🏆 We won the "${challenge.name}" challenge! 🎉` : 
+            `Challenge "${challenge.name}" completed`,
+        challengeName: challenge.name,
+        winner: result.winner,
+        isOurClassWinner: isWinner,
+        challengerScore: result.challengerScore,
+        opponentScore: result.opponentScore,
+        createdAt: new Date().toISOString(),
+        classCode: currentClassCode,
+        // CRITICAL: Mark as visible to students
+        visibleToStudents: true
+    };
+    
+    if (!isDemoMode && database && database.ref) {
+        // Save to classActivity where students can read
+        database.ref(`classActivity/${currentClassCode}`).push().set(activity);
+        
+        // ALSO save to student-specific path
+        database.ref(`studentNotifications/${currentClassCode}/challengeResults`).push().set({
+            ...activity,
+            timestamp: Date.now(),
+            read: false
+        });
+    } else {
+        activity.id = 'challenge_completed_' + Date.now();
+        activityIds.add(activity.id);
+        liveActivity.unshift(activity);
+        renderLiveActivity();
+    }
+    
+    // Show celebration on TEACHER side
+    if (isWinner) {
+        showNotification(`🏆 We won the "${challenge.name}" challenge!`, 'success');
+        // Launch confetti will be handled by the "You won" button
+    } else {
+        showNotification(`Challenge "${challenge.name}" completed`, 'info');
+    }
+}
+
+// NEW: Enhanced calculateChallengeScore with real-time data
+async function calculateChallengeScore(classCode, challengeType) {
+    // For demo mode, generate realistic scores
+    if (isDemoMode) {
+        return calculateDemoChallengeScore(classCode, challengeType);
+    }
+    
+    try {
+        if (challengeType === 'total_study_hours') {
+            return await calculateStudyHours(classCode);
+        } else if (challengeType === 'streak_count') {
+            return await calculateAverageStreak(classCode);
+        }
+    } catch (error) {
+        console.error(`Error calculating score for ${classCode}:`, error);
+    }
+    
+    return 0;
+}
+
+// NEW: Demo score calculation with time-based progression
+function calculateDemoChallengeScore(classCode, challengeType) {
+    // Base score plus progression over time
+    const isMyClass = classCode === currentClassCode;
+    let baseScore, progressionFactor;
+    
+    if (challengeType === 'total_study_hours') {
+        baseScore = isMyClass ? 25 : 20;
+        progressionFactor = 0.2; // 20% possible increase over challenge duration
+    } else if (challengeType === 'streak_count') {
+        baseScore = isMyClass ? 4.5 : 3.8;
+        progressionFactor = 0.3; // 30% possible increase
+    } else {
+        baseScore = isMyClass ? 100 : 80;
+        progressionFactor = 0.15;
+    }
+    
+    // Add random progression based on "effort"
+    const randomProgression = Math.random() * progressionFactor;
+    const finalScore = baseScore * (1 + randomProgression);
+    
+    return parseFloat(finalScore.toFixed(1));
+}
+
+// Also update the existing completeChallenge function to use the new one
+const originalCompleteChallenge = completeChallenge;
+completeChallenge = async function(challengeId) {
+    return await completeChallengeWithWinner(challengeId);
+};
+
+// ========== VISUAL COUNTDOWN TIMER ==========
+
+// Add countdown timer to challenge cards
+function updateChallengeCountdowns() {
+    document.querySelectorAll('.challenge-card').forEach(card => {
+        const challengeId = card.dataset.challengeId;
+        if (!challengeId) return;
+        
+        const challenge = allChallenges.find(c => c.id === challengeId);
+        if (!challenge || challenge.status !== 'active') return;
+        
+        // Update time remaining display
+        const timeElement = card.querySelector('.challenge-card-time');
+        if (timeElement) {
+            const timeRemaining = calculateTimeRemaining(challenge);
+            timeElement.innerHTML = timeElement.innerHTML.replace(/•.*days/, `• ${timeRemaining} remaining`);
+        }
+        
+        // Update progress bar if exists
+        const progressBar = card.querySelector('.challenge-card-progress div:last-child div');
+        if (progressBar) {
+            const progress = Math.round(challenge.progress);
+            progressBar.style.width = `${progress}%`;
+            
+            // Update progress text
+            const progressText = card.querySelector('.challenge-card-progress div:first-child span:last-child');
+            if (progressText) {
+                progressText.textContent = `${progress}%`;
+            }
+        }
+    });
+}
+
+// Update the calculateTimeRemaining function to be more precise
+function calculateTimeRemaining(challenge) {
+    if (challenge.status !== 'active' || !challenge.endsAt) {
+        return challenge.status === 'completed' ? "Completed" : "Not started";
+    }
+    
+    const endsAt = new Date(challenge.endsAt);
+    const now = new Date();
+    
+    if (now >= endsAt) {
+        return "Ending...";
+    }
+    
+    const diffMs = endsAt - now;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (diffDays > 0) {
+        return `${diffDays}d ${diffHours}h`;
+    } else if (diffHours > 0) {
+        return `${diffHours}h ${diffMinutes}m`;
+    } else {
+        return `${diffMinutes}m`;
+    }
+}
+
+// Update the renderChallengeCard function to include countdown
+// Add this line in the challenge card HTML (around line where duration is shown):
+// Change: <div class="challenge-card-time">vs ${opponentClass} • ${challenge.duration} days • ${challengeType.name}</div>
+// To: <div class="challenge-card-time">vs ${opponentClass} • ${calculateTimeRemaining(challenge)} • ${challengeType.name}</div>
+
+// ========== CHALLENGE REMINDERS ==========
+
+// Send reminders when challenge is about to end
+function sendChallengeReminders() {
+    const now = new Date();
+    
+    activeChallenges.forEach(challenge => {
+        if (!challenge.endsAt) return;
+        
+        const endsAt = new Date(challenge.endsAt);
+        const hoursRemaining = Math.floor((endsAt - now) / (1000 * 60 * 60));
+        
+        // Send reminder when there's 1 hour left
+        if (hoursRemaining === 1) {
+            const reminderKey = `challenge_reminder_${challenge.id}`;
+            const lastReminder = localStorage.getItem(reminderKey);
+            
+            if (!lastReminder || Date.now() - parseInt(lastReminder) > 30 * 60 * 1000) {
+                showNotification(
+                    `⏰ "${challenge.name}" challenge ends in 1 hour! Final push!`,
+                    'warning'
+                );
+                localStorage.setItem(reminderKey, Date.now().toString());
+            }
+        }
+        
+        // Send reminder when there's 24 hours left
+        if (hoursRemaining === 24) {
+            const reminderKey = `challenge_reminder_24h_${challenge.id}`;
+            const lastReminder = localStorage.getItem(reminderKey);
+            
+            if (!lastReminder) {
+                showNotification(
+                    `⏰ "${challenge.name}" challenge ends in 24 hours!`,
+                    'info'
+                );
+                localStorage.setItem(reminderKey, Date.now().toString());
+            }
+        }
+    });
+}
+
+// Update startChallengeUpdates to include reminders
+const originalStartChallengeUpdates = startChallengeUpdates;
+startChallengeUpdates = function() {
+    originalStartChallengeUpdates();
+    
+    // Check for reminders every 5 minutes
+    setInterval(() => {
+        sendChallengeReminders();
+    }, 5 * 60 * 1000);
+    
+    // Also update countdowns every minute
+    setInterval(() => {
+        updateChallengeCountdowns();
+    }, 60 * 1000);
+};
+
+// ========== TEST FUNCTION ==========
+
+// Manually test challenge completion
+// function testChallengeCompletion() {
+//     if (activeChallenges.length === 0) {
+//         showNotification("No active challenges to test", "error");
+//         return;
+//     }
+    
+//     const challenge = activeChallenges[0];
+//     if (confirm(`Test completion of "${challenge.name}"? This will declare a winner and end the challenge.`)) {
+//         // Set end time to now
+//         challenge.endsAt = new Date().toISOString();
+//         completeChallengeWithWinner(challenge.id);
+//         updateChallengesUI();
+//         showNotification("Test challenge completion triggered", "success");
+//     }
+// }
+
+// Add test button to challenges section
+// document.addEventListener('DOMContentLoaded', function() {
+//     setTimeout(() => {
+//         const challengesHeader = document.querySelector('#challenges .content-header');
+//         if (challengesHeader && !document.getElementById('testCompletionBtn')) {
+//             const testBtn = document.createElement('button');
+//             testBtn.id = 'testCompletionBtn';
+//             testBtn.className = 'btn btn-warning';
+//             testBtn.innerHTML = '🧪 Test Completion';
+//             testBtn.onclick = testChallengeCompletion;
+//             testBtn.style.marginLeft = '10px';
+//             testBtn.title = "Manually trigger challenge completion for testing";
+//             challengesHeader.appendChild(testBtn);
+//         }
+//     }, 3000);
+// });
+
+
+// ========== DEBUG FUNCTION ==========
+function debugChallenges() {
+    console.log("=== CHALLENGES DEBUG INFO ===");
+    console.log("Current class code:", currentClassCode);
+    console.log("Teacher ID:", teacherId);
+    console.log("All challenges:", allChallenges.length);
+    console.log("Active challenges:", activeChallenges.length);
+    console.log("Pending challenges:", pendingChallenges.length);
+    console.log("Completed challenges:", completedChallenges.length);
+    
+    console.log("\n=== ALL CHALLENGES DETAILS ===");
+    allChallenges.forEach((c, i) => {
+        console.log(`${i+1}. ${c.name} (${c.id})`);
+        console.log(`   Status: ${c.status}, Challenger: ${c.challengerClass}, Opponent: ${c.opponentClass}`);
+        console.log(`   My class: ${currentClassCode}, Involved: ${(c.challengerClass === currentClassCode || c.opponentClass === currentClassCode) ? 'YES' : 'NO'}`);
+    });
+    
+    alert(`Challenges Debug Info:\n\n` +
+          `Current class: ${currentClassCode}\n` +
+          `Total challenges: ${allChallenges.length}\n` +
+          `Active: ${activeChallenges.length}\n` +
+          `Pending: ${pendingChallenges.length}\n` +
+          `Completed: ${completedChallenges.length}\n\n` +
+          `Check console for full details.`);
+}
+
+
+
+// Call this when challenges section loads
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(addDebugButton, 3000);
+});
 
 // Reject challenge from notification
 async function rejectChallengeFromNotification(challengeId) {
@@ -12325,10 +13854,1163 @@ function navigateToCreateChallenge() {
         showNotification("Create challenge section not found", "error");
     }
 }
+
+
+// ========== LOCALSTORAGE AUTO-BACKUP SYSTEM ==========
+// This system automatically saves ALL data to localStorage without affecting existing features
+
+// Global backup interval
+let backupInterval;
+
+// Initialize backup system
+function initializeBackupSystem() {
+    console.log("💾 Initializing auto-backup system...");
+    
+    // Save immediately on initialization
+    setTimeout(saveAllDataToLocalStorage, 1000);
+    
+    // Start auto-backup every 30 seconds
+    backupInterval = setInterval(saveAllDataToLocalStorage, 30000);
+    
+    // Also backup when window/tab is closed
+    window.addEventListener('beforeunload', saveAllDataToLocalStorage);
+    
+    // Backup on page visibility change (when tab becomes hidden)
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            saveAllDataToLocalStorage();
+        }
+    });
+    
+    console.log("✅ Auto-backup system initialized");
+}
+
+// Save ALL data to localStorage
+function saveAllDataToLocalStorage() {
+    try {
+        const backupTimestamp = new Date().toISOString();
+        
+        // 1. Save teacher profile data
+        localStorage.setItem('teacher_userId', teacherId || '');
+        localStorage.setItem('teacher_name', teacherName || 'Teacher');
+        localStorage.setItem('teacher_email', currentUser?.email || '');
+        localStorage.setItem('teacher_demoMode', isDemoMode.toString());
+        
+        // 2. Save ALL classes data
+        if (teacherClasses && teacherClasses.length > 0) {
+            localStorage.setItem('teacher_all_classes', JSON.stringify(teacherClasses));
+            localStorage.setItem('teacher_current_class_index', selectedClassIndex.toString());
+            localStorage.setItem('teacher_current_class_code', currentClassCode || '');
+            localStorage.setItem('teacher_current_class_id', currentClassId || '');
+        }
+        
+        // 3. Save current class data (if any)
+        if (currentClassCode) {
+            // Students data
+            localStorage.setItem(`class_${currentClassCode}_students`, JSON.stringify(students));
+            
+            // Announcements data
+            localStorage.setItem(`class_${currentClassCode}_announcements`, JSON.stringify(announcements));
+            
+            // Assignments data  
+            localStorage.setItem(`class_${currentClassCode}_assignments`, JSON.stringify(assignments));
+            
+            // Resources data
+            localStorage.setItem(`class_${currentClassCode}_resources`, JSON.stringify(resources));
+            
+            // Polls data
+            localStorage.setItem(`class_${currentClassCode}_polls`, JSON.stringify(polls));
+            
+            // Activity data
+            localStorage.setItem(`class_${currentClassCode}_activity`, JSON.stringify(liveActivity));
+            
+            // Challenge data
+            localStorage.setItem(`class_${currentClassCode}_challenges_all`, JSON.stringify(allChallenges));
+            localStorage.setItem(`class_${currentClassCode}_challenges_active`, JSON.stringify(activeChallenges));
+            localStorage.setItem(`class_${currentClassCode}_challenges_pending`, JSON.stringify(pendingChallenges));
+            localStorage.setItem(`class_${currentClassCode}_challenges_completed`, JSON.stringify(completedChallenges));
+            
+            // Milestone settings
+            if (currentClassCode in milestoneConfigCache) {
+                localStorage.setItem(`class_${currentClassCode}_milestones`, JSON.stringify(milestoneConfigCache[currentClassCode]));
+            }
+            
+            // Streak chain data
+            localStorage.setItem(`class_${currentClassCode}_streak_chain`, JSON.stringify({
+                lastUpdated: backupTimestamp,
+                chainData: getStreakChainData()
+            }));
+        }
+        
+        // 4. Save theme and UI state
+        localStorage.setItem('teacher_theme', document.body.className || 'light');
+        localStorage.setItem('teacher_sidebar_collapsed', isSidebarCollapsed.toString());
+        
+        // 5. Save backup timestamp
+        localStorage.setItem('last_backup_timestamp', backupTimestamp);
+        
+        console.log(`💾 Auto-backup completed at ${backupTimestamp}`);
+        
+    } catch (error) {
+        console.error("❌ Error in auto-backup:", error);
+    }
+}
+
+// Load ALL data from localStorage
+function loadAllDataFromLocalStorage() {
+    console.log("📂 Loading all data from localStorage...");
+    
+    try {
+        // 1. Load teacher profile
+        const savedTeacherId = localStorage.getItem('teacher_userId');
+        if (savedTeacherId) {
+            teacherId = savedTeacherId;
+        }
+        
+        const savedTeacherName = localStorage.getItem('teacher_name');
+        if (savedTeacherName) {
+            teacherName = savedTeacherName;
+            document.getElementById('teacherName').value = teacherName;
+        }
+        
+        const savedDemoMode = localStorage.getItem('teacher_demoMode');
+        if (savedDemoMode === 'true') {
+            isDemoMode = true;
+            document.getElementById('demoModeBtn').style.display = 'flex';
+        }
+        
+        // 2. Load classes data
+        const savedClasses = localStorage.getItem('teacher_all_classes');
+        if (savedClasses) {
+            teacherClasses = JSON.parse(savedClasses);
+            
+            const savedClassIndex = localStorage.getItem('teacher_current_class_index');
+            if (savedClassIndex) {
+                selectedClassIndex = parseInt(savedClassIndex);
+            }
+            
+            const savedClassCode = localStorage.getItem('teacher_current_class_code');
+            if (savedClassCode && teacherClasses[selectedClassIndex]?.code === savedClassCode) {
+                currentClassCode = savedClassCode;
+                currentClassId = localStorage.getItem('teacher_current_class_id') || teacherClasses[selectedClassIndex]?.id;
+            }
+        }
+        
+        // 3. Load current class data (if any)
+        if (currentClassCode) {
+            // Load students
+            const savedStudents = localStorage.getItem(`class_${currentClassCode}_students`);
+            if (savedStudents) {
+                students = JSON.parse(savedStudents);
+            }
+            
+            // Load announcements
+            const savedAnnouncements = localStorage.getItem(`class_${currentClassCode}_announcements`);
+            if (savedAnnouncements) {
+                announcements = JSON.parse(savedAnnouncements);
+                announcementIds = new Set(announcements.map(a => a.id));
+            }
+            
+            // Load assignments
+            const savedAssignments = localStorage.getItem(`class_${currentClassCode}_assignments`);
+            if (savedAssignments) {
+                assignments = JSON.parse(savedAssignments);
+            }
+            
+            // Load resources
+            const savedResources = localStorage.getItem(`class_${currentClassCode}_resources`);
+            if (savedResources) {
+                resources = JSON.parse(savedResources);
+                resourceIds = new Set(resources.map(r => r.id));
+            }
+            
+            // Load polls
+            const savedPolls = localStorage.getItem(`class_${currentClassCode}_polls`);
+            if (savedPolls) {
+                polls = JSON.parse(savedPolls);
+                pollIds = new Set(polls.map(p => p.id));
+            }
+            
+            // Load activity
+            const savedActivity = localStorage.getItem(`class_${currentClassCode}_activity`);
+            if (savedActivity) {
+                liveActivity = JSON.parse(savedActivity);
+                activityIds = new Set(liveActivity.map(a => a.id));
+            }
+            
+            // Load challenges
+            const savedAllChallenges = localStorage.getItem(`class_${currentClassCode}_challenges_all`);
+            const savedActiveChallenges = localStorage.getItem(`class_${currentClassCode}_challenges_active`);
+            const savedPendingChallenges = localStorage.getItem(`class_${currentClassCode}_challenges_pending`);
+            const savedCompletedChallenges = localStorage.getItem(`class_${currentClassCode}_challenges_completed`);
+            
+            if (savedAllChallenges) {
+                allChallenges = JSON.parse(savedAllChallenges);
+            }
+            if (savedActiveChallenges) {
+                activeChallenges = JSON.parse(savedActiveChallenges);
+            }
+            if (savedPendingChallenges) {
+                pendingChallenges = JSON.parse(savedPendingChallenges);
+            }
+            if (savedCompletedChallenges) {
+                completedChallenges = JSON.parse(savedCompletedChallenges);
+            }
+            
+            // Load milestones
+            const savedMilestones = localStorage.getItem(`class_${currentClassCode}_milestones`);
+            if (savedMilestones) {
+                milestoneConfigCache[currentClassCode] = JSON.parse(savedMilestones);
+            }
+            
+            // Load notifications
+            loadNotificationsFromLocalStorage();
+        }
+        
+        // 4. Load theme and UI state
+        const savedTheme = localStorage.getItem('teacher_theme');
+        if (savedTheme) {
+            changeTheme(savedTheme);
+        }
+        
+        const savedSidebarState = localStorage.getItem('teacher_sidebar_collapsed');
+        if (savedSidebarState === 'true') {
+            isSidebarCollapsed = true;
+        }
+        
+        console.log("✅ Successfully loaded all data from localStorage");
+        
+        // Show last backup time
+        const lastBackup = localStorage.getItem('last_backup_timestamp');
+        if (lastBackup) {
+            const backupDate = new Date(lastBackup);
+            console.log(`📅 Last backup: ${backupDate.toLocaleString()}`);
+        }
+        
+        return true;
+        
+    } catch (error) {
+        console.error("❌ Error loading data from localStorage:", error);
+        return false;
+    }
+}
+
+// Helper function for streak chain data
+function getStreakChainData() {
+    const chainContainer = document.getElementById('streakChain');
+    if (!chainContainer) return null;
+    
+    const chainLinks = [];
+    chainContainer.querySelectorAll('.chain-link').forEach(link => {
+        chainLinks.push({
+            day: link.dataset.day,
+            status: link.classList.contains('completed') ? 'completed' : 
+                   link.classList.contains('pending') ? 'pending' : 'active'
+        });
+    });
+    
+    return {
+        totalLinks: document.getElementById('totalChainLinks')?.textContent || '0',
+        chainLinks: chainLinks
+    };
+}
+
+// Enhanced save functions with auto-backup
+const originalSaveAnnouncementsToLocalStorage = saveAnnouncementsToLocalStorage;
+saveAnnouncementsToLocalStorage = function() {
+    originalSaveAnnouncementsToLocalStorage();
+    saveAllDataToLocalStorage(); // Trigger full backup
+};
+
+const originalSaveAssignmentsToLocalStorage = saveAssignmentsToLocalStorage;
+saveAssignmentsToLocalStorage = function() {
+    originalSaveAssignmentsToLocalStorage();
+    saveAllDataToLocalStorage();
+};
+
+const originalSaveResourcesToLocalStorage = saveResourcesToLocalStorage;
+saveResourcesToLocalStorage = function() {
+    originalSaveResourcesToLocalStorage();
+    saveAllDataToLocalStorage();
+};
+
+const originalSavePollsToLocalStorage = savePollsToLocalStorage;
+savePollsToLocalStorage = function() {
+    originalSavePollsToLocalStorage();
+    saveAllDataToLocalStorage();
+};
+
+const originalSaveChallengesToLocalStorage = saveChallengesToLocalStorage;
+saveChallengesToLocalStorage = function() {
+    originalSaveChallengesToLocalStorage();
+    saveAllDataToLocalStorage();
+};
+
+// ========== FIXED TEACHER INITIALIZATION WITH CHALLENGES ==========
+
+// Replace the enhanced initializeTeacher function with this version
+initializeTeacher = async function() {
+    console.log("🎯 Enhanced teacher initialization with localStorage...");
+    
+    // First, try to load existing data from localStorage
+    const dataLoaded = loadAllDataFromLocalStorage();
+    
+    if (dataLoaded && teacherClasses.length > 0) {
+        // Data loaded successfully, update UI
+        updateClassSelector();
+        updateUI();
+        renderAllData();
+        updateStats();
+        
+        // INITIALIZE CHALLENGES BEFORE ANYTHING ELSE
+        setTimeout(() => {
+            initializeChallenges(); // This is the key fix
+            getLiveActivity(currentClassCode);
+            initializeSidebarHeatmap();
+        }, 500);
+        
+        showNotification("Dashboard loaded from localStorage! ✅", "success");
+        
+        // Still load from Firebase if not in demo mode
+        if (!isDemoMode) {
+            try {
+                await loadClassesFromFirebase();
+                if (currentClassCode) {
+                    await loadClassData();
+                    await loadMilestoneSettingsForClass();
+                    setupRealtimeListeners();
+                    
+                    // Sync challenges with Firebase data
+                    syncChallengesWithFirebase();
+                }
+            } catch (error) {
+                console.error("Firebase sync failed, using localStorage data:", error);
+            }
+        }
+        
+    } else {
+        // No data in localStorage, use original initialization
+        await originalInitializeTeacher();
+        
+        // Initialize backup system
+        initializeBackupSystem();
+    }
+};
+
+// Add this function to sync challenges between localStorage and Firebase
+async function syncChallengesWithFirebase() {
+    if (isDemoMode || !currentClassCode) return;
+    
+    console.log("🔄 Syncing challenges with Firebase...");
+    
+    try {
+        // Load challenges from Firebase
+        const snapshot = await database.ref('challenges').once('value');
+        
+        if (snapshot.exists()) {
+            let firebaseChallenges = [];
+            
+            snapshot.forEach(child => {
+                const challenge = child.val();
+                const challengeId = child.key;
+                
+                // Check if this challenge involves our current class
+                if (challenge.challengerClass === currentClassCode || 
+                    challenge.opponentClass === currentClassCode) {
+                    
+                    const enrichedChallenge = {
+                        id: challengeId,
+                        ...challenge,
+                        myScore: calculateMyScore(challenge),
+                        opponentScore: calculateOpponentScore(challenge),
+                        myWinning: isMyClassWinning(challenge),
+                        timeRemaining: calculateTimeRemaining(challenge),
+                        progress: calculateChallengeProgress(challenge)
+                    };
+                    
+                    firebaseChallenges.push(enrichedChallenge);
+                }
+            });
+            
+            console.log(`📊 Found ${firebaseChallenges.length} challenges in Firebase for class ${currentClassCode}`);
+            
+            // Merge Firebase challenges with localStorage challenges
+            const localStorageChallenges = allChallenges;
+            
+            // Create a map of challenge IDs for quick lookup
+            const challengeMap = new Map();
+            
+            // First, add all localStorage challenges
+            localStorageChallenges.forEach(challenge => {
+                challengeMap.set(challenge.id, challenge);
+            });
+            
+            // Then add/update with Firebase challenges
+            firebaseChallenges.forEach(fbChallenge => {
+                const existingChallenge = challengeMap.get(fbChallenge.id);
+                
+                if (existingChallenge) {
+                    // Update existing challenge with Firebase data
+                    Object.assign(existingChallenge, fbChallenge);
+                } else {
+                    // Add new challenge from Firebase
+                    challengeMap.set(fbChallenge.id, fbChallenge);
+                }
+            });
+            
+            // Convert back to array
+            allChallenges = Array.from(challengeMap.values());
+            
+            // Re-categorize challenges
+            activeChallenges = allChallenges.filter(c => c.status === 'active');
+            pendingChallenges = allChallenges.filter(c => c.status === 'pending' && c.opponentClass === currentClassCode);
+            completedChallenges = allChallenges.filter(c => c.status === 'completed');
+            
+            // Save merged data back to localStorage
+            saveChallengesToLocalStorage();
+            
+            // Update UI
+            updateChallengesUI();
+            
+            console.log(`✅ Synced challenges: ${allChallenges.length} total`);
+        }
+    } catch (error) {
+        console.error("Error syncing challenges with Firebase:", error);
+    }
+}
+
+// Also update the loadClassData function to ensure challenges load
+const originalLoadClassData = loadClassData;
+loadClassData = async function() {
+    await originalLoadClassData();
+    
+    // Load challenges AFTER class data loads
+    setTimeout(() => {
+        if (!window.challengesInitialized) {
+            initializeChallenges();
+            window.challengesInitialized = true;
+        }
+    }, 1000);
+};
+
+
+// Data recovery function (can be called manually)
+function recoverDataFromBackup() {
+    if (confirm("Recover all data from localStorage backup? This will overwrite current data.")) {
+        loadAllDataFromLocalStorage();
+        showNotification("Data recovered successfully! ✅", "success");
+        
+        // Refresh UI
+        updateClassSelector();
+        updateUI();
+        renderAllData();
+        updateStats();
+        updateChallengesUI();
+    }
+}
+
+// Manual backup function
+function createManualBackup() {
+    saveAllDataToLocalStorage();
+    showNotification("Manual backup created successfully! 💾", "success");
+}
+
+// View backup info
+function showBackupInfo() {
+    const lastBackup = localStorage.getItem('last_backup_timestamp');
+    let message = "No backups found.";
+    
+    if (lastBackup) {
+        const backupDate = new Date(lastBackup);
+        message = `Last backup: ${backupDate.toLocaleString()}`;
+        
+        // Calculate data size
+        let totalSize = 0;
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith('teacher_') || key.startsWith('class_')) {
+                totalSize += localStorage.getItem(key).length * 2; // Approximate bytes
+            }
+        }
+        
+        message += `\nTotal backup size: ${(totalSize / 1024).toFixed(2)} KB`;
+    }
+    
+    alert(`📊 Backup Information:\n\n${message}\n\nAuto-backup runs every 30 seconds.`);
+}
+
+// Add backup button to settings
+function addBackupButtonToSettings() {
+    const settingsSection = document.getElementById('settings');
+    if (!settingsSection) return;
+    
+    // Check if backup button already exists
+    if (document.getElementById('backupManagementSection')) return;
+    
+    const backupHTML = `
+        <div id="backupManagementSection" style="margin-top: var(--spacing-xl); padding-top: var(--spacing-xl); border-top: 1px solid var(--border);">
+            <h3>💾 LocalStorage Backup</h3>
+            <div class="pro-tip" style="margin-bottom: var(--spacing-md);">
+                <strong>🛡️ Data Protection</strong>
+                All your data is automatically saved to browser storage every 30 seconds. No data will be lost even if you close the browser.
+            </div>
+            <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-md); flex-wrap: wrap;">
+                <button class="btn btn-success" onclick="createManualBackup()">💾 Create Manual Backup</button>
+                <button class="btn btn-secondary" onclick="recoverDataFromBackup()">🔄 Recover Data</button>
+                <button class="btn btn-info" onclick="showBackupInfo()">📊 Backup Info</button>
+                <button class="btn btn-warning" onclick="exportAllBackupData()">📤 Export All Data</button>
+            </div>
+        </div>
+    `;
+    
+    // Insert before the logout button or at the end
+    const dataManagementSection = settingsSection.querySelector('.content-body > div:last-child');
+    if (dataManagementSection) {
+        dataManagementSection.insertAdjacentHTML('beforebegin', backupHTML);
+    }
+}
+
+// Export all backup data
+function exportAllBackupData() {
+    const allData = {};
+    
+    // Collect all teacher-related data from localStorage
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('teacher_') || key.startsWith('class_')) {
+            try {
+                allData[key] = JSON.parse(localStorage.getItem(key));
+            } catch {
+                allData[key] = localStorage.getItem(key);
+            }
+        }
+    }
+    
+    allData.exportDate = new Date().toISOString();
+    allData.exportVersion = "1.0";
+    
+    const dataStr = JSON.stringify(allData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = `teacher-full-backup-${new Date().toISOString().split('T')[0]}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
+    showNotification("Full backup exported successfully! 📤", "success");
+}
+
+// Initialize backup system when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Add backup section to settings
+    setTimeout(addBackupButtonToSettings, 2000);
+    
+    // Also trigger auto-backup when any form is submitted
+    document.addEventListener('submit', function(e) {
+        if (e.target.tagName === 'FORM' || e.target.closest('form')) {
+            setTimeout(saveAllDataToLocalStorage, 500);
+        }
+    });
+    
+    // Backup when switching classes
+    const originalSwitchClass = switchClass;
+    switchClass = async function(classIndex) {
+        // Save current class data before switching
+        saveAllDataToLocalStorage();
+        await originalSwitchClass(classIndex);
+    };
+    
+    console.log("✅ LocalStorage backup system ready");
+});
+
+
+
+
+
+
+
+
+
+
+
+// ========== ENHANCED CELEBRATION SYSTEM WITH SOUND ==========
+
+// Sound management system
+const celebrationSounds = {
+    win: new Audio('https://assets.mixkit.co/sfx/download/mixkit-winning-chimes-2015.mp3'),
+    achievement: new Audio('https://assets.mixkit.co/sfx/download/mixkit-achievement-bell-600.mp3'),
+    confetti: new Audio('https://assets.mixkit.co/sfx/download/mixkit-party-horn-sound-2927.mp3'),
+    celebration: new Audio('https://assets.mixkit.co/sfx/download/mixkit-crowd-celebration-01-2231.mp3')
+};
+
+
+// Set volume immediately
+Object.values(celebrationSounds).forEach(sound => {
+    sound.volume = 0.3;
+    sound.preload = 'auto';
+    sound.load(); // Preload the sounds
+});
+
+
+
+// Add this function to debug confetti
+function debugConfetti() {
+    const canvas = document.getElementById('confettiCanvas');
+    console.log("Confetti Canvas:", {
+        exists: !!canvas,
+        display: canvas?.style.display,
+        width: canvas?.width,
+        height: canvas?.height,
+        style: canvas?.style.cssText
+    });
+    
+    // Force show and test
+    if (canvas) {
+        canvas.style.display = 'block';
+        canvas.style.zIndex = '99999';
+        canvas.style.opacity = '1';
+        launchFullScreenConfetti();
+        console.log("Confetti launched for debugging");
+    }
+}
+
+
+
+// Call this when page loads
+setTimeout(addConfettiTestButton, 3000);
+
+
+// Global confetti system
+let isConfettiActive = false;
+
+// Enhanced confetti with sound
+function launchEnhancedConfetti(type = 'celebration') {
+    if (isConfettiActive) return; // Prevent multiple confetti at once
+    
+    console.log(`🎉 Launching enhanced confetti with ${type} sound`);
+    isConfettiActive = true;
+    
+    // Play celebration sound
+    playCelebrationSound(type);
+    
+    // Launch visual confetti
+    launchFullScreenConfetti();
+    
+    // Reset flag after animation
+    setTimeout(() => {
+        isConfettiActive = false;
+    }, 5000);
+}
+
+// Play celebration sound
+function playCelebrationSound(type = 'celebration') {
+    try {
+        const sound = celebrationSounds[type] || celebrationSounds.celebration;
+        sound.currentTime = 0;
+        sound.volume = getSoundVolume();
+        
+        // Play with user interaction requirement handling
+        const playPromise = sound.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log("Sound play failed (may need user interaction):", error);
+                // Fallback: Play on next user interaction
+                document.addEventListener('click', function playOnce() {
+                    sound.play().catch(() => {});
+                    document.removeEventListener('click', playOnce);
+                });
+            });
+        }
+    } catch (error) {
+        console.log("Sound error:", error);
+    }
+}
+
+// Get sound volume from settings
+function getSoundVolume() {
+    const savedVolume = localStorage.getItem('celebration_volume');
+    return savedVolume ? parseFloat(savedVolume) : 0.5;
+}
+
+// Save sound volume setting
+function setSoundVolume(volume) {
+    localStorage.setItem('celebration_volume', volume.toString());
+    Object.values(celebrationSounds).forEach(sound => {
+        sound.volume = volume;
+    });
+}
+
+// ========== FULL-SCREEN CONFETTI CANVAS ==========
+
+// Enhanced confetti canvas
+let confettiContext = null;
+let confettiParticles = [];
+const CONFETTI_COLORS = [
+    '#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', 
+    '#8b5cf6', '#ec4899', '#14b8a6', '#f97316', '#8b5cf6'
+];
+
+// Initialize confetti canvas
+function initConfettiCanvas() {
+    const canvas = document.getElementById('confettiCanvas');
+    if (!canvas) {
+        // Create canvas if it doesn't exist
+        const newCanvas = document.createElement('canvas');
+        newCanvas.id = 'confettiCanvas';
+        newCanvas.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        `;
+        document.body.appendChild(canvas);
+    }
+    
+    resizeConfettiCanvas();
+    confettiContext = document.getElementById('confettiCanvas').getContext('2d');
+}
+
+// Resize canvas for high DPI screens
+function resizeConfettiCanvas() {
+    const canvas = document.getElementById('confettiCanvas');
+    if (!canvas) return;
+    
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = '100vw';
+    canvas.style.height = '100vh';
+    
+    if (confettiContext) {
+        confettiContext.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+}
+
+// Launch full-screen confetti
+function launchFullScreenConfetti() {
+    const canvas = document.getElementById('confettiCanvas');
+    if (!canvas) {
+        initConfettiCanvas();
+    }
+    
+    canvas.style.display = 'block';
+    confettiContext = canvas.getContext('2d');
+    
+    // Create 300 particles for full effect
+    confettiParticles = [];
+    const particleCount = 300;
+    
+    for (let i = 0; i < particleCount; i++) {
+        confettiParticles.push({
+            x: Math.random() * canvas.width,
+            y: -Math.random() * canvas.height * 0.5,
+            size: Math.random() * 12 + 4,
+            color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+            speed: Math.random() * 5 + 2,
+            angle: Math.random() * Math.PI * 2,
+            rotation: Math.random() * Math.PI * 2,
+            rotationSpeed: (Math.random() - 0.5) * 0.2,
+            shape: Math.random() > 0.5 ? 'circle' : 'rectangle',
+            gravity: 0.05 + Math.random() * 0.03,
+            wind: (Math.random() - 0.5) * 0.5
+        });
+    }
+    
+    // Start animation
+    animateConfetti();
+}
+
+// Animate confetti
+function animateConfetti() {
+    if (!confettiContext) return;
+    
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = confettiContext;
+    
+    // Clear with slight fade for trail effect
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    let activeParticles = 0;
+    
+    confettiParticles.forEach(particle => {
+        // Update position
+        particle.x += Math.sin(particle.angle) * particle.wind;
+        particle.y += particle.speed;
+        particle.angle += 0.05;
+        particle.rotation += particle.rotationSpeed;
+        
+        // Apply gravity
+        particle.speed += particle.gravity;
+        
+        // Draw particle
+        ctx.save();
+        ctx.translate(particle.x, particle.y);
+        ctx.rotate(particle.rotation);
+        ctx.fillStyle = particle.color;
+        
+        if (particle.shape === 'circle') {
+            // Draw circle
+            ctx.beginPath();
+            ctx.arc(0, 0, particle.size / 2, 0, Math.PI * 2);
+            ctx.fill();
+        } else {
+            // Draw rectangle (confetti shape)
+            ctx.fillRect(-particle.size / 2, -particle.size / 4, particle.size, particle.size / 2);
+        }
+        
+        ctx.restore();
+        
+        // Keep particle if still on screen
+        if (particle.y < canvas.height) {
+            activeParticles++;
+        }
+    });
+    
+    // Continue animation if particles remain
+    if (activeParticles > 0) {
+        requestAnimationFrame(animateConfetti);
+    } else {
+        // Hide canvas when done
+        setTimeout(() => {
+            canvas.style.display = 'none';
+        }, 500);
+    }
+}
+
+// ========== CELEBRATION TRIGGERS ==========
+
+// Enhanced celebration for challenge wins
+function celebrateChallengeWin(challenge, result) {
+    const isWinner = result.winner === currentClassCode;
+    
+    // Play appropriate sound
+    playCelebrationSound(isWinner ? 'win' : 'achievement');
+    
+    // Launch confetti for winners
+    if (isWinner) {
+        setTimeout(() => launchFullScreenConfetti(), 500);
+    }
+    
+    // Show notification
+    showNotification(
+        isWinner ? 
+            `🏆 We won the "${challenge.name}" challenge!` :
+            `😅 Challenge "${challenge.name}" completed`,
+        isWinner ? 'success' : 'info'
+    );
+}
+
+// Enhanced milestone celebration
+function celebrateClassMilestone(key, message) {
+    // Play achievement sound
+    playCelebrationSound('achievement');
+    
+    // Launch confetti
+    setTimeout(() => launchFullScreenConfetti(), 300);
+    
+    // Show notification
+    showNotification(`🎉 ${message}`, "success");
+}
+
+// Enhanced streak milestone
+function celebrateChainMilestone(totalStreakDays) {
+    // Play celebration sound
+    playCelebrationSound('celebration');
+    
+    // Launch confetti
+    setTimeout(() => launchFullScreenConfetti(), 400);
+    
+    showNotification(`🎉 Class Milestone! ${totalStreakDays} links in the streak chain!`, 'success');
+}
+
+// Test celebration function
+function testCelebrationWithSound() {
+    if (confirm("Test full celebration with sound and confetti?")) {
+        playCelebrationSound('win');
+        launchFullScreenConfetti();
+        showNotification("🎉 Test celebration with sound!", "success");
+    }
+}
+
+// ========== SOUND SETTINGS UI ==========
+
+// Add sound settings to teacher settings
+function addSoundSettingsToUI() {
+    const settingsSection = document.getElementById('settings');
+    if (!settingsSection) return;
+    
+    // Check if sound settings already exist
+    if (document.getElementById('soundSettingsSection')) return;
+    
+    const soundSettingsHTML = `
+        <div id="soundSettingsSection" style="margin-top: var(--spacing-xl); padding-top: var(--spacing-xl); border-top: 1px solid var(--border);">
+            <h3>🔊 Celebration Sounds</h3>
+            <div class="pro-tip" style="margin-bottom: var(--spacing-md);">
+                <strong>🎵 Sound Effects</strong>
+                Celebration sounds play when your class wins challenges or reaches milestones.
+            </div>
+            <div style="margin-bottom: var(--spacing-lg);">
+                <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text);">
+                    Celebration Volume
+                </label>
+                <input type="range" id="celebrationVolume" min="0" max="1" step="0.1" 
+                       value="${getSoundVolume()}"
+                       style="width: 100%; margin-bottom: var(--spacing-sm);"
+                       oninput="updateSoundVolume(this.value)">
+                <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--text-muted);">
+                    <span>Mute</span>
+                    <span id="volumeDisplay">${Math.round(getSoundVolume() * 100)}%</span>
+                    <span>Loud</span>
+                </div>
+            </div>
+            <div style="display: flex; gap: var(--spacing-md);">
+                <button class="btn btn-success" onclick="testCelebrationWithSound()" style="flex: 1;">
+                    🔊 Test Celebration
+                </button>
+                <button class="btn btn-secondary" onclick="toggleSoundMute()" style="flex: 1;">
+                    🔇 Toggle Mute
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Insert before data management section
+    const dataManagementSection = settingsSection.querySelector('.content-body > div:last-child');
+    if (dataManagementSection) {
+        dataManagementSection.insertAdjacentHTML('beforebegin', soundSettingsHTML);
+    }
+}
+
+// Update sound volume
+function updateSoundVolume(volume) {
+    setSoundVolume(parseFloat(volume));
+    document.getElementById('volumeDisplay').textContent = `${Math.round(volume * 100)}%`;
+}
+
+// Toggle sound mute
+function toggleSoundMute() {
+    const currentVolume = getSoundVolume();
+    const newVolume = currentVolume > 0 ? 0 : 0.5;
+    setSoundVolume(newVolume);
+    
+    const volumeSlider = document.getElementById('celebrationVolume');
+    const volumeDisplay = document.getElementById('volumeDisplay');
+    
+    if (volumeSlider) volumeSlider.value = newVolume;
+    if (volumeDisplay) volumeDisplay.textContent = `${Math.round(newVolume * 100)}%`;
+    
+    showNotification(newVolume > 0 ? "🔊 Sound enabled" : "🔇 Sound muted", "info");
+}
+
+// ========== INITIALIZATION ==========
+
+
+
+// Update sound initialization
+function initSounds() {
+    // Try different sound sources
+    const soundSources = {
+        win: [
+            'https://assets.mixkit.co/sfx/download/mixkit-winning-chimes-2015.mp3',
+            'https://www.soundjay.com/buttons/button-3.mp3' // Fallback
+        ],
+        celebration: [
+            'https://assets.mixkit.co/sfx/download/mixkit-crowd-celebration-01-2231.mp3',
+            'https://www.soundjay.com/buttons/button-37a.mp3' // Fallback
+        ]
+    };
+    
+    celebrationSounds.win = new Audio();
+    celebrationSounds.celebration = new Audio();
+    
+    // Try first source, fall back to second if it fails
+    celebrationSounds.win.src = soundSources.win[0];
+    celebrationSounds.celebration.src = soundSources.celebration[0];
+    
+    // Set volume
+    celebrationSounds.win.volume = 0.3;
+    celebrationSounds.celebration.volume = 0.3;
+    
+    // Preload
+    celebrationSounds.win.load();
+    celebrationSounds.celebration.load();
+    
+    console.log("✅ Sounds initialized");
+}
+
+// Call this on page load
+setTimeout(initSounds, 1000);
+
+
+
+
+
+
+
+// Initialize celebration system
+function initCelebrationSystem() {
+    console.log("🎉 Initializing celebration system...");
+    
+    // Initialize confetti canvas
+    initConfettiCanvas();
+    
+    // Add sound settings to UI
+    setTimeout(addSoundSettingsToUI, 2000);
+    
+    // Handle window resize
+    window.addEventListener('resize', resizeConfettiCanvas);
+    
+    // Test sound on first load (with user interaction)
+    document.addEventListener('click', function initSoundsOnce() {
+        // Preload sounds on first click
+        Object.values(celebrationSounds).forEach(sound => {
+            sound.load();
+        });
+        document.removeEventListener('click', initSoundsOnce);
+    });
+    
+    console.log("✅ Celebration system initialized");
+}
+
+// Replace existing launchConfetti function
+launchConfetti = launchFullScreenConfetti;
+
+// ========== INTEGRATION WITH EXISTING CODE ==========
+
+// Update the completeChallengeWithWinner function to use enhanced celebration
+// Replace the sendChallengeCompletionNotifications function with this enhanced version:
+function sendChallengeCompletionNotifications(challenge, result) {
+    const challengeType = CHALLENGE_TYPES[challenge.type] || { name: 'Challenge', unit: 'points' };
+    const isWinner = result.winner === currentClassCode;
+    const wonText = isWinner ? "won" : "lost";
+    
+    // Enhanced celebration with sound and confetti
+    celebrateChallengeWin(challenge, result);
+    
+    // Post announcement to class
+    const announcementTitle = isWinner ? 
+        `🎉 We Won the "${challenge.name}" Challenge!` :
+        `😅 Challenge "${challenge.name}" Completed`;
+    
+    const announcementMessage = isWinner ? 
+        `CONGRATULATIONS! 🏆\n\nOur class WON the "${challenge.name}" challenge against ${challenge.challengerClass === currentClassCode ? challenge.opponentClass : challenge.challengerClass}!\n\n` +
+        `🏁 Final Score: ${result.challengerScore} vs ${result.opponentScore} ${challengeType.unit}\n` +
+        `🎯 Challenge Type: ${challengeType.name}\n` +
+        `⏱️ Duration: ${challenge.duration} days\n\n` +
+        `Amazing work, everyone! Your hard studying paid off! Keep up the great work! 💪` :
+        `The "${challenge.name}" challenge has ended.\n\n` +
+        `🏁 Final Score: ${result.challengerScore} vs ${result.opponentScore} ${challengeType.unit}\n` +
+        `🎯 Challenge Type: ${challengeType.name}\n` +
+        `⏱️ Duration: ${challenge.duration} days\n\n` +
+        `While we didn't win this time, great effort everyone! Let's keep studying and do better next time! 💪`;
+    
+    postSystemAnnouncement(announcementTitle, announcementMessage);
+    
+    // Add to activity feed with celebration emoji
+    const activity = {
+        type: 'challenge_completed',
+        message: `🏆 Challenge "${challenge.name}" completed! ${result.winner === currentClassCode ? 'WE WON! 🎉' : `${result.winner} wins`}`,
+        challengeName: challenge.name,
+        winner: result.winner,
+        challengerScore: result.challengerScore,
+        opponentScore: result.opponentScore,
+        createdAt: new Date().toISOString(),
+        classCode: currentClassCode,
+        isCelebration: isWinner
+    };
+    
+    if (!isDemoMode && database && database.ref) {
+        database.ref(`classActivity/${currentClassCode}`).push().set(activity);
+    } else {
+        activity.id = 'challenge_completed_' + Date.now();
+        activityIds.add(activity.id);
+        liveActivity.unshift(activity);
+        renderLiveActivity();
+    }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(initCelebrationSystem, 1000);
+});
+
+// Also add sound to test celebration button in settings
+// Update your existing testCelebration function:
+testCelebration = function() {
+    if (!currentClassCode) {
+        showNotification("Please select a class first", "error");
+        return;
+    }
+    
+    const message = "Test celebration — great job, class!";
+    playCelebrationSound('celebration');
+    launchFullScreenConfetti();
+    postSystemAnnouncement("Class Celebration (Test)", `🎉 ${message}`);
+    showNotification(`🎉 ${message}`, "success");
+};
+
+
+// Initialize everything on load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("🎯 Initializing enhanced features...");
+    
+    // Initialize confetti canvas
+    setTimeout(() => {
+        const canvas = document.createElement('canvas');
+        canvas.id = 'confettiCanvas';
+        canvas.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 99999;
+            display: none;
+        `;
+        document.body.appendChild(canvas);
+        console.log("✅ Confetti canvas created");
+    }, 1000);
+    
+    // Add debug panel
+    setTimeout(addDebugPanel, 2000);
+    
+    // Test a simple confetti function
+    window.testSimpleConfetti = function() {
+        const canvas = document.getElementById('confettiCanvas');
+        if (!canvas) return;
+        
+        canvas.style.display = 'block';
+        const ctx = canvas.getContext('2d');
+        
+        // Simple confetti
+        for (let i = 0; i < 50; i++) {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            const size = Math.random() * 10 + 5;
+            const color = ['#4f46e5', '#10b981', '#f59e0b'][Math.floor(Math.random() * 3)];
+            
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, size, size);
+        }
+        
+        setTimeout(() => {
+            canvas.style.display = 'none';
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }, 2000);
+    };
+    
+    console.log("✅ Debug functions added");
+});
 </script>
 
 
 
 </body>
 </html>
-
