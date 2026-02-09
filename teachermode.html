@@ -1,8 +1,4 @@
 <!DOCTYPE html>
-
-  
-</body>
-</html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -14544,7 +14540,7 @@ function setSoundVolume(volume) {
 // ========== FULL-SCREEN CONFETTI CANVAS ==========
 
 // Enhanced confetti canvas
-let confettiContext = null;
+
 let confettiParticles = [];
 const CONFETTI_COLORS = [
     '#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', 
@@ -15007,6 +15003,225 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     console.log("✅ Debug functions added");
+});
+
+
+
+
+// ========== FIX FOR UNDEFINED FUNCTIONS ==========
+
+// Fix for bubbleIcon reference error in chatbot
+const bubbleIcon = document.querySelector('.bubble-icon');
+const bubbleMessage = document.querySelector('.bubble-message');
+
+// Original initializeTeacher function that was referenced
+async function originalInitializeTeacher() {
+    console.log("🎯 Original teacher initialization...");
+    
+    showNotification("Loading your classes...", "info");
+    
+    if (isDemoMode) {
+        loadTeacherClassesFromLocalStorage();
+    } else {
+        await loadClassesFromFirebase();
+    }
+    
+    if (teacherClasses.length === 0) {
+        console.log("No classes found, creating default class...");
+        await createDefaultClass();
+    }
+    
+    if (teacherClasses.length > 0) {
+        currentClassId = teacherClasses[0].id;
+        currentClassCode = teacherClasses[0].code;
+        selectedClassIndex = 0;
+        console.log(`📝 Current class set to: ${teacherClasses[0].name}`);
+    }
+    
+    updateClassSelector();
+    updateUI();
+    
+    if (currentClassCode) {
+        await loadClassData();
+        await loadMilestoneSettingsForClass();
+    }
+    
+    if (!isDemoMode) {
+        setupRealtimeListeners();
+    }
+    
+    loadSidebarState();
+    updateSidebarToggleVisibility();
+    
+    console.log(`✅ Teacher dashboard initialized with ${teacherClasses.length} classes`);
+    showNotification("Dashboard loaded successfully! ✅", "success");
+    
+    const savedTheme = localStorage.getItem('teacherTheme') || 'light';
+    changeTheme(savedTheme);
+    updateMobileTitle();
+    
+    setTimeout(() => {
+        initializeChallenges();
+    }, 1000);
+    
+    setTimeout(() => {
+        initializeChallenges();
+    }, 1000);
+}
+
+// Add debug button function
+function addDebugButton() {
+    const challengesHeader = document.querySelector('#challenges .content-header');
+    if (challengesHeader && !document.getElementById('challengeDebugBtn')) {
+        const debugBtn = document.createElement('button');
+        debugBtn.id = 'challengeDebugBtn';
+        debugBtn.className = 'btn btn-warning';
+        debugBtn.innerHTML = '🐛 Debug';
+        debugBtn.onclick = function() {
+            console.log("=== DEBUG CHALLENGES ===");
+            console.log("Current class:", currentClassCode);
+            console.log("All challenges:", allChallenges.length);
+            console.log("Active:", activeChallenges.length);
+            console.log("Pending:", pendingChallenges.length);
+            console.log("Students:", students.length);
+            
+            alert(`Debug Info:\nClass: ${currentClassCode}\nChallenges: ${allChallenges.length}\nStudents: ${students.length}\nCheck console for details.`);
+        };
+        debugBtn.style.marginLeft = '10px';
+        challengesHeader.appendChild(debugBtn);
+    }
+}
+
+// Add confetti test button
+function addConfettiTestButton() {
+    const settingsSection = document.getElementById('settings');
+    if (settingsSection && !document.getElementById('confettiTestBtn')) {
+        const testBtn = document.createElement('button');
+        testBtn.id = 'confettiTestBtn';
+        testBtn.className = 'btn btn-success';
+        testBtn.innerHTML = '🎉 Test Confetti';
+        testBtn.onclick = function() {
+            console.log("Testing confetti...");
+            launchConfetti();
+            showNotification("Confetti test! 🎉", "success");
+        };
+        testBtn.style.marginTop = '10px';
+        testBtn.style.width = '100%';
+        
+        const milestoneDiv = settingsSection.querySelector('.form-group:has(#milestoneTotalStreak)');
+        if (milestoneDiv) {
+            milestoneDiv.appendChild(testBtn);
+        }
+    }
+}
+
+// Initialize confetti context safely
+let confettiContext = null;
+
+// Fixed resize function that checks initialization
+function resizeConfettiCanvas() {
+    const canvas = document.getElementById('confettiCanvas');
+    if (!canvas) {
+        console.log("Confetti canvas not found, creating...");
+        const newCanvas = document.createElement('canvas');
+        newCanvas.id = 'confettiCanvas';
+        newCanvas.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        `;
+        document.body.appendChild(canvas);
+        return;
+    }
+    
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = '100vw';
+    canvas.style.height = '100vh';
+    
+    // Only initialize context if we're going to use it
+    if (!confettiContext) {
+        confettiContext = canvas.getContext('2d');
+        if (confettiContext) {
+            confettiContext.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+    }
+}
+
+// Simple confetti function that works
+function launchConfetti() {
+    console.log("🎉 Launching confetti...");
+    
+    const canvas = document.getElementById('confettiCanvas');
+    if (!canvas) {
+        console.error("❌ Confetti canvas not found!");
+        return;
+    }
+    
+    const ctx = canvas.getContext('2d');
+    canvas.style.display = 'block';
+    canvas.style.zIndex = '99999';
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Create simple confetti
+    const colors = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#8b5cf6'];
+    
+    for (let i = 0; i < 100; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const size = Math.random() * 10 + 5;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, size, size);
+    }
+    
+    // Hide after 3 seconds
+    setTimeout(() => {
+        canvas.style.display = 'none';
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }, 3000);
+}
+
+// Show create challenge modal
+function showCreateChallengeModal() {
+    if (!currentClassCode) {
+        showNotification("Please select a class first", "error");
+        return;
+    }
+    
+    showSection('create-challenge');
+    resetChallengeForm();
+}
+
+// ========== INITIALIZE MISSING ELEMENTS ON LOAD ==========
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("👩‍🏫 Teacher Mode fixing initialization...");
+    
+    // Initialize confetti canvas
+    setTimeout(() => {
+        resizeConfettiCanvas();
+        addConfettiTestButton();
+    }, 2000);
+    
+    // Add debug button
+    setTimeout(() => {
+        addDebugButton();
+    }, 3000);
+    
+    // Fix the login error by setting the original function
+    window.originalInitializeTeacher = originalInitializeTeacher;
+    
+    console.log("✅ Fixed functions initialized");
 });
 </script>
 
