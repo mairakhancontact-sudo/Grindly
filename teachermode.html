@@ -3586,6 +3586,1369 @@ textarea {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
 }
+
+
+
+/* ========== THEME-AWARE RESPONSIVE NOTIFICATIONS ========== */
+#toastContainer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.toast {
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 350px;
+  animation: slideIn 0.3s ease;
+  border-left: 4px solid;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+/* LIGHT THEME */
+body.light .toast {
+  background: rgba(255, 255, 255, 0.95);
+  color: #1f2937;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light .toast.success {
+  border-left-color: #10b981;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(255, 255, 255, 0.95));
+}
+
+body.light .toast.error {
+  border-left-color: #ef4444;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(255, 255, 255, 0.95));
+}
+
+body.light .toast.warning {
+  border-left-color: #f59e0b;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(255, 255, 255, 0.95));
+}
+
+body.light .toast.info {
+  border-left-color: #3b82f6;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(255, 255, 255, 0.95));
+}
+
+/* DARK THEME */
+body.dark .toast {
+  background: rgba(30, 41, 59, 0.95);
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.dark .toast.success {
+  border-left-color: #34d399;
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(30, 41, 59, 0.95));
+}
+
+body.dark .toast.error {
+  border-left-color: #f87171;
+  background: linear-gradient(135deg, rgba(248, 113, 113, 0.15), rgba(30, 41, 59, 0.95));
+}
+
+body.dark .toast.warning {
+  border-left-color: #fbbf24;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(30, 41, 59, 0.95));
+}
+
+body.dark .toast.info {
+  border-left-color: #60a5fa;
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.15), rgba(30, 41, 59, 0.95));
+}
+
+/* SYSTEM PREFERENCE (auto theme) */
+@media (prefers-color-scheme: dark) {
+  body.auto .toast {
+    background: rgba(30, 41, 59, 0.95);
+    color: #f1f5f9;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  body.auto .toast.success {
+    border-left-color: #34d399;
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(30, 41, 59, 0.95));
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ========== RESPONSIVE ADJUSTMENTS ========== */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  #toastContainer {
+    top: 15px;
+    right: 15px;
+    max-width: 300px;
+  }
+  
+  .toast {
+    max-width: 280px;
+    padding: 14px;
+    gap: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .toast span:first-child {
+    font-size: 1.3rem;
+  }
+  
+  .toast > div > div:first-child {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  .toast > div > div:last-child {
+    font-size: 0.8rem;
+    opacity: 0.8;
+  }
+}
+
+/* Mobile (480px - 768px) */
+@media (max-width: 768px) {
+  #toastContainer {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    align-items: stretch;
+    gap: 6px;
+  }
+  
+  .toast {
+    max-width: 100% !important;
+    width: 100%;
+    padding: 12px !important;
+    margin: 0 !important;
+    gap: 10px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  body.dark .toast,
+  body.auto .toast {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .toast span:first-child {
+    font-size: 1.2rem !important;
+    min-width: 24px;
+  }
+  
+  .toast > div {
+    min-width: 0;
+  }
+  
+  .toast > div > div:first-child {
+    font-size: 0.85rem !important;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+  
+  .toast > div > div:last-child {
+    font-size: 0.75rem !important;
+    margin-top: 2px;
+    opacity: 0.8;
+  }
+}
+
+/* Extra small phones (< 480px) */
+@media (max-width: 480px) {
+  #toastContainer {
+    top: 5px;
+    right: 5px;
+    left: 5px;
+    gap: 4px;
+  }
+  
+  .toast {
+    padding: 10px !important;
+    border-radius: 8px;
+    gap: 8px;
+    font-size: 0.8rem;
+  }
+  
+  .toast span:first-child {
+    font-size: 1rem !important;
+    min-width: 20px;
+  }
+  
+  .toast > div > div:first-child {
+    font-size: 0.8rem !important;
+  }
+  
+  .toast > div > div:last-child {
+    font-size: 0.7rem !important;
+  }
+}
+
+/* Small height devices */
+@media (max-height: 600px) {
+  #toastContainer {
+    top: 5px;
+    bottom: auto !important;
+  }
+  
+  .toast {
+    padding: 8px 12px !important;
+    min-height: auto;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* ========== MINIMAL THEME-AWARE NOTIFICATIONS ========== */
+#toastContainer {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.toast {
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 300px;
+  animation: slideIn 0.3s ease;
+  border-left: 3px solid;
+  font-size: 0.875rem;
+  backdrop-filter: blur(10px);
+}
+
+/* Light theme */
+body.light .toast {
+  background: rgba(255, 255, 255, 0.98);
+  color: #1f2937;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body.light .toast.success { border-left-color: #10b981; }
+body.light .toast.error { border-left-color: #ef4444; }
+body.light .toast.warning { border-left-color: #f59e0b; }
+body.light .toast.info { border-left-color: #3b82f6; }
+
+/* Dark theme */
+body.dark .toast {
+  background: rgba(30, 41, 59, 0.98);
+  color: #f1f5f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.dark .toast.success { border-left-color: #34d399; }
+body.dark .toast.error { border-left-color: #f87171; }
+body.dark .toast.warning { border-left-color: #fbbf24; }
+body.dark .toast.info { border-left-color: #60a5fa; }
+
+/* Mobile */
+@media (max-width: 768px) {
+  #toastContainer {
+    top: 5px;
+    right: 5px;
+    left: 5px;
+    align-items: stretch;
+  }
+  
+  .toast {
+    max-width: 100%;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    gap: 8px;
+  }
+  
+  .toast span {
+    font-size: 1rem;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ========== ULTRA-COMPACT THEME-AWARE NOTIFICATIONS ========== */
+#toastContainer {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.toast {
+    border-radius: 6px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 260px;
+    animation: slideIn 0.2s ease;
+    border-left: 2px solid;
+    font-size: 0.75rem; /* 12px */
+    backdrop-filter: blur(6px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: all 0.15s ease;
+}
+
+/* Light theme */
+body.light .toast {
+    background: rgba(255, 255, 255, 0.98);
+    color: #1f2937;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.light .toast.success { 
+    border-left-color: #10b981;
+    background: rgba(16, 185, 129, 0.06);
+}
+
+body.light .toast.error { 
+    border-left-color: #ef4444;
+    background: rgba(239, 68, 68, 0.06);
+}
+
+body.light .toast.warning { 
+    border-left-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.06);
+}
+
+body.light .toast.info { 
+    border-left-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.06);
+}
+
+/* Dark theme */
+body.dark .toast {
+    background: rgba(30, 41, 59, 0.98);
+    color: #f1f5f9;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.dark .toast.success { 
+    border-left-color: #34d399;
+    background: rgba(52, 211, 153, 0.08);
+}
+
+body.dark .toast.error { 
+    border-left-color: #f87171;
+    background: rgba(248, 113, 113, 0.08);
+}
+
+body.dark .toast.warning { 
+    border-left-color: #fbbf24;
+    background: rgba(251, 191, 36, 0.08);
+}
+
+body.dark .toast.info { 
+    border-left-color: #60a5fa;
+    background: rgba(96, 165, 250, 0.08);
+}
+
+.toast span {
+    font-size: 0.9rem;
+    min-width: 16px;
+    text-align: center;
+}
+
+.toast > div {
+    flex: 1;
+    min-width: 0;
+}
+
+.toast > div > div:first-child {
+    font-weight: 600;
+    line-height: 1.15;
+    word-break: break-word;
+    font-size: 0.75rem;
+}
+
+.toast > div > div:last-child {
+    font-size: 0.625rem; /* 10px */
+    opacity: 0.7;
+    margin-top: 1px;
+    letter-spacing: -0.1px;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+/* ========== ULTRA-COMPACT MOBILE NOTIFICATIONS ========== */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+    #toastContainer {
+        top: 6px;
+        right: 6px;
+        max-width: 240px;
+        gap: 3px;
+    }
+    
+    .toast {
+        max-width: 230px;
+        padding: 5px 8px;
+        gap: 5px;
+        font-size: 0.6875rem; /* 11px */
+        border-radius: 4px;
+    }
+    
+    .toast span {
+        font-size: 0.8rem;
+        min-width: 14px;
+    }
+    
+    .toast > div > div:first-child {
+        font-size: 0.6875rem;
+        line-height: 1.1;
+    }
+    
+    .toast > div > div:last-child {
+        font-size: 0.5625rem; /* 9px */
+    }
+}
+
+/* Mobile (480px - 768px) - SUPER TINY */
+@media (max-width: 768px) {
+    #toastContainer {
+        top: 4px;
+        right: 4px;
+        left: 4px;
+        align-items: stretch;
+        gap: 2px;
+    }
+    
+    .toast {
+        max-width: 100% !important;
+        width: 100%;
+        padding: 4px 6px !important;
+        margin: 0 !important;
+        gap: 4px;
+        border-radius: 3px;
+        font-size: 0.625rem; /* 10px */
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03);
+        border-left-width: 1.5px !important;
+        border-width: 0.5px !important;
+    }
+    
+    .toast span {
+        font-size: 0.7rem !important;
+        min-width: 12px;
+    }
+    
+    .toast > div > div:first-child {
+        font-size: 0.625rem !important;
+        line-height: 1.1;
+        font-weight: 600;
+    }
+    
+    .toast > div > div:last-child {
+        font-size: 0.5rem !important; /* 8px */
+        margin-top: 0.5px;
+        opacity: 0.8;
+        letter-spacing: -0.2px;
+    }
+}
+
+/* Extra small phones (< 480px) - MICRO SIZE */
+@media (max-width: 480px) {
+    #toastContainer {
+        top: 2px;
+        right: 2px;
+        left: 2px;
+        gap: 1px;
+    }
+    
+    .toast {
+        padding: 3px 5px !important;
+        border-radius: 2px;
+        gap: 3px;
+        font-size: 0.5625rem; /* 9px */
+        border-left-width: 1px !important;
+    }
+    
+    .toast span {
+        font-size: 0.6rem !important;
+        min-width: 10px;
+    }
+    
+    .toast > div > div:first-child {
+        font-size: 0.5625rem !important;
+        line-height: 1.05;
+        font-weight: 600;
+    }
+    
+    .toast > div > div:last-child {
+        font-size: 0.4375rem !important; /* 7px */
+        letter-spacing: -0.3px;
+    }
+}
+
+/* Landscape mode on mobile - ULTRA COMPACT */
+@media (max-width: 768px) and (orientation: landscape) {
+    #toastContainer {
+        top: 1px;
+        right: 1px;
+        left: 1px;
+        gap: 1px;
+    }
+    
+    .toast {
+        padding: 2px 4px !important;
+        gap: 3px;
+        border-left-width: 1px !important;
+    }
+    
+    .toast span {
+        font-size: 0.55rem !important;
+        min-width: 8px;
+    }
+    
+    .toast > div > div:first-child {
+        font-size: 0.5rem !important;
+        line-height: 1;
+    }
+    
+    .toast > div > div:last-child {
+        display: none; /* Hide timestamp in landscape */
+    }
+}
+
+/* Small height devices */
+@media (max-height: 500px) {
+    #toastContainer {
+        top: 1px;
+    }
+    
+    .toast {
+        padding: 2px 5px !important;
+        min-height: auto;
+    }
+}
+
+
+
+
+.memory-wall-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.memory-card {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.memory-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border-color: var(--accent);
+}
+
+.memory-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--accent), var(--success));
+    border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.memory-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: var(--spacing-md);
+    flex-grow: 1;
+}
+
+.memory-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-light);
+    font-size: 0.875rem;
+}
+
+.memory-author {
+    color: var(--accent);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.memory-date {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.memory-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+
+.empty-memories {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+}
+
+.empty-memories-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.empty-memories-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.empty-memories-description {
+    max-width: 400px;
+    margin: 0 auto;
+}
+</style>
+
+
+
+
+
+<style>
+/* Memory Wall Whiteboard */
+.memory-whiteboard {
+    position: relative;
+    width: 100%;
+    min-height: 600px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: grab;
+}
+
+.whiteboard-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.welcome-note {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.sticky-notes-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.sticky-notes-container > * {
+    pointer-events: auto;
+}
+
+/* Sticky Note Styles */
+.sticky-note {
+    position: absolute;
+    width: 200px;
+    min-height: 200px;
+    padding: 16px;
+    border-radius: 4px;
+    box-shadow: 
+        0 4px 8px rgba(0,0,0,0.1),
+        0 2px 4px rgba(0,0,0,0.1) inset,
+        0 -1px 0 rgba(0,0,0,0.05) inset;
+    transform: rotate(var(--rotation, 0deg));
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: grab;
+    user-select: none;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.sticky-note:hover {
+    transform: rotate(var(--rotation, 0deg)) scale(1.02);
+    box-shadow: 
+        0 6px 12px rgba(0,0,0,0.15),
+        0 2px 4px rgba(0,0,0,0.1) inset,
+        0 -1px 0 rgba(0,0,0,0.05) inset;
+    z-index: 10;
+}
+
+.sticky-note:active {
+    cursor: grabbing;
+}
+
+.sticky-note.dragging {
+    opacity: 0.9;
+    z-index: 100;
+}
+
+.note-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.note-text {
+    flex-grow: 1;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #333;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    margin-bottom: 8px;
+}
+
+.note-meta {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(0,0,0,0.1);
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.note-author {
+    color: #666;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.note-date {
+    color: #999;
+    font-size: 10px;
+}
+
+.note-actions {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.btn-note {
+    padding: 2px 6px;
+    font-size: 10px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.sticky-note:hover .btn-note {
+    opacity: 1;
+}
+
+.btn-like {
+    background: rgba(255,255,255,0.8);
+    color: #666;
+}
+
+.btn-delete {
+    background: rgba(255,0,0,0.1);
+    color: #ff4444;
+}
+
+.note-likes {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 11px;
+}
+
+/* Welcome Note */
+.sticky-note.welcome {
+    width: 250px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.sticky-note.welcome .note-text {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.sticky-note.welcome .note-author {
+    color: rgba(255,255,255,0.9);
+}
+
+/* Color Picker */
+.color-picker {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.color-option {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+}
+
+.color-option.selected {
+    border-color: var(--accent);
+    transform: scale(1.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Note Preview */
+.sticky-note-preview {
+    width: 200px;
+    min-height: 150px;
+    padding: 12px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: rotate(-1deg);
+    margin: 0 auto;
+}
+
+.preview-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.preview-text {
+    flex-grow: 1;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    font-size: 12px;
+    color: #333;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.preview-meta {
+    margin-top: auto;
+    padding-top: 4px;
+    border-top: 1px dashed rgba(0,0,0,0.1);
+    font-size: 10px;
+}
+
+.preview-author {
+    color: #666;
+    font-weight: 600;
+}
+
+/* Note Colors */
+.note-yellow { background: #FFEB3B; }
+.note-green { background: #C8E6C9; }
+.note-blue { background: #BBDEFB; }
+.note-purple { background: #E1BEE7; }
+.note-orange { background: #FFCCBC; }
+.note-light-yellow { background: #FFF9C4; }
+
+/* Controls Bar */
+.whiteboard-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 8px;
+    z-index: 1000;
+}
+
+.whiteboard-btn {
+    background: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-size: 18px;
+}
+
+.whiteboard-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Empty State */
+.empty-whiteboard {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.empty-whiteboard-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+.empty-whiteboard-title {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 600;
+}
+
+.empty-whiteboard-description {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sticky-note {
+        width: 150px;
+        min-height: 150px;
+        padding: 12px;
+    }
+    
+    .note-text {
+        font-size: 12px;
+    }
+    
+    .whiteboard-controls {
+        bottom: 10px;
+        right: 10px;
+    }
+    
+    .whiteboard-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+}
+
+
+
+
+
+/* ========== MEMORY WALL WHITEBOARD STYLES ========== */
+.memory-whiteboard {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border);
+    overflow: hidden;
+    margin-bottom: var(--spacing-xl);
+}
+
+.whiteboard-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+.welcome-note {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-1deg);
+    z-index: 1;
+}
+
+.sticky-notes-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.sticky-note {
+    position: absolute;
+    width: 200px;
+    min-height: 200px;
+    padding: var(--spacing-md);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.1);
+    cursor: move;
+    transition: all 0.3s ease;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.sticky-note:hover {
+    transform: rotate(0deg) scale(1.05) !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.1);
+    z-index: 100 !important;
+}
+
+.sticky-note.dragging {
+    opacity: 0.9;
+    transform: scale(1.1) !important;
+    z-index: 1000 !important;
+    cursor: grabbing;
+}
+
+.sticky-note.welcome {
+    width: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-align: center;
+}
+
+.note-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.note-text {
+    flex: 1;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: var(--spacing-md);
+    overflow-wrap: break-word;
+    overflow-y: auto;
+    max-height: 120px;
+}
+
+.note-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: rgba(0,0,0,0.7);
+    margin-top: auto;
+}
+
+.note-author {
+    font-weight: 600;
+}
+
+.note-date {
+    opacity: 0.7;
+}
+
+.note-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
+}
+
+.note-likes {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: rgba(0,0,0,0.7);
+}
+
+.btn-note {
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0.7;
+    transition: all 0.2s;
+}
+
+.btn-note:hover {
+    opacity: 1;
+    background: rgba(0,0,0,0.1);
+}
+
+.btn-like:hover {
+    color: #ef4444;
+}
+
+.btn-delete:hover {
+    color: #ef4444;
+}
+
+.whiteboard-controls {
+    position: absolute;
+    bottom: var(--spacing-md);
+    right: var(--spacing-md);
+    display: flex;
+    gap: var(--spacing-sm);
+    z-index: 10;
+}
+
+.whiteboard-btn {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.whiteboard-btn:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+/* Color picker */
+.color-picker {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+
+.color-option {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+}
+
+.color-option.selected {
+    border-color: var(--text);
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--text);
+}
+
+/* Preview */
+.sticky-note-preview {
+    width: 100%;
+    min-height: 120px;
+    padding: var(--spacing-md);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-top: var(--spacing-sm);
+}
+
+.preview-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-text {
+    flex: 1;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: var(--spacing-sm);
+}
+
+.preview-meta {
+    font-size: 12px;
+    color: rgba(0,0,0,0.7);
+    margin-top: auto;
+}
+
+.preview-author {
+    font-weight: 600;
+}
+
+/* Add memory form on the page (not modal) */
+.add-memory-form {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    border: 2px solid var(--border);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+    .memory-whiteboard {
+        height: 400px;
+    }
+    
+    .sticky-note {
+        width: 160px;
+        min-height: 160px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+
+/* Add Memory Page Styles */
+.color-option {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.color-option:hover .color-option-tooltip {
+    display: block;
+}
+
+.color-option-tooltip {
+    display: none;
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 100;
+}
+
+.color-option-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 4px 4px 0;
+    border-style: solid;
+    border-color: var(--text) transparent transparent;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+}
+
+@media (max-width: 1024px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+}
 </style>
 </head>
 <body>
@@ -3657,7 +5020,10 @@ textarea {
       <div class="nav-item active" onclick="showSection('dashboard'); closeSidebarOnMobile();">
         📊 Dashboard
       </div>
-      
+    <!-- Memory Wall Navigation -->
+<div class="nav-item" onclick="showSection('memoryWall'); closeSidebarOnMobile();">
+    📝 Memory Wall
+</div>
  
       <div class="nav-item" onclick="showSection('announcements'); closeSidebarOnMobile();">
         📢 Announcements
@@ -4006,6 +5372,228 @@ textarea {
       </div>
       </div>
      
+
+
+
+<!-- Memory Wall Section - Main Whiteboard View -->
+<div id="memoryWall" class="dashboard-content" style="grid-column: span 12; display: none;">
+    <div class="content-card" style="padding: 0; overflow: hidden;">
+        <div class="content-header" style="border-bottom: 1px solid var(--border);">
+            <h2>📝 Class Memory Wall</h2>
+            <button class="btn btn-primary" onclick="showAddMemoryPage()">
+                + Add New Memory
+            </button>
+        </div>
+        
+        <div class="content-body" style="padding: 0;">
+            <div class="pro-tip" style="margin: var(--spacing-md);">
+                <strong>🎨 Interactive Memory Wall</strong>
+                Click "Add New Memory" to share your thoughts, or drag notes around to organize them!
+            </div>
+            
+            <!-- Whiteboard Container -->
+            <div id="memoryWhiteboard" class="memory-whiteboard">
+                <!-- Background grid pattern -->
+                <div class="whiteboard-background"></div>
+                
+                <!-- Welcome message (centered) -->
+                <div class="welcome-note" id="welcomeNote">
+                    <div class="sticky-note welcome">
+                        <div class="note-content">
+                            <div class="note-text">Welcome to our Class Memory Wall! 🎉<br><br>Share what you've learned, celebrate achievements, or post encouraging words!</div>
+                            <div class="note-meta">
+                                <span class="note-author">👨‍🏫 Teacher</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sticky notes container -->
+                <div id="stickyNotesContainer" class="sticky-notes-container"></div>
+            </div>
+            
+            <!-- Memory Wall Stats -->
+            <div style="padding: var(--spacing-lg); background: var(--card); border-top: 1px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h4>📊 Wall Stats</h4>
+                        <div style="display: flex; gap: var(--spacing-lg); margin-top: var(--spacing-sm);">
+                            <div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);" id="totalNotesCount">0</div>
+                                <div style="font-size: 0.875rem; color: var(--text-muted);">Total Notes</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);" id="totalLikesCount">0</div>
+                                <div style="font-size: 0.875rem; color: var(--text-muted);">Total Likes</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning);" id="studentNotesCount">0</div>
+                                <div style="font-size: 0.875rem; color: var(--text-muted);">Student Notes</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-secondary" onclick="refreshMemoryWall()">
+                            ⟳ Refresh Wall
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Memory Page -->
+<div id="addMemoryPage" class="dashboard-content" style="grid-column: span 12; display: none;">
+    <div class="content-card">
+        <div class="content-header" style="border-bottom: 1px solid var(--border);">
+            <h2>✨ Add New Memory</h2>
+            <button class="btn btn-secondary" onclick="backToMemoryWall()">
+                ← Back to Memory Wall
+            </button>
+        </div>
+        
+        <div class="content-body">
+            <div class="pro-tip" style="margin-bottom: var(--spacing-xl);">
+                <strong>📝 Share Your Thoughts</strong>
+                Add a memory, achievement, or encouraging word to the class wall. Your note will appear on the interactive whiteboard!
+            </div>
+            
+            <div style="max-width: 800px; margin: 0 auto;">
+                <!-- Form in two columns -->
+                <div class="form-row">
+                    <!-- Left Column: Text Input -->
+                    <div class="form-group">
+                        <label for="addMemoryText" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text);">
+                            Your Memory
+                        </label>
+                        <textarea id="addMemoryText" 
+                                  placeholder="What I learned this week...&#10;Proud moment...&#10;Encouraging word for classmates..."
+                                  rows="6"
+                                  maxlength="300"
+                                  style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); resize: vertical; font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; font-size: 16px;"></textarea>
+                        <div style="display: flex; justify-content: space-between; margin-top: var(--spacing-xs);">
+                            <div style="font-size: 0.875rem; color: var(--text-muted);">
+                                💡 Tip: Keep it positive and encouraging!
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--text-muted);">
+                                <span id="addMemoryCharCount">0</span>/300 characters
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Options -->
+                    <div>
+                        <!-- Author -->
+                        <div class="form-group" style="margin-bottom: var(--spacing-lg);">
+                            <label for="addMemoryAuthor" style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text);">
+                                Your Name
+                            </label>
+                            <input type="text" id="addMemoryAuthor" 
+                                   placeholder="Your name or nickname"
+                                   style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); font-size: 16px;">
+                            <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: var(--spacing-xs);">
+                                Leave empty to post as "Anonymous"
+                            </div>
+                        </div>
+                        
+                        <!-- Color Selection -->
+                        <div class="form-group" style="margin-bottom: var(--spacing-lg);">
+                            <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text);">
+                                Note Color
+                            </label>
+                            <div class="color-picker">
+                                <div class="color-option selected" data-color="#FFEB3B" onclick="selectAddMemoryColor('#FFEB3B')" style="background: #FFEB3B;" title="Yellow (Default)">
+                                    <div class="color-option-tooltip">Yellow</div>
+                                </div>
+                                <div class="color-option" data-color="#C8E6C9" onclick="selectAddMemoryColor('#C8E6C9')" style="background: #C8E6C9;" title="Green">
+                                    <div class="color-option-tooltip">Green</div>
+                                </div>
+                                <div class="color-option" data-color="#BBDEFB" onclick="selectAddMemoryColor('#BBDEFB')" style="background: #BBDEFB;" title="Blue">
+                                    <div class="color-option-tooltip">Blue</div>
+                                </div>
+                                <div class="color-option" data-color="#E1BEE7" onclick="selectAddMemoryColor('#E1BEE7')" style="background: #E1BEE7;" title="Purple">
+                                    <div class="color-option-tooltip">Purple</div>
+                                </div>
+                                <div class="color-option" data-color="#FFCCBC" onclick="selectAddMemoryColor('#FFCCBC')" style="background: #FFCCBC;" title="Orange">
+                                    <div class="color-option-tooltip">Orange</div>
+                                </div>
+                                <div class="color-option" data-color="#FFF9C4" onclick="selectAddMemoryColor('#FFF9C4')" style="background: #FFF9C4;" title="Light Yellow">
+                                    <div class="color-option-tooltip">Light Yellow</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: var(--spacing-xs);">
+                                Choose a color for your sticky note
+                            </div>
+                        </div>
+                        
+                        <!-- Preview -->
+                        <div class="form-group">
+                            <label style="display: block; margin-bottom: var(--spacing-sm); font-weight: 600; color: var(--text);">
+                                Preview
+                            </label>
+                            <div id="addMemoryPreview" class="sticky-note-preview" style="background: #FFEB3B; min-height: 150px;">
+                                <div class="preview-content">
+                                    <div class="preview-text" id="addMemoryPreviewText">
+                                        Your memory will appear here...
+                                    </div>
+                                    <div class="preview-meta">
+                                        <span class="preview-author" id="addMemoryPreviewAuthor">Anonymous</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: var(--spacing-xs);">
+                                This is how your note will look on the wall
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-xl);">
+                    <button class="btn btn-secondary" onclick="backToMemoryWall()" style="flex: 1;">
+                        ← Cancel
+                    </button>
+                    <button class="btn btn-success" onclick="submitMemory()" style="flex: 2; padding: var(--spacing-lg); font-size: 1.1rem;">
+                        📌 Add to Memory Wall
+                    </button>
+                </div>
+                
+                <!-- Tips -->
+                <div style="margin-top: var(--spacing-xl); padding: var(--spacing-lg); background: var(--accent-light); border-radius: var(--radius);">
+                    <h4 style="margin-bottom: var(--spacing-md); color: var(--accent);">💡 Ideas for Your Memory:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-md);">
+                        <div style="background: white; padding: var(--spacing-md); border-radius: var(--radius);">
+                            <div style="font-weight: 600; margin-bottom: var(--spacing-xs);">🎯 Achievements</div>
+                            <div style="font-size: 0.875rem; color: var(--text-muted);">
+                                "I finally understood algebra!"
+                                "Completed my first project!"
+                            </div>
+                        </div>
+                        <div style="background: white; padding: var(--spacing-md); border-radius: var(--radius);">
+                            <div style="font-weight: 600; margin-bottom: var(--spacing-xs);">💭 Reflections</div>
+                            <div style="font-size: 0.875rem; color: var(--text-muted);">
+                                "What I learned this week..."
+                                "My favorite lesson was..."
+                            </div>
+                        </div>
+                        <div style="background: white; padding: var(--spacing-md); border-radius: var(--radius);">
+                            <div style="font-weight: 600; margin-bottom: var(--spacing-xs);">🌟 Encouragement</div>
+                            <div style="font-size: 0.875rem; color: var(--text-muted);">
+                                "You can do it!"
+                                "Great work, class!"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
       <!-- Announcements Section -->
       <div id="announcements" class="dashboard-content" style="grid-column: span 12; display: none;">
         <div class="content-card">
@@ -4607,6 +6195,12 @@ textarea {
 
 </div>
 
+
+
+
+
+
+
 <!-- Notifications Modal -->
 <div id="notificationsModal" class="modal">
     <div class="modal-content" style="max-width: 600px;">
@@ -4698,6 +6292,73 @@ textarea {
   </div>
 </div>
 
+
+
+<!-- Memory Modal -->
+<div id="memoryModal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <button class="modal-close" onclick="hideModal('memoryModal')">×</button>
+        <div class="modal-header">
+            <h3>📝 Add to Memory Wall</h3>
+            <p>Share a memory, achievement, or encouraging word!</p>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="modalMemoryText">Your Memory</label>
+                <textarea id="modalMemoryText" 
+                          placeholder="What I learned this week...&#10;Proud moment...&#10;Encouraging word for classmates..."
+                          rows="4"
+                          maxlength="300"
+                          style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text); resize: vertical; font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;"></textarea>
+                <div style="text-align: right; font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+                    <span id="charCount">0</span>/300 characters
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="modalMemoryAuthor">Your Name (Optional)</label>
+                <input type="text" id="modalMemoryAuthor" 
+                       placeholder="Anonymous or your name"
+                       style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text);">
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+                    Leave empty to post as "Anonymous"
+                </div>
+            </div>
+            
+            <!-- Note Color Selection -->
+            <div class="form-group">
+                <label>Note Color</label>
+                <div class="color-picker">
+                    <div class="color-option selected" data-color="#FFEB3B" onclick="selectNoteColor('#FFEB3B')" style="background: #FFEB3B;"></div>
+                    <div class="color-option" data-color="#C8E6C9" onclick="selectNoteColor('#C8E6C9')" style="background: #C8E6C9;"></div>
+                    <div class="color-option" data-color="#BBDEFB" onclick="selectNoteColor('#BBDEFB')" style="background: #BBDEFB;"></div>
+                    <div class="color-option" data-color="#E1BEE7" onclick="selectNoteColor('#E1BEE7')" style="background: #E1BEE7;"></div>
+                    <div class="color-option" data-color="#FFCCBC" onclick="selectNoteColor('#FFCCBC')" style="background: #FFCCBC;"></div>
+                    <div class="color-option" data-color="#FFF9C4" onclick="selectNoteColor('#FFF9C4')" style="background: #FFF9C4;"></div>
+                </div>
+            </div>
+            
+            <!-- Preview -->
+            <div class="form-group">
+                <label>Preview</label>
+                <div id="notePreview" class="sticky-note-preview" style="background: #FFEB3B;">
+                    <div class="preview-content">
+                        <div class="preview-text" id="previewText">Your memory will appear here...</div>
+                        <div class="preview-meta">
+                            <span class="preview-author" id="previewAuthor">Anonymous</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-xl);">
+            <button class="btn btn-secondary" onclick="hideModal('memoryModal')" style="flex: 1;">Cancel</button>
+            <button class="btn btn-success" onclick="addMemoryFromModal()" style="flex: 1;">📌 Add to Wall</button>
+        </div>
+    </div>
+</div>
+
+
 <div id="createAssignmentModal" class="modal">
   <div class="modal-content">
     <button class="modal-close" onclick="hideModal('createAssignmentModal')">×</button>
@@ -4771,6 +6432,12 @@ const firebaseConfig = {
   messagingSenderId: "737621420458",
   appId: "1:737621420458:web:74c873869a1a47c2ce23d3"
 };
+
+
+
+
+
+
 
 // ========== GLOBAL VARIABLES ==========
 let database;
@@ -5681,6 +7348,19 @@ function hideCreatePollForm() {
 // ========== CLASS DATA MANAGEMENT ==========
 async function loadClassData() {
   
+
+
+  const originalLoadClassData = loadClassData;
+loadClassData = async function() {
+    await originalLoadClassData();
+    
+    // Setup memory wall for students
+    setTimeout(() => {
+        setupMemoryWallForStudents();
+    }, 1000);
+};
+
+
   if (!currentClassCode) {
     console.log("❌ Cannot load class data: No class selected");
     return;
@@ -8857,33 +10537,49 @@ function launchConfetti() {
 
 
 
+
 function showNotification(message, type = "info") {
-  const container = document.getElementById('toastContainer');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  
-  let icon = '💡';
-  if (type === 'success') icon = '✅';
-  if (type === 'error') icon = '❌';
-  if (type === 'warning') icon = '⚠️';
-  if (type === 'info') icon = 'ℹ️';
-  
-  toast.innerHTML = `
-    <span style="font-size: 1.5rem;">${icon}</span>
-    <div style="flex: 1;">
-      <div style="font-weight: 700;">${message}</div>
-      <div style="font-size: 0.875rem; opacity: 0.8;">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-    </div>
-  `;
-  
-  container.appendChild(toast);
-  
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(100%)';
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
+    const container = document.getElementById('toastContainer');
+    if (!container) {
+        console.error("Toast container not found!");
+        return;
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    let icon = '💡';
+    if (type === 'success') icon = '✅';
+    if (type === 'error') icon = '❌';
+    if (type === 'warning') icon = '⚠️';
+    if (type === 'info') icon = 'ℹ️';
+    
+    toast.innerHTML = `
+        <span>${icon}</span>
+        <div>
+            <div>${message}</div>
+            <div>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+        </div>
+    `;
+    
+    container.appendChild(toast);
+    
+    // Auto-remove after shorter delay on mobile
+    const isMobile = window.innerWidth <= 768;
+    const delay = isMobile ? 2500 : 3500; // Shorter on mobile
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%) scale(0.9)';
+        setTimeout(() => {
+            if (toast.parentNode === container) {
+                container.removeChild(toast);
+            }
+        }, 150);
+    }, delay);
 }
+
+
 
 function updateSyncStatus(text, type = "info") {
   try {
@@ -9100,7 +10796,25 @@ function showSection(sectionId) {
       break;
     }
   }
+
+
+const originalShowSection = showSection;
+showSection = function(sectionId) {
+    if (sectionId === 'memoryWall') {
+        showMemoryWall();
+        return;
+    }
+    
+    // Hide memory pages
+    document.getElementById('addMemoryPage').style.display = 'none';
+    
+    // Call original function
+    originalShowSection(sectionId);
+};
+
+
   
+
   // Hide all sections
   document.querySelectorAll('.dashboard-content').forEach(section => {
     section.style.display = 'none';
@@ -9590,17 +11304,34 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(createTeacherChatbot, 2000); // Wait a bit longer for data to load
 });
 
+// ========== TEACHER MODE AI CHATBOT (FIXED VERSION) ==========
 async function createTeacherChatbot() {
-    if (document.getElementById('teacherChatbotBtn')) return;
-    
-    const feedbackBtn = document.querySelector('.feedback-btn');
-    let feedbackBottom = 20;
-    
-    if (feedbackBtn) {
-        const rect = feedbackBtn.getBoundingClientRect();
-        feedbackBottom = window.innerHeight - rect.top + 15;
+    if (document.getElementById('teacherChatbotBtn')) {
+        console.log("🤖 Chatbot already exists");
+        return;
     }
     
+    // Check if we have the image available
+    const chatbotImageUrl = "ai-chatbot-transparent.png"; // This should exist in your project
+    
+    // Function to calculate feedback button position
+    function calculateFeedbackBottom() {
+        const feedbackBtn = document.querySelector('.feedback-btn');
+        if (feedbackBtn) {
+            try {
+                const rect = feedbackBtn.getBoundingClientRect();
+                return window.innerHeight - rect.top + 15;
+            } catch (e) {
+                console.log("Could not calculate feedback position:", e);
+                return 20;
+            }
+        }
+        return 20;
+    }
+    
+    let feedbackBottom = calculateFeedbackBottom();
+    
+    // Create chatbot container
     const chatbotContainer = document.createElement('div');
     chatbotContainer.className = 'teacher-chatbot-fab';
     chatbotContainer.innerHTML = `
@@ -9613,556 +11344,683 @@ async function createTeacherChatbot() {
             <div class="bubble-stats" id="chatbotStats"></div>
         </div>
         <button class="teacher-chatbot-btn" id="teacherChatbotBtn" aria-label="AI Teaching Assistant">
-            <img class="teacher-chatbot-img" src="ai-chatbot-transparent.png" alt="AI Teaching Assistant">
+            <img class="teacher-chatbot-img" src="${chatbotImageUrl}" alt="AI Teaching Assistant" onerror="this.style.display='none';this.parentNode.innerHTML='🤖';">
         </button>
     `;
     
     document.body.appendChild(chatbotContainer);
     
-    const styles = `
-        /* Teacher Mode Chatbot - Bottom Right - BIG IMAGE */
-        .teacher-chatbot-fab {
-            position: fixed !important;
-            right: 30px !important;
-            bottom: ${feedbackBottom + 20}px !important;
-            z-index: 9998 !important;
-            display: flex !important;
-            flex-direction: column-reverse !important;
-            align-items: flex-end !important;
-            gap: 20px !important;
-        }
-        
-        .teacher-chatbot-bubble {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: white !important;
-            border: 3px solid rgba(255, 255, 255, 0.3) !important;
-            border-radius: 22px !important;
-            padding: 20px !important;
-            width: 380px !important;
-            max-width: 380px !important;
-            min-height: 160px !important;
-            opacity: 0 !important;
-            transform: translateX(30px) scale(0.95) !important;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
-            box-shadow: 0 12px 35px rgba(0,0,0,0.3), 
-                        0 0 0 1px rgba(255, 255, 255, 0.15) inset !important;
-            font-family: 'Poppins', sans-serif !important;
-            pointer-events: none !important;
-            margin-bottom: 15px !important;
-            overflow: hidden !important;
-        }
-        
-        .teacher-chatbot-bubble.show {
-            opacity: 1 !important;
-            transform: translateX(0) scale(1) !important;
-        }
-        
-        .bubble-header {
-            display: flex !important;
-            align-items: center !important;
-            gap: 10px !important;
-            margin-bottom: 10px !important;
-            position: relative !important;
-            z-index: 1 !important;
-        }
-        
-        .bubble-icon {
-            font-size: 28px !important;
-            animation: pulse 2s infinite !important;
-        }
-        
-        .bubble-title {
-            font-size: 18px !important;
-            font-weight: 800 !important;
-            letter-spacing: 0.5px !important;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
-        }
-        
-        .bubble-message {
-            font-size: 15px !important;
-            font-weight: 500 !important;
-            line-height: 1.6 !important;
-            position: relative !important;
-            z-index: 1 !important;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
-            margin-bottom: 10px !important;
-        }
-        
-        .bubble-stats {
-            font-size: 13px !important;
-            color: rgba(255, 255, 255, 0.9) !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
-            padding-top: 8px !important;
-            margin-top: 8px !important;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        /* BIGGER CHATBOT IMAGE */
-        .teacher-chatbot-btn {
-            width: 200px !important;
-            height: 200px !important;
-            border: none !important;
-            background: transparent !important;
-            cursor: pointer !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            border-radius: 0 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            transition: all 0.3s ease !important;
-            order: 1 !important;
-            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4)) !important;
-        }
-        
-        .teacher-chatbot-btn:hover {
-            transform: scale(1.1) rotate(3deg) !important;
-            filter: drop-shadow(0 10px 20px rgba(102, 126, 234, 0.5)) !important;
-        }
-        
-        .teacher-chatbot-img {
-            width: 200px !important;
-            height: 200px !important;
-            object-fit: contain !important;
-            border-radius: 0 !important;
-            animation: floatAnimation 3s ease-in-out infinite !important;
-            transition: all 0.3s ease !important;
-        }
-        
-        .teacher-chatbot-btn:hover .teacher-chatbot-img {
-            filter: brightness(1.15) saturate(1.4) !important;
-        }
-        
-        @keyframes floatAnimation {
-            0%, 100% { 
-                transform: translateY(0) rotate(0deg); 
-            }
-            33% { 
-                transform: translateY(-15px) rotate(-1deg); 
-            }
-            66% { 
-                transform: translateY(8px) rotate(1deg); 
-            }
-        }
-        
-        /* Mobile responsive */
-        @media (max-width: 768px) {
-            .teacher-chatbot-fab {
-                right: 15px !important;
-                bottom: ${feedbackBottom + 15}px !important;
-            }
-            
-            .teacher-chatbot-bubble {
-                width: 320px !important;
-                max-width: 320px !important;
-                min-height: 140px !important;
-            }
-            
-            .teacher-chatbot-btn {
-                width: 160px !important;
-                height: 160px !important;
-            }
-            
-            .teacher-chatbot-img {
-                width: 160px !important;
-                height: 160px !important;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .teacher-chatbot-fab {
-                right: 10px !important;
-                bottom: ${feedbackBottom + 10}px !important;
-            }
-            
-            .teacher-chatbot-bubble {
-                width: 280px !important;
-                max-width: 280px !important;
-                min-height: 130px !important;
-            }
-            
-            .teacher-chatbot-btn {
-                width: 140px !important;
-                height: 140px !important;
-            }
-            
-            .teacher-chatbot-img {
-                width: 140px !important;
-                height: 140px !important;
-            }
-        }
-    `;
-    
-    const styleElement = document.createElement('style');
-    styleElement.textContent = styles;
-    document.head.appendChild(styleElement);
-    
-    // ========== REAL STUDENT DATA ANALYSIS ==========
-    let currentTeacherId = null;
-    let teacherClasses = [];
-    
-    // Get current teacher ID from localStorage or Firebase auth
-    async function getTeacherData() {
+    // Create responsive styles
+    const updateChatbotStyles = () => {
         try {
-            // Try to get from Firebase auth first
-            if (firebase.auth().currentUser) {
-                currentTeacherId = firebase.auth().currentUser.uid;
-            }
+            feedbackBottom = calculateFeedbackBottom();
             
-            // Fallback to localStorage
-            if (!currentTeacherId) {
-                const saved = localStorage.getItem('teacherId');
-                if (saved && saved.startsWith('teacher_')) {
-                    currentTeacherId = saved;
+            // Remove existing styles
+            const existingStyle = document.getElementById('chatbot-responsive-styles');
+            if (existingStyle) existingStyle.remove();
+            
+            const styles = `
+                /* Teacher Mode Chatbot - Responsive */
+                .teacher-chatbot-fab {
+                    position: fixed !important;
+                    z-index: 9998 !important;
+                    display: flex !important;
+                    flex-direction: column-reverse !important;
+                    align-items: flex-end !important;
+                    transition: all 0.3s ease !important;
                 }
+                
+                .teacher-chatbot-bubble {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                    color: white !important;
+                    border: 3px solid rgba(255, 255, 255, 0.3) !important;
+                    border-radius: 22px !important;
+                    opacity: 0 !important;
+                    transform: translateX(30px) scale(0.95) !important;
+                    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+                    box-shadow: 0 12px 35px rgba(0,0,0,0.3), 
+                                0 0 0 1px rgba(255, 255, 255, 0.15) inset !important;
+                    font-family: 'Poppins', sans-serif !important;
+                    pointer-events: none !important;
+                    overflow: hidden !important;
+                }
+                
+                .teacher-chatbot-bubble.show {
+                    opacity: 1 !important;
+                    transform: translateX(0) scale(1) !important;
+                }
+                
+                .bubble-header {
+                    display: flex !important;
+                    align-items: center !important;
+                    margin-bottom: 10px !important;
+                    position: relative !important;
+                    z-index: 1 !important;
+                }
+                
+                .bubble-icon {
+                    animation: pulse 2s infinite !important;
+                }
+                
+                .bubble-title {
+                    font-weight: 800 !important;
+                    letter-spacing: 0.5px !important;
+                    text-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+                }
+                
+                .bubble-message {
+                    font-weight: 500 !important;
+                    line-height: 1.6 !important;
+                    position: relative !important;
+                    z-index: 1 !important;
+                    text-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+                    margin-bottom: 10px !important;
+                }
+                
+                .bubble-stats {
+                    color: rgba(255, 255, 255, 0.9) !important;
+                    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+                    padding-top: 8px !important;
+                    margin-top: 8px !important;
+                }
+                
+                @keyframes pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.1); }
+                }
+                
+                .teacher-chatbot-btn {
+                    border: none !important;
+                    background: transparent !important;
+                    cursor: pointer !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    border-radius: 0 !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    transition: all 0.3s ease !important;
+                    order: 1 !important;
+                }
+                
+                .teacher-chatbot-btn:hover {
+                    transform: scale(1.1) rotate(3deg) !important;
+                    filter: drop-shadow(0 10px 20px rgba(102, 126, 234, 0.5)) !important;
+                }
+                
+                .teacher-chatbot-img {
+                    object-fit: contain !important;
+                    border-radius: 0 !important;
+                    animation: floatAnimation 3s ease-in-out infinite !important;
+                    transition: all 0.3s ease !important;
+                }
+                
+                .teacher-chatbot-btn:hover .teacher-chatbot-img {
+                    filter: brightness(1.15) saturate(1.4) !important;
+                }
+                
+                @keyframes floatAnimation {
+                    0%, 100% { 
+                        transform: translateY(0) rotate(0deg); 
+                    }
+                    33% { 
+                        transform: translateY(-15px) rotate(-1deg); 
+                    }
+                    66% { 
+                        transform: translateY(8px) rotate(1deg); 
+                    }
+                }
+                
+                /* DESKTOP (1024px+) */
+                @media (min-width: 1025px) {
+                    .teacher-chatbot-fab {
+                        right: 30px !important;
+                        bottom: ${feedbackBottom + 20}px !important;
+                        gap: 20px !important;
+                    }
+                    
+                    .teacher-chatbot-bubble {
+                        width: 380px !important;
+                        max-width: 380px !important;
+                        min-height: 160px !important;
+                        padding: 20px !important;
+                        margin-bottom: 15px !important;
+                    }
+                    
+                    .bubble-header {
+                        gap: 10px !important;
+                    }
+                    
+                    .bubble-icon {
+                        font-size: 28px !important;
+                    }
+                    
+                    .bubble-title {
+                        font-size: 18px !important;
+                    }
+                    
+                    .bubble-message {
+                        font-size: 15px !important;
+                    }
+                    
+                    .bubble-stats {
+                        font-size: 13px !important;
+                    }
+                    
+                    .teacher-chatbot-btn {
+                        width: 200px !important;
+                        height: 200px !important;
+                        filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4)) !important;
+                    }
+                    
+                    .teacher-chatbot-img {
+                        width: 200px !important;
+                        height: 200px !important;
+                    }
+                }
+                
+                /* TABLET (768px - 1024px) */
+                @media (max-width: 1024px) and (min-width: 769px) {
+                    .teacher-chatbot-fab {
+                        right: 20px !important;
+                        bottom: ${feedbackBottom + 15}px !important;
+                        gap: 15px !important;
+                    }
+                    
+                    .teacher-chatbot-bubble {
+                        width: 300px !important;
+                        max-width: 300px !important;
+                        min-height: 140px !important;
+                        padding: 16px !important;
+                        margin-bottom: 10px !important;
+                        border-radius: 18px !important;
+                    }
+                    
+                    .bubble-header {
+                        gap: 8px !important;
+                        margin-bottom: 8px !important;
+                    }
+                    
+                    .bubble-icon {
+                        font-size: 22px !important;
+                    }
+                    
+                    .bubble-title {
+                        font-size: 16px !important;
+                    }
+                    
+                    .bubble-message {
+                        font-size: 14px !important;
+                        line-height: 1.5 !important;
+                    }
+                    
+                    .bubble-stats {
+                        font-size: 12px !important;
+                    }
+                    
+                    .teacher-chatbot-btn {
+                        width: 150px !important;
+                        height: 150px !important;
+                        filter: drop-shadow(0 6px 12px rgba(0,0,0,0.3)) !important;
+                    }
+                    
+                    .teacher-chatbot-img {
+                        width: 150px !important;
+                        height: 150px !important;
+                    }
+                }
+                
+                /* MOBILE (480px - 768px) - SMALL */
+                @media (max-width: 768px) and (min-width: 481px) {
+                    .teacher-chatbot-fab {
+                        right: 15px !important;
+                        bottom: ${feedbackBottom + 10}px !important;
+                        gap: 12px !important;
+                    }
+                    
+                    .teacher-chatbot-bubble {
+                        width: 250px !important;
+                        max-width: 250px !important;
+                        min-height: 120px !important;
+                        padding: 14px !important;
+                        margin-bottom: 8px !important;
+                        border-radius: 16px !important;
+                        border-width: 2px !important;
+                    }
+                    
+                    .bubble-header {
+                        gap: 8px !important;
+                        margin-bottom: 6px !important;
+                    }
+                    
+                    .bubble-icon {
+                        font-size: 20px !important;
+                    }
+                    
+                    .bubble-title {
+                        font-size: 15px !important;
+                        letter-spacing: 0.3px !important;
+                    }
+                    
+                    .bubble-message {
+                        font-size: 13px !important;
+                        line-height: 1.4 !important;
+                        margin-bottom: 6px !important;
+                    }
+                    
+                    .bubble-stats {
+                        font-size: 11px !important;
+                        padding-top: 6px !important;
+                        margin-top: 6px !important;
+                    }
+                    
+                    .teacher-chatbot-btn {
+                        width: 120px !important;
+                        height: 120px !important;
+                        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)) !important;
+                    }
+                    
+                    .teacher-chatbot-img {
+                        width: 120px !important;
+                        height: 120px !important;
+                    }
+                }
+                
+                /* EXTRA SMALL PHONES (< 480px) - VERY SMALL */
+                @media (max-width: 480px) {
+                    .teacher-chatbot-fab {
+                        right: 10px !important;
+                        bottom: ${feedbackBottom + 8}px !important;
+                        gap: 10px !important;
+                    }
+                    
+                    .teacher-chatbot-bubble {
+                        width: 200px !important;
+                        max-width: 200px !important;
+                        min-height: 100px !important;
+                        padding: 12px !important;
+                        margin-bottom: 6px !important;
+                        border-radius: 14px !important;
+                        border-width: 1.5px !important;
+                        box-shadow: 0 8px 20px rgba(0,0,0,0.25), 
+                                    0 0 0 1px rgba(255, 255, 255, 0.1) inset !important;
+                    }
+                    
+                    .bubble-header {
+                        gap: 6px !important;
+                        margin-bottom: 5px !important;
+                    }
+                    
+                    .bubble-icon {
+                        font-size: 18px !important;
+                    }
+                    
+                    .bubble-title {
+                        font-size: 14px !important;
+                        letter-spacing: 0.2px !important;
+                    }
+                    
+                    .bubble-message {
+                        font-size: 12px !important;
+                        line-height: 1.3 !important;
+                        margin-bottom: 4px !important;
+                    }
+                    
+                    .bubble-stats {
+                        font-size: 10px !important;
+                        padding-top: 4px !important;
+                        margin-top: 4px !important;
+                    }
+                    
+                    .teacher-chatbot-btn {
+                        width: 100px !important;
+                        height: 100px !important;
+                        filter: drop-shadow(0 3px 6px rgba(0,0,0,0.25)) !important;
+                    }
+                    
+                    .teacher-chatbot-img {
+                        width: 100px !important;
+                        height: 100px !important;
+                    }
+                }
+                
+                /* VERY SMALL HEIGHT */
+                @media (max-height: 600px) {
+                    .teacher-chatbot-fab {
+                        bottom: ${feedbackBottom}px !important;
+                    }
+                    
+                    .teacher-chatbot-bubble {
+                        min-height: 90px !important;
+                        padding: 10px !important;
+                    }
+                    
+                    .bubble-message {
+                        font-size: 11px !important;
+                        line-height: 1.2 !important;
+                    }
+                }
+            `;
+            
+            const styleElement = document.createElement('style');
+            styleElement.id = 'chatbot-responsive-styles';
+            styleElement.textContent = styles;
+            document.head.appendChild(styleElement);
+        } catch (error) {
+            console.error("Error updating chatbot styles:", error);
+        }
+    };
+    
+    // Initial styles
+    updateChatbotStyles();
+    
+    // ========== SIMPLE RANDOM MESSAGES SYSTEM ==========
+    
+    // Array of random messages
+    const randomMessages = [
+        {
+            icon: '👋',
+            message: "Hi Teacher! I'm here to help you track student progress.",
+            type: 'welcome'
+        },
+        {
+            icon: '📊',
+            message: "I'll analyze student activity patterns and give you insights.",
+            type: 'info'
+        },
+        {
+            icon: '⏰',
+            message: "Evening is peak study time! Consider scheduling review sessions.",
+            type: 'tip'
+        },
+        {
+            icon: '🔥',
+            message: "Students with consistent daily streaks learn 3x better!",
+            type: 'fact'
+        },
+        {
+            icon: '💡',
+            message: "Try sending motivational messages to students with low streaks.",
+            type: 'suggestion'
+        },
+        {
+            icon: '🎯',
+            message: "Set weekly goals! Students with goals study 40% more.",
+            type: 'recommendation'
+        },
+        {
+            icon: '📈',
+            message: "Check which times your class is most active for announcements.",
+            type: 'insight'
+        },
+        {
+            icon: '🤝',
+            message: "Consider creating study groups for collaborative learning.",
+            type: 'suggestion'
+        },
+        {
+            icon: '🌟',
+            message: "Recognize top performers to motivate the entire class!",
+            type: 'tip'
+        }
+    ];
+    
+    // Get a random message
+    function getRandomMessage() {
+        return randomMessages[Math.floor(Math.random() * randomMessages.length)];
+    }
+    
+    // Get current time-based message
+    function getTimeBasedMessage() {
+        const hour = new Date().getHours();
+        
+        if (hour < 6) {
+            return {
+                icon: '🌙',
+                message: "Early morning! Some night owls might still be studying.",
+                type: 'time'
+            };
+        } else if (hour < 12) {
+            return {
+                icon: '☀️',
+                message: "Good morning! Perfect time for daily announcements.",
+                type: 'time'
+            };
+        } else if (hour < 17) {
+            return {
+                icon: '📚',
+                message: "Afternoon study sessions work best for retention!",
+                type: 'time'
+            };
+        } else if (hour < 21) {
+            return {
+                icon: '🌆',
+                message: "Evening peak hours! Students are most active now.",
+                type: 'time'
+            };
+        } else {
+            return {
+                icon: '🌃',
+                message: "Late night cramming? Consider suggesting morning reviews.",
+                type: 'time'
+            };
+        }
+    }
+    
+    // Show a message in the bubble
+    function showMessage(messageData, stats = null) {
+        try {
+            const bubble = document.getElementById('teacherChatbotBubble');
+            const bubbleIcon = document.querySelector('.bubble-icon');
+            const bubbleMessage = document.querySelector('.bubble-message');
+            const chatbotStats = document.getElementById('chatbotStats');
+            
+            if (!bubble || !bubbleIcon || !bubbleMessage || !chatbotStats) {
+                console.log("Chatbot elements not found");
+                return;
             }
             
-            return currentTeacherId;
+            bubbleIcon.textContent = messageData.icon;
+            bubbleMessage.textContent = messageData.message;
+            
+            if (stats) {
+                chatbotStats.innerHTML = stats;
+            } else {
+                const fontSize = window.innerWidth <= 480 ? '10px' : '12px';
+                chatbotStats.innerHTML = `<div style="text-align: center; font-size: ${fontSize}">AI Teaching Assistant</div>`;
+            }
+            
+            bubble.classList.add('show');
+            
+            // Auto-hide after time
+            const showTime = window.innerWidth <= 480 ? 5000 : 7000;
+            
+            setTimeout(() => {
+                if (bubble) bubble.classList.remove('show');
+            }, showTime);
         } catch (error) {
-            console.error("Error getting teacher data:", error);
+            console.error("Error showing message:", error);
+        }
+    }
+    
+    // ========== SIMPLE ANALYZER (NO FIREBASE DEPENDENCIES) ==========
+    
+    function analyzeClassData() {
+        try {
+            // Get student count from your global variables
+            const studentCount = students ? students.length : 0;
+            const realStudents = students ? students.filter(s => !s.isTeacher) : [];
+            
+            if (studentCount === 0) {
+                return null;
+            }
+            
+            // Calculate basic stats
+            const activeStudents = realStudents.filter(s => {
+                if (!s.lastActive || s.lastActive === 'Unknown') return false;
+                const lastActive = new Date(s.lastActive);
+                const now = new Date();
+                const diffDays = Math.floor((now - lastActive) / (1000 * 60 * 60 * 24));
+                return diffDays <= 3;
+            }).length;
+            
+            const avgStreak = realStudents.length > 0 ? 
+                (realStudents.reduce((sum, s) => sum + (s.streak || 0), 0) / realStudents.length).toFixed(1) : 0;
+            
+            const avgHours = realStudents.length > 0 ? 
+                (realStudents.reduce((sum, s) => sum + parseFloat(s.totalStudyHours || 0), 0) / realStudents.length).toFixed(1) : 0;
+            
+            return {
+                totalStudents: studentCount,
+                activeStudents: activeStudents,
+                averageStreak: avgStreak,
+                averageHours: avgHours,
+                strugglingStudents: realStudents.filter(s => (s.streak || 0) < 2).length,
+                excellingStudents: realStudents.filter(s => (s.streak || 0) > 7).length
+            };
+        } catch (error) {
+            console.error("Error analyzing class data:", error);
             return null;
         }
     }
     
-    // Get all classes for this teacher
-    async function getTeacherClasses() {
-        if (!currentTeacherId) return [];
-        
-        try {
-            const classesRef = firebase.database().ref('classes');
-            const snapshot = await classesRef.once('value');
-            const allClasses = snapshot.val() || {};
-            
-            // Filter classes where teacherId matches
-            teacherClasses = [];
-            for (const [classCode, classData] of Object.entries(allClasses)) {
-                if (classData.teacherId === currentTeacherId) {
-                    teacherClasses.push({
-                        code: classCode,
-                        name: classData.name || `Class ${classCode}`,
-                        studentCount: classData.students ? Object.keys(classData.students).length : 0
-                    });
-                }
-            }
-            
-            return teacherClasses;
-        } catch (error) {
-            console.error("Error getting teacher classes:", error);
-            return [];
-        }
-    }
-    
-    // Get detailed student data for a specific class
-    async function getClassStudents(classCode) {
-        try {
-            const studentsRef = firebase.database().ref(`classes/${classCode}/students`);
-            const snapshot = await studentsRef.once('value');
-            const studentsData = snapshot.val() || {};
-            
-            const students = [];
-            for (const [studentId, studentData] of Object.entries(studentsData)) {
-                if (!studentData.isTeacherAccount) { // Filter out teacher accounts
-                    students.push({
-                        id: studentId,
-                        name: studentData.name || `Student ${studentId.substring(0, 6)}`,
-                        streak: studentData.streak || 0,
-                        totalHours: studentData.totalStudyHours || (studentData.totalMinutes / 60).toFixed(1) || 0,
-                        lastActive: studentData.lastActive || null,
-                        points: studentData.points || 0,
-                        isActive: isStudentActive(studentData.lastActive)
-                    });
-                }
-            }
-            
-            return students;
-        } catch (error) {
-            console.error(`Error getting students for class ${classCode}:`, error);
-            return [];
-        }
-    }
-    
-    // Check if student is active (studied in last 3 days)
-    function isStudentActive(lastActiveDate) {
-        if (!lastActiveDate) return false;
-        
-        const lastActive = new Date(lastActiveDate);
-        const now = new Date();
-        const diffDays = Math.floor((now - lastActive) / (1000 * 60 * 60 * 24));
-        
-        return diffDays <= 3;
-    }
-    
-    // Analyze students and generate insights
-    async function analyzeStudents() {
-        if (teacherClasses.length === 0) return null;
-        
-        const analysis = {
-            totalStudents: 0,
-            activeStudents: 0,
-            strugglingStudents: [],
-            excellingStudents: [],
-            averageStreak: 0,
-            averageHours: 0,
-            classStats: [],
-            trends: []
-        };
-        
-        let totalStreak = 0;
-        let totalHours = 0;
-        let studentCount = 0;
-        
-        // Analyze each class
-        for (const classInfo of teacherClasses) {
-            const students = await getClassStudents(classInfo.code);
-            const classAnalysis = {
-                classCode: classInfo.code,
-                className: classInfo.name,
-                totalStudents: students.length,
-                activeCount: 0,
-                avgStreak: 0,
-                avgHours: 0,
-                struggling: [],
-                excelling: []
-            };
-            
-            let classStreak = 0;
-            let classHours = 0;
-            
-            for (const student of students) {
-                // Count active students
-                if (student.isActive) classAnalysis.activeCount++;
-                
-                // Track averages
-                classStreak += student.streak;
-                classHours += parseFloat(student.totalHours);
-                
-                // Identify struggling students (streak < 2 and not active)
-                if (student.streak < 2 && !student.isActive) {
-                    classAnalysis.struggling.push(student);
-                    analysis.strugglingStudents.push({
-                        ...student,
-                        className: classInfo.name
-                    });
-                }
-                
-                // Identify excelling students (streak > 7 and active)
-                if (student.streak > 7 && student.isActive) {
-                    classAnalysis.excelling.push(student);
-                    analysis.excellingStudents.push({
-                        ...student,
-                        className: classInfo.name
-                    });
-                }
-            }
-            
-            // Calculate class averages
-            if (students.length > 0) {
-                classAnalysis.avgStreak = (classStreak / students.length).toFixed(1);
-                classAnalysis.avgHours = (classHours / students.length).toFixed(1);
-                
-                totalStreak += classStreak;
-                totalHours += classHours;
-                studentCount += students.length;
-            }
-            
-            analysis.classStats.push(classAnalysis);
-            analysis.totalStudents += students.length;
-            analysis.activeStudents += classAnalysis.activeCount;
-        }
-        
-        // Calculate overall averages
-        if (studentCount > 0) {
-            analysis.averageStreak = (totalStreak / studentCount).toFixed(1);
-            analysis.averageHours = (totalHours / studentCount).toFixed(1);
-        }
-        
-        // Generate trends
-        if (analysis.strugglingStudents.length > 0) {
-            analysis.trends.push({
-                type: 'concern',
-                message: `${analysis.strugglingStudents.length} students are struggling (low streak, inactive)`
-            });
-        }
-        
-        if (analysis.excellingStudents.length > 0) {
-            analysis.trends.push({
-                type: 'positive',
-                message: `${analysis.excellingStudents.length} students are excelling (streak > 7, active)`
-            });
-        }
-        
-        if (analysis.activeStudents / analysis.totalStudents < 0.5) {
-            analysis.trends.push({
-                type: 'concern',
-                message: `Only ${Math.round((analysis.activeStudents / analysis.totalStudents) * 100)}% of students are active`
-            });
-        }
-        
-        return analysis;
-    }
-    
-    // Generate insight message based on real analysis
     function generateInsightFromAnalysis(analysis) {
-        if (!analysis) {
-            return {
-                icon: '🤔',
-                message: "No student data available yet. Check back when students start studying.",
-                type: 'info'
-            };
+        if (!analysis || analysis.totalStudents === 0) {
+            // Randomly choose between time-based or random message
+            return Math.random() > 0.5 ? getTimeBasedMessage() : getRandomMessage();
         }
         
-        // Randomly pick what type of insight to show
-        const insightTypes = ['struggling', 'excelling', 'trend', 'recommendation'];
+        const insightTypes = ['stats', 'tip', 'recommendation'];
         const selectedType = insightTypes[Math.floor(Math.random() * insightTypes.length)];
         
         switch(selectedType) {
-            case 'struggling':
-                if (analysis.strugglingStudents.length > 0) {
-                    const student = analysis.strugglingStudents[Math.floor(Math.random() * analysis.strugglingStudents.length)];
+            case 'stats':
+                return {
+                    icon: '📊',
+                    message: `${analysis.totalStudents} students, ${analysis.activeStudents} active. Avg streak: ${analysis.averageStreak} days`,
+                    type: 'info'
+                };
+                
+            case 'tip':
+                if (analysis.strugglingStudents > 0) {
                     return {
-                        icon: '⚠️',
-                        message: `${student.name} in ${student.className} hasn't studied in a while (streak: ${student.streak}). Consider checking in.`,
-                        type: 'concern'
+                        icon: '💡',
+                        message: `${analysis.strugglingStudents} students need help. Consider reaching out to them.`,
+                        type: 'suggestion'
                     };
                 }
-                // Fall through if no struggling students
-                
-            case 'excelling':
-                if (analysis.excellingStudents.length > 0) {
-                    const student = analysis.excellingStudents[Math.floor(Math.random() * analysis.excellingStudents.length)];
+                if (analysis.excellingStudents > 0) {
                     return {
                         icon: '🌟',
-                        message: `${student.name} in ${student.className} is doing great! ${student.streak}-day streak and ${student.totalHours} hours studied.`,
+                        message: `${analysis.excellingStudents} students are excelling! Recognize their effort.`,
                         type: 'positive'
                     };
                 }
-                // Fall through if no excelling students
-                
-            case 'trend':
-                if (analysis.trends.length > 0) {
-                    const trend = analysis.trends[Math.floor(Math.random() * analysis.trends.length)];
-                    return {
-                        icon: trend.type === 'positive' ? '📈' : '📉',
-                        message: trend.message,
-                        type: trend.type
-                    };
-                }
-                // Fall through if no trends
+                // Fall through
                 
             case 'recommendation':
                 const recommendations = [
-                    `Send a motivational message to students with streaks below 2 (${analysis.strugglingStudents.length} students)`,
-                    `Recognize top performers in your next announcement (${analysis.excellingStudents.length} students excelling)`,
-                    `Consider creating study groups - average streak is ${analysis.averageStreak} days`,
-                    `Schedule office hours - ${analysis.totalStudents - analysis.activeStudents} students haven't been active recently`,
-                    `Try a class-wide challenge - average study time is ${analysis.averageHours} hours per student`
+                    "Try a class-wide challenge to boost engagement!",
+                    "Share the weekly study leaderboard to motivate students.",
+                    "Schedule office hours for students who need extra help.",
+                    "Create a review session before the next assignment."
                 ];
                 
-                const recommendation = recommendations[Math.floor(Math.random() * recommendations.length)];
                 return {
-                    icon: '💡',
-                    message: recommendation,
+                    icon: '🎯',
+                    message: recommendations[Math.floor(Math.random() * recommendations.length)],
                     type: 'recommendation'
                 };
                 
             default:
-                return {
-                    icon: '📊',
-                    message: `You have ${analysis.totalStudents} students across ${teacherClasses.length} classes. ${analysis.activeStudents} are active recently.`,
-                    type: 'info'
-                };
+                return getRandomMessage();
         }
     }
     
-    // Get current date for time-based messages
-    function getTimeBasedMessage() {
-        const hour = new Date().getHours();
-        
-        if (hour < 12) {
-            return "Good morning! Time to check on your students' progress.";
-        } else if (hour < 17) {
-            return "Good afternoon! Perfect time for class announcements.";
-        } else if (hour < 21) {
-            return "Good evening! Many students study during these hours.";
-        } else {
-            return "Late night? Some students might be cramming. Consider morning review.";
-        }
-    }
-    
-    // Main function to show insight
     async function showRealInsight() {
-        const bubbleMessage = document.querySelector('.bubble-message');
-        const bubbleIcon = document.querySelector('.bubble-icon');
-        const chatbotStats = document.getElementById('chatbotStats');
-        
-        // Show analyzing message
-       const bubbleIconElement = document.querySelector('.bubble-icon');
-const bubbleMessageElement = document.querySelector('.bubble-message');
-if (bubbleIconElement) bubbleIconElement.textContent = '🔍';
-if (bubbleMessageElement) bubbleMessageElement.textContent = "Analyzing student data...";
-        chatbotStats.innerHTML = '<div style="text-align: center;">Fetching latest student progress...</div>';
-        
-        const bubble = document.getElementById('teacherChatbotBubble');
-        bubble.classList.add('show');
-        
-        // Get teacher data if needed
-        if (!currentTeacherId) {
-            await getTeacherData();
-        }
-        
-        // Get classes if needed
-        if (teacherClasses.length === 0) {
-            await getTeacherClasses();
-        }
-        
-        // Analyze students
-        const analysis = await analyzeStudents();
-        
-        // Generate insight
-        let insight;
-        if (analysis && analysis.totalStudents > 0) {
-            insight = generateInsightFromAnalysis(analysis);
+        try {
+            const bubble = document.getElementById('teacherChatbotBubble');
+            const bubbleIcon = document.querySelector('.bubble-icon');
+            const bubbleMessage = document.querySelector('.bubble-message');
+            const chatbotStats = document.getElementById('chatbotStats');
             
-            // Update stats display
-            chatbotStats.innerHTML = `
-                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 5px;">
-                    <span>👥 ${analysis.totalStudents} students</span>
-                    <span>🔥 ${analysis.averageStreak} avg streak</span>
-                    <span>⏰ ${analysis.averageHours}h avg</span>
-                </div>
-                <div style="font-size: 11px; margin-top: 4px; text-align: center;">
-                    ${analysis.activeStudents} active • ${teacherClasses.length} classes
-                </div>
-            `;
+            if (!bubble || !bubbleIcon || !bubbleMessage || !chatbotStats) return;
+            
+            bubbleIcon.textContent = '🔍';
+            bubbleMessage.textContent = "Analyzing student data...";
+            chatbotStats.innerHTML = '<div style="text-align: center;">Checking progress...</div>';
+            bubble.classList.add('show');
+            
+            // Analyze current class data
+            const analysis = analyzeClassData();
+            
+            let insight;
+            let statsHtml = '';
+            
+            if (analysis && analysis.totalStudents > 0) {
+                insight = generateInsightFromAnalysis(analysis);
+                
+                statsHtml = `
+                    <div style="display: flex; justify-content: space-between; font-size: ${window.innerWidth <= 480 ? '10px' : '12px'}; margin-top: 5px;">
+                        <span>👥 ${analysis.totalStudents}</span>
+                        <span>🔥 ${analysis.averageStreak}</span>
+                        <span>⏰ ${analysis.averageHours}h</span>
+                    </div>
+                    <div style="font-size: ${window.innerWidth <= 480 ? '9px' : '11px'}; margin-top: 4px; text-align: center;">
+                        ${analysis.activeStudents} active • ${teacherClasses?.length || 0} classes
+                    </div>
+                `;
+            } else {
+                // Randomly choose between time-based or random message
+                insight = Math.random() > 0.5 ? getTimeBasedMessage() : getRandomMessage();
+                const fontSize = window.innerWidth <= 480 ? '10px' : '12px';
+                statsHtml = `<div style="text-align: center; font-size: ${fontSize}">Waiting for student data...</div>`;
+            }
+            
+            // Update with insight
+            bubbleIcon.textContent = insight.icon;
+            bubbleMessage.textContent = insight.message;
+            chatbotStats.innerHTML = statsHtml;
+            
+            const showTime = window.innerWidth <= 480 ? 6000 : 8000;
+            setTimeout(() => {
+                if (bubble) bubble.classList.remove('show');
+            }, showTime);
+            
+            return insight;
+        } catch (error) {
+            console.error("Error showing insight:", error);
+            return null;
+        }
+    }
+    
+    // ========== SIMPLE AUTOMATED MESSAGES ==========
+    
+    // Function to show any type of message
+    async function showRandomMessage() {
+        // Only show if page is visible
+        if (document.visibilityState !== 'visible') return;
+        
+        // 50% chance of showing real insight if we have data
+        // 50% chance of showing random/timed message
+        const shouldShowReal = Math.random() < 0.5 && students && students.length > 0;
+        
+        if (shouldShowReal) {
+            await showRealInsight();
         } else {
-            // No data yet
-            insight = {
-                icon: '👋',
-                message: getTimeBasedMessage(),
-                type: 'welcome'
-            };
+            // Randomly choose between time-based or generic random message
+            const messageType = Math.random();
             
-            chatbotStats.innerHTML = `
-                <div style="text-align: center; font-size: 12px;">
-                    Waiting for student data...
-                </div>
-            `;
+            if (messageType < 0.5) {
+                // Time-based message
+                const timeMessage = getTimeBasedMessage();
+                showMessage(timeMessage);
+            } else {
+                // Random generic message
+                const randomMessage = getRandomMessage();
+                showMessage(randomMessage);
+            }
         }
-        
-        // Update bubble with insight
-        bubbleIcon.textContent = insight.icon;
-        bubbleMessage.textContent = insight.message;
-        
-        // Show for 12 seconds
-        setTimeout(() => {
-            bubble.classList.remove('show');
-        }, 12000);
-        
-        return insight;
     }
     
     // Add click event
@@ -10171,44 +12029,67 @@ if (bubbleMessageElement) bubbleMessageElement.textContent = "Analyzing student 
         chatbotBtn.addEventListener('click', showRealInsight);
     }
     
-    // Show welcome message
-    setTimeout(async () => {
-        bubbleIcon.textContent = '👋';
-        bubbleMessage.textContent = "Hi Teacher! I analyze your real student data. Let me check your classes...";
-        chatbotStats.innerHTML = '<div style="text-align: center;">Loading student information...</div>';
-        document.getElementById('teacherChatbotBubble').classList.add('show');
-        
-        // Initialize data in background
-        setTimeout(async () => {
-            await getTeacherData();
-            await getTeacherClasses();
+    // Show welcome message after a delay
+    setTimeout(() => {
+        try {
+            const bubbleIcon = document.querySelector('.bubble-icon');
+            const bubbleMessage = document.querySelector('.bubble-message');
+            const chatbotStats = document.getElementById('chatbotStats');
+            const bubble = document.getElementById('teacherChatbotBubble');
             
-            // Update welcome message with real data
-            if (teacherClasses.length > 0) {
-                bubbleMessage.textContent = `Found ${teacherClasses.length} classes! I'll monitor ${teacherClasses.reduce((sum, c) => sum + c.studentCount, 0)} students.`;
-                chatbotStats.innerHTML = `<div style="text-align: center;">Ready to analyze student progress</div>`;
-            }
-        }, 1000);
-        
-        setTimeout(() => document.getElementById('teacherChatbotBubble').classList.remove('show'), 6000);
+            if (!bubbleIcon || !bubbleMessage || !chatbotStats || !bubble) return;
+            
+            bubbleIcon.textContent = '👋';
+            bubbleMessage.textContent = "Hi Teacher! I'm your AI assistant.";
+            chatbotStats.innerHTML = '<div style="text-align: center;">I\'ll share insights automatically!</div>';
+            bubble.classList.add('show');
+            
+            setTimeout(() => {
+                bubble.classList.remove('show');
+            }, 5000);
+        } catch (error) {
+            console.error("Error showing welcome:", error);
+        }
     }, 3000);
     
-    // AUTOMATED MESSAGES - Analyze and send insights every 3-5 minutes
-    setInterval(async () => {
-        if (Math.random() < 0.4 && document.visibilityState === 'visible') {
-            await showRealInsight();
-        }
-    }, 180000 + Math.random() * 120000);
+    // ========== AUTOMATED MESSAGES WITH SHORT INTERVALS ==========
     
-    // Force an analysis every 6 minutes
-    setInterval(async () => {
+    // Send messages randomly every 60-120 seconds
+    const shortInterval = setInterval(() => {
+        // 30% chance to show a message each interval
+        if (Math.random() < 0.3 && document.visibilityState === 'visible') {
+            showRandomMessage();
+        }
+    }, 60000 + Math.random() * 60000); // 60-120 seconds
+    
+    // Also send a guaranteed message every 3-5 minutes
+    const mediumInterval = setInterval(() => {
         if (document.visibilityState === 'visible') {
-            await showRealInsight();
+            showRandomMessage();
         }
-    }, 360000);
+    }, 180000 + Math.random() * 120000); // 3-5 minutes
     
-    console.log("🤖 REAL Student Analysis Chatbot initialized. Image: 200px");
+    // Update styles on resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            updateChatbotStyles();
+        }, 250);
+    });
+    
+    // Clean up intervals when page is hidden
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            // Hide bubble if visible
+            const bubble = document.getElementById('teacherChatbotBubble');
+            if (bubble) bubble.classList.remove('show');
+        }
+    });
+    
+    console.log("🤖 AI Teaching Assistant initialized with short-interval messages");
 }
+
 
 // Handle window resize
 let resizeTimeout;
@@ -12596,19 +14477,7 @@ function ensureChallengesVisible() {
     }
 }
 
-// Call this when switching to challenges section
-const originalShowSection = showSection;
-showSection = function(sectionId) {
-    originalShowSection(sectionId);
-    
-    if (sectionId === 'challenges') {
-        // Ensure challenges are properly displayed
-        setTimeout(() => {
-            ensureChallengesVisible();
-            addDebugButton(); // Add debug button if needed
-        }, 300);
-    }
-};
+
 
 // Add visual indicator for empty challenges
 function updateAllChallengesList() {
@@ -15223,6 +17092,1140 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log("✅ Fixed functions initialized");
 });
+
+
+
+
+
+// ========== MEMORY WALL - WHITEBOARD VERSION ==========
+let memoryWallNotes = [];
+let selectedNoteColor = '#FFEB3B';
+let currentDraggedNote = null;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+let isDragging = false;
+
+// Initialize memory wall
+function initializeMemoryWall() {
+    loadMemoryWallNotes();
+    setupWhiteboardInteractions();
+    setupModalListeners();
+}
+
+// Load notes from Firebase/LocalStorage
+function loadMemoryWallNotes() {
+    if (!currentClassCode) return;
+    
+    if (isDemoMode) {
+        loadMemoryWallFromLocalStorage();
+    } else {
+        loadMemoryWallFromFirebase();
+    }
+}
+
+function loadMemoryWallFromLocalStorage() {
+    try {
+        const saved = localStorage.getItem(`memoryWall_notes_${currentClassCode}`);
+        if (saved) {
+            memoryWallNotes = JSON.parse(saved);
+            renderStickyNotes();
+        }
+    } catch (error) {
+        console.error("Error loading memory wall:", error);
+        memoryWallNotes = [];
+    }
+}
+
+function loadMemoryWallFromFirebase() {
+    try {
+        database.ref(`memoryWall/${currentClassCode}/notes`).on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                memoryWallNotes = [];
+                snapshot.forEach(child => {
+                    memoryWallNotes.push({
+                        id: child.key,
+                        ...child.val()
+                    });
+                });
+                renderStickyNotes();
+                saveMemoryWallToLocalStorage();
+            } else {
+                memoryWallNotes = [];
+                renderStickyNotes();
+            }
+        });
+    } catch (error) {
+        console.error("Error loading memory wall from Firebase:", error);
+        loadMemoryWallFromLocalStorage();
+    }
+}
+
+// Save notes
+function saveMemoryWallToLocalStorage() {
+    if (!currentClassCode) return;
+    try {
+        localStorage.setItem(`memoryWall_notes_${currentClassCode}`, JSON.stringify(memoryWallNotes));
+    } catch (error) {
+        console.error("Error saving memory wall:", error);
+    }
+}
+
+// Show modal
+function showMemoryModal() {
+    document.getElementById('modalMemoryText').value = '';
+    document.getElementById('modalMemoryAuthor').value = '';
+    document.getElementById('charCount').textContent = '0';
+    document.getElementById('previewText').textContent = 'Your memory will appear here...';
+    document.getElementById('previewAuthor').textContent = 'Anonymous';
+    
+    // Reset color to yellow
+    selectNoteColor('#FFEB3B');
+    
+    showModal('memoryModal');
+}
+
+// Setup modal listeners
+function setupModalListeners() {
+    const textInput = document.getElementById('modalMemoryText');
+    const authorInput = document.getElementById('modalMemoryAuthor');
+    const charCount = document.getElementById('charCount');
+    
+    if (textInput) {
+        textInput.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = length;
+            
+            // Update preview
+            document.getElementById('previewText').textContent = 
+                this.value || 'Your memory will appear here...';
+            
+            // Limit to 300 chars
+            if (length > 300) {
+                this.value = this.value.substring(0, 300);
+                charCount.textContent = '300';
+                charCount.style.color = 'var(--danger)';
+            } else {
+                charCount.style.color = 'var(--text-muted)';
+            }
+        });
+    }
+    
+    if (authorInput) {
+        authorInput.addEventListener('input', function() {
+            const author = this.value.trim() || 'Anonymous';
+            document.getElementById('previewAuthor').textContent = author;
+        });
+    }
+}
+
+// Select note color
+function selectNoteColor(color) {
+    selectedNoteColor = color;
+    
+    // Update selected state
+    document.querySelectorAll('.color-option').forEach(option => {
+        option.classList.remove('selected');
+        if (option.dataset.color === color) {
+            option.classList.add('selected');
+        }
+    });
+    
+    // Update preview
+    document.getElementById('notePreview').style.background = color;
+}
+
+// Add memory from modal
+function addMemoryFromModal() {
+    const text = document.getElementById('modalMemoryText').value.trim();
+    const author = document.getElementById('modalMemoryAuthor').value.trim() || 'Anonymous';
+    
+    if (!text) {
+        showNotification("Please write something for your memory note!", "error");
+        return;
+    }
+    
+    // Create new note
+    const note = {
+        id: 'note_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        text: text,
+        author: author,
+        color: selectedNoteColor,
+        x: Math.random() * 70 + 10, // Random position (10-80%)
+        y: Math.random() * 70 + 10,
+        rotation: (Math.random() * 8) - 4, // Random rotation -4 to +4 degrees
+        likes: 0,
+        likedBy: [],
+        createdAt: new Date().toISOString(),
+        classCode: currentClassCode,
+        teacherId: teacherId
+    };
+    
+    if (isDemoMode) {
+        // Add to local storage
+        memoryWallNotes.push(note);
+        saveMemoryWallToLocalStorage();
+        renderStickyNotes();
+        showNotification("Memory note added! 📝", "success");
+    } else {
+        // Save to Firebase
+        saveNoteToFirebase(note);
+    }
+    
+    hideModal('memoryModal');
+}
+
+// Save note to Firebase
+function saveNoteToFirebase(note) {
+    if (!currentClassCode || !teacherId) {
+        showNotification("Please select a class first", "error");
+        return;
+    }
+    
+    try {
+        const noteRef = database.ref(`memoryWall/${currentClassCode}/notes`).push();
+        note.id = noteRef.key;
+        
+        noteRef.set(note)
+            .then(() => {
+                memoryWallNotes.push(note);
+                showNotification("Memory note added! 📝", "success");
+            })
+            .catch(error => {
+                console.error("Error saving note:", error);
+                showNotification("Failed to save note: " + error.message, "error");
+            });
+    } catch (error) {
+        console.error("Error saving note to Firebase:", error);
+        showNotification("Error saving note", "error");
+    }
+}
+
+// Render sticky notes
+// Fixed renderStickyNotes function
+function renderStickyNotes() {
+    const container = document.getElementById('stickyNotesContainer');
+    if (!container) return;
+    
+    // Clear container
+    container.innerHTML = '';
+    
+    if (memoryWallNotes.length === 0) {
+        // Show welcome message centered
+        const whiteboard = document.getElementById('memoryWhiteboard');
+        if (whiteboard) {
+            const welcomeNote = document.createElement('div');
+            welcomeNote.className = 'welcome-note';
+            welcomeNote.style.position = 'absolute';
+            welcomeNote.style.top = '50%';
+            welcomeNote.style.left = '50%';
+            welcomeNote.style.transform = 'translate(-50%, -50%) rotate(-1deg)';
+            welcomeNote.style.zIndex = '1';
+            
+            welcomeNote.innerHTML = `
+                <div class="sticky-note welcome">
+                    <div class="note-content">
+                        <div class="note-text">Welcome to our Class Memory Wall! 🎉<br><br>Share what you've learned, celebrate achievements, or post encouraging words!</div>
+                        <div class="note-meta">
+                            <span class="note-author">👨‍🏫 Teacher</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            whiteboard.appendChild(welcomeNote);
+        }
+        return;
+    }
+    
+    // Hide any existing welcome note
+    const welcomeNote = document.querySelector('.welcome-note');
+    if (welcomeNote) {
+        welcomeNote.style.display = 'none';
+    }
+    
+    // Create each sticky note
+    memoryWallNotes.forEach(note => {
+        const noteElement = createStickyNoteElement(note);
+        container.appendChild(noteElement);
+    });
+    
+    updateMemoryWallStats();
+
+    
+    // Hide welcome note if there are actual notes
+   
+    if (welcomeNote) {
+        welcomeNote.style.display = 'none';
+    }
+    
+    // Create each sticky note
+    memoryWallNotes.forEach(note => {
+        const noteElement = createStickyNoteElement(note);
+        container.appendChild(noteElement);
+    });
+  }
+
+// Create sticky note element
+function createStickyNoteElement(note) {
+    const noteElement = document.createElement('div');
+    noteElement.className = 'sticky-note';
+    noteElement.id = `note-${note.id}`;
+    noteElement.style.background = note.color;
+    noteElement.style.left = `${note.x || 20}%`;
+    noteElement.style.top = `${note.y || 20}%`;
+    noteElement.style.transform = `rotate(${note.rotation || 0}deg)`;
+    noteElement.style.zIndex = '2';
+    
+    // Set data attributes
+    noteElement.dataset.noteId = note.id;
+    noteElement.dataset.x = note.x || 20;
+    noteElement.dataset.y = note.y || 20;
+    
+    // Format date
+    const date = new Date(note.createdAt);
+    const timeAgo = getTimeAgo(note.createdAt);
+    
+    noteElement.innerHTML = `
+        <div class="note-content">
+            <div class="note-text">${escapeHtml(note.text)}</div>
+            <div class="note-meta">
+                <div class="note-author">
+                    <span>👤</span>
+                    <span>${escapeHtml(note.author)}</span>
+                </div>
+                <div class="note-date" title="${date.toLocaleString()}">
+                    ${timeAgo}
+                </div>
+            </div>
+            <div class="note-actions">
+                <div class="note-likes">
+                    <span>👍</span>
+                    <span>${note.likes || 0}</span>
+                </div>
+                <div style="flex-grow: 1;"></div>
+                <button class="btn-note btn-like" onclick="likeNote('${note.id}', event)">
+                    👍
+                </button>
+                <button class="btn-note btn-delete" onclick="deleteNote('${note.id}', event)">
+                    🗑️
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Add drag functionality
+    setupNoteDragging(noteElement, note);
+    
+    return noteElement;
+}
+
+// Setup note dragging
+// Fixed dragging setup
+function setupNoteDragging(noteElement, note) {
+    let isDragging = false;
+    let startX, startY, initialX, initialY;
+    
+    const startDrag = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        isDragging = true;
+        
+        if (e.type === 'touchstart') {
+            const touch = e.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
+        } else {
+            startX = e.clientX;
+            startY = e.clientY;
+        }
+        
+        // Get current position
+        const rect = noteElement.getBoundingClientRect();
+        const whiteboard = document.getElementById('memoryWhiteboard');
+        const whiteboardRect = whiteboard.getBoundingClientRect();
+        
+        initialX = rect.left - whiteboardRect.left;
+        initialY = rect.top - whiteboardRect.top;
+        
+        noteElement.classList.add('dragging');
+        noteElement.style.zIndex = '1000';
+        
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', dragTouch);
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchend', stopDragTouch);
+    };
+    
+    const drag = (e) => {
+        if (!isDragging) return;
+        
+        const whiteboard = document.getElementById('memoryWhiteboard');
+        const whiteboardRect = whiteboard.getBoundingClientRect();
+        
+        const currentX = e.clientX;
+        const currentY = e.clientY;
+        
+        const deltaX = currentX - startX;
+        const deltaY = currentY - startY;
+        
+        let newX = initialX + deltaX;
+        let newY = initialY + deltaY;
+        
+        // Convert to percentages
+        const xPercent = (newX / whiteboardRect.width) * 100;
+        const yPercent = (newY / whiteboardRect.height) * 100;
+        
+        // Keep within bounds
+        const boundedX = Math.max(0, Math.min(95, xPercent));
+        const boundedY = Math.max(0, Math.min(95, yPercent));
+        
+        noteElement.style.left = `${boundedX}%`;
+        noteElement.style.top = `${boundedY}%`;
+        
+        // Update note data
+        note.x = boundedX;
+        note.y = boundedY;
+    };
+    
+    const dragTouch = (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        
+        const touch = e.touches[0];
+        const whiteboard = document.getElementById('memoryWhiteboard');
+        const whiteboardRect = whiteboard.getBoundingClientRect();
+        
+        const currentX = touch.clientX;
+        const currentY = touch.clientY;
+        
+        const deltaX = currentX - startX;
+        const deltaY = currentY - startY;
+        
+        let newX = initialX + deltaX;
+        let newY = initialY + deltaY;
+        
+        const xPercent = (newX / whiteboardRect.width) * 100;
+        const yPercent = (newY / whiteboardRect.height) * 100;
+        
+        const boundedX = Math.max(0, Math.min(95, xPercent));
+        const boundedY = Math.max(0, Math.min(95, yPercent));
+        
+        noteElement.style.left = `${boundedX}%`;
+        noteElement.style.top = `${boundedY}%`;
+        
+        note.x = boundedX;
+        note.y = boundedY;
+    };
+    
+    const stopDrag = () => {
+        if (!isDragging) return;
+        
+        isDragging = false;
+        noteElement.classList.remove('dragging');
+        noteElement.style.zIndex = '2';
+        
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('mouseup', stopDrag);
+        document.removeEventListener('touchmove', dragTouch);
+        document.removeEventListener('touchend', stopDragTouch);
+        
+        // Save position
+        if (note && note.x !== undefined && note.y !== undefined) {
+            saveNotePosition(note.id, note.x, note.y);
+        }
+    };
+    
+    const stopDragTouch = () => {
+        stopDrag();
+    };
+    
+    // Add event listeners
+    noteElement.addEventListener('mousedown', startDrag);
+    noteElement.addEventListener('touchstart', startDrag, { passive: false });
+}
+    
+    function startDragTouch(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (e.touches.length === 1) {
+            isDragging = true;
+            const touch = e.touches[0];
+            startX = touch.clientX - noteElement.offsetLeft;
+            startY = touch.clientY - noteElement.offsetTop;
+            
+            noteElement.classList.add('dragging');
+            noteElement.style.zIndex = '1000';
+            
+            document.addEventListener('touchmove', dragTouch);
+            document.addEventListener('touchend', stopDragTouch);
+        }
+    }
+    
+    function drag(e) {
+        if (!isDragging) return;
+        
+        // Calculate new position relative to whiteboard
+        const whiteboard = document.getElementById('memoryWhiteboard');
+        const whiteboardRect = whiteboard.getBoundingClientRect();
+        
+        let newX = e.clientX - startX - whiteboardRect.left;
+        let newY = e.clientY - startY - whiteboardRect.top;
+        
+        // Convert to percentages
+        const xPercent = (newX / whiteboardRect.width) * 100;
+        const yPercent = (newY / whiteboardRect.height) * 100;
+        
+        // Keep within bounds (0-100%)
+        const boundedX = Math.max(0, Math.min(95, xPercent));
+        const boundedY = Math.max(0, Math.min(95, yPercent));
+        
+        noteElement.style.left = `${boundedX}%`;
+        noteElement.style.top = `${boundedY}%`;
+        
+        // Update note data
+        note.x = boundedX;
+        note.y = boundedY;
+        noteElement.dataset.x = boundedX;
+        noteElement.dataset.y = boundedY;
+    }
+    
+    function dragTouch(e) {
+        if (!isDragging || e.touches.length !== 1) return;
+        
+        const touch = e.touches[0];
+        const whiteboard = document.getElementById('memoryWhiteboard');
+        const whiteboardRect = whiteboard.getBoundingClientRect();
+        
+        let newX = touch.clientX - startX - whiteboardRect.left;
+        let newY = touch.clientY - startY - whiteboardRect.top;
+        
+        const xPercent = (newX / whiteboardRect.width) * 100;
+        const yPercent = (newY / whiteboardRect.height) * 100;
+        
+        const boundedX = Math.max(0, Math.min(95, xPercent));
+        const boundedY = Math.max(0, Math.min(95, yPercent));
+        
+        noteElement.style.left = `${boundedX}%`;
+        noteElement.style.top = `${boundedY}%`;
+        
+        note.x = boundedX;
+        note.y = boundedY;
+        noteElement.dataset.x = boundedX;
+        noteElement.dataset.y = boundedY;
+    }
+    
+    function stopDrag() {
+        if (!isDragging) return;
+        
+        isDragging = false;
+        noteElement.classList.remove('dragging');
+        noteElement.style.zIndex = '2';
+        
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('mouseup', stopDrag);
+        
+        // Save position
+        saveNotePosition(note.id, note.x, note.y);
+    }
+    
+    function stopDragTouch() {
+        if (!isDragging) return;
+        
+        isDragging = false;
+        noteElement.classList.remove('dragging');
+        noteElement.style.zIndex = '2';
+        
+        document.removeEventListener('touchmove', dragTouch);
+        document.removeEventListener('touchend', stopDragTouch);
+        
+        saveNotePosition(note.id, note.x, note.y);
+    }
+
+
+// Save note position
+function saveNotePosition(noteId, x, y) {
+    const note = memoryWallNotes.find(n => n.id === noteId);
+    if (!note) return;
+    
+    note.x = x;
+    note.y = y;
+    
+    if (isDemoMode) {
+        saveMemoryWallToLocalStorage();
+    } else {
+        database.ref(`memoryWall/${currentClassCode}/notes/${noteId}`).update({
+            x: x,
+            y: y
+        });
+    }
+}
+
+// Like a note
+function likeNote(noteId, event) {
+    if (event) event.stopPropagation();
+    
+    const note = memoryWallNotes.find(n => n.id === noteId);
+    if (!note) return;
+    
+    note.likes = (note.likes || 0) + 1;
+    
+    // Update UI
+    const noteElement = document.getElementById(`note-${noteId}`);
+    if (noteElement) {
+        const likesSpan = noteElement.querySelector('.note-likes span:last-child');
+        if (likesSpan) {
+            likesSpan.textContent = note.likes;
+        }
+    }
+    
+    // Save
+    if (isDemoMode) {
+        saveMemoryWallToLocalStorage();
+    } else {
+        database.ref(`memoryWall/${currentClassCode}/notes/${noteId}`).update({
+            likes: note.likes
+        });
+    }
+    
+    showNotification("Liked! 👍", "success");
+}
+
+// Delete a note
+function deleteNote(noteId, event) {
+    if (event) event.stopPropagation();
+    
+    if (!confirm("Delete this memory note from the wall?")) return;
+    
+    const note = memoryWallNotes.find(n => n.id === noteId);
+    if (!note) return;
+    
+    // Check permissions (teacher or author)
+    if (!isDemoMode) {
+        const isTeacher = note.teacherId === teacherId;
+        const isAuthor = note.author === teacherName || note.author === 'Teacher';
+        
+        if (!isTeacher && !isAuthor) {
+            showNotification("You can only delete your own notes", "error");
+            return;
+        }
+    }
+    
+    // Remove from array
+    memoryWallNotes = memoryWallNotes.filter(n => n.id !== noteId);
+    
+    // Remove from UI
+    const noteElement = document.getElementById(`note-${noteId}`);
+    if (noteElement) {
+        noteElement.style.opacity = '0';
+        noteElement.style.transform = 'scale(0.5) rotate(10deg)';
+        setTimeout(() => {
+            noteElement.remove();
+        }, 300);
+    }
+    
+    // Save
+    if (isDemoMode) {
+        saveMemoryWallToLocalStorage();
+    } else {
+        database.ref(`memoryWall/${currentClassCode}/notes/${noteId}`).remove();
+    }
+    
+    showNotification("Note deleted", "success");
+}
+
+// Setup whiteboard interactions
+function setupWhiteboardInteractions() {
+    const whiteboard = document.getElementById('memoryWhiteboard');
+    if (!whiteboard) return;
+    
+    // Add zoom controls
+    addWhiteboardControls();
+}
+
+// Add whiteboard controls
+function addWhiteboardControls() {
+    const whiteboard = document.getElementById('memoryWhiteboard');
+    if (!whiteboard || document.querySelector('.whiteboard-controls')) return;
+    
+    const controls = document.createElement('div');
+    controls.className = 'whiteboard-controls';
+    controls.innerHTML = `
+        <button class="whiteboard-btn" onclick="zoomInWhiteboard()" title="Zoom In">
+            🔍+
+        </button>
+        <button class="whiteboard-btn" onclick="zoomOutWhiteboard()" title="Zoom Out">
+            🔍-
+        </button>
+        <button class="whiteboard-btn" onclick="resetWhiteboard()" title="Reset View">
+            🔄
+        </button>
+        <button class="whiteboard-btn" onclick="refreshMemoryWall()" title="Refresh">
+            ⟳
+        </button>
+    `;
+    
+    whiteboard.appendChild(controls);
+}
+
+// Whiteboard controls
+function zoomInWhiteboard() {
+    const container = document.getElementById('stickyNotesContainer');
+    if (container) {
+        const currentScale = parseFloat(container.style.transform?.replace('scale(', '') || '1');
+        const newScale = Math.min(2, currentScale + 0.2);
+        container.style.transform = `scale(${newScale})`;
+        showNotification(`Zoom: ${Math.round(newScale * 100)}%`, "info");
+    }
+}
+
+function zoomOutWhiteboard() {
+    const container = document.getElementById('stickyNotesContainer');
+    if (container) {
+        const currentScale = parseFloat(container.style.transform?.replace('scale(', '') || '1');
+        const newScale = Math.max(0.5, currentScale - 0.2);
+        container.style.transform = `scale(${newScale})`;
+        showNotification(`Zoom: ${Math.round(newScale * 100)}%`, "info");
+    }
+}
+
+function resetWhiteboard() {
+    const container = document.getElementById('stickyNotesContainer');
+    if (container) {
+        container.style.transform = 'scale(1)';
+        showNotification("View reset", "info");
+    }
+}
+
+function refreshMemoryWall() {
+    loadMemoryWallNotes();
+    showNotification("Memory wall refreshed", "info");
+}
+
+// Helper functions
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML.replace(/\n/g, '<br>');
+}
+
+function getTimeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMinutes = Math.floor(diffMs / 60000);
+    
+    if (diffMinutes < 1) return 'Just now';
+    if (diffMinutes < 60) return `${diffMinutes}m ago`;
+    
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays < 7) return `${diffDays}d ago`;
+    
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// ========== STUDENT VISIBILITY ==========
+
+// This ensures the memory wall is visible to students
+function setupMemoryWallForStudents() {
+    if (!isDemoMode && currentClassCode) {
+        // Create initial welcome note if none exist
+        database.ref(`memoryWall/${currentClassCode}/notes`).once('value')
+            .then(snapshot => {
+                if (!snapshot.exists()) {
+                    const welcomeNote = {
+                        id: 'welcome_note',
+                        text: "Welcome to our Class Memory Wall! 🎉\n\nShare what you've learned this week, celebrate achievements, or post encouraging words for classmates.\n\nClick 'Add Memory' to get started!",
+                        author: teacherName || 'Teacher',
+                        color: '#667eea',
+                        x: 50,
+                        y: 50,
+                        rotation: -1,
+                        likes: 0,
+                        likedBy: [],
+                        createdAt: new Date().toISOString(),
+                        classCode: currentClassCode,
+                        teacherId: teacherId
+                    };
+                    
+                    database.ref(`memoryWall/${currentClassCode}/notes/welcome_note`).set(welcomeNote);
+                }
+            });
+    }
+}
+
+// ========== INTEGRATION ==========
+
+// Update showSection to initialize memory wall
+const originalShowSection = showSection;
+showSection = function(sectionId) {
+    originalShowSection(sectionId);
+    
+    if (sectionId === 'memoryWall') {
+        // Initialize memory wall when shown
+        setTimeout(() => {
+            initializeMemoryWall();
+        }, 100);
+    }
+};
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("📝 Memory Wall system loaded");
+});
+
+
+
+
+
+// Toggle the add memory form
+function toggleAddMemoryForm() {
+    const form = document.getElementById('addMemoryForm');
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+        document.getElementById('memoryText').focus();
+        
+        // Set up character count
+        const textarea = document.getElementById('memoryText');
+        const charCount = document.getElementById('memoryCharCount');
+        
+        textarea.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = length;
+            
+            if (length > 300) {
+                this.value = this.value.substring(0, 300);
+                charCount.textContent = '300';
+                charCount.style.color = 'var(--danger)';
+            } else {
+                charCount.style.color = 'var(--text-muted)';
+            }
+        });
+    } else {
+        form.style.display = 'none';
+    }
+}
+
+// Add memory from the inline form
+function addMemoryFromForm() {
+    const text = document.getElementById('memoryText').value.trim();
+    const author = document.getElementById('memoryAuthor').value.trim() || 'Anonymous';
+    
+    if (!text) {
+        showNotification("Please write something for your memory note!", "error");
+        return;
+    }
+    
+    // Create new note
+    const note = {
+        id: 'note_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        text: text,
+        author: author,
+        color: selectedNoteColor || '#FFEB3B',
+        x: Math.random() * 70 + 10, // Random position (10-80%)
+        y: Math.random() * 70 + 10,
+        rotation: (Math.random() * 8) - 4, // Random rotation -4 to +4 degrees
+        likes: 0,
+        likedBy: [],
+        createdAt: new Date().toISOString(),
+        classCode: currentClassCode,
+        teacherId: teacherId
+    };
+    
+    if (isDemoMode) {
+        // Add to local storage
+        memoryWallNotes.push(note);
+        saveMemoryWallToLocalStorage();
+        renderStickyNotes();
+        showNotification("Memory note added! 📝", "success");
+        
+        // Clear form
+        document.getElementById('memoryText').value = '';
+        document.getElementById('memoryAuthor').value = '';
+        document.getElementById('memoryCharCount').textContent = '0';
+        toggleAddMemoryForm();
+    } else {
+        // Save to Firebase
+        saveNoteToFirebase(note);
+        
+        // Clear form
+        document.getElementById('memoryText').value = '';
+        document.getElementById('memoryAuthor').value = '';
+        document.getElementById('memoryCharCount').textContent = '0';
+        toggleAddMemoryForm();
+    }
+}
+
+// Save note to Firebase
+function saveNoteToFirebase(note) {
+    if (!currentClassCode || !teacherId) {
+        showNotification("Please select a class first", "error");
+        return;
+    }
+    
+    try {
+        const noteRef = database.ref(`memoryWall/${currentClassCode}/notes`).push();
+        note.id = noteRef.key;
+        
+        noteRef.set(note)
+            .then(() => {
+                memoryWallNotes.push(note);
+                showNotification("Memory note added! 📝", "success");
+            })
+            .catch(error => {
+                console.error("Error saving note:", error);
+                showNotification("Failed to save note: " + error.message, "error");
+            });
+    } catch (error) {
+        console.error("Error saving note to Firebase:", error);
+        showNotification("Error saving note", "error");
+    }
+}
+
+// This function should already exist, but let's make sure it's accessible
+function selectNoteColor(color) {
+    selectedNoteColor = color;
+    
+    // Update selected state
+    document.querySelectorAll('.color-option').forEach(option => {
+        option.classList.remove('selected');
+        if (option.dataset.color === color) {
+            option.classList.add('selected');
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+// Memory Wall Navigation
+let selectedAddMemoryColor = '#FFEB3B';
+
+// Show the main memory wall (whiteboard view)
+function showMemoryWall() {
+    // Hide all sections
+    document.querySelectorAll('.dashboard-content').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Show memory wall
+    document.getElementById('memoryWall').style.display = 'block';
+    
+    // Update active nav
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.textContent.includes('📝 Memory Wall')) {
+            item.classList.add('active');
+        }
+    });
+    
+    // Update header
+    document.getElementById('dashboardHeader').querySelector('h1').textContent = 'Memory Wall';
+    document.getElementById('dashboardSubtitle').textContent = 'Share memories and encouragement with the class';
+    
+    // Load memory wall data
+    loadMemoryWallNotes();
+    updateMemoryWallStats();
+}
+
+// Show the Add Memory page
+function showAddMemoryPage() {
+    // Hide memory wall, show add memory page
+    document.getElementById('memoryWall').style.display = 'none';
+    document.getElementById('addMemoryPage').style.display = 'block';
+    
+    // Reset form
+    document.getElementById('addMemoryText').value = '';
+    document.getElementById('addMemoryAuthor').value = '';
+    document.getElementById('addMemoryCharCount').textContent = '0';
+    document.getElementById('addMemoryPreviewText').textContent = 'Your memory will appear here...';
+    document.getElementById('addMemoryPreviewAuthor').textContent = 'Anonymous';
+    
+    // Reset color to yellow
+    selectAddMemoryColor('#FFEB3B');
+    
+    // Set default author based on mode
+    if (isDemoMode) {
+        document.getElementById('addMemoryAuthor').value = teacherName || 'Teacher';
+    } else {
+        // Check if we're in teacher mode
+        if (window.location.href.includes('teachermode') || document.querySelector('.teacher-emoji')) {
+            document.getElementById('addMemoryAuthor').value = teacherName || 'Teacher';
+        } else {
+            // Student mode
+            const studentName = localStorage.getItem('studentName') || 'Student';
+            document.getElementById('addMemoryAuthor').value = studentName;
+        }
+    }
+    
+    // Setup real-time preview
+    setupMemoryPreview();
+}
+
+// Go back to memory wall from add memory page
+function backToMemoryWall() {
+    document.getElementById('addMemoryPage').style.display = 'none';
+    document.getElementById('memoryWall').style.display = 'block';
+}
+
+// Select color for add memory page
+function selectAddMemoryColor(color) {
+    selectedAddMemoryColor = color;
+    
+    // Update selected state
+    document.querySelectorAll('#addMemoryPage .color-option').forEach(option => {
+        option.classList.remove('selected');
+        if (option.dataset.color === color) {
+            option.classList.add('selected');
+        }
+    });
+    
+    // Update preview
+    document.getElementById('addMemoryPreview').style.background = color;
+}
+
+// Setup real-time preview
+function setupMemoryPreview() {
+    const textInput = document.getElementById('addMemoryText');
+    const authorInput = document.getElementById('addMemoryAuthor');
+    const charCount = document.getElementById('addMemoryCharCount');
+    
+    // Update preview when text changes
+    textInput.addEventListener('input', function() {
+        const length = this.value.length;
+        charCount.textContent = length;
+        
+        // Update preview text
+        document.getElementById('addMemoryPreviewText').textContent = 
+            this.value || 'Your memory will appear here...';
+        
+        // Limit to 300 chars
+        if (length > 300) {
+            this.value = this.value.substring(0, 300);
+            charCount.textContent = '300';
+            charCount.style.color = 'var(--danger)';
+        } else {
+            charCount.style.color = 'var(--text-muted)';
+        }
+    });
+    
+    // Update preview when author changes
+    authorInput.addEventListener('input', function() {
+        const author = this.value.trim() || 'Anonymous';
+        document.getElementById('addMemoryPreviewAuthor').textContent = author;
+    });
+}
+
+// Submit memory from the add memory page
+function submitMemory() {
+    const text = document.getElementById('addMemoryText').value.trim();
+    const author = document.getElementById('addMemoryAuthor').value.trim() || 'Anonymous';
+    
+    if (!text) {
+        showNotification("Please write something for your memory note!", "error");
+        return;
+    }
+    
+    if (text.length < 10) {
+        showNotification("Please write a bit more (at least 10 characters)", "warning");
+        return;
+    }
+    
+    // Determine if this is from teacher or student
+    const isTeacher = window.location.href.includes('teachermode') || document.querySelector('.teacher-emoji');
+    
+    // Create new note
+    const note = {
+        id: 'note_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        text: text,
+        author: author,
+        color: selectedAddMemoryColor,
+        x: Math.random() * 70 + 10, // Random position (10-80%)
+        y: Math.random() * 70 + 10,
+        rotation: (Math.random() * 8) - 4, // Random rotation -4 to +4 degrees
+        likes: 0,
+        likedBy: [],
+        createdAt: new Date().toISOString(),
+        classCode: currentClassCode,
+        isTeacherNote: isTeacher,
+        teacherId: isTeacher ? teacherId : null,
+        studentId: !isTeacher ? (localStorage.getItem('studentUserId') || 'student_' + Date.now()) : null
+    };
+    
+    if (isDemoMode) {
+        // Add to local storage
+        memoryWallNotes.push(note);
+        saveMemoryWallToLocalStorage();
+        renderStickyNotes();
+        updateMemoryWallStats();
+        showNotification("Memory note added! 📝", "success");
+        
+        // Go back to memory wall
+        backToMemoryWall();
+    } else {
+        // Save to Firebase
+        saveNoteToFirebase(note);
+    }
+}
+
+// Save note to Firebase
+function saveNoteToFirebase(note) {
+    if (!currentClassCode) {
+        showNotification("Please select a class first", "error");
+        return;
+    }
+    
+    try {
+        const noteRef = database.ref(`memoryWall/${currentClassCode}/notes`).push();
+        note.id = noteRef.key;
+        
+        noteRef.set(note)
+            .then(() => {
+                memoryWallNotes.push(note);
+                showNotification("Memory note added to the wall! 📝", "success");
+                
+                // Go back to memory wall
+                backToMemoryWall();
+            })
+            .catch(error => {
+                console.error("Error saving note:", error);
+                showNotification("Failed to save note: " + error.message, "error");
+            });
+    } catch (error) {
+        console.error("Error saving note to Firebase:", error);
+        showNotification("Error saving note", "error");
+    }
+}
+
+// Update memory wall statistics
+function updateMemoryWallStats() {
+    const totalNotes = memoryWallNotes.length;
+    const totalLikes = memoryWallNotes.reduce((sum, note) => sum + (note.likes || 0), 0);
+    const studentNotes = memoryWallNotes.filter(note => !note.isTeacherNote).length;
+    
+    document.getElementById('totalNotesCount').textContent = totalNotes;
+    document.getElementById('totalLikesCount').textContent = totalLikes;
+    document.getElementById('studentNotesCount').textContent = studentNotes;
+}
+
+// Refresh memory wall
+function refreshMemoryWall() {
+    loadMemoryWallNotes();
+    showNotification("Memory wall refreshed", "info");
+}
+
+// Update the showSection function to handle memory wall navigation
+
 </script>
 
 
