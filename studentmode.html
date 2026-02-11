@@ -4935,6 +4935,7 @@ body, #studentMemoryWhiteboard, #studentStickyNotesContainer {
    <div class="nav-item" onclick="showStudentMemoryWall(); closeMobileMenu();">
     📝 Memory Wall
 </div>
+
       <div class="nav-item" onclick="showSection('tasks'); closeMobileMenu();">
         📝 Tasks
       </div>
@@ -4947,6 +4948,10 @@ body, #studentMemoryWhiteboard, #studentStickyNotesContainer {
       <div class="nav-item" onclick="showSection('myclasses'); closeMobileMenu();">
         🎓 My Classes
       </div>
+      <!-- Or if you want a more prominent button, add this: -->
+<div class="sidebar-btn nav-item" onclick="window.location.href='student_checkin.html'" >
+    😊 Quick Check-in
+</div>
       <div class="nav-item" onclick="showSection('statistics'); closeMobileMenu();">
         📈 Statistics
       </div>
@@ -12784,6 +12789,10 @@ function loadStudentMemoryWall() {
         showNotification("Error connecting to memory wall", "error");
     }
 }
+
+
+
+
 </script>
 <div id="confettiLayer" aria-hidden="true"></div>
 <div id="premiumSparkleLayer" class="premium-sparkle-layer" aria-hidden="true"></div>
