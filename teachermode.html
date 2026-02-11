@@ -4949,6 +4949,95 @@ body.dark .toast.info {
         gap: var(--spacing-lg);
     }
 }
+
+
+
+
+/* Check-in Chart Styles */
+.checkin-chart {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.chart-bar {
+    transition: height 0.5s ease;
+}
+
+.chart-bar:hover {
+    opacity: 0.9;
+    transform: translateY(-5px);
+}
+
+/* Emotion colors for consistency */
+.emotion-confident {
+    color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+    border-left: 3px solid #4CAF50;
+}
+
+.emotion-okay {
+    color: #FF9800;
+    background: rgba(255, 152, 0, 0.1);
+    border-left: 3px solid #FF9800;
+}
+
+.emotion-struggling {
+    color: #f44336;
+    background: rgba(244, 67, 54, 0.1);
+    border-left: 3px solid #f44336;
+}
+
+/* Quick check-in button */
+.btn-checkin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s;
+}
+
+.btn-checkin:hover {
+    transform: translateY(-2px);
+}
+
+
+/* Add to your existing CSS */
+.checkin-chart-bar {
+    transition: height 0.5s ease;
+    cursor: pointer;
+}
+
+.checkin-chart-bar:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.session-active {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.activity-item {
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 </style>
 </head>
 <body>
@@ -5043,6 +5132,10 @@ body.dark .toast.info {
       <div class="nav-item" onclick="showSection('analytics'); closeSidebarOnMobile();">
         📈 Analytics
       </div>
+      <!-- In your sidebar nav section, add this: -->
+<div class="nav-item" onclick="showSection('checkins'); closeSidebarOnMobile();">
+    😊 Quick Check-ins
+</div>
       <div class="nav-item" onclick="showSection('settings'); closeSidebarOnMobile();">
         ⚙️ Settings
       </div>
@@ -5741,6 +5834,12 @@ body.dark .toast.info {
         </div>
       </div>
       
+
+
+
+
+     
+
       <!-- Analytics Section -->
       <div id="analytics" class="dashboard-content" style="grid-column: span 12; display: none;">
         <div class="content-card">
@@ -5827,6 +5926,168 @@ body.dark .toast.info {
         </div>
       </div>
       
+
+
+
+
+
+      <!-- Quick Check-ins Section - Keep this one only! -->
+<div id="checkins" class="dashboard-content" style="grid-column: span 12; display: none;">
+    <div class="content-card">
+        <div class="content-header">
+            <h2>😊 Quick Check-in System</h2>
+            <div style="display: flex; gap: var(--spacing-sm);">
+                <button class="btn btn-success" onclick="startLiveCheckInSession()">
+                    🎬 Start Live Check-in
+                </button>
+                <button class="btn btn-secondary" onclick="resetCheckInData()">
+                    🔄 Reset Check-ins
+                </button>
+            </div>
+        </div>
+        
+        <div class="content-body">
+            <div class="pro-tip">
+                <strong>😊 Real-time Emotional Check-ins</strong>
+                Start a live check-in session and share the link with students. They'll anonymously submit how they're feeling, and you'll see the results update in real-time.
+            </div>
+            
+            <!-- Live Session Controls -->
+            <div class="form-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <h3 style="color: white;">🎬 Live Session Status</h3>
+                <div id="liveSessionStatus" style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--spacing-md);">
+                    <div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">Status:</div>
+                        <div style="font-size: 1.25rem; font-weight: 700;" id="sessionStatusText">Not Active</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">Session Code:</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; font-family: monospace;" id="sessionCodeDisplay">------</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">Active For:</div>
+                        <div style="font-size: 1.25rem; font-weight: 700;" id="sessionTimer">0:00</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: var(--spacing-lg);">
+                    <div style="font-size: 0.875rem; margin-bottom: var(--spacing-sm);">Share this link with students:</div>
+                    <div style="display: flex; gap: var(--spacing-sm);">
+                        <input type="text" id="studentCheckinLink" readonly 
+                               value="Start a session to get a link"
+                               style="flex: 1; padding: var(--spacing-md); background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: var(--radius); color: white; font-size: 0.875rem;">
+                        <button class="btn btn-secondary" onclick="copyCheckinLink()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">
+                            📋 Copy
+                        </button>
+                        <button class="btn btn-secondary" onclick="showQRCode()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">
+                            📱 QR Code
+                        </button>
+                    </div>
+                    
+                    <!-- QR Code Display -->
+                    <div id="qrCodeContainer" style="display: none; text-align: center; margin-top: var(--spacing-md);">
+                        <div id="qrcode"></div>
+                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: var(--spacing-sm);">
+                            Scan with phone camera
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Check-in Stats Cards -->
+            <div class="quick-stats" style="margin: var(--spacing-xl) 0;">
+                <div class="stat-card" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
+                    <div class="stat-icon">😊</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="confidentCount">0</div>
+                        <div class="stat-label">Confident</div>
+                        <div id="confidentPercent" style="font-size: 0.75rem; opacity: 0.8;">0%</div>
+                    </div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%);">
+                    <div class="stat-icon">😐</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="okayCount">0</div>
+                        <div class="stat-label">Okay</div>
+                        <div id="okayPercent" style="font-size: 0.75rem; opacity: 0.8;">0%</div>
+                    </div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #FF5722 0%, #f44336 100%);">
+                    <div class="stat-icon">😕</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="strugglingCount">0</div>
+                        <div class="stat-label">Struggling</div>
+                        <div id="strugglingPercent" style="font-size: 0.75rem; opacity: 0.8;">0%</div>
+                    </div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="totalResponses">0</div>
+                        <div class="stat-label">Total Responses</div>
+                        <div style="font-size: 0.75rem; opacity: 0.8;" id="lastUpdateTime">Just now</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Visual Chart -->
+            <div class="form-card" style="margin-bottom: var(--spacing-xl);">
+                <h3>📊 Emotional Distribution</h3>
+                
+                <div style="height: 200px; margin: var(--spacing-xl) 0;">
+                    <div id="checkinChart" style="display: flex; align-items: flex-end; justify-content: center; gap: 40px; height: 100%;">
+                        <!-- Chart bars will be dynamically generated -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Responses -->
+            <div class="form-card">
+                <h3>🕒 Recent Check-ins</h3>
+                <div id="recentCheckins" class="activity-list" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Recent check-ins will appear here -->
+                    <div style="text-align: center; padding: var(--spacing-xl); color: var(--text-muted);">
+                        No check-ins yet. Start a live session and share the link with students!
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-xl);">
+                <div class="form-card" style="border-left: 4px solid #4CAF50;">
+                    <h3 style="color: #4CAF50;">🎯 For Confident Students</h3>
+                    <ul style="margin-top: var(--spacing-md); padding-left: 1.5rem;">
+                        <li>Assign extension activities</li>
+                        <li>Peer teaching opportunities</li>
+                        <li>Challenge problems</li>
+                        <li>Research projects</li>
+                    </ul>
+                </div>
+                
+                <div class="form-card" style="border-left: 4px solid #FF9800;">
+                    <h3 style="color: #FF9800;">🔄 For Okay Students</h3>
+                    <ul style="margin-top: var(--spacing-md); padding-left: 1.5rem;">
+                        <li>Additional practice</li>
+                        <li>Small group discussions</li>
+                        <li>Concept reviews</li>
+                        <li>Study buddy pairing</li>
+                    </ul>
+                </div>
+                
+                <div class="form-card" style="border-left: 4px solid #f44336;">
+                    <h3 style="color: #f44336;">💝 For Struggling Students</h3>
+                    <ul style="margin-align: var(--spacing-md); padding-left: 1.5rem;">
+                        <li>One-on-one support</li>
+                        <li>Simplified materials</li>
+                        <li>Frequent checkpoints</li>
+                        <li>Positive reinforcement</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
       <!-- Challenges Section -->
 <div id="challenges" class="dashboard-content" style="grid-column: span 12; display: none;">
@@ -6936,6 +7197,11 @@ async function initializeTeacher() {
     setTimeout(() => {
         initializeChallenges();
     }, 1000);
+
+   initializeCheckInSystem();
+    
+    // Load check-in data for current class
+    loadCheckInDataForClass();
 }
 
 async function loadClassesFromFirebase() {
@@ -7129,6 +7395,8 @@ async function switchClass(classIndex) {
 
     showNotification(`Switched to ${teacherClasses[classIndex].name}`, "success");
   }
+  // Load check-in data for new class
+loadCheckInDataForClass();
 }
 
 function showCreateClassModal() {
@@ -8474,6 +8742,7 @@ function renderAllData() {
   renderResources();
   renderPolls();
   renderLiveActivity();
+  const checkinStats = addCheckinStatsToDashboard();
 }
 
 function renderStudents() {
@@ -10182,6 +10451,7 @@ function updateUI() {
   }
   // Update the streak chain
     updateClassStreakChain();
+    const checkinStats = addCheckinStatsToDashboard();
 }
 
 
@@ -18226,6 +18496,1752 @@ function refreshMemoryWall() {
 
 // Update the showSection function to handle memory wall navigation
 
+
+
+
+// ========== QUICK CHECK-IN SYSTEM ==========
+let checkinData = {
+    confident: 12,
+    okay: 8,
+    struggling: 4,
+    lastUpdated: null
+};
+
+// Initialize check-in system
+function initializeCheckInSystem() {
+    console.log("😊 Initializing Quick Check-in System...");
+    
+    // Load check-in data from localStorage
+    if (currentClassCode) {
+        loadCheckInData();
+    }
+}
+
+// Load check-in data from localStorage or Firebase
+function loadCheckInData() {
+    if (!currentClassCode) return;
+    
+    try {
+        const saved = localStorage.getItem(`teacher_checkins_${currentClassCode}`);
+        if (saved) {
+            const data = JSON.parse(saved);
+            checkinData = {
+                confident: data.confident || 0,
+                okay: data.okay || 0,
+                struggling: data.struggling || 0,
+                lastUpdated: data.lastUpdated || null
+            };
+        }
+    } catch (error) {
+        console.error("Error loading check-in data:", error);
+    }
+    
+    // Update UI if we're on the check-in section
+    updateCheckInUI();
+}
+
+// Save check-in data
+function saveCheckInData() {
+    if (!currentClassCode) return;
+    
+    checkinData.lastUpdated = new Date().toISOString();
+    
+    try {
+        localStorage.setItem(`teacher_checkins_${currentClassCode}`, JSON.stringify(checkinData));
+        
+        // Also save to Firebase if not in demo mode
+        if (!isDemoMode && teacherId) {
+            database.ref(`classCheckins/${currentClassCode}`).set(checkinData)
+                .catch(error => console.error("Error saving to Firebase:", error));
+        }
+    } catch (error) {
+        console.error("Error saving check-in data:", error);
+    }
+}
+
+// Update check-in UI
+function updateCheckInUI() {
+    if (!document.getElementById('confidentCount')) return;
+    
+    // Update counts
+    document.getElementById('confidentCount').textContent = checkinData.confident;
+    document.getElementById('okayCount').textContent = checkinData.okay;
+    document.getElementById('strugglingCount').textContent = checkinData.struggling;
+    
+    const total = checkinData.confident + checkinData.okay + checkinData.struggling;
+    document.getElementById('totalResponses').textContent = total;
+    
+    // Update percentages
+    const confidentPercent = total > 0 ? Math.round((checkinData.confident / total) * 100) : 0;
+    const okayPercent = total > 0 ? Math.round((checkinData.okay / total) * 100) : 0;
+    const strugglingPercent = total > 0 ? Math.round((checkinData.struggling / total) * 100) : 0;
+    
+    document.getElementById('confidentPercent').textContent = confidentPercent + '%';
+    document.getElementById('okayPercent').textContent = okayPercent + '%';
+    document.getElementById('strugglingPercent').textContent = strugglingPercent + '%';
+    
+    // Update class code display
+    if (currentClassCode) {
+        document.getElementById('checkinClassCode').textContent = currentClassCode;
+        document.getElementById('studentCheckinLink').textContent = 
+            `https://mairakhancontact-sudo.github.io/studentmode?checkin=${currentClassCode}`;
+    }
+    
+    // Update chart bars
+    updateCheckInChart();
+}
+
+// Update the visual chart
+function updateCheckInChart() {
+    const chartBars = document.querySelector('.chart-bars');
+    if (!chartBars) return;
+    
+    const total = checkinData.confident + checkinData.okay + checkinData.struggling;
+    
+    // Clear existing bars
+    chartBars.innerHTML = '';
+    
+    // Create bars
+    const emotions = [
+        { type: 'confident', count: checkinData.confident, color: '#4CAF50' },
+        { type: 'okay', count: checkinData.okay, color: '#FF9800' },
+        { type: 'struggling', count: checkinData.struggling, color: '#f44336' }
+    ];
+    
+    const maxCount = Math.max(checkinData.confident, checkinData.okay, checkinData.struggling) || 1;
+    
+    emotions.forEach(emotion => {
+        const height = (emotion.count / maxCount) * 150; // Max 150px height
+        const percentage = total > 0 ? Math.round((emotion.count / total) * 100) : 0;
+        
+        const bar = document.createElement('div');
+        bar.className = 'chart-bar';
+        bar.style.cssText = `
+            width: 80px;
+            height: ${height}px;
+            background: ${emotion.color};
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            cursor: pointer;
+            transition: height 0.5s ease;
+        `;
+        
+        // Tooltip with count
+        bar.innerHTML = `
+            <div style="position: absolute; top: -25px; left: 0; right: 0; text-align: center; font-weight: 600; color: ${emotion.color};">
+                ${emotion.count}
+            </div>
+            <div style="position: absolute; bottom: -25px; left: 0; right: 0; text-align: center; font-size: 0.875rem; font-weight: 600; color: var(--text);">
+                ${percentage}%
+            </div>
+        `;
+        
+        bar.onclick = () => showEmotionDetails(emotion.type);
+        chartBars.appendChild(bar);
+    });
+}
+
+// Show details for a specific emotion
+function showEmotionDetails(emotionType) {
+    let title = '';
+    let description = '';
+    let suggestions = [];
+    
+    switch(emotionType) {
+        case 'confident':
+            title = '😊 Confident Students';
+            description = 'These students are feeling confident about the material.';
+            suggestions = [
+                'Provide extension activities',
+                'Assign advanced problems',
+                'Offer peer teaching opportunities',
+                'Encourage independent research'
+            ];
+            break;
+        case 'okay':
+            title = '😐 Okay Students';
+            description = 'These students are keeping up but could use additional support.';
+            suggestions = [
+                'Offer additional practice problems',
+                'Facilitate small group discussions',
+                'Provide concept review sessions',
+                'Pair with study buddies'
+            ];
+            break;
+        case 'struggling':
+            title = '😕 Struggling Students';
+            description = 'These students need additional support to understand the material.';
+            suggestions = [
+                'Schedule one-on-one sessions',
+                'Provide simplified learning materials',
+                'Create frequent progress checkpoints',
+                'Offer positive reinforcement'
+            ];
+            break;
+    }
+    
+    showNotification(`There are ${checkinData[emotionType]} students feeling this way.`, "info");
+    
+    // Create a popup with detailed suggestions
+    const modalContent = `
+        <div style="padding: var(--spacing-lg);">
+            <h2 style="margin-bottom: var(--spacing-md);">${title}</h2>
+            <p style="margin-bottom: var(--spacing-lg); color: var(--text-muted);">${description}</p>
+            
+            <h3 style="margin-bottom: var(--spacing-sm);">💡 Suggested Actions:</h3>
+            <ul style="margin-left: 1.5rem; line-height: 2;">
+                ${suggestions.map(s => `<li>${s}</li>`).join('')}
+            </ul>
+        </div>
+    `;
+    
+    showCustomModal(title, modalContent);
+}
+
+// Trigger a new check-in
+function triggerQuickCheckIn() {
+    if (!currentClassCode) {
+        showNotification("Please select a class first", "error");
+        return;
+    }
+    
+    // Reset counts for new check-in
+    checkinData = {
+        confident: 0,
+        okay: 0,
+        struggling: 0,
+        lastUpdated: null
+    };
+    
+    saveCheckInData();
+    updateCheckInUI();
+    
+    // Notify students (in a real app, this would push to Firebase)
+    if (!isDemoMode) {
+        postSystemAnnouncement(
+            "📝 Quick Check-in Time!",
+            "How are you feeling about today's lesson? Click the emoji that matches your mood: 😊 Confident | 😐 Okay | 😕 Struggling"
+        );
+    }
+    
+    showNotification("✅ New check-in initiated! Ask students to submit their feelings.", "success");
+}
+
+// Copy check-in link for students
+function copyCheckinLink() {
+    if (!currentClassCode) {
+        showNotification("Please select a class first", "error");
+        return;
+    }
+    
+    const link = `https://mairakhancontact-sudo.github.io/studentmode?checkin=${currentClassCode}`;
+    navigator.clipboard.writeText(link).then(() => {
+        showNotification("✅ Check-in link copied to clipboard! Share this with students.", "success");
+    }).catch(() => {
+        showNotification("❌ Failed to copy link", "error");
+    });
+}
+
+// Manual update for demo purposes
+function updateCheckinCounts(confident, okay, struggling) {
+    checkinData.confident = confident || 0;
+    checkinData.okay = okay || 0;
+    checkinData.struggling = struggling || 0;
+    
+    saveCheckInData();
+    updateCheckInUI();
+    
+    showNotification("✅ Check-in counts updated", "success");
+}
+
+// Add a quick stats card to dashboard
+function addCheckinStatsToDashboard() {
+    // This can be called to add a small check-in stats card to the main dashboard
+    const total = checkinData.confident + checkinData.okay + checkinData.struggling;
+    
+    return `
+        <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); cursor: pointer;" onclick="showSection('checkins')">
+            <div class="stat-icon">😊</div>
+            <div class="stat-content">
+                <div class="stat-number">${total}</div>
+                <div class="stat-label">Check-in Responses</div>
+                <div style="font-size: 0.75rem; opacity: 0.8; margin-top: 4px;">
+                    ${checkinData.confident} 😊 | ${checkinData.okay} 😐 | ${checkinData.struggling} 😕
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Helper function for custom modal
+function showCustomModal(title, content) {
+    // Remove existing modal if any
+    const existingModal = document.getElementById('customModal');
+    if (existingModal) {
+        document.body.removeChild(existingModal);
+    }
+    
+    const modal = document.createElement('div');
+    modal.id = 'customModal';
+    modal.className = 'modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    `;
+    
+    modal.innerHTML = `
+        <div class="modal-content" style="background: var(--card); border-radius: var(--radius-lg); max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <div style="position: sticky; top: 0; background: var(--card); padding: var(--spacing-lg); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                <h3>${title}</h3>
+                <button onclick="document.body.removeChild(document.getElementById('customModal'))" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">
+                    ×
+                </button>
+            </div>
+            ${content}
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+// Call this when switching classes
+function loadCheckInDataForClass() {
+    if (currentClassCode) {
+        loadCheckInData();
+    }
+}
+
+
+
+
+
+// ========== QUICK CHECK-IN SYSTEM ==========
+let currentCheckinSession = null;
+let checkinTimer = null;
+let sessionStartTime = null;
+let liveCheckinListener = null;
+
+// Initialize check-in system
+function initializeCheckInSystem() {
+    console.log("😊 Initializing Quick Check-in System...");
+    
+    // Load any active session
+    if (currentClassCode) {
+        checkForActiveSessions();
+    }
+}
+
+// Check for active sessions
+async function checkForActiveSessions() {
+    if (!currentClassCode || isDemoMode) return;
+    
+    try {
+        const sessionsRef = database.ref('checkinSessions');
+        const snapshot = await sessionsRef.orderByChild('classCode').equalTo(currentClassCode).once('value');
+        
+        if (snapshot.exists()) {
+            snapshot.forEach(child => {
+                const session = child.val();
+                if (session.isActive && session.teacherId === teacherId) {
+                    currentCheckinSession = {
+                        code: child.key,
+                        ...session
+                    };
+                    startSessionTimer();
+                    setupRealtimeCheckinListener();
+                    updateSessionUI();
+                    console.log(`✅ Resumed active check-in session: ${currentCheckinSession.code}`);
+                }
+            });
+        }
+    } catch (error) {
+        console.error("Error checking for active sessions:", error);
+    }
+}
+
+// Start a live check-in session
+async function startLiveCheckInSession() {
+    if (!currentClassCode) {
+        showNotification("Please select a class first", "error");
+        return;
+    }
+    
+    // End any existing session
+    if (currentCheckinSession) {
+        await endCheckInSession();
+    }
+    
+    // Generate session code
+    const sessionCode = generateSessionCode();
+    
+    currentCheckinSession = {
+        code: sessionCode,
+        classCode: currentClassCode,
+        className: teacherClasses.find(c => c.code === currentClassCode)?.name || "Class",
+        teacherId: teacherId,
+        teacherName: teacherName,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        counts: {
+            confident: 0,
+            okay: 0,
+            struggling: 0
+        },
+        totalResponses: 0,
+        lastUpdated: new Date().toISOString()
+    };
+    
+    sessionStartTime = new Date();
+    
+    try {
+        // Save to Firebase
+        await database.ref(`checkinSessions/${sessionCode}`).set(currentCheckinSession);
+        
+        // Update UI
+        updateSessionUI();
+        
+        // Start timer
+        startSessionTimer();
+        
+        // Setup real-time listener
+        setupRealtimeCheckinListener();
+        
+        // Create system announcement
+        const checkinLink = `${window.location.origin}/student_checkin.html?session=${sessionCode}`;
+        postSystemAnnouncement(
+            "📝 Live Quick Check-in Started!",
+            `How are you feeling about today's lesson? Click this link to check in anonymously: ${checkinLink}`
+        );
+        
+        showNotification(`✅ Live check-in started! Share the link with students.`, "success");
+        
+    } catch (error) {
+        console.error("Error starting check-in session:", error);
+        showNotification("Failed to start check-in session: " + error.message, "error");
+    }
+}
+
+// Generate a session code
+function generateSessionCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+}
+
+// Update session UI
+function updateSessionUI() {
+    if (!currentCheckinSession) {
+        document.getElementById('sessionStatusText').textContent = "Not Active";
+        document.getElementById('sessionCodeDisplay').textContent = "------";
+        document.getElementById('studentCheckinLink').value = "Start a live session to get a link";
+        document.getElementById('sessionTimer').textContent = "0:00";
+        
+        // Hide QR code
+        document.getElementById('qrCodeContainer').style.display = 'none';
+        return;
+    }
+    
+    document.getElementById('sessionStatusText').textContent = "Active ✓";
+    document.getElementById('sessionCodeDisplay').textContent = currentCheckinSession.code;
+    
+    // Generate the check-in link
+    const checkinLink = `${window.location.origin}/student_checkin.html?session=${currentCheckinSession.code}`;
+    document.getElementById('studentCheckinLink').value = checkinLink;
+    
+    // Update counts
+    updateCheckInCountsUI();
+    
+    // Generate QR code
+    generateQRCode(checkinLink);
+}
+
+// Generate QR Code
+function generateQRCode(url) {
+    const container = document.getElementById('qrcode');
+    if (!container) return;
+    
+    // Clear previous QR code
+    container.innerHTML = '';
+    
+    // Create QR code using a free service
+    const qrSize = 150;
+    container.style.width = qrSize + 'px';
+    container.style.height = qrSize + 'px';
+    container.style.margin = '0 auto';
+    container.style.background = 'white';
+    container.style.padding = '10px';
+    container.style.borderRadius = '8px';
+    
+    // Create QR code image
+    const qrImg = document.createElement('img');
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(url)}`;
+    qrImg.alt = 'QR Code for check-in';
+    qrImg.style.width = '100%';
+    qrImg.style.height = '100%';
+    
+    container.appendChild(qrImg);
+}
+
+// Show/Hide QR Code
+function showQRCode() {
+    const qrContainer = document.getElementById('qrCodeContainer');
+    if (!qrContainer) return;
+    
+    const linkInput = document.getElementById('studentCheckinLink');
+    if (!linkInput.value || linkInput.value === "Start a live session to get a link") {
+        showNotification("Start a live session first to generate QR code", "warning");
+        return;
+    }
+    
+    if (qrContainer.style.display === 'none') {
+        qrContainer.style.display = 'block';
+    } else {
+        qrContainer.style.display = 'none';
+    }
+}
+
+// Update check-in counts UI
+function updateCheckInCountsUI() {
+    if (!currentCheckinSession) return;
+    
+    const counts = currentCheckinSession.counts || { confident: 0, okay: 0, struggling: 0 };
+    const total = currentCheckinSession.totalResponses || 0;
+    
+    // Update numbers
+    document.getElementById('confidentCount').textContent = counts.confident;
+    document.getElementById('okayCount').textContent = counts.okay;
+    document.getElementById('strugglingCount').textContent = counts.struggling;
+    document.getElementById('totalResponses').textContent = total;
+    
+    // Update percentages
+    const confidentPercent = total > 0 ? Math.round((counts.confident / total) * 100) : 0;
+    const okayPercent = total > 0 ? Math.round((counts.okay / total) * 100) : 0;
+    const strugglingPercent = total > 0 ? Math.round((counts.struggling / total) * 100) : 0;
+    
+    document.getElementById('confidentPercent').textContent = confidentPercent + '%';
+    document.getElementById('okayPercent').textContent = okayPercent + '%';
+    document.getElementById('strugglingPercent').textContent = strugglingPercent + '%';
+    
+    // Update last updated time
+    if (currentCheckinSession.lastUpdated) {
+        const lastUpdated = new Date(currentCheckinSession.lastUpdated);
+        const now = new Date();
+        const diffMinutes = Math.floor((now - lastUpdated) / 60000);
+        
+        if (diffMinutes < 1) {
+            document.getElementById('lastUpdateTime').textContent = "Just now";
+        } else if (diffMinutes < 60) {
+            document.getElementById('lastUpdateTime').textContent = `${diffMinutes}m ago`;
+        } else {
+            document.getElementById('lastUpdateTime').textContent = `${Math.floor(diffMinutes/60)}h ago`;
+        }
+    }
+    
+    // Update chart
+    updateCheckInChart();
+    
+    // Load recent responses
+    loadRecentCheckins();
+}
+
+// Update the visual chart
+function updateCheckInChart() {
+    const chartContainer = document.getElementById('checkinChart');
+    if (!chartContainer || !currentCheckinSession) return;
+    
+    const counts = currentCheckinSession.counts || { confident: 0, okay: 0, struggling: 0 };
+    const maxCount = Math.max(counts.confident, counts.okay, counts.struggling) || 1;
+    
+    chartContainer.innerHTML = '';
+    
+    const emotions = [
+        { type: 'confident', count: counts.confident, color: '#4CAF50', emoji: '😊' },
+        { type: 'okay', count: counts.okay, color: '#FF9800', emoji: '😐' },
+        { type: 'struggling', count: counts.struggling, color: '#f44336', emoji: '😕' }
+    ];
+    
+    emotions.forEach(emotion => {
+        const height = (emotion.count / maxCount) * 150;
+        
+        const barContainer = document.createElement('div');
+        barContainer.style.cssText = `
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        `;
+        
+        const bar = document.createElement('div');
+        bar.style.cssText = `
+            width: 60px;
+            height: ${height}px;
+            background: ${emotion.color};
+            border-radius: 8px 8px 0 0;
+            transition: height 0.5s ease;
+            cursor: pointer;
+        `;
+        
+        bar.onclick = () => showEmotionDetails(emotion.type);
+        
+        const label = document.createElement('div');
+        label.style.cssText = `
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        `;
+        label.innerHTML = `
+            <div style="font-size: 1.5rem;">${emotion.emoji}</div>
+            <div style="font-weight: 600;">${emotion.count}</div>
+            <div style="font-size: 0.875rem; color: var(--text-muted); text-transform: capitalize;">${emotion.type}</div>
+        `;
+        
+        barContainer.appendChild(bar);
+        barContainer.appendChild(label);
+        chartContainer.appendChild(barContainer);
+    });
+}
+
+// Load recent check-ins
+async function loadRecentCheckins() {
+    const container = document.getElementById('recentCheckins');
+    if (!container || !currentCheckinSession) return;
+    
+    try {
+        const responsesRef = database.ref(`checkinSessions/${currentCheckinSession.code}/responses`);
+        const snapshot = await responsesRef.orderByChild('timestamp').limitToLast(10).once('value');
+        
+        container.innerHTML = '';
+        
+        if (!snapshot.exists()) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: var(--spacing-xl); color: var(--text-muted);">
+                    No check-ins yet. Share the link with students!
+                </div>
+            `;
+            return;
+        }
+        
+        const responses = [];
+        snapshot.forEach(child => {
+            responses.push({
+                id: child.key,
+                ...child.val()
+            });
+        });
+        
+        // Sort by timestamp (newest first)
+        responses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        responses.forEach(response => {
+            const time = new Date(response.timestamp);
+            const timeStr = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const emotionEmoji = {
+                confident: '😊',
+                okay: '😐',
+                struggling: '😕'
+            }[response.emotion] || '😶';
+            
+            const emotionColor = {
+                confident: '#4CAF50',
+                okay: '#FF9800',
+                struggling: '#f44336'
+            }[response.emotion] || '#666';
+            
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: var(--spacing-md);
+                padding: var(--spacing-md);
+                background: var(--bg);
+                border-radius: var(--radius);
+                margin-bottom: var(--spacing-sm);
+            `;
+            
+            item.innerHTML = `
+                <div style="font-size: 1.5rem;">${emotionEmoji}</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; color: ${emotionColor};">${response.emotion.charAt(0).toUpperCase() + response.emotion.slice(1)}</div>
+                    ${response.comment ? `<div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 4px;">"${response.comment}"</div>` : ''}
+                </div>
+                <div style="font-size: 0.875rem; color: var(--text-muted);">${timeStr}</div>
+            `;
+            
+            container.appendChild(item);
+        });
+        
+    } catch (error) {
+        console.error("Error loading recent check-ins:", error);
+    }
+}
+
+// Setup real-time listener for check-in updates
+function setupRealtimeCheckinListener() {
+    if (!currentCheckinSession || liveCheckinListener) {
+        return;
+    }
+    
+    try {
+        const sessionRef = database.ref(`checkinSessions/${currentCheckinSession.code}`);
+        
+        liveCheckinListener = sessionRef.on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const sessionData = snapshot.val();
+                currentCheckinSession = {
+                    code: snapshot.key,
+                    ...sessionData
+                };
+                
+                updateCheckInCountsUI();
+                
+                // If session is no longer active, clean up
+                if (!sessionData.isActive) {
+                    endCheckInSession();
+                }
+            }
+        });
+        
+        console.log(`✅ Listening for real-time check-in updates on session ${currentCheckinSession.code}`);
+        
+    } catch (error) {
+        console.error("Error setting up real-time listener:", error);
+    }
+}
+
+// Start session timer
+function startSessionTimer() {
+    if (checkinTimer) {
+        clearInterval(checkinTimer);
+    }
+    
+    if (!sessionStartTime) {
+        sessionStartTime = new Date();
+    }
+    
+    checkinTimer = setInterval(() => {
+        if (!sessionStartTime) return;
+        
+        const now = new Date();
+        const diff = Math.floor((now - sessionStartTime) / 1000);
+        const minutes = Math.floor(diff / 60);
+        const seconds = diff % 60;
+        
+        document.getElementById('sessionTimer').textContent = 
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
+}
+
+// End check-in session
+async function endCheckInSession() {
+    if (!currentCheckinSession) return;
+    
+    try {
+        // Mark as inactive in Firebase
+        await database.ref(`checkinSessions/${currentCheckinSession.code}/isActive`).set(false);
+        
+        // Clean up
+        if (liveCheckinListener) {
+            const sessionRef = database.ref(`checkinSessions/${currentCheckinSession.code}`);
+            sessionRef.off('value', liveCheckinListener);
+            liveCheckinListener = null;
+        }
+        
+        if (checkinTimer) {
+            clearInterval(checkinTimer);
+            checkinTimer = null;
+        }
+        
+        console.log(`✅ Ended check-in session: ${currentCheckinSession.code}`);
+        
+        // Create summary announcement
+        const counts = currentCheckinSession.counts || { confident: 0, okay: 0, struggling: 0 };
+        const total = currentCheckinSession.totalResponses || 0;
+        
+        if (total > 0) {
+            postSystemAnnouncement(
+                "📊 Check-in Session Complete",
+                `Check-in results: 😊 ${counts.confident} confident | 😐 ${counts.okay} okay | 😕 ${counts.struggling} struggling. Thank you for participating!`
+            );
+        }
+        
+        // Reset
+        currentCheckinSession = null;
+        sessionStartTime = null;
+        updateSessionUI();
+        
+        showNotification("Check-in session ended successfully", "success");
+        
+    } catch (error) {
+        console.error("Error ending check-in session:", error);
+    }
+}
+
+// Reset check-in data
+function resetCheckInData() {
+    if (confirm("Reset all check-in data for this session? This cannot be undone.")) {
+        if (currentCheckinSession) {
+            endCheckInSession();
+        }
+        
+        // Reset UI
+        document.getElementById('confidentCount').textContent = "0";
+        document.getElementById('okayCount').textContent = "0";
+        document.getElementById('strugglingCount').textContent = "0";
+        document.getElementById('totalResponses').textContent = "0";
+        document.getElementById('confidentPercent').textContent = "0%";
+        document.getElementById('okayPercent').textContent = "0%";
+        document.getElementById('strugglingPercent').textContent = "0%";
+        document.getElementById('lastUpdateTime').textContent = "Just now";
+        
+        const chartContainer = document.getElementById('checkinChart');
+        if (chartContainer) {
+            chartContainer.innerHTML = '';
+        }
+        
+        const recentContainer = document.getElementById('recentCheckins');
+        if (recentContainer) {
+            recentContainer.innerHTML = `
+                <div style="text-align: center; padding: var(--spacing-xl); color: var(--text-muted);">
+                    No check-ins yet. Start a live session and share the link with students!
+                </div>
+            `;
+        }
+        
+        showNotification("Check-in data reset", "success");
+    }
+}
+
+// Copy check-in link to clipboard
+function copyCheckinLink() {
+    const linkInput = document.getElementById('studentCheckinLink');
+    
+    if (!linkInput.value || linkInput.value === "Start a live session to get a link") {
+        showNotification("Start a live session first to get a link", "warning");
+        return;
+    }
+    
+    linkInput.select();
+    linkInput.setSelectionRange(0, 99999); // For mobile
+    
+    try {
+        navigator.clipboard.writeText(linkInput.value).then(() => {
+            showNotification("✅ Check-in link copied to clipboard! Share with students.", "success");
+        });
+    } catch (error) {
+        // Fallback for older browsers
+        document.execCommand('copy');
+        showNotification("✅ Link copied to clipboard!", "success");
+    }
+}
+
+// Show emotion details
+function showEmotionDetails(emotionType) {
+    if (!currentCheckinSession) return;
+    
+    const count = currentCheckinSession.counts?.[emotionType] || 0;
+    const total = currentCheckinSession.totalResponses || 0;
+    const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+    
+    const details = {
+        confident: {
+            title: "😊 Confident Students",
+            description: `${count} students (${percentage}%) feel confident about the material.`,
+            suggestions: [
+                "Assign extension activities or advanced problems",
+                "Offer peer teaching opportunities",
+                "Provide independent research projects",
+                "Use as classroom helpers for struggling peers"
+            ]
+        },
+        okay: {
+            title: "😐 Okay Students",
+            description: `${count} students (${percentage}%) are keeping up but may have questions.`,
+            suggestions: [
+                "Provide additional practice problems",
+                "Facilitate small group discussions",
+                "Schedule concept review sessions",
+                "Pair with study buddies"
+            ]
+        },
+        struggling: {
+            title: "😕 Struggling Students",
+            description: `${count} students (${percentage}%) need additional support.`,
+            suggestions: [
+                "Schedule one-on-one support sessions",
+                "Provide simplified learning materials",
+                "Create frequent progress checkpoints",
+                "Offer positive reinforcement and encouragement"
+            ]
+        }
+    };
+    
+    const detail = details[emotionType];
+    
+    // Create modal
+    const modalContent = `
+        <div style="padding: var(--spacing-lg); max-width: 500px;">
+            <h2 style="margin-bottom: var(--spacing-md);">${detail.title}</h2>
+            <p style="margin-bottom: var(--spacing-lg); padding: var(--spacing-md); background: var(--bg); border-radius: var(--radius);">
+                ${detail.description}
+            </p>
+            
+            <h3 style="margin-bottom: var(--spacing-sm);">💡 Suggested Actions:</h3>
+            <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                ${detail.suggestions.map(s => `<li>${s}</li>`).join('')}
+            </ul>
+            
+            <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-xl);">
+                <button onclick="hideCustomModal()" class="btn btn-secondary" style="flex: 1;">
+                    Close
+                </button>
+                <button onclick="takeActionForEmotion('${emotionType}')" class="btn btn-primary" style="flex: 1;">
+                    Take Action
+                </button>
+            </div>
+        </div>
+    `;
+    
+    showCustomModal(detail.title, modalContent);
+}
+
+// Helper function to show custom modal
+function showCustomModal(title, content) {
+    // Remove existing modal if any
+    const existingModal = document.getElementById('customCheckinModal');
+    if (existingModal) {
+        document.body.removeChild(existingModal);
+    }
+    
+    const modal = document.createElement('div');
+    modal.id = 'customCheckinModal';
+    modal.className = 'modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    `;
+    
+    modal.innerHTML = `
+        <div class="modal-content" style="background: var(--card); border-radius: var(--radius-lg); max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            ${content}
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Close on outside click
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            hideCustomModal();
+        }
+    };
+}
+
+function hideCustomModal() {
+    const modal = document.getElementById('customCheckinModal');
+    if (modal) {
+        document.body.removeChild(modal);
+    }
+}
+
+// Take action for emotion group
+function takeActionForEmotion(emotionType) {
+    const actions = {
+        confident: "Assign extension activities to challenge confident students.",
+        okay: "Prepare additional practice materials for students who are just keeping up.",
+        struggling: "Plan one-on-one sessions for struggling students."
+    };
+    
+    postSystemAnnouncement(
+        "🎯 Action Item: Supporting Students",
+        actions[emotionType] + " Based on today's check-in results."
+    );
+    
+    hideCustomModal();
+    showNotification("Action item created in announcements!", "success");
+}
+
+// Call this when switching classes
+function loadCheckInDataForClass() {
+    if (currentClassCode) {
+        checkForActiveSessions();
+    }
+}
+
+
+
+
+
+
+// ========== SESSION PERSISTENCE FUNCTIONS ==========
+function saveCheckinSessionState() {
+    if (sessionCode && sessionData) {
+        const sessionState = {
+            sessionCode: sessionCode,
+            sessionData: sessionData,
+            selectedEmotion: selectedEmotion,
+            checkinFormVisible: document.getElementById('checkinForm').style.display === 'block',
+            timestamp: new Date().toISOString()
+        };
+        localStorage.setItem('active_checkin_session', JSON.stringify(sessionState));
+        console.log("💾 Check-in session state saved");
+    }
+}
+
+function loadCheckinSessionState() {
+    try {
+        const savedState = localStorage.getItem('active_checkin_session');
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            
+            // Check if session is still valid (less than 1 hour old)
+            const savedTime = new Date(state.timestamp);
+            const now = new Date();
+            const hoursDiff = (now - savedTime) / (1000 * 60 * 60);
+            
+            if (hoursDiff < 1) { // Session valid for 1 hour
+                sessionCode = state.sessionCode;
+                sessionData = state.sessionData;
+                selectedEmotion = state.selectedEmotion;
+                
+                console.log("📂 Loaded active check-in session from localStorage:", sessionCode);
+                return true;
+            } else {
+                console.log("❌ Saved session expired, clearing...");
+                clearCheckinSessionState();
+            }
+        }
+    } catch (error) {
+        console.error("Error loading check-in session state:", error);
+        clearCheckinSessionState();
+    }
+    return false;
+}
+
+function clearCheckinSessionState() {
+    localStorage.removeItem('active_checkin_session');
+    sessionCode = null;
+    sessionData = null;
+    selectedEmotion = null;
+}
+
+// ========== UPDATE INITIALIZATION ==========
+async function initializeApp() {
+    console.log("📱 Initializing application...");
+    
+    try {
+        // Initialize Firebase
+        const firebaseInitialized = await initializeFirebase();
+        
+        if (!firebaseInitialized) {
+            showError("Failed to initialize check-in system. Please refresh the page.");
+            return false;
+        }
+        
+        // FIRST: Check if we have an active check-in session
+        const hasActiveSession = loadCheckinSessionState();
+        
+        // Check URL for session code (only if no active session)
+        if (!hasActiveSession) {
+            checkUrlForSession();
+        }
+        
+        // Setup event listeners
+        setupEventListeners();
+        
+        // Setup periodic sync
+        setupPeriodicSync();
+        
+        // If we have an active session, restore it
+        if (hasActiveSession) {
+            await restoreActiveCheckinSession();
+        }
+        
+        console.log("✅ Application initialization complete");
+        return true;
+        
+    } catch (error) {
+        console.error("❌ Application initialization failed:", error);
+        showError("Failed to initialize application. Please refresh the page.");
+        return false;
+    }
+}
+
+async function restoreActiveCheckinSession() {
+    if (!sessionCode || !sessionData) return;
+    
+    console.log("🔄 Restoring active check-in session...");
+    showLoading("Restoring your check-in session...");
+    
+    try {
+        // Verify session still exists and is active
+        const sessionRef = database.ref(`checkinSessions/${sessionCode}`);
+        const snapshot = await sessionRef.once('value');
+        
+        if (!snapshot.exists()) {
+            console.log("Session no longer exists");
+            clearCheckinSessionState();
+            hideLoading();
+            showError("The check-in session has ended.");
+            return;
+        }
+        
+        const currentSessionData = snapshot.val();
+        if (!currentSessionData.isActive) {
+            console.log("Session is no longer active");
+            clearCheckinSessionState();
+            hideLoading();
+            showError("This check-in session has ended.");
+            return;
+        }
+        
+        // Check if user has already submitted
+        const userId = getUserId();
+        const hasSubmittedLocal = localStorage.getItem(`has_submitted_${sessionCode}`);
+        
+        if (hasSubmittedLocal === 'true') {
+            console.log("User already submitted for this session");
+            showAlreadySubmittedView();
+            hideLoading();
+            return;
+        }
+        
+        // Show check-in form with restored data
+        showCheckinForm();
+        
+        // Restore selected emotion if any
+        if (selectedEmotion) {
+            selectEmotion(selectedEmotion);
+        }
+        
+        hideLoading();
+        showSuccess("Your check-in session has been restored!");
+        console.log("✅ Check-in session restored successfully");
+        
+    } catch (error) {
+        console.error("Error restoring session:", error);
+        clearCheckinSessionState();
+        hideLoading();
+        showError("Could not restore check-in session. Please rejoin.");
+    }
+}
+
+// ========== UPDATE JOIN SESSION ==========
+async function joinSession() {
+    const inputCode = document.getElementById('sessionCodeInput').value.trim().toUpperCase();
+    
+    if (!inputCode || inputCode.length !== 6) {
+        showError("Please enter a valid 6-digit session code");
+        return;
+    }
+    
+    // Clear any previous session state
+    clearCheckinSessionState();
+    
+    sessionCode = inputCode;
+    showLoading("Checking session...");
+    
+    try {
+        console.log(`🔍 Checking session: ${sessionCode}`);
+        
+        // Ensure Firebase is initialized
+        if (!database) {
+            console.log("Database not initialized, initializing...");
+            await initializeFirebase();
+        }
+        
+        if (!database) {
+            throw new Error("Failed to initialize database");
+        }
+        
+        // Check if session exists
+        const sessionRef = database.ref(`checkinSessions/${sessionCode}`);
+        const snapshot = await sessionRef.once('value');
+        
+        console.log("Session snapshot exists:", snapshot.exists());
+        
+        hideLoading();
+        
+        if (!snapshot.exists()) {
+            showError(`Session "${sessionCode}" not found. Please check with your teacher.`);
+            return;
+        }
+        
+        sessionData = snapshot.val();
+        
+        // Check if session is active
+        if (!sessionData.isActive) {
+            showError("This check-in session has ended. Please ask your teacher to start a new one.");
+            return;
+        }
+        
+        // Save session state immediately
+        saveCheckinSessionState();
+        
+        // Get user ID
+        const userId = getUserId();
+        console.log("Checking for user ID:", userId);
+        
+        // Check if already submitted for this session
+        const hasSubmittedLocal = localStorage.getItem(`has_submitted_${sessionCode}`);
+        if (hasSubmittedLocal === 'true') {
+            console.log("Already submitted (local storage flag)");
+            showAlreadySubmittedView();
+            return;
+        }
+        
+        // Then check Firebase for this user's submissions
+        try {
+            const responsesRef = database.ref(`checkinSessions/${sessionCode}/responses`);
+            const responsesSnapshot = await responsesRef.once('value');
+            
+            if (responsesSnapshot.exists()) {
+                let foundSubmission = false;
+                responsesSnapshot.forEach(child => {
+                    const response = child.val();
+                    if (response && response.userId === userId) {
+                        foundSubmission = true;
+                        console.log("Found existing submission in Firebase for userId:", userId);
+                    }
+                });
+                
+                if (foundSubmission) {
+                    // Set flag in localStorage
+                    localStorage.setItem(`has_submitted_${sessionCode}`, 'true');
+                    showAlreadySubmittedView();
+                    return;
+                }
+            }
+        } catch (error) {
+            console.log("Could not check Firebase submissions:", error);
+            // Continue anyway
+        }
+        
+        // Show check-in form
+        showCheckinForm();
+        
+    } catch (error) {
+        hideLoading();
+        console.error("❌ Error joining session:", error);
+        showError(`Connection error: ${error.message}. Please check with your teacher.`);
+    }
+}
+
+// ========== UPDATE SUBMIT CHECKIN ==========
+async function submitCheckin() {
+    if (!selectedEmotion || !sessionCode) {
+        showError("Please select how you're feeling first.");
+        return;
+    }
+    
+    const comment = document.getElementById('commentInput').value.trim();
+    const userId = getUserId();
+    const timestamp = new Date().toISOString();
+    
+    showLoading("Submitting your response...");
+    
+    console.log("📤 Submitting response for user:", userId);
+    
+    try {
+        // Generate a unique response ID
+        const responseId = `response_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        
+        // Direct Firebase REST API call
+        const responseUrl = `https://student-teacher-app-4e7c9-default-rtdb.firebaseio.com/checkinSessions/${sessionCode}/responses/${responseId}.json`;
+        
+        const responseData = {
+            emotion: selectedEmotion,
+            comment: comment || '',
+            timestamp: timestamp,
+            submittedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            userId: userId,
+            sessionCode: sessionCode
+        };
+        
+        console.log("Submitting to:", responseUrl);
+        
+        const response = await fetch(responseUrl, {
+            method: 'PUT',
+            body: JSON.stringify(responseData),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        console.log("HTTP Response status:", response.status, response.statusText);
+        
+        if (response.ok) {
+            // Mark as submitted in localStorage
+            localStorage.setItem(`has_submitted_${sessionCode}`, 'true');
+            localStorage.setItem(`checkin_submitted_${sessionCode}`, userId);
+            
+            // Clear active session state (since we're done)
+            clearCheckinSessionState();
+            
+            // Also update counts
+            await updateCountsDirect();
+            
+            hideLoading();
+            showSuccessView();
+            console.log("✅ Response submitted successfully!");
+            
+        } else {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+    } catch (error) {
+        hideLoading();
+        console.error("❌ Submission failed:", error);
+        showError("Failed to submit. Please try again.");
+    }
+}
+
+// ========== UPDATE UI FUNCTIONS ==========
+function showCheckinForm() {
+    // Save state before showing form
+    saveCheckinSessionState();
+    
+    // Update step indicator
+    updateStepIndicator(2);
+    
+    // Hide session entry, show check-in form
+    document.getElementById('sessionEntry').style.display = 'none';
+    document.getElementById('checkinForm').style.display = 'block';
+    
+    // Update session info
+    const sessionInfo = document.getElementById('sessionInfo');
+    sessionInfo.innerHTML = `
+        <h3>${sessionData.className || 'Class Check-in'}</h3>
+        <p><strong>Session:</strong> ${sessionCode}</p>
+        <p><strong>Teacher:</strong> ${sessionData.teacherName || 'Your Teacher'}</p>
+        <p style="font-size: 0.9rem; margin-top: 5px; color: #666;">
+            Started ${formatTimeAgo(sessionData.createdAt)}
+        </p>
+    `;
+    
+    // Focus on first emotion option
+    document.querySelector('.emotion-option').focus();
+}
+
+function selectEmotion(emotion) {
+    selectedEmotion = emotion;
+    
+    // Save state when emotion is selected
+    saveCheckinSessionState();
+    
+    // Remove selected class from all options
+    document.querySelectorAll('.emotion-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+    
+    // Add selected class to chosen option
+    document.querySelector(`[data-emotion="${emotion}"]`).classList.add('selected');
+    
+    // Enable submit button
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').innerHTML = `Submit as ${emotion.charAt(0).toUpperCase() + emotion.slice(1)} →`;
+    
+    // Update step indicator
+    updateStepIndicator(3);
+}
+
+function goBackToSessionEntry() {
+    // Clear session state when going back
+    clearCheckinSessionState();
+    
+    document.getElementById('checkinForm').style.display = 'none';
+    document.getElementById('sessionEntry').style.display = 'block';
+    document.getElementById('errorContainer').innerHTML = '';
+    
+    // Reset step indicator
+    updateStepIndicator(1);
+    
+    // Clear selection
+    selectedEmotion = null;
+    document.querySelectorAll('.emotion-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').innerHTML = 'Submit Check-in';
+}
+
+function enterNewSession() {
+    // Clear all session state
+    clearCheckinSessionState();
+    
+    document.getElementById('alreadySubmitted').style.display = 'none';
+    document.getElementById('sessionEntry').style.display = 'block';
+    
+    // Clear inputs
+    document.getElementById('sessionCodeInput').value = '';
+    document.getElementById('urlInput').value = '';
+    document.getElementById('errorContainer').innerHTML = '';
+    document.getElementById('successContainer').innerHTML = '';
+    
+    // Reset step indicator
+    updateStepIndicator(1);
+    
+    // Focus on input
+    document.getElementById('sessionCodeInput').focus();
+    
+    // Reset variables
+    sessionCode = null;
+    sessionData = null;
+    selectedEmotion = null;
+    hasSubmitted = false;
+}
+
+// ========== ADD WINDOW EVENT LISTENERS ==========
+// Save state before page unload
+window.addEventListener('beforeunload', function() {
+    saveCheckinSessionState();
+});
+
+// Save state when page is hidden
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        saveCheckinSessionState();
+    }
+});
+
+// Auto-save state periodically (every 30 seconds)
+setInterval(saveCheckinSessionState, 30000);
+
+// ========== SESSION PERSISTENCE FOR TEACHER ==========
+
+// Save teacher's check-in session state
+function saveTeacherCheckinSessionState() {
+    if (currentCheckinSession && teacherId) {
+        const sessionState = {
+            sessionCode: currentCheckinSession.code,
+            classCode: currentClassCode,
+            teacherId: teacherId,
+            sessionData: currentCheckinSession,
+            isActive: true,
+            lastSaved: new Date().toISOString()
+        };
+        localStorage.setItem(`teacher_checkin_session_${teacherId}`, JSON.stringify(sessionState));
+        console.log("💾 Teacher check-in session state saved");
+    }
+}
+
+// Load teacher's check-in session state
+async function loadTeacherCheckinSessionState() {
+    try {
+        if (!teacherId) return false;
+        
+        const savedState = localStorage.getItem(`teacher_checkin_session_${teacherId}`);
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            
+            // Check if session is still valid (less than 24 hours old)
+            const savedTime = new Date(state.lastSaved);
+            const now = new Date();
+            const hoursDiff = (now - savedTime) / (1000 * 60 * 60);
+            
+            if (hoursDiff < 24) { // Session valid for 24 hours
+                console.log("📂 Loading saved check-in session:", state.sessionCode);
+                
+                // Check if session still exists in Firebase and is active
+                try {
+                    const sessionRef = database.ref(`checkinSessions/${state.sessionCode}`);
+                    const snapshot = await sessionRef.once('value');
+                    
+                    if (snapshot.exists()) {
+                        const sessionData = snapshot.val();
+                        if (sessionData.isActive && sessionData.teacherId === teacherId) {
+                            // Restore session
+                            currentCheckinSession = {
+                                code: state.sessionCode,
+                                ...sessionData
+                            };
+                            sessionStartTime = new Date(sessionData.createdAt);
+                            
+                            // Restore UI
+                            updateSessionUI();
+                            
+                            // Setup listeners
+                            startSessionTimer();
+                            setupRealtimeCheckinListener();
+                            
+                            console.log("✅ Teacher check-in session restored from localStorage");
+                            
+                            // Post recovery notification
+                            showNotification("✅ Your live check-in session was restored!", "success");
+                            return true;
+                        } else {
+                            console.log("Saved session is no longer active");
+                            clearTeacherCheckinSessionState();
+                        }
+                    } else {
+                        console.log("Saved session no longer exists in Firebase");
+                        clearTeacherCheckinSessionState();
+                    }
+                } catch (error) {
+                    console.error("Error checking session in Firebase:", error);
+                    clearTeacherCheckinSessionState();
+                }
+            } else {
+                console.log("Saved session expired");
+                clearTeacherCheckinSessionState();
+            }
+        }
+    } catch (error) {
+        console.error("Error loading teacher check-in session state:", error);
+        clearTeacherCheckinSessionState();
+    }
+    return false;
+}
+
+// Clear teacher's check-in session state
+function clearTeacherCheckinSessionState() {
+    if (teacherId) {
+        localStorage.removeItem(`teacher_checkin_session_${teacherId}`);
+    }
+}
+
+// Update the startLiveCheckInSession function to save state immediately
+async function startLiveCheckInSession() {
+    if (!currentClassCode) {
+        showNotification("Please select a class first", "error");
+        return;
+    }
+    
+    // End any existing session
+    if (currentCheckinSession) {
+        await endCheckInSession();
+    }
+    
+    // Generate session code
+    const sessionCode = generateSessionCode();
+    
+    currentCheckinSession = {
+        code: sessionCode,
+        classCode: currentClassCode,
+        className: teacherClasses.find(c => c.code === currentClassCode)?.name || "Class",
+        teacherId: teacherId,
+        teacherName: teacherName,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        counts: {
+            confident: 0,
+            okay: 0,
+            struggling: 0
+        },
+        totalResponses: 0,
+        lastUpdated: new Date().toISOString()
+    };
+    
+    sessionStartTime = new Date();
+    
+    try {
+        // Save to Firebase
+        await database.ref(`checkinSessions/${sessionCode}`).set(currentCheckinSession);
+        
+        // SAVE STATE IMMEDIATELY
+        saveTeacherCheckinSessionState();
+        
+        // Update UI
+        updateSessionUI();
+        
+        // Start timer
+        startSessionTimer();
+        
+        // Setup real-time listener
+        setupRealtimeCheckinListener();
+        
+        // Create system announcement
+        const checkinLink = `${window.location.origin}/student_checkin.html?session=${sessionCode}`;
+        postSystemAnnouncement(
+            "📝 Live Quick Check-in Started!",
+            `How are you feeling about today's lesson? Click this link to check in anonymously: ${checkinLink}`
+        );
+        
+        showNotification(`✅ Live check-in started! Share the link with students.`, "success");
+        
+    } catch (error) {
+        console.error("Error starting check-in session:", error);
+        showNotification("Failed to start check-in session: " + error.message, "error");
+    }
+}
+
+// Update the endCheckInSession function to clear state
+async function endCheckInSession() {
+    if (!currentCheckinSession) return;
+    
+    try {
+        // Mark as inactive in Firebase
+        await database.ref(`checkinSessions/${currentCheckinSession.code}/isActive`).set(false);
+        
+        // Clean up
+        if (liveCheckinListener) {
+            const sessionRef = database.ref(`checkinSessions/${currentCheckinSession.code}`);
+            sessionRef.off('value', liveCheckinListener);
+            liveCheckinListener = null;
+        }
+        
+        if (checkinTimer) {
+            clearInterval(checkinTimer);
+            checkinTimer = null;
+        }
+        
+        // CLEAR SAVED STATE
+        clearTeacherCheckinSessionState();
+        
+        console.log(`✅ Ended check-in session: ${currentCheckinSession.code}`);
+        
+        // Create summary announcement
+        const counts = currentCheckinSession.counts || { confident: 0, okay: 0, struggling: 0 };
+        const total = currentCheckinSession.totalResponses || 0;
+        
+        if (total > 0) {
+            postSystemAnnouncement(
+                "📊 Check-in Session Complete",
+                `Check-in results: 😊 ${counts.confident} confident | 😐 ${counts.okay} okay | 😕 ${counts.struggling} struggling. Thank you for participating!`
+            );
+        }
+        
+        // Reset
+        currentCheckinSession = null;
+        sessionStartTime = null;
+        updateSessionUI();
+        
+        showNotification("Check-in session ended successfully", "success");
+        
+    } catch (error) {
+        console.error("Error ending check-in session:", error);
+    }
+}
+
+// Update the initializeTeacher function to load saved sessions
+// Find the initializeTeacher function and add this at the end:
+initializeTeacher = async function() {
+    console.log("🎯 Enhanced teacher initialization with localStorage...");
+    
+    // First, try to load existing data from localStorage
+    const dataLoaded = loadAllDataFromLocalStorage();
+    
+    if (dataLoaded && teacherClasses.length > 0) {
+        // Data loaded successfully, update UI
+        updateClassSelector();
+        updateUI();
+        renderAllData();
+        updateStats();
+        
+        // INITIALIZE CHALLENGES BEFORE ANYTHING ELSE
+        setTimeout(() => {
+            initializeChallenges(); // This is the key fix
+            getLiveActivity(currentClassCode);
+            initializeSidebarHeatmap();
+        }, 500);
+        
+        // LOAD CHECK-IN SESSION STATE
+        setTimeout(async () => {
+            await loadTeacherCheckinSessionState();
+        }, 1000);
+        
+        showNotification("Dashboard loaded from localStorage! ✅", "success");
+        
+        // Still load from Firebase if not in demo mode
+        if (!isDemoMode) {
+            try {
+                await loadClassesFromFirebase();
+                if (currentClassCode) {
+                    await loadClassData();
+                    await loadMilestoneSettingsForClass();
+                    setupRealtimeListeners();
+                    
+                    // Sync challenges with Firebase data
+                    syncChallengesWithFirebase();
+                }
+            } catch (error) {
+                console.error("Firebase sync failed, using localStorage data:", error);
+            }
+        }
+        
+    } else {
+        // No data in localStorage, use original initialization
+        await originalInitializeTeacher();
+        
+        // Initialize backup system
+        initializeBackupSystem();
+    }
+};
+
+// Add auto-save on state changes
+function startAutoSaveCheckinSession() {
+    // Save session state every 10 seconds
+    setInterval(() => {
+        if (currentCheckinSession && currentCheckinSession.isActive) {
+            saveTeacherCheckinSessionState();
+        }
+    }, 10000); // 10 seconds
+    
+    // Save when leaving the page
+    window.addEventListener('beforeunload', () => {
+        if (currentCheckinSession && currentCheckinSession.isActive) {
+            saveTeacherCheckinSessionState();
+        }
+    });
+    
+    // Save when tab becomes inactive
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden && currentCheckinSession && currentCheckinSession.isActive) {
+            saveTeacherCheckinSessionState();
+        }
+    });
+}
+
+// Add this to your initialization
+document.addEventListener('DOMContentLoaded', function() {
+    // Start auto-save for check-in sessions
+    setTimeout(() => {
+        startAutoSaveCheckinSession();
+    }, 3000);
+});
+
+// Also update the saveCheckInData function to save session state
+function saveCheckInData() {
+    if (!currentClassCode) return;
+    
+    checkinData.lastUpdated = new Date().toISOString();
+    
+    try {
+        localStorage.setItem(`teacher_checkins_${currentClassCode}`, JSON.stringify(checkinData));
+        
+        // Also save to Firebase if not in demo mode
+        if (!isDemoMode && teacherId) {
+            database.ref(`classCheckins/${currentClassCode}`).set(checkinData)
+                .catch(error => console.error("Error saving to Firebase:", error));
+        }
+        
+        // Save session state if active
+        if (currentCheckinSession && currentCheckinSession.isActive) {
+            saveTeacherCheckinSessionState();
+        }
+    } catch (error) {
+        console.error("Error saving check-in data:", error);
+    }
+}
 </script>
 
 
