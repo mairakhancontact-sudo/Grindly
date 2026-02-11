@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>Quick Check-in</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #f44336;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --radius: 16px;
+            --radius-sm: 8px;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.15);
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-xxl: 48px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --container-max: 1200px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            html {
+                font-size: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            html {
+                font-size: 14px;
+            }
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Segoe UI Emoji', Roboto, Oxygen, system-ui, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md);
+            line-height: 1.5;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+        
+        /* Safe Area Insets for Modern Mobile Browsers */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(var(--spacing-md), env(safe-area-inset-left));
+                padding-right: max(var(--spacing-md), env(safe-area-inset-right));
+                padding-top: max(var(--spacing-md), env(safe-area-inset-top));
+                padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
+            }
+        }
+        
+        /* Container System */
+        .container {
+            width: 100%;
+            max-width: var(--container-max);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            align-items: stretch;
+        }
+        
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+                max-width: 600px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                gap: var(--spacing-md);
+            }
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: var(--spacing-lg);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .card {
+                padding: var(--spacing-md);
+                border-radius: var(--radius-sm);
+            }
+        }
+        
+        .left-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            position: relative;
+        }
+        
+        /* Header & Typography */
+        .header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                margin-bottom: var(--spacing-lg);
+            }
+        }
+        
+        .emoji-display {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+            animation: float 3s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        @media (max-width: 768px) {
+            .emoji-display {
+                font-size: 3.5rem;
+                margin-bottom: var(--spacing-md);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .emoji-display {
+                font-size: 3rem;
+            }
+        }
+        
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.2;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.6rem;
+            }
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        @media (max-width: 768px) {
+            .form-group {
+                margin-bottom: var(--spacing-md);
+            }
+        }
+        
+        label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+        
+        .input-group {
+            position: relative;
+            display: flex;
+            width: 100%;
+        }
+        
+        .session-input {
+            flex: 1;
+            padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 48px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--radius);
+            font-size: 1.1rem;
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            letter-spacing: 2px;
+            transition: var(--transition);
+            min-height: 56px;
+            width: 100%;
+        }
+        
+        @media (max-width: 480px) {
+            .session-input {
+                padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 44px;
+                min-height: 52px;
+            }
+        }
+        
+        .session-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: var(--spacing-md);
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: #999;
+            pointer-events: none;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: var(--spacing-md) var(--spacing-xl);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            min-height: 56px;
+            width: 100%;
+            touch-action: manipulation;
+        }
+        
+        @media (max-width: 480px) {
+            .btn {
+                padding: var(--spacing-md);
+                min-height: 52px;
+            }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Emotion Options */
+        .emotion-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-md);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        @media (max-width: 768px) {
+            .emotion-options {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--spacing-sm);
+                margin: var(--spacing-lg) 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .emotion-options {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+        }
+        
+        .emotion-option {
+            background: var(--light);
+            border: 3px solid transparent;
+            border-radius: var(--radius);
+            padding: var(--spacing-lg);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 160px;
+        }
+        
+        @media (max-width: 768px) {
+            .emotion-option {
+                padding: var(--spacing-md);
+                min-height: 140px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .emotion-option {
+                padding: var(--spacing-lg);
+                min-height: auto;
+                flex-direction: row;
+                text-align: left;
+                gap: var(--spacing-md);
+                justify-content: flex-start;
+            }
+        }
+        
+        .emotion-option:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .emotion-option.selected {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .emotion-emoji {
+            font-size: 2.8rem;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        @media (max-width: 480px) {
+            .emotion-emoji {
+                font-size: 2.2rem;
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+        }
+        
+        .emotion-label {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: var(--spacing-sm);
+            font-size: 1.1rem;
+        }
+        
+        @media (max-width: 480px) {
+            .emotion-label {
+                margin-bottom: var(--spacing-xs);
+            }
+        }
+        
+        .emotion-desc {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        @media (max-width: 480px) {
+            .emotion-desc {
+                font-size: 0.85rem;
+            }
+        }
+        
+        /* Textarea */
+        textarea {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 2px solid #e0e0e0;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            max-height: 300px;
+            transition: var(--transition);
+            line-height: 1.5;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        /* Step Indicator */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 768px) {
+            .step-indicator {
+                margin-bottom: var(--spacing-lg);
+            }
+        }
+        
+        .step {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 480px) {
+            .step {
+                width: 32px;
+                height: 32px;
+                font-size: 0.85rem;
+            }
+        }
+        
+        .step.active {
+            background: var(--primary);
+        }
+        
+        .step.completed {
+            background: var(--success);
+        }
+        
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: #e0e0e0;
+            min-width: 20px;
+        }
+        
+        .step-line.active {
+            background: var(--primary);
+        }
+        
+        /* Back Button */
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: var(--spacing-sm) 0;
+            margin-bottom: var(--spacing-md);
+            font-weight: 500;
+        }
+        
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+        
+        /* Utility Classes */
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        .slide-up {
+            animation: slideUp 0.4s ease-out;
+        }
+        
+        /* Media Queries for Ultra-Small Screens */
+        @media (max-width: 360px) {
+            :root {
+                --spacing-xl: 24px;
+                --spacing-lg: 20px;
+                --spacing-md: 14px;
+                --spacing-sm: 10px;
+                --radius: 12px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .emoji-display {
+                font-size: 2.5rem;
+            }
+            
+            .btn {
+                font-size: 0.95rem;
+                padding: var(--spacing-md) var(--spacing-lg);
+            }
+        }
+        
+        /* Landscape Orientation Adjustments */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .container {
+                max-height: 90vh;
+                overflow-y: auto;
+                align-items: flex-start;
+            }
+            
+            .card {
+                min-height: auto;
+            }
+            
+            .header {
+                margin-bottom: var(--spacing-md);
+            }
+            
+            .emoji-display {
+                font-size: 2.5rem;
+                margin-bottom: var(--spacing-sm);
+            }
+            
+            .emotion-option {
+                min-height: 120px;
+                padding: var(--spacing-md);
+            }
+        }
+        
+        /* Print Styles */
+        @media print {
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            
+            .card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            
+            .btn, .back-btn {
+                display: none;
+            }
+        }
+        
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --light: #2d3748;
+                --dark: #f7fafc;
+            }
+            
+            body {
+                background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            }
+            
+            .card:not(.left-card) {
+                background: #2d3748;
+                color: #f7fafc;
+            }
+            
+            label, .emotion-label, .session-info h3 {
+                color: #f7fafc;
+            }
+            
+            .session-input, textarea {
+                background: #4a5568;
+                border-color: #718096;
+                color: #f7fafc;
+            }
+            
+            .session-input::placeholder, textarea::placeholder {
+                color: #a0aec0;
+            }
+            
+            .session-info, .teacher-info {
+                background: rgba(66, 153, 225, 0.1);
+            }
+            
+            .emotion-option {
+                background: #4a5568;
+            }
+            
+            .emotion-desc {
+                color: #cbd5e0;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+        
+        /* Keyframes */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    
+    <!-- Additional responsive styles -->
+    <style>
+        /* Component-specific responsive styles */
+        
+        /* How it works list */
+        .how-it-works {
+            list-style: none;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .how-it-works li {
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+        }
+        
+        .how-it-works .step-number {
+            background: rgba(255,255,255,0.2);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        /* URL input group */
+        .url-input-group {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+        }
+        
+        @media (max-width: 480px) {
+            .url-input-group {
+                flex-direction: column;
+            }
+        }
+        
+        .url-input {
+            flex: 1;
+            padding: var(--spacing-md);
+            border: 2px solid #e0e0e0;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            min-height: 56px;
+        }
+        
+        @media (max-width: 480px) {
+            .url-input {
+                min-height: 52px;
+            }
+        }
+        
+        /* Session info box */
+        .session-info {
+            background: rgba(102, 126, 234, 0.08);
+            padding: var(--spacing-md);
+            border-radius: var(--radius);
+            margin-bottom: var(--spacing-lg);
+            border-left: 4px solid var(--primary);
+        }
+        
+        /* Teacher info box */
+        .teacher-info {
+            background: rgba(255, 152, 0, 0.08);
+            padding: var(--spacing-md);
+            border-radius: var(--radius);
+            margin-top: var(--spacing-lg);
+            font-size: 0.9rem;
+        }
+        
+        /* Messages */
+        .error-message, .success-message {
+            padding: var(--spacing-md);
+            border-radius: var(--radius);
+            margin-bottom: var(--spacing-lg);
+            border-left: 4px solid transparent;
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+        }
+        
+        .error-message {
+            background: rgba(244, 67, 54, 0.1);
+            color: var(--danger);
+            border-left-color: var(--danger);
+        }
+        
+        .success-message {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+            border-left-color: var(--success);
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            font-size: 1.2rem;
+            color: var(--dark);
+            backdrop-filter: blur(4px);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .loading-overlay {
+                background: rgba(26, 32, 44, 0.95);
+            }
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(102, 126, 234, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Info text */
+        .info-text {
+            margin-top: var(--spacing-lg);
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .info-text {
+                color: #cbd5e0;
+            }
+        }
+        
+        /* Button group for already submitted view */
+        .button-group {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-xl);
+        }
+        
+        @media (max-width: 480px) {
+            .button-group {
+                flex-direction: column;
+            }
+        }
+        
+        /* Grid layout for larger screens */
+        @media (min-width: 993px) {
+            .container {
+                min-height: 700px;
+            }
+            
+            .left-card {
+                padding: var(--spacing-xxl);
+            }
+        }
+        
+        /* Accessibility: Focus visible */
+        *:focus-visible {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Card - Instructions -->
+        <div class="card left-card fade-in">
+            <div class="header">
+                <div class="emoji-display" role="img" aria-label="Smiling face">😊</div>
+                <h1>Quick Check-in</h1>
+                <p>Share how you're feeling with your teacher</p>
+            </div>
+            
+            <div style="margin-top: auto;">
+                <h3 style="margin-bottom: var(--spacing-md);">How it works:</h3>
+                <ul class="how-it-works">
+                    <li>
+                        <span class="step-number">1</span>
+                        <span>Your teacher will share a 6-digit session code</span>
+                    </li>
+                    <li>
+                        <span class="step-number">2</span>
+                        <span>Enter the code on the right</span>
+                    </li>
+                    <li>
+                        <span class="step-number">3</span>
+                        <span>Choose how you're feeling</span>
+                    </li>
+                    <li>
+                        <span class="step-number">4</span>
+                        <span>Submit anonymously</span>
+                    </li>
+                </ul>
+                
+                <div class="teacher-info">
+                    <strong>ℹ️ For Teachers:</strong>
+                    <p style="margin-top: var(--spacing-sm); opacity: 0.9; font-size: 0.85rem;">
+                        Share the session code from your Teacher Dashboard. Students can enter it here to check in.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Card - Check-in Form -->
+        <div class="card slide-up" style="animation-delay: 0.1s;">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active">1</div>
+                <div class="step-line"></div>
+                <div class="step">2</div>
+                <div class="step-line"></div>
+                <div class="step">3</div>
+            </div>
+            
+            <!-- Session Entry Form -->
+            <div id="sessionEntry">
+                <h2 style="margin-bottom: var(--spacing-md); color: var(--dark);">Enter Session Code</h2>
+                <p style="color: #666; margin-bottom: var(--spacing-lg);">
+                    Enter the 6-digit code shared by your teacher
+                </p>
+                
+                <div id="errorContainer"></div>
+                <div id="successContainer"></div>
+                
+                <div class="form-group">
+                    <label for="sessionCodeInput">Session Code</label>
+                    <div class="input-group">
+                        <span class="input-icon" role="img" aria-label="Numbers icon">🔢</span>
+                        <input type="text" 
+                               id="sessionCodeInput" 
+                               class="session-input"
+                               placeholder="ABCD12"
+                               maxlength="6"
+                               autocapitalize="characters"
+                               inputmode="text"
+                               aria-describedby="sessionCodeHelp">
+                    </div>
+                    <div id="sessionCodeHelp" style="font-size: 0.85rem; color: #999; margin-top: var(--spacing-sm);">
+                        Example: ABC123 or 456DEF
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label style="font-size: 0.95rem; color: #666;">Or use a direct link:</label>
+                    <div class="url-input-group">
+                        <input type="url" 
+                               id="urlInput" 
+                               class="url-input"
+                               placeholder="Paste check-in URL here"
+                               inputmode="url">
+                        <button class="btn btn-secondary" id="useUrlBtn" style="white-space: nowrap;">
+                            <span role="img" aria-label="Link icon">🔗</span> Use URL
+                        </button>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" id="joinBtn">
+                    Continue to Check-in →
+                </button>
+                
+                <div style="text-align: center; margin-top: var(--spacing-xl);">
+                    <button class="back-btn" id="backToDashboardBtn">
+                        ← Back to Student Dashboard
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Check-in Form (Hidden Initially) -->
+            <div id="checkinForm" style="display: none;">
+                <button class="back-btn" id="backToSessionBtn">
+                    ← Back
+                </button>
+                
+                <h2 style="margin-bottom: var(--spacing-sm); color: var(--dark);">How are you feeling?</h2>
+                
+                <div id="sessionInfo" class="session-info"></div>
+                
+                <div class="emotion-options">
+                    <button type="button" class="emotion-option confident" data-emotion="confident" aria-pressed="false">
+                        <div class="emotion-emoji" role="img" aria-label="Smiling face">😊</div>
+                        <div>
+                            <div class="emotion-label">Confident</div>
+                            <div class="emotion-desc">I understand this well</div>
+                        </div>
+                    </button>
+                    
+                    <button type="button" class="emotion-option okay" data-emotion="okay" aria-pressed="false">
+                        <div class="emotion-emoji" role="img" aria-label="Neutral face">😐</div>
+                        <div>
+                            <div class="emotion-label">Okay</div>
+                            <div class="emotion-desc">I'm keeping up</div>
+                        </div>
+                    </button>
+                    
+                    <button type="button" class="emotion-option struggling" data-emotion="struggling" aria-pressed="false">
+                        <div class="emotion-emoji" role="img" aria-label="Confused face">😕</div>
+                        <div>
+                            <div class="emotion-label">Struggling</div>
+                            <div class="emotion-desc">I need more help</div>
+                        </div>
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="commentInput">Comments (Optional)</label>
+                    <textarea id="commentInput" 
+                              placeholder="Any specific questions or feedback for your teacher? (This is anonymous)"
+                              aria-describedby="commentHelp">
+                    </textarea>
+                    <div id="commentHelp" style="font-size: 0.85rem; color: #999; margin-top: var(--spacing-sm);">
+                        Your teacher will see this feedback but won't know who it's from
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" id="submitBtn" disabled>
+                    Submit Check-in
+                </button>
+                
+                <div class="info-text">
+                    <p>✅ Your response is completely anonymous</p>
+                    <p>✅ Only one submission per session</p>
+                    <p>✅ Teacher sees overall results, not individual names</p>
+                </div>
+            </div>
+            
+            <!-- Already Submitted View -->
+            <div id="alreadySubmitted" style="display: none;">
+                <div class="success-message">
+                    <h3 style="margin-bottom: var(--spacing-sm);">✅ Thank You!</h3>
+                    <p>You've already submitted your check-in for this session.</p>
+                    <p style="margin-top: var(--spacing-sm); font-size: 0.9rem;">
+                        Your teacher will see your response in the overall results.
+                    </p>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-secondary" id="returnToDashboardBtn">
+                        ← Return to Dashboard
+                    </button>
+                    <button class="btn btn-secondary" id="newSessionBtn">
+                        ↻ New Session
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;" role="alert" aria-busy="true">
+        <div class="spinner" aria-hidden="true"></div>
+        <p id="loadingText">Loading...</p>
+    </div>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <script>
+        // JavaScript code remains exactly the same as your original
+        // ========== GLOBAL VARIABLES ==========
+        let database = null;
+        let firebaseApp = null;
+        let sessionCode = null;
+        let sessionData = null;
+        let selectedEmotion = null;
+        let hasSubmitted = false;
+
+        // ========== FIREBASE INITIALIZATION ==========
+        async function initializeFirebase() {
+            try {
+                console.log("🔥 Initializing Firebase...");
+                
+                // Check if Firebase is already loaded
+                if (typeof firebase === 'undefined') {
+                    console.error("Firebase SDK not loaded!");
+                    showError("Firebase SDK failed to load. Please refresh the page.");
+                    return false;
+                }
+                
+                // Firebase Configuration
+                const firebaseConfig = {
+                    apiKey: "AIzaSyBAIPxgXPZmGdPvB98TLFRfTAClgXWEIM0",
+                    authDomain: "student-teacher-app-4e7c9.firebaseapp.com",
+                    databaseURL: "https://student-teacher-app-4e7c9-default-rtdb.firebaseio.com",
+                    projectId: "student-teacher-app-4e7c9",
+                    storageBucket: "student-teacher-app-4e7c9.firebasestorage.app",
+                    messagingSenderId: "737621420458",
+                    appId: "1:737621420458:web:74c873869a1a47c2ce23d3"
+                };
+                
+                // Initialize Firebase app (only if not already initialized)
+                if (!firebase.apps.length) {
+                    firebaseApp = firebase.initializeApp(firebaseConfig);
+                    console.log("✅ Created new Firebase app instance");
+                } else {
+                    firebaseApp = firebase.app();
+                    console.log("✅ Using existing Firebase app");
+                }
+                
+                // Get database reference
+                database = firebase.database();
+                
+                if (!database) {
+                    throw new Error("Failed to get database reference");
+                }
+                
+                console.log("✅ Firebase initialized successfully");
+                return true;
+                
+            } catch (error) {
+                console.error("❌ Firebase initialization failed:", error);
+                showError("Failed to initialize database. Please try again.");
+                return false;
+            }
+        }
+
+        // ========== APPLICATION INITIALIZATION ==========
+        async function initializeApp() {
+            console.log("📱 Initializing application...");
+            
+            try {
+                // Initialize Firebase
+                const firebaseInitialized = await initializeFirebase();
+                
+                if (!firebaseInitialized) {
+                    showError("Failed to initialize check-in system. Please refresh the page.");
+                    return false;
+                }
+                
+                // Check URL for session code
+                checkUrlForSession();
+                
+                // Setup event listeners
+                setupEventListeners();
+                
+                // Setup periodic sync
+                setupPeriodicSync();
+                
+                console.log("✅ Application initialization complete");
+                return true;
+                
+            } catch (error) {
+                console.error("❌ Application initialization failed:", error);
+                showError("Failed to initialize application. Please refresh the page.");
+                return false;
+            }
+        }
+
+        function setupEventListeners() {
+            // Session input
+            const sessionInput = document.getElementById('sessionCodeInput');
+            if (sessionInput) {
+                // Focus with slight delay for mobile
+                setTimeout(() => {
+                    sessionInput.focus();
+                }, 300);
+                
+                sessionInput.addEventListener('input', function(e) {
+                    this.value = this.value.toUpperCase();
+                });
+                
+                sessionInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        joinSession();
+                    }
+                });
+            }
+            
+            // URL input
+            const urlInput = document.getElementById('urlInput');
+            if (urlInput) {
+                urlInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        extractCodeFromURL();
+                    }
+                });
+            }
+            
+            // Buttons
+            const joinBtn = document.getElementById('joinBtn');
+            if (joinBtn) {
+                joinBtn.addEventListener('click', joinSession);
+            }
+            
+            const useUrlBtn = document.getElementById('useUrlBtn');
+            if (useUrlBtn) {
+                useUrlBtn.addEventListener('click', extractCodeFromURL);
+            }
+            
+            const backToDashboardBtn = document.getElementById('backToDashboardBtn');
+            if (backToDashboardBtn) {
+                backToDashboardBtn.addEventListener('click', function() {
+                    window.location.href = 'studentmode.html';
+                });
+            }
+            
+            const backToSessionBtn = document.getElementById('backToSessionBtn');
+            if (backToSessionBtn) {
+                backToSessionBtn.addEventListener('click', goBackToSessionEntry);
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', submitCheckin);
+            }
+            
+            const returnToDashboardBtn = document.getElementById('returnToDashboardBtn');
+            if (returnToDashboardBtn) {
+                returnToDashboardBtn.addEventListener('click', function() {
+                    window.location.href = 'studentmode.html';
+                });
+            }
+            
+            const newSessionBtn = document.getElementById('newSessionBtn');
+            if (newSessionBtn) {
+                newSessionBtn.addEventListener('click', enterNewSession);
+            }
+            
+            // Emotion options - use button elements
+            const emotionOptions = document.querySelectorAll('.emotion-option');
+            emotionOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    selectEmotion(this.dataset.emotion);
+                });
+                
+                // Add keyboard support
+                option.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        selectEmotion(this.dataset.emotion);
+                    }
+                });
+            });
+        }
+
+        // ========== SESSION MANAGEMENT ==========
+        function checkUrlForSession() {
+            const params = new URLSearchParams(window.location.search);
+            const urlSessionCode = params.get('session');
+            
+            if (urlSessionCode) {
+                document.getElementById('sessionCodeInput').value = urlSessionCode.toUpperCase();
+                showSuccess(`Session code loaded from URL: ${urlSessionCode}`);
+                
+                // Auto-join after a brief delay
+                setTimeout(() => {
+                    joinSession();
+                }, 1000);
+            }
+        }
+
+        function extractCodeFromURL() {
+            const urlInput = document.getElementById('urlInput').value.trim();
+            
+            if (!urlInput) {
+                showError("Please paste a check-in URL");
+                return;
+            }
+            
+            try {
+                // Try to parse as URL
+                const url = new URL(urlInput);
+                const params = new URLSearchParams(url.search);
+                const code = params.get('session');
+                
+                if (code) {
+                    document.getElementById('sessionCodeInput').value = code.toUpperCase();
+                    showSuccess(`Session code extracted: ${code}`);
+                    document.getElementById('urlInput').value = '';
+                    document.getElementById('joinBtn').focus();
+                } else {
+                    showError("No session code found in URL. Make sure it contains ?session=CODE");
+                }
+            } catch (error) {
+                // If not a valid URL, try to extract code from string
+                const match = urlInput.match(/session=([A-Z0-9]{6})/i);
+                if (match) {
+                    document.getElementById('sessionCodeInput').value = match[1].toUpperCase();
+                    showSuccess(`Session code extracted: ${match[1]}`);
+                    document.getElementById('urlInput').value = '';
+                } else {
+                    showError("Could not find session code. Please check the URL format.");
+                }
+            }
+        }
+
+        async function joinSession() {
+            const inputCode = document.getElementById('sessionCodeInput').value.trim().toUpperCase();
+            
+            if (!inputCode || inputCode.length !== 6) {
+                showError("Please enter a valid 6-digit session code");
+                return;
+            }
+            
+            sessionCode = inputCode;
+            showLoading("Checking session...");
+            
+            try {
+                console.log(`🔍 Checking session: ${sessionCode}`);
+                
+                // Clear any previous "already submitted" state
+                hasSubmitted = false;
+                
+                // Ensure Firebase is initialized
+                if (!database) {
+                    console.log("Database not initialized, initializing...");
+                    await initializeFirebase();
+                }
+                
+                if (!database) {
+                    throw new Error("Failed to initialize database");
+                }
+                
+                // Check if session exists
+                const sessionRef = database.ref(`checkinSessions/${sessionCode}`);
+                const snapshot = await sessionRef.once('value');
+                
+                hideLoading();
+                
+                if (!snapshot.exists()) {
+                    showError(`Session "${sessionCode}" not found. Please check with your teacher.`);
+                    return;
+                }
+                
+                sessionData = snapshot.val();
+                
+                // Check if session is active
+                if (!sessionData.isActive) {
+                    showError("This check-in session has ended. Please ask your teacher to start a new one.");
+                    return;
+                }
+                
+                // Check if already submitted
+                const hasSubmittedLocal = localStorage.getItem(`has_submitted_${sessionCode}`);
+                if (hasSubmittedLocal === 'true') {
+                    showAlreadySubmittedView();
+                    return;
+                }
+                
+                // Show check-in form
+                showCheckinForm();
+                
+            } catch (error) {
+                hideLoading();
+                console.error("❌ Error joining session:", error);
+                showError(`Connection error: ${error.message}. Please check with your teacher.`);
+            }
+        }
+
+        function showCheckinForm() {
+            // Update step indicator
+            updateStepIndicator(2);
+            
+            // Hide session entry, show check-in form
+            document.getElementById('sessionEntry').style.display = 'none';
+            document.getElementById('checkinForm').style.display = 'block';
+            
+            // Update session info
+            const sessionInfo = document.getElementById('sessionInfo');
+            sessionInfo.innerHTML = `
+                <h3>${sessionData.className || 'Class Check-in'}</h3>
+                <p><strong>Session:</strong> ${sessionCode}</p>
+                <p><strong>Teacher:</strong> ${sessionData.teacherName || 'Your Teacher'}</p>
+                <p style="font-size: 0.9rem; margin-top: 5px; color: #666;">
+                    Started ${formatTimeAgo(sessionData.createdAt)}
+                </p>
+            `;
+            
+            // Focus on first emotion option
+            document.querySelector('.emotion-option').focus();
+        }
+
+        // ========== CHECK-IN FUNCTIONS ==========
+        function selectEmotion(emotion) {
+            selectedEmotion = emotion;
+            
+            // Update aria-pressed state
+            document.querySelectorAll('.emotion-option').forEach(option => {
+                option.setAttribute('aria-pressed', 'false');
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class and update aria-pressed
+            const selectedOption = document.querySelector(`[data-emotion="${emotion}"]`);
+            selectedOption.classList.add('selected');
+            selectedOption.setAttribute('aria-pressed', 'true');
+            
+            // Enable submit button
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `Submit as ${emotion.charAt(0).toUpperCase() + emotion.slice(1)} →`;
+            
+            // Update step indicator
+            updateStepIndicator(3);
+        }
+
+        async function submitCheckin() {
+            if (!selectedEmotion || !sessionCode) {
+                showError("Please select how you're feeling first.");
+                return;
+            }
+            
+            const comment = document.getElementById('commentInput').value.trim();
+            const userId = getUserId();
+            const timestamp = new Date().toISOString();
+            
+            showLoading("Submitting your response...");
+            
+            try {
+                // Generate a unique response ID
+                const responseId = `response_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                
+                // Direct Firebase REST API call
+                const responseUrl = `https://student-teacher-app-4e7c9-default-rtdb.firebaseio.com/checkinSessions/${sessionCode}/responses/${responseId}.json`;
+                
+                const responseData = {
+                    emotion: selectedEmotion,
+                    comment: comment || '',
+                    timestamp: timestamp,
+                    submittedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    userId: userId,
+                    sessionCode: sessionCode
+                };
+                
+                const response = await fetch(responseUrl, {
+                    method: 'PUT',
+                    body: JSON.stringify(responseData),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    // Mark as submitted in localStorage
+                    localStorage.setItem(`has_submitted_${sessionCode}`, 'true');
+                    localStorage.setItem(`checkin_submitted_${sessionCode}`, userId);
+                    
+                    // Update counts
+                    await updateCountsDirect();
+                    
+                    hideLoading();
+                    showSuccessView();
+                    
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+            } catch (error) {
+                hideLoading();
+                console.error("❌ Submission failed:", error);
+                showError("Failed to submit. Please try again.");
+            }
+        }
+
+        async function updateCountsDirect() {
+            try {
+                // Get current count
+                const countsUrl = `https://student-teacher-app-4e7c9-default-rtdb.firebaseio.com/checkinSessions/${sessionCode}/counts/${selectedEmotion}.json`;
+                
+                const currentCountResponse = await fetch(countsUrl);
+                const currentCount = await currentCountResponse.json() || 0;
+                
+                // Update count
+                await fetch(countsUrl, {
+                    method: 'PUT',
+                    body: JSON.stringify(currentCount + 1),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                // Update total
+                const totalUrl = `https://student-teacher-app-4e7c9-default-rtdb.firebaseio.com/checkinSessions/${sessionCode}/totalResponses.json`;
+                
+                const currentTotalResponse = await fetch(totalUrl);
+                const currentTotal = await currentTotalResponse.json() || 0;
+                
+                await fetch(totalUrl, {
+                    method: 'PUT',
+                    body: JSON.stringify(currentTotal + 1),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+            } catch (error) {
+                console.log("⚠️ Could not update counts:", error);
+            }
+        }
+
+        // ========== VIEW MANAGEMENT ==========
+        function showSuccessView() {
+            document.getElementById('checkinForm').style.display = 'none';
+            document.getElementById('alreadySubmitted').style.display = 'block';
+            
+            // Update success message with emotion
+            const emotionText = {
+                confident: "confident 😊",
+                okay: "okay 😐", 
+                struggling: "struggling 😕"
+            }[selectedEmotion];
+            
+            const successMsg = document.querySelector('#alreadySubmitted .success-message');
+            successMsg.innerHTML = `
+                <h3 style="margin-bottom: var(--spacing-sm);">✅ Check-in Submitted!</h3>
+                <p>You indicated you're feeling <strong>${emotionText}</strong>.</p>
+                <p style="margin-top: var(--spacing-sm); font-size: 0.9rem;">
+                    Your teacher will see this in the overall results.
+                </p>
+            `;
+        }
+
+        function showAlreadySubmittedView() {
+            document.getElementById('sessionEntry').style.display = 'none';
+            document.getElementById('alreadySubmitted').style.display = 'block';
+        }
+
+        function goBackToSessionEntry() {
+            // Clear submission flag if going back
+            if (sessionCode) {
+                localStorage.removeItem(`has_submitted_${sessionCode}`);
+            }
+            
+            document.getElementById('checkinForm').style.display = 'none';
+            document.getElementById('sessionEntry').style.display = 'block';
+            document.getElementById('errorContainer').innerHTML = '';
+            
+            // Reset step indicator
+            updateStepIndicator(1);
+            
+            // Clear selection
+            selectedEmotion = null;
+            document.querySelectorAll('.emotion-option').forEach(option => {
+                option.classList.remove('selected');
+                option.setAttribute('aria-pressed', 'false');
+            });
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').innerHTML = 'Submit Check-in';
+            
+            // Focus back on session input
+            document.getElementById('sessionCodeInput').focus();
+        }
+
+        function enterNewSession() {
+            // Clear submission flag for the current session
+            if (sessionCode) {
+                localStorage.removeItem(`has_submitted_${sessionCode}`);
+            }
+            
+            document.getElementById('alreadySubmitted').style.display = 'none';
+            document.getElementById('sessionEntry').style.display = 'block';
+            
+            // Clear inputs
+            document.getElementById('sessionCodeInput').value = '';
+            document.getElementById('urlInput').value = '';
+            document.getElementById('errorContainer').innerHTML = '';
+            document.getElementById('successContainer').innerHTML = '';
+            
+            // Reset step indicator
+            updateStepIndicator(1);
+            
+            // Focus on input
+            document.getElementById('sessionCodeInput').focus();
+            
+            // Reset variables
+            sessionCode = null;
+            sessionData = null;
+            selectedEmotion = null;
+            hasSubmitted = false;
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function getUserId() {
+            // Check localStorage for this specific session
+            if (sessionCode) {
+                const existingId = localStorage.getItem(`checkin_submitted_${sessionCode}`);
+                if (existingId) {
+                    return existingId;
+                }
+            }
+            
+            // Generate a new clean ID for this session
+            const timestamp = Date.now();
+            const randomStr = Math.random().toString(36).substr(2, 9);
+            return `user_${timestamp}_${randomStr}`;
+        }
+
+        function updateStepIndicator(step) {
+            const steps = document.querySelectorAll('.step');
+            const lines = document.querySelectorAll('.step-line');
+            
+            steps.forEach((s, index) => {
+                s.classList.remove('active', 'completed');
+                if (index + 1 === step) {
+                    s.classList.add('active');
+                } else if (index + 1 < step) {
+                    s.classList.add('completed');
+                }
+            });
+            
+            lines.forEach((l, index) => {
+                l.classList.remove('active');
+                if (index + 1 < step) {
+                    l.classList.add('active');
+                }
+            });
+        }
+
+        function showError(message) {
+            const container = document.getElementById('errorContainer');
+            container.innerHTML = `
+                <div class="error-message">
+                    <span style="font-size: 1.2rem;">⚠️</span>
+                    <div>
+                        <strong>Error:</strong> ${message}
+                    </div>
+                </div>
+            `;
+            
+            // Scroll to error message on mobile
+            if (window.innerWidth < 768) {
+                container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function showSuccess(message) {
+            const container = document.getElementById('successContainer');
+            container.innerHTML = `
+                <div class="success-message">
+                    ✅ ${message}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 3000);
+        }
+
+        function showLoading(text = "Loading...") {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function formatTimeAgo(timestamp) {
+            if (!timestamp) return 'recently';
+            
+            const now = new Date();
+            const past = new Date(timestamp);
+            const diffMs = now - past;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            if (diffMins < 1) return 'just now';
+            if (diffMins < 60) return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
+            
+            const diffHours = Math.floor(diffMins / 60);
+            if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+            
+            const diffDays = Math.floor(diffHours / 24);
+            return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+        }
+
+        // ========== INITIALIZE APPLICATION ==========
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log("📱 Page loaded, initializing...");
+            initializeApp();
+            
+            // Handle orientation changes
+            let previousOrientation = window.orientation;
+            window.addEventListener('orientationchange', function() {
+                // Small delay to allow orientation to settle
+                setTimeout(() => {
+                    if (window.orientation !== previousOrientation) {
+                        // Re-focus on current active element
+                        const activeElement = document.activeElement;
+                        if (activeElement) {
+                            setTimeout(() => activeElement.focus(), 100);
+                        }
+                        previousOrientation = window.orientation;
+                    }
+                }, 300);
+            });
+            
+            // Handle resize events
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    // Any responsive adjustments can go here
+                }, 250);
+            });
+        });
+
+        // Prevent zoom on double-tap (iOS)
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
