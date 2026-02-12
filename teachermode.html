@@ -3,14 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>Grindly | Teacher Mode</title>
-<meta name="viewport">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <style>
-/* ===== CSS VARIABLES ===== */
 /* ===== CSS VARIABLES ===== */
 :root {
   /* Light theme (default) */
@@ -127,6 +125,150 @@ body.purple {
   --accent-light: rgba(139, 92, 246, 0.2);
 }
 
+body.aurora {
+  --bg: #0b1020;
+  --card: #121a2f;
+  --text: #e6f4ff;
+  --text-muted: #93b4d1;
+  --border: #1d2a44;
+  --accent: #7dd3fc;
+  --accent-dark: #22d3ee;
+  --accent-light: rgba(125, 211, 252, 0.15);
+}
+
+body.obsidian {
+  --bg: #0c0b0f;
+  --card: #16141d;
+  --text: #f4f0ff;
+  --text-muted: #b1a9c6;
+  --border: #2b2438;
+  --accent: #f97316;
+  --accent-dark: #c2410c;
+  --accent-light: rgba(249, 115, 22, 0.18);
+}
+
+body.celestial {
+  --bg: #0c1b2a;
+  --card: #14263b;
+  --text: #f8fafc;
+  --text-muted: #9fb4d1;
+  --border: #1f3550;
+  --accent: #a78bfa;
+  --accent-dark: #7c3aed;
+  --accent-light: rgba(167, 139, 250, 0.2);
+}
+
+body.aurora {
+  background:
+    radial-gradient(1200px 700px at 0% -30%, rgba(56, 189, 248, 0.38), transparent 60%),
+    radial-gradient(900px 600px at 85% 0%, rgba(16, 185, 129, 0.28), transparent 55%),
+    radial-gradient(700px 500px at 10% 30%, rgba(125, 211, 252, 0.18), transparent 55%),
+    linear-gradient(170deg, #061018 0%, #0a111c 45%, #0b1422 100%);
+}
+
+body.obsidian {
+  background:
+    radial-gradient(900px 600px at 70% -10%, rgba(249, 115, 22, 0.18), transparent 60%),
+    radial-gradient(800px 500px at 0% 20%, rgba(244, 63, 94, 0.18), transparent 55%),
+    linear-gradient(170deg, #050607 0%, #0b0c10 55%, #14121a 100%);
+}
+
+body.celestial {
+  background:
+    radial-gradient(1200px 700px at 20% -15%, rgba(167, 139, 250, 0.4), transparent 60%),
+    radial-gradient(900px 600px at 85% 0%, rgba(56, 189, 248, 0.35), transparent 60%),
+    radial-gradient(700px 500px at 30% 25%, rgba(251, 191, 36, 0.12), transparent 55%),
+    linear-gradient(170deg, #0b1424 0%, #0d1a2f 55%, #12213a 100%);
+}
+
+/* ===== SPECIAL THEME ENHANCEMENTS ===== */
+body.aurora .content-card,
+body.aurora .form-card,
+body.aurora .stat-card,
+body.aurora .sidebar {
+  background:
+    linear-gradient(180deg, rgba(11, 22, 34, 0.92), rgba(6, 16, 26, 0.94)),
+    radial-gradient(320px 220px at 15% 0%, rgba(34, 211, 238, 0.2), transparent 60%);
+  border: 1px solid rgba(125, 211, 252, 0.25);
+  box-shadow: 0 12px 32px rgba(2, 8, 23, 0.6);
+}
+
+body.aurora .btn.btn-primary,
+body.aurora .btn-submit,
+body.aurora .btn-success {
+  background: linear-gradient(135deg, #22d3ee 0%, #10b981 45%, #7dd3fc 100%);
+  color: #061018;
+  border: none;
+}
+
+body.aurora .btn.btn-secondary {
+  background: rgba(125, 211, 252, 0.15);
+  border: 1px solid rgba(125, 211, 252, 0.35);
+  color: #e6f4ff;
+}
+
+body.aurora .class-code-display {
+  background: linear-gradient(120deg, #22d3ee, #7dd3fc);
+}
+
+body.obsidian .content-card,
+body.obsidian .form-card,
+body.obsidian .stat-card,
+body.obsidian .sidebar {
+  background:
+    linear-gradient(180deg, rgba(15, 14, 19, 0.96), rgba(7, 8, 12, 0.96)),
+    radial-gradient(300px 220px at 90% 0%, rgba(249, 115, 22, 0.22), transparent 60%);
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  box-shadow: 0 14px 36px rgba(10, 4, 20, 0.7);
+}
+
+body.obsidian .btn.btn-primary,
+body.obsidian .btn-submit,
+body.obsidian .btn-success {
+  background: linear-gradient(135deg, #f97316 0%, #ef4444 50%, #f59e0b 100%);
+  color: #140b09;
+  border: none;
+}
+
+body.obsidian .btn.btn-secondary {
+  background: rgba(249, 115, 22, 0.15);
+  border: 1px solid rgba(249, 115, 22, 0.35);
+  color: #f4f0ff;
+}
+
+body.obsidian .class-code-display {
+  background: linear-gradient(120deg, #f97316, #fb7185);
+}
+
+body.celestial .content-card,
+body.celestial .form-card,
+body.celestial .stat-card,
+body.celestial .sidebar {
+  background:
+    linear-gradient(180deg, rgba(15, 32, 52, 0.97), rgba(8, 18, 33, 0.97)),
+    radial-gradient(300px 200px at 10% 0%, rgba(167, 139, 250, 0.25), transparent 60%);
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  box-shadow: 0 12px 34px rgba(9, 14, 28, 0.65);
+}
+
+body.celestial .btn.btn-primary,
+body.celestial .btn-submit,
+body.celestial .btn-success {
+  background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 40%, #f472b6 100%);
+  color: #0b1220;
+  border: none;
+}
+
+body.celestial .btn.btn-secondary {
+  background: rgba(96, 165, 250, 0.18);
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  color: #f8fafc;
+}
+
+body.celestial .class-code-display {
+  background: linear-gradient(120deg, #a78bfa, #38bdf8);
+}
+
 /* ===== BASE STYLES ===== */
 * {
   margin: 0;
@@ -151,12 +293,201 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.theme-preview .app-layout,
+body.theme-preview .mobile-header,
+body.theme-preview .sidebar-toggle {
+  filter: blur(8px);
+}
+
+.theme-preview-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 10, 18, 0.6);
+  z-index: 10000;
+}
+
+.theme-preview-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  max-width: 440px;
+  width: calc(100% - 2rem);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+
+.theme-preview-card h3 {
+  margin-bottom: var(--spacing-md);
+}
+
+.theme-preview-card p {
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-lg);
+}
+
 /* ===== LAYOUT STRUCTURE ===== */
 .app-layout {
   display: grid;
   grid-template-columns: 280px 1fr;
   min-height: 100vh;
   transition: all var(--transition);
+}
+
+/* ===== PRESENTATION MODE ===== */
+body.presentation-mode .sidebar {
+  display: none;
+}
+
+body.presentation-mode .app-layout {
+  grid-template-columns: 1fr;
+}
+
+body.presentation-mode .dashboard-header {
+  display: none;
+}
+
+body.presentation-mode .main-content {
+  padding-top: var(--spacing-lg);
+}
+
+.presentation-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.presentation-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.presentation-meta {
+  display: flex;
+  gap: var(--spacing-md);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.presentation-controls {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.presentation-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.presentation-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow);
+}
+
+.presentation-card h3 {
+  margin-bottom: var(--spacing-md);
+  font-size: 1.05rem;
+}
+
+.presentation-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.presentation-stat:last-child {
+  border-bottom: none;
+}
+
+.presentation-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.presentation-list {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.presentation-item {
+  padding: var(--spacing-sm);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.presentation-progress {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.presentation-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--gradient-primary);
+  width: 0%;
+}
+
+.presentation-timer {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.presentation-grid .span-3 { grid-column: span 3; }
+.presentation-grid .span-4 { grid-column: span 4; }
+.presentation-grid .span-6 { grid-column: span 6; }
+.presentation-grid .span-8 { grid-column: span 8; }
+.presentation-grid .span-12 { grid-column: span 12; }
+
+@media (max-width: 1100px) {
+  .presentation-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .presentation-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .presentation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .presentation-grid .span-3,
+  .presentation-grid .span-4,
+  .presentation-grid .span-6,
+  .presentation-grid .span-8 {
+    grid-column: span 2;
+  }
 }
 
 /* Sidebar collapsed state */
@@ -5103,12 +5434,18 @@ body.dark .toast.info {
     <div class="class-switcher">
       <select id="classSelector" onchange="switchClass(this.value)">
         <option value="">Select a Class</option>
+        <option value="aurora"> Aurora (Unlockable)</option>
+        <option value="obsidian"> Obsidian (Unlockable)</option>
+        <option value="celestial">Celestial (Unlockable)</option>
       </select>
     </div>
     
     <nav class="sidebar-nav">
       <div class="nav-item active" onclick="showSection('dashboard'); closeSidebarOnMobile();">
         📊 Dashboard
+      </div>
+      <div class="nav-item" onclick="showSection('presentation'); closeSidebarOnMobile();">
+        Presentation Mode
       </div>
     <!-- Memory Wall Navigation -->
 <div class="nav-item" onclick="showSection('memoryWall'); closeSidebarOnMobile();">
@@ -5137,6 +5474,9 @@ body.dark .toast.info {
 <div class="nav-item" onclick="showSection('checkins'); closeSidebarOnMobile();">
     😊 Quick Check-ins
 </div>
+      <div class="nav-item" onclick="showSection('exitTickets'); closeSidebarOnMobile();">
+        Exit Tickets
+      </div>
       <div class="nav-item" onclick="showSection('settings'); closeSidebarOnMobile();">
         ⚙️ Settings
       </div>
@@ -5198,6 +5538,23 @@ body.dark .toast.info {
       <div id="aggregateHeatmapSidebar" class="aggregate-heatmap"></div>
       <div id="aggregateInsightSidebar" class="aggregate-heatmap-insight" style="margin-top: var(--spacing-sm);"></div>
     </div>
+
+    <!-- Sidebar Tools -->
+    <div class="sidebar-stats" style="margin-top: var(--spacing-lg);">
+      <h3>Sidebar Tools</h3>
+      <div class="pro-tip" style="margin-bottom: var(--spacing-sm);">
+        <strong>Pro Tip</strong>
+        Use Focus Bell to reset attention, Lightning Plan to set today’s 3-step plan, and Exit Ticket to capture quick understanding.
+      </div>
+      <div style="display: grid; gap: var(--spacing-sm);">
+        <button class="btn btn-secondary" onclick="toggleFocusBell()">Focus Bell</button>
+        <button class="btn btn-secondary" onclick="openLightningPlan()">Lightning Plan</button>
+        <button class="btn btn-secondary" onclick="openExitTicket()">Exit Ticket</button>
+        <button class="btn btn-secondary" onclick="startFocusSprint()">Focus Sprint</button>
+      </div>
+      <div id="sidebarToolStatus" style="margin-top: var(--spacing-sm); font-size: 0.75rem; color: var(--text-muted);"></div>
+      <div id="sidebarToolDetails" style="margin-top: var(--spacing-sm); font-size: 0.85rem;"></div>
+    </div>
     
     <div class="pro-tip">
       <strong>💡 Pro Tip</strong>
@@ -5210,13 +5567,16 @@ body.dark .toast.info {
     </div>
     
     <div style="margin-top: var(--spacing-xl);">
-      <select class="theme-selector" onchange="changeTheme(this.value)" style="width: 100%; padding: 0.875rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text);">
+      <select class="theme-selector" onchange="handleThemeSelection(this.value)" style="width: 100%; padding: 0.875rem; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text);">
         <option value="light">☀️ Light Theme</option>
         <option value="dark">🌙 Dark Theme</option>
         <option value="ocean">🌊 Ocean Theme</option>
         <option value="forest">🌲 Forest Theme</option>
         <option value="sunset">🌅 Sunset Theme</option>
         <option value="purple">💜 Purple Theme</option>
+        <option value="aurora">✨ Aurora Theme</option>
+        <option value="obsidian">🕤 Obsidian Theme</option>
+        <option value="celestial">🌌 Celestial Theme</option>
       </select>
     </div>
     
@@ -5244,6 +5604,7 @@ body.dark .toast.info {
     Home
 </button>
 <!-- Or add to desktop controls bar -->
+<button class="btn btn-secondary" onclick="togglePresentationMode()">Presentation Mode</button>
 <button class="btn btn-secondary notification-bell" onclick="showNotifications()" style="position: relative;">
     🔔 Notifications
     <span id="notificationCountDesktop" class="badge" style="display: none;">0</span>
@@ -5308,6 +5669,68 @@ body.dark .toast.info {
           Monitor your class health at a glance: Total students shows enrollment, announcements track communication, assignments measure workload, and average streak indicates student engagement consistency.
         </div>
         
+        <!-- Teacher Toolkit -->
+        <div class="content-card" style="margin-top: var(--spacing-xl);">
+          <div class="content-header">
+            <h2>Teacher Toolkit</h2>
+            <button class="btn btn-secondary" onclick="renderTeacherToolkit()">Refresh Toolkit</button>
+          </div>
+          <div class="content-body">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--spacing-lg);">
+              <div class="form-card" style="margin: 0;">
+                <h3>ðŸŽ¯ Instant Student Picker</h3>
+                <div id="randomStudentResult" style="margin: var(--spacing-sm) 0; color: var(--text-muted);">Pick a student to spotlight.</div>
+                <button class="btn btn-primary" onclick="pickRandomStudentForToolkit()">Pick Student</button>
+              </div>
+
+              <div class="form-card" style="margin: 0;">
+                <h3>ðŸ¤ Group Generator</h3>
+                <input type="number" id="groupSizeInput" min="2" placeholder="Group size (e.g. 3)">
+                <button class="btn btn-secondary" style="margin-top: var(--spacing-sm);" onclick="generateStudentGroups()">Create Groups</button>
+                <div id="groupGeneratorOutput" style="margin-top: var(--spacing-sm); color: var(--text-muted);"></div>
+              </div>
+
+              <div class="form-card" style="margin: 0;">
+                <h3>âœ… Attendance Today</h3>
+                <div id="attendanceSummary" style="color: var(--text-muted);">Waiting for data...</div>
+              </div>
+
+              <div class="form-card" style="margin: 0;">
+                <h3>ðŸ“Š Class Pulse</h3>
+                <div id="classPulseSummary" style="color: var(--text-muted);">Waiting for check-ins...</div>
+              </div>
+
+              <div class="form-card" style="margin: 0;">
+                <h3>ðŸš¨ At-Risk Outreach</h3>
+                <div id="atRiskCount" style="margin-bottom: var(--spacing-sm); color: var(--text-muted);">0 students need support.</div>
+                <button class="btn btn-warning" onclick="sendAtRiskOutreach()">Send Support Announcement</button>
+              </div>
+
+              <div class="form-card" style="margin: 0;">
+                <h3>ðŸ† Weekly Wins</h3>
+                <div id="weeklyWinsPreview" style="margin-bottom: var(--spacing-sm); color: var(--text-muted);">Previewing top students...</div>
+                <button class="btn btn-success" onclick="sendWeeklyWins()">Share Weekly Wins</button>
+              </div>
+
+              <div class="form-card" style="margin: 0;">
+                <h3>ðŸ“ Quick Notes</h3>
+                <textarea id="toolkitQuickNotes" placeholder="Jot down quick notes for today..." style="min-height: 110px;"></textarea>
+                <div id="toolkitNotesStatus" style="margin-top: var(--spacing-xs); color: var(--text-muted); font-size: 0.8rem;">Not saved yet.</div>
+                <button class="btn btn-secondary" style="margin-top: var(--spacing-sm);" onclick="saveToolkitNotes()">Save Notes</button>
+              </div>
+
+              <div class="form-card" style="margin: 0;">
+                <h3>ðŸ“Œ Priority List</h3>
+                <div style="display: flex; gap: var(--spacing-sm);">
+                  <input type="text" id="priorityItemInput" placeholder="Add a focus item...">
+                  <button class="btn btn-secondary" onclick="addPriorityItem()">Add</button>
+                </div>
+                <div id="priorityList" style="margin-top: var(--spacing-sm); color: var(--text-muted);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Main Content Area -->
         <div class="dashboard-grid" style="margin-top: var(--spacing-xl);">
           
@@ -5932,6 +6355,115 @@ body.dark .toast.info {
 
 
 
+      <!-- Presentation Mode Section -->
+      <div id="presentation" class="dashboard-content presentation-view" style="grid-column: span 12; display: none;">
+        <div class="presentation-toolbar">
+          <div>
+            <div class="presentation-title">Class Presentation Mode</div>
+            <div class="presentation-meta">
+              <span id="presentationClassName">Class: --</span>
+              <span id="presentationClassCode">Code: ------</span>
+              <span id="presentationLastUpdated">Updated: --</span>
+            </div>
+          </div>
+          <div class="presentation-controls">
+            <button class="btn btn-secondary" id="presentationAutoBtn" onclick="togglePresentationAutoRefresh()">Live Auto Refresh: ON</button>
+            <button class="btn btn-secondary" onclick="togglePresentationFullScreen()">Full Screen</button>
+            <button class="btn btn-danger" onclick="exitPresentationMode()">Exit</button>
+          </div>
+        </div>
+
+        <div class="presentation-grid">
+          <div class="presentation-card span-3">
+            <h3>Class Snapshot</h3>
+            <div class="presentation-stat"><span>Total Students</span><strong id="presentationStudentsCount">0</strong></div>
+            <div class="presentation-stat"><span>Active This Week</span><strong id="presentationActiveCount">0</strong></div>
+            <div class="presentation-stat"><span>Average Streak</span><strong id="presentationAvgStreak">0</strong></div>
+            <div class="presentation-stat"><span>Class Health</span><strong id="presentationHealthScore">0</strong></div>
+            <div class="presentation-pill" id="presentationHealthLabel">Steady</div>
+          </div>
+
+          <div class="presentation-card span-3">
+            <h3>Student Spotlight</h3>
+            <div id="presentationSpotlight">No students yet.</div>
+            <button class="btn btn-secondary" style="margin-top: var(--spacing-sm);" onclick="pickNewSpotlight()">New Spotlight</button>
+            <button class="btn btn-primary" style="margin-top: var(--spacing-sm);" onclick="createSpotlightShoutout()">Send Shoutout</button>
+          </div>
+
+          <div class="presentation-card span-3">
+            <h3>At-Risk Alerts</h3>
+            <div id="presentationAtRisk" class="presentation-list"></div>
+          </div>
+
+          <div class="presentation-card span-3">
+            <h3>Goals Tracker</h3>
+            <div style="display: grid; gap: var(--spacing-sm);">
+              <label style="font-size: 0.85rem;">Active Students Target</label>
+              <input type="number" id="goalActiveTarget" min="1" placeholder="e.g. 20">
+              <div class="presentation-progress"><span id="goalActiveProgress"></span></div>
+              <label style="font-size: 0.85rem;">Average Streak Target</label>
+              <input type="number" id="goalStreakTarget" min="1" placeholder="e.g. 7">
+              <div class="presentation-progress"><span id="goalStreakProgress"></span></div>
+              <button class="btn btn-secondary" onclick="savePresentationGoals()">Save Goals</button>
+            </div>
+          </div>
+
+          <div class="presentation-card span-6">
+            <h3>Live Students</h3>
+            <div id="presentationStudents" class="presentation-list"></div>
+          </div>
+
+          <div class="presentation-card span-6">
+            <h3>Recent Announcements</h3>
+            <div id="presentationAnnouncements" class="presentation-list"></div>
+          </div>
+
+          <div class="presentation-card span-4">
+            <h3>Assignments</h3>
+            <div id="presentationAssignments" class="presentation-list"></div>
+          </div>
+
+          <div class="presentation-card span-4">
+            <h3>Resources</h3>
+            <div id="presentationResources" class="presentation-list"></div>
+          </div>
+
+          <div class="presentation-card span-4">
+            <h3>Challenges</h3>
+            <div id="presentationChallenges" class="presentation-list"></div>
+          </div>
+
+          <div class="presentation-card span-6">
+            <h3>Agenda and Timer</h3>
+            <div class="presentation-timer" id="presentationTimer">00:00</div>
+            <div style="display: flex; gap: var(--spacing-sm); margin: var(--spacing-sm) 0;">
+              <button class="btn btn-primary" onclick="startPresentationTimer()">Start</button>
+              <button class="btn btn-secondary" onclick="pausePresentationTimer()">Pause</button>
+              <button class="btn btn-danger" onclick="resetPresentationTimer()">Reset</button>
+            </div>
+            <div style="display: flex; gap: var(--spacing-sm);">
+              <input type="text" id="agendaItemInput" placeholder="Add agenda item...">
+              <button class="btn btn-secondary" onclick="addAgendaItem()">Add</button>
+            </div>
+            <div id="presentationAgenda" class="presentation-list" style="margin-top: var(--spacing-sm);"></div>
+          </div>
+
+          <div class="presentation-card span-6">
+            <h3>Check-ins Snapshot</h3>
+            <div class="presentation-stat"><span>Confident</span><strong id="presentationCheckinConfident">0</strong></div>
+            <div class="presentation-stat"><span>Okay</span><strong id="presentationCheckinOkay">0</strong></div>
+            <div class="presentation-stat"><span>Struggling</span><strong id="presentationCheckinStruggling">0</strong></div>
+            <div class="presentation-stat"><span>Last Update</span><strong id="presentationCheckinUpdated">--</strong></div>
+            <button class="btn btn-secondary" onclick="showSection('checkins')">Open Check-ins</button>
+          </div>
+
+          <div class="presentation-card span-12">
+            <h3>Live Activity</h3>
+            <div id="presentationActivity" class="presentation-list"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- Quick Check-ins Section - Keep this one only! -->
 <div id="checkins" class="dashboard-content" style="grid-column: span 12; display: none;">
     <div class="content-card">
@@ -6088,6 +6620,43 @@ body.dark .toast.info {
         </div>
     </div>
 </div>
+
+      <!-- Exit Tickets Section -->
+      <div id="exitTickets" class="dashboard-content" style="grid-column: span 12; display: none;">
+        <div class="content-card">
+          <div class="content-header">
+            <h2>Exit Tickets</h2>
+            <div style="display: flex; gap: var(--spacing-sm);">
+              <button class="btn btn-primary" onclick="openExitTicket()">Generate Exit Ticket</button>
+              <button class="btn btn-secondary" onclick="shareExitTicket()">Share Ticket</button>
+            </div>
+          </div>
+          <div class="content-body">
+            <div class="pro-tip">
+              <strong>Exit Ticket</strong>
+              Use this to capture quick understanding at the end of class. Students submit responses and you'll see them here in real time.
+            </div>
+            <div class="form-card" style="margin-top: var(--spacing-md);">
+              <h3>Student Link</h3>
+              <div style="display: flex; gap: var(--spacing-sm);">
+                <input type="text" id="exitTicketLink" readonly placeholder="Generate to create a link">
+                <button class="btn btn-secondary" onclick="copyExitTicketLink()">Copy Link</button>
+              </div>
+            </div>
+            <div class="form-card" style="margin-top: var(--spacing-md);">
+              <h3>Questions</h3>
+              <div id="exitTicketQuestions">Generate a ticket to show questions.</div>
+              <div style="margin-top: var(--spacing-sm);">
+                <button class="btn btn-secondary" onclick="removeExitTicket()">Remove</button>
+              </div>
+            </div>
+            <div class="form-card" style="margin-top: var(--spacing-md);">
+              <h3>Responses</h3>
+              <div id="exitTicketResponses">No responses yet.</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
 
       <!-- Challenges Section -->
@@ -6769,6 +7338,51 @@ let students = [];
 let currentSection = 'dashboard';
 let liveActivity = [];
 
+// Presentation mode state
+let presentationAutoRefreshEnabled = true;
+let presentationAutoRefreshTimer = null;
+let presentationSpotlightId = null;
+let presentationTimerSeconds = 0;
+let presentationTimerHandle = null;
+let themePreviewTheme = null;
+let previousTheme = null;
+let toolkitRandomStudentId = null;
+let toolkitGroups = [];
+let toolkitNotes = '';
+let toolkitPriorityItems = [];
+let focusSprintTimer = null;
+let focusBellAudioInstance = null;
+let focusBellContext = null;
+let exitTicketListenerActive = false;
+
+const STORAGE_SCHEMA_VERSION = 2;
+
+function initLocalStorageSchema() {
+  try {
+    const stored = parseInt(localStorage.getItem('lifeos_schema_version') || '1', 10);
+    if (stored >= STORAGE_SCHEMA_VERSION) return;
+
+    if (stored < 2) {
+      const legacyTheme = localStorage.getItem('teacherTheme');
+      const newTheme = localStorage.getItem('teacher_theme');
+      if (legacyTheme && !newTheme) {
+        localStorage.setItem('teacher_theme', legacyTheme);
+      }
+      if (newTheme && !legacyTheme) {
+        localStorage.setItem('teacherTheme', newTheme);
+      }
+      const demoId = localStorage.getItem('demo_teacher_id');
+      if (demoId && !localStorage.getItem('teacher_userId')) {
+        localStorage.setItem('teacher_userId', demoId);
+      }
+    }
+
+    localStorage.setItem('lifeos_schema_version', String(STORAGE_SCHEMA_VERSION));
+  } catch (error) {
+    console.error("Schema migration failed:", error);
+  }
+}
+
 // Track announcements and resources to prevent duplicates
 let announcementIds = new Set();
 let resourceIds = new Set();
@@ -7000,14 +7614,18 @@ function loadTeacherClassesFromLocalStorage() {
     
       sessionCode = null; // Add this
 
-    // Generate demo teacher ID
-    teacherId = "demo_teacher_" + Math.random().toString(36).substr(2, 9);
+    // Generate demo teacher ID (persist across refresh)
+    const savedDemoId = localStorage.getItem('demo_teacher_id');
+    teacherId = savedDemoId || ("demo_teacher_" + Math.random().toString(36).substr(2, 9));
+    localStorage.setItem('demo_teacher_id', teacherId);
     teacherName = "Demo Teacher";
     currentUser = {
         uid: teacherId,
         email: "teacher@example.com",
         displayName: teacherName
     };
+    localStorage.setItem('teacher_userId', teacherId);
+    localStorage.setItem('teacher_name', teacherName);
     
     // Initialize demo data
     initializeDemoData();
@@ -7064,6 +7682,15 @@ function initializeDemoData() {
         currentClassCode = teacherClasses[0].code;
         currentClassId = teacherClasses[0].id;
         selectedClassIndex = 0;
+        const savedCode = localStorage.getItem('teacher_current_class_code');
+        if (savedCode) {
+            const foundIndex = teacherClasses.findIndex(cls => cls.code === savedCode);
+            if (foundIndex >= 0) {
+                currentClassId = teacherClasses[foundIndex].id;
+                currentClassCode = teacherClasses[foundIndex].code;
+                selectedClassIndex = foundIndex;
+            }
+        }
     }
     
     // Initialize demo arrays if empty
@@ -9209,7 +9836,1099 @@ function renderAllData() {
   renderResources();
   renderPolls();
   renderLiveActivity();
+  renderPresentation();
+  renderTeacherToolkit();
+  renderSidebarTools();
+  renderExitTicketSection();
   const checkinStats = addCheckinStatsToDashboard();
+}
+
+// ========== PRESENTATION MODE ==========
+function setPresentationMode(isActive) {
+  if (isActive) {
+    document.body.classList.add('presentation-mode');
+    startPresentationAutoRefresh();
+    renderPresentation();
+  } else {
+    document.body.classList.remove('presentation-mode');
+    stopPresentationAutoRefresh();
+  }
+}
+
+function togglePresentationMode() {
+  if (document.body.classList.contains('presentation-mode')) {
+    showSection('dashboard');
+    return;
+  }
+  if (!currentClassCode) {
+    showNotification("Please select a class first", "error");
+    return;
+  }
+  showSection('presentation');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function exitPresentationMode() {
+  showSection('dashboard');
+}
+
+function togglePresentationAutoRefresh() {
+  presentationAutoRefreshEnabled = !presentationAutoRefreshEnabled;
+  const btn = document.getElementById('presentationAutoBtn');
+  if (btn) {
+    btn.textContent = `Live Auto Refresh: ${presentationAutoRefreshEnabled ? 'ON' : 'OFF'}`;
+  }
+  if (presentationAutoRefreshEnabled) {
+    startPresentationAutoRefresh();
+  } else {
+    stopPresentationAutoRefresh();
+  }
+}
+
+function startPresentationAutoRefresh() {
+  if (!presentationAutoRefreshEnabled) return;
+  stopPresentationAutoRefresh();
+  presentationAutoRefreshTimer = setInterval(() => {
+    renderPresentation();
+  }, 15000);
+}
+
+function stopPresentationAutoRefresh() {
+  if (presentationAutoRefreshTimer) {
+    clearInterval(presentationAutoRefreshTimer);
+    presentationAutoRefreshTimer = null;
+  }
+}
+
+function togglePresentationFullScreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen().catch(() => {});
+  }
+}
+
+function parseLastActiveDate(value) {
+  if (!value || value === 'Unknown') return null;
+  const parsed = new Date(value);
+  if (isNaN(parsed.getTime())) return null;
+  return parsed;
+}
+
+function getCurrentClassName() {
+  if (!currentClassCode) return 'No class selected';
+  const match = teacherClasses.find(cls => cls.code === currentClassCode);
+  return match ? match.name : 'Current Class';
+}
+
+function getPresentationGoals() {
+  if (!currentClassCode) return { activeTarget: null, streakTarget: null };
+  try {
+    const raw = localStorage.getItem(`teacher_presentation_goals_${currentClassCode}`);
+    if (!raw) return { activeTarget: null, streakTarget: null };
+    const parsed = JSON.parse(raw);
+    return {
+      activeTarget: parsed.activeTarget || null,
+      streakTarget: parsed.streakTarget || null
+    };
+  } catch (error) {
+    return { activeTarget: null, streakTarget: null };
+  }
+}
+
+function savePresentationGoals() {
+  if (!currentClassCode) {
+    showNotification("Select a class first", "error");
+    return;
+  }
+  const activeTarget = Number(document.getElementById('goalActiveTarget')?.value || 0) || null;
+  const streakTarget = Number(document.getElementById('goalStreakTarget')?.value || 0) || null;
+  localStorage.setItem(`teacher_presentation_goals_${currentClassCode}`, JSON.stringify({
+    activeTarget: activeTarget,
+    streakTarget: streakTarget
+  }));
+  renderPresentation();
+  showNotification("Presentation goals saved", "success");
+}
+
+function getAgendaItems() {
+  if (!currentClassCode) return [];
+  try {
+    const raw = localStorage.getItem(`teacher_presentation_agenda_${currentClassCode}`);
+    return raw ? JSON.parse(raw) : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveAgendaItems(items) {
+  if (!currentClassCode) return;
+  localStorage.setItem(`teacher_presentation_agenda_${currentClassCode}`, JSON.stringify(items));
+}
+
+function addAgendaItem() {
+  const input = document.getElementById('agendaItemInput');
+  if (!input) return;
+  const value = input.value.trim();
+  if (!value) return;
+  const items = getAgendaItems();
+  items.push(value);
+  saveAgendaItems(items);
+  input.value = '';
+  renderAgendaItems();
+}
+
+function removeAgendaItem(index) {
+  const items = getAgendaItems();
+  items.splice(index, 1);
+  saveAgendaItems(items);
+  renderAgendaItems();
+}
+
+function renderAgendaItems() {
+  const container = document.getElementById('presentationAgenda');
+  if (!container) return;
+  const items = getAgendaItems();
+  if (!items.length) {
+    container.innerHTML = `<div class="presentation-item">Add agenda items to guide the session.</div>`;
+    return;
+  }
+  container.innerHTML = items.map((item, index) => `
+    <div class="presentation-item" style="display: flex; justify-content: space-between; gap: var(--spacing-sm);">
+      <span>${item}</span>
+      <button class="btn btn-secondary" onclick="removeAgendaItem(${index})">Remove</button>
+    </div>
+  `).join('');
+}
+
+function updatePresentationTimerDisplay() {
+  const el = document.getElementById('presentationTimer');
+  if (!el) return;
+  const minutes = String(Math.floor(presentationTimerSeconds / 60)).padStart(2, '0');
+  const seconds = String(presentationTimerSeconds % 60).padStart(2, '0');
+  el.textContent = `${minutes}:${seconds}`;
+}
+
+function startPresentationTimer() {
+  if (presentationTimerHandle) return;
+  presentationTimerHandle = setInterval(() => {
+    presentationTimerSeconds += 1;
+    updatePresentationTimerDisplay();
+  }, 1000);
+}
+
+function pausePresentationTimer() {
+  if (presentationTimerHandle) {
+    clearInterval(presentationTimerHandle);
+    presentationTimerHandle = null;
+  }
+}
+
+function resetPresentationTimer() {
+  pausePresentationTimer();
+  presentationTimerSeconds = 0;
+  updatePresentationTimerDisplay();
+}
+
+function pickNewSpotlight() {
+  const realStudents = students.filter(s => !s.isTeacher);
+  if (!realStudents.length) {
+    presentationSpotlightId = null;
+    renderPresentation();
+    return;
+  }
+  const randomStudent = realStudents[Math.floor(Math.random() * realStudents.length)];
+  presentationSpotlightId = randomStudent.id;
+  renderPresentation();
+}
+
+function createSpotlightShoutout() {
+  if (!currentClassCode) {
+    showNotification("Select a class first", "error");
+    return;
+  }
+  const realStudents = students.filter(s => !s.isTeacher);
+  if (!realStudents.length) {
+    showNotification("No students to shout out yet", "error");
+    return;
+  }
+  const topStudents = [...realStudents].sort((a, b) => (b.points || 0) - (a.points || 0)).slice(0, 3);
+  const names = topStudents.map(s => s.name).join(', ');
+  const title = "Class Shoutout";
+  const content = `Shoutout to ${names} for leading the class with strong progress and consistency. Keep the momentum going!`;
+  postAnnouncement(title, content);
+}
+
+function renderPresentation() {
+  const presentationSection = document.getElementById('presentation');
+  if (!presentationSection) return;
+
+  const classNameEl = document.getElementById('presentationClassName');
+  const classCodeEl = document.getElementById('presentationClassCode');
+  const updatedEl = document.getElementById('presentationLastUpdated');
+  if (classNameEl) classNameEl.textContent = `Class: ${getCurrentClassName()}`;
+  if (classCodeEl) classCodeEl.textContent = `Code: ${currentClassCode || '------'}`;
+  if (updatedEl) updatedEl.textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+
+  const realStudents = students.filter(s => !s.isTeacher);
+  const totalStudents = realStudents.length;
+  const recentActive = realStudents.filter(student => {
+    const last = parseLastActiveDate(student.lastActive);
+    if (!last) return false;
+    const diffDays = (Date.now() - last.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays <= 7;
+  });
+  const avgStreak = totalStudents > 0
+    ? Math.round(realStudents.reduce((sum, s) => sum + (s.streak || 0), 0) / totalStudents)
+    : 0;
+  const activePercent = totalStudents > 0 ? Math.round((recentActive.length / totalStudents) * 100) : 0;
+  const normalizedStreak = Math.min(100, avgStreak * 8);
+  const healthScore = Math.round((normalizedStreak + activePercent) / 2);
+
+  const studentsCountEl = document.getElementById('presentationStudentsCount');
+  const activeCountEl = document.getElementById('presentationActiveCount');
+  const avgStreakEl = document.getElementById('presentationAvgStreak');
+  const healthScoreEl = document.getElementById('presentationHealthScore');
+  const healthLabelEl = document.getElementById('presentationHealthLabel');
+
+  if (studentsCountEl) studentsCountEl.textContent = totalStudents;
+  if (activeCountEl) activeCountEl.textContent = recentActive.length;
+  if (avgStreakEl) avgStreakEl.textContent = avgStreak;
+  if (healthScoreEl) healthScoreEl.textContent = healthScore;
+  if (healthLabelEl) {
+    if (healthScore >= 70) {
+      healthLabelEl.textContent = 'Strong';
+    } else if (healthScore >= 40) {
+      healthLabelEl.textContent = 'Steady';
+    } else {
+      healthLabelEl.textContent = 'Needs Attention';
+    }
+  }
+
+  const spotlightContainer = document.getElementById('presentationSpotlight');
+  if (spotlightContainer) {
+    if (!realStudents.length) {
+      spotlightContainer.textContent = 'No students yet.';
+    } else {
+      let spotlightStudent = realStudents.find(s => s.id === presentationSpotlightId);
+      if (!spotlightStudent) {
+        spotlightStudent = realStudents[0];
+        presentationSpotlightId = spotlightStudent.id;
+      }
+      spotlightContainer.innerHTML = `
+        <div class="presentation-item">
+          <strong>${spotlightStudent.name}</strong>
+          <div>Points: ${spotlightStudent.points || 0}</div>
+          <div>Streak: ${spotlightStudent.streak || 0} days</div>
+          <div>Last Active: ${formatShortDate(spotlightStudent.lastActive)}</div>
+        </div>
+      `;
+    }
+  }
+
+  const atRiskContainer = document.getElementById('presentationAtRisk');
+  if (atRiskContainer) {
+    const atRisk = realStudents.filter(student => {
+      const streakLow = (student.streak || 0) <= 1;
+      const last = parseLastActiveDate(student.lastActive);
+      if (!last) return true;
+      const diffDays = (Date.now() - last.getTime()) / (1000 * 60 * 60 * 24);
+      return streakLow || diffDays >= 3;
+    }).slice(0, 4);
+
+    if (!atRisk.length) {
+      atRiskContainer.innerHTML = `<div class="presentation-item">No at-risk students right now.</div>`;
+    } else {
+      atRiskContainer.innerHTML = atRisk.map(student => `
+        <div class="presentation-item">
+          <strong>${student.name}</strong>
+          <div>Streak: ${student.streak || 0} days</div>
+          <div>Last Active: ${formatShortDate(student.lastActive)}</div>
+        </div>
+      `).join('');
+    }
+  }
+
+  const goals = getPresentationGoals();
+  const goalActiveInput = document.getElementById('goalActiveTarget');
+  const goalStreakInput = document.getElementById('goalStreakTarget');
+  if (goalActiveInput && document.activeElement !== goalActiveInput) {
+    goalActiveInput.value = goals.activeTarget || '';
+  }
+  if (goalStreakInput && document.activeElement !== goalStreakInput) {
+    goalStreakInput.value = goals.streakTarget || '';
+  }
+
+  const activeProgress = document.getElementById('goalActiveProgress');
+  const streakProgress = document.getElementById('goalStreakProgress');
+  if (activeProgress) {
+    const activeTarget = goals.activeTarget || 0;
+    const pct = activeTarget ? Math.min(100, Math.round((recentActive.length / activeTarget) * 100)) : 0;
+    activeProgress.style.width = `${pct}%`;
+  }
+  if (streakProgress) {
+    const streakTarget = goals.streakTarget || 0;
+    const pct = streakTarget ? Math.min(100, Math.round((avgStreak / streakTarget) * 100)) : 0;
+    streakProgress.style.width = `${pct}%`;
+  }
+
+  const studentsContainer = document.getElementById('presentationStudents');
+  if (studentsContainer) {
+    const topStudents = [...realStudents].sort((a, b) => (b.points || 0) - (a.points || 0)).slice(0, 6);
+    if (!topStudents.length) {
+      studentsContainer.innerHTML = `<div class="presentation-item">No students yet.</div>`;
+    } else {
+      studentsContainer.innerHTML = topStudents.map(student => `
+        <div class="presentation-item">
+          <strong>${student.name}</strong>
+          <div>${student.totalStudyHours || '0.0'}h • ${student.points || 0} pts • Streak ${student.streak || 0}</div>
+        </div>
+      `).join('');
+    }
+  }
+
+  const announcementsContainer = document.getElementById('presentationAnnouncements');
+  if (announcementsContainer) {
+    const recentAnnouncements = announcements.slice(0, 3);
+    announcementsContainer.innerHTML = recentAnnouncements.length
+      ? recentAnnouncements.map(ann => `
+          <div class="presentation-item">
+            <strong>${ann.title}</strong>
+            <div>${ann.content}</div>
+          </div>
+        `).join('')
+      : `<div class="presentation-item">No announcements yet.</div>`;
+  }
+
+  const assignmentsContainer = document.getElementById('presentationAssignments');
+  if (assignmentsContainer) {
+    const recentAssignments = assignments.slice(0, 3);
+    assignmentsContainer.innerHTML = recentAssignments.length
+      ? recentAssignments.map(assignment => `
+          <div class="presentation-item">
+            <strong>${assignment.title}</strong>
+            <div>Due: ${assignment.dueDate || 'No due date'}</div>
+          </div>
+        `).join('')
+      : `<div class="presentation-item">No assignments yet.</div>`;
+  }
+
+  const resourcesContainer = document.getElementById('presentationResources');
+  if (resourcesContainer) {
+    const recentResources = resources.slice(0, 3);
+    resourcesContainer.innerHTML = recentResources.length
+      ? recentResources.map(resource => `
+          <div class="presentation-item">
+            <strong>${resource.title}</strong>
+            <div>${resource.description || 'No description'}</div>
+          </div>
+        `).join('')
+      : `<div class="presentation-item">No resources yet.</div>`;
+  }
+
+  const challengesContainer = document.getElementById('presentationChallenges');
+  if (challengesContainer) {
+    const allList = (typeof allChallenges !== 'undefined') ? allChallenges : [];
+    const classChallenges = allList.filter(challenge =>
+      challenge.challengerClass === currentClassCode || challenge.opponentClass === currentClassCode
+    ).slice(0, 3);
+    challengesContainer.innerHTML = classChallenges.length
+      ? classChallenges.map(challenge => `
+          <div class="presentation-item">
+            <strong>${challenge.name}</strong>
+            <div>Status: ${challenge.status || 'active'}</div>
+          </div>
+        `).join('')
+      : `<div class="presentation-item">No challenges yet.</div>`;
+  }
+
+  const activityContainer = document.getElementById('presentationActivity');
+  if (activityContainer) {
+    const recentActivity = liveActivity.slice(0, 6);
+    activityContainer.innerHTML = recentActivity.length
+      ? recentActivity.map(item => `
+          <div class="presentation-item">
+            <strong>${item.title || item.type || 'Activity'}</strong>
+            <div>${item.description || item.message || ''}</div>
+          </div>
+        `).join('')
+      : `<div class="presentation-item">No activity yet.</div>`;
+  }
+
+  const checkinConfident = document.getElementById('presentationCheckinConfident');
+  const checkinOkay = document.getElementById('presentationCheckinOkay');
+  const checkinStruggling = document.getElementById('presentationCheckinStruggling');
+  const checkinUpdated = document.getElementById('presentationCheckinUpdated');
+  if (checkinConfident) checkinConfident.textContent = checkinData?.confident || 0;
+  if (checkinOkay) checkinOkay.textContent = checkinData?.okay || 0;
+  if (checkinStruggling) checkinStruggling.textContent = checkinData?.struggling || 0;
+  if (checkinUpdated) {
+    checkinUpdated.textContent = checkinData?.lastUpdated
+      ? formatShortDate(checkinData.lastUpdated)
+      : 'Not updated';
+  }
+
+  renderAgendaItems();
+  updatePresentationTimerDisplay();
+}
+
+// ========== TEACHER TOOLKIT ==========
+function getRealStudents() {
+  return students.filter(student => !student.isTeacher);
+}
+
+function renderTeacherToolkit() {
+  const realStudents = getRealStudents();
+  const randomResult = document.getElementById('randomStudentResult');
+  const groupOutput = document.getElementById('groupGeneratorOutput');
+  const attendanceSummary = document.getElementById('attendanceSummary');
+  const classPulseSummary = document.getElementById('classPulseSummary');
+  const atRiskCount = document.getElementById('atRiskCount');
+  const weeklyWinsPreview = document.getElementById('weeklyWinsPreview');
+  const notesField = document.getElementById('toolkitQuickNotes');
+  const notesStatus = document.getElementById('toolkitNotesStatus');
+  const priorityList = document.getElementById('priorityList');
+
+  loadToolkitState();
+
+  if (randomResult) {
+    if (!realStudents.length) {
+      randomResult.textContent = 'No students available yet.';
+    } else if (toolkitRandomStudentId) {
+      const student = realStudents.find(s => s.id === toolkitRandomStudentId);
+      randomResult.innerHTML = student
+        ? `<strong>${student.name}</strong> â€¢ ${student.points || 0} pts â€¢ ${student.streak || 0} day streak`
+        : 'Pick a student to spotlight.';
+    } else {
+      randomResult.textContent = 'Pick a student to spotlight.';
+    }
+  }
+
+  if (attendanceSummary) {
+    const activeToday = realStudents.filter(student => {
+      const last = parseLastActiveDate(student.lastActive);
+      if (!last) return false;
+      const diffHours = (Date.now() - last.getTime()) / (1000 * 60 * 60);
+      return diffHours <= 24;
+    });
+    const names = activeToday.slice(0, 6).map(s => s.name).join(', ');
+    attendanceSummary.innerHTML = activeToday.length
+      ? `<strong>${activeToday.length}</strong> active in the last 24 hours.<br><span>${names}${activeToday.length > 6 ? '…' : ''}</span>`
+      : 'No students active in the last 24 hours yet.';
+  }
+
+  if (groupOutput) {
+    if (!toolkitGroups.length) {
+      groupOutput.textContent = 'No groups created yet.';
+    } else {
+      groupOutput.innerHTML = toolkitGroups.map((group, index) => {
+        const names = group.map(student => student.name).join(', ');
+        return `<div style="margin-bottom: var(--spacing-sm);"><strong>Group ${index + 1}:</strong> ${names}</div>`;
+      }).join('');
+    }
+  }
+
+  if (classPulseSummary) {
+    const confident = checkinData?.confident || 0;
+    const okay = checkinData?.okay || 0;
+    const struggling = checkinData?.struggling || 0;
+    const total = confident + okay + struggling;
+    if (total === 0) {
+      classPulseSummary.textContent = 'No check-ins yet. Start a live check-in session.';
+    } else {
+      classPulseSummary.innerHTML = `Confident: <strong>${confident}</strong> â€¢ Okay: <strong>${okay}</strong> â€¢ Struggling: <strong>${struggling}</strong>`;
+    }
+  }
+
+  if (atRiskCount) {
+    const atRiskStudents = getAtRiskStudents(realStudents);
+    atRiskCount.innerHTML = `<strong>${atRiskStudents.length}</strong> students need support.`;
+  }
+
+  if (weeklyWinsPreview) {
+    if (!realStudents.length) {
+      weeklyWinsPreview.textContent = 'Add students to see top performers.';
+    } else {
+      const topStudents = [...realStudents].sort((a, b) => (b.points || 0) - (a.points || 0)).slice(0, 3);
+      weeklyWinsPreview.innerHTML = topStudents.map(s => s.name).join(', ');
+    }
+  }
+
+  if (notesField && notesField.value !== toolkitNotes) {
+    notesField.value = toolkitNotes || '';
+  }
+  if (notesStatus) {
+    const lastSaved = getToolkitState()?.notesUpdatedAt;
+    notesStatus.textContent = lastSaved ? `Saved ${formatShortDate(lastSaved)}` : 'Not saved yet.';
+  }
+
+  if (priorityList) {
+    if (!toolkitPriorityItems.length) {
+      priorityList.innerHTML = 'No priorities yet.';
+    } else {
+      priorityList.innerHTML = toolkitPriorityItems.map((item, index) => `
+        <div style="display: flex; justify-content: space-between; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs);">
+          <span>${item}</span>
+          <button class="btn btn-secondary" onclick="removePriorityItem(${index})">Done</button>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+function pickRandomStudentForToolkit() {
+  const realStudents = getRealStudents();
+  if (!realStudents.length) {
+    showNotification("No students available yet", "error");
+    return;
+  }
+  const student = realStudents[Math.floor(Math.random() * realStudents.length)];
+  toolkitRandomStudentId = student.id;
+  saveToolkitState();
+  renderTeacherToolkit();
+}
+
+function generateStudentGroups() {
+  const realStudents = getRealStudents();
+  const sizeInput = document.getElementById('groupSizeInput');
+  const output = document.getElementById('groupGeneratorOutput');
+  if (!output) return;
+  const groupSize = Number(sizeInput?.value || 0);
+  if (!groupSize || groupSize < 2) {
+    showNotification("Enter a group size of at least 2", "error");
+    return;
+  }
+  if (!realStudents.length) {
+    output.textContent = 'No students to group yet.';
+    return;
+  }
+
+  const shuffled = [...realStudents].sort(() => Math.random() - 0.5);
+  toolkitGroups = [];
+  for (let i = 0; i < shuffled.length; i += groupSize) {
+    toolkitGroups.push(shuffled.slice(i, i + groupSize));
+  }
+  saveToolkitState();
+  output.innerHTML = toolkitGroups.map((group, index) => {
+    const names = group.map(student => student.name).join(', ');
+    return `<div style="margin-bottom: var(--spacing-sm);"><strong>Group ${index + 1}:</strong> ${names}</div>`;
+  }).join('');
+}
+
+function getAtRiskStudents(realStudents) {
+  return realStudents.filter(student => {
+    const streakLow = (student.streak || 0) <= 1;
+    const last = parseLastActiveDate(student.lastActive);
+    if (!last) return true;
+    const diffDays = (Date.now() - last.getTime()) / (1000 * 60 * 60 * 24);
+    return streakLow || diffDays >= 3;
+  });
+}
+
+function sendAtRiskOutreach() {
+  if (!currentClassCode) {
+    showNotification("Select a class first", "error");
+    return;
+  }
+  const realStudents = getRealStudents();
+  const atRisk = getAtRiskStudents(realStudents);
+  if (!atRisk.length) {
+    showNotification("No at-risk students right now", "success");
+    return;
+  }
+  const names = atRisk.slice(0, 6).map(s => s.name).join(', ');
+  const title = "Support Check-In";
+  const content = `Let's keep our momentum going! I want to check in with everyone, especially: ${names}. Reach out if you need help or a quick boost.`;
+  postAnnouncement(title, content);
+}
+
+function sendWeeklyWins() {
+  if (!currentClassCode) {
+    showNotification("Select a class first", "error");
+    return;
+  }
+  const realStudents = getRealStudents();
+  if (!realStudents.length) {
+    showNotification("No students to celebrate yet", "error");
+    return;
+  }
+  const topStudents = [...realStudents].sort((a, b) => (b.points || 0) - (a.points || 0)).slice(0, 3);
+  const names = topStudents.map(s => s.name).join(', ');
+  const totalHours = realStudents.reduce((sum, s) => sum + (Number(s.totalStudyHours) || 0), 0).toFixed(1);
+  const title = "Weekly Wins";
+  const content = `Shoutout to ${names} for leading the class this week! The class logged ${totalHours} total study hours. Keep it up, everyone!`;
+  postAnnouncement(title, content);
+}
+
+// ========== SIDEBAR TOOLS ==========
+function updateSidebarToolStatus(text) {
+  const status = document.getElementById('sidebarToolStatus');
+  if (status) status.textContent = text;
+}
+
+function initFocusBellAudio() {
+  if (!focusBellAudioInstance) {
+    focusBellAudioInstance = new Audio('./bell.mp3');
+    focusBellAudioInstance.preload = 'auto';
+    focusBellAudioInstance.load();
+  }
+}
+
+function playSynthBell() {
+  try {
+    if (!focusBellContext) {
+      focusBellContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    const ctx = focusBellContext;
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+
+    const now = ctx.currentTime;
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.exponentialRampToValueAtTime(0.4, now + 0.01);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + 1.6);
+    master.connect(ctx.destination);
+
+    const partials = [520, 1040, 1560];
+    partials.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      const peak = 0.35 / (idx + 1);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(peak, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.4);
+      osc.connect(gain);
+      gain.connect(master);
+      osc.start(now);
+      osc.stop(now + 1.6);
+    });
+  } catch (error) {
+    console.warn("Synth bell failed:", error);
+  }
+}
+
+function getSidebarStorageKey(key) {
+  return `${key}_${currentClassCode || 'global'}`;
+}
+
+function formatSprintTime(seconds) {
+  const safe = Math.max(0, seconds || 0);
+  const mins = String(Math.floor(safe / 60)).padStart(2, '0');
+  const secs = String(safe % 60).padStart(2, '0');
+  return `${mins}:${secs}`;
+}
+
+function renderSidebarTools() {
+  const status = document.getElementById('sidebarToolStatus');
+  const details = document.getElementById('sidebarToolDetails');
+  if (!status || !details) return;
+
+  const focusBell = localStorage.getItem('teacher_focus_bell');
+  const planRaw = localStorage.getItem(getSidebarStorageKey('teacher_lightning_plan'));
+  const sprintRaw = localStorage.getItem(getSidebarStorageKey('teacher_focus_sprint'));
+  const ticketRaw = localStorage.getItem(getSidebarStorageKey('teacher_exit_ticket'));
+
+  let plan = null;
+  let sprint = null;
+  try { plan = planRaw ? JSON.parse(planRaw) : null; } catch (e) {}
+  try { sprint = sprintRaw ? JSON.parse(sprintRaw) : null; } catch (e) {}
+  let ticket = null;
+  try { ticket = ticketRaw ? JSON.parse(ticketRaw) : null; } catch (e) {}
+
+  const statusParts = [];
+  if (focusBell) statusParts.push(`Focus Bell: ${focusBell}`);
+  if (plan && plan.steps && plan.steps.length) statusParts.push(`Lightning Plan: Ready`);
+  if (sprint && sprint.active) statusParts.push(`Focus Sprint: ${formatSprintTime(sprint.remainingSeconds)}`);
+  if (ticket && ticket.questions && ticket.questions.length) statusParts.push(`Exit Ticket: Ready`);
+  status.textContent = statusParts.length ? statusParts.join(' • ') : 'No active tools yet.';
+
+  const detailLines = [];
+  if (plan && plan.steps && plan.steps.length) {
+    detailLines.push(`<div style="margin-top: var(--spacing-sm);"><strong>Lightning Plan</strong></div>`);
+    detailLines.push(`<div style="margin-bottom: var(--spacing-xs);">${plan.steps.map(step => `• ${step}`).join('<br>')}</div>`);
+    detailLines.push(`<div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm);"><button class="btn btn-secondary" onclick="shareLightningPlan()">Share Plan</button><button class="btn btn-secondary" onclick="removeLightningPlan()">Remove</button></div>`);
+  }
+  if (sprint && sprint.active) {
+    detailLines.push(`<div style="margin-top: var(--spacing-sm);"><strong>Focus Sprint</strong> • ${formatSprintTime(sprint.remainingSeconds)}</div>`);
+    detailLines.push(`<button class="btn btn-secondary" onclick="stopFocusSprint()">End Sprint</button>`);
+  }
+  if (ticket && ticket.questions && ticket.questions.length) {
+    detailLines.push(`<div style="margin-top: var(--spacing-sm);"><strong>Exit Ticket</strong></div>`);
+    detailLines.push(`<div style="margin-bottom: var(--spacing-xs);">${ticket.questions.map(q => `• ${q}`).join('<br>')}</div>`);
+    detailLines.push(`<div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm);"><button class="btn btn-secondary" onclick="shareExitTicket()">Share Ticket</button><button class="btn btn-secondary" onclick="removeExitTicket()">Remove</button></div>`);
+  }
+
+  details.innerHTML = detailLines.length ? detailLines.join('') : '';
+}
+
+function toggleFocusBell() {
+  initFocusBellAudio();
+  if (focusBellAudioInstance) {
+    focusBellAudioInstance.currentTime = 0;
+    focusBellAudioInstance.play().catch(() => {
+      playSynthBell();
+    });
+  } else {
+    playSynthBell();
+  }
+  const now = new Date();
+  const stamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  localStorage.setItem('teacher_focus_bell', stamp);
+  updateSidebarToolStatus(`Focus Bell rung at ${stamp}`);
+  showNotification("Focus Bell rung. Take a deep breath and refocus.", "success");
+  renderSidebarTools();
+}
+
+function openLightningPlan() {
+  const modal = document.getElementById('lightningPlanModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeLightningPlanModal() {
+  const modal = document.getElementById('lightningPlanModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function saveLightningPlan() {
+  const step1 = document.getElementById('lightningStep1').value.trim();
+  const step2 = document.getElementById('lightningStep2').value.trim();
+  const step3 = document.getElementById('lightningStep3').value.trim();
+  const steps = [step1, step2, step3].filter(Boolean);
+  if (steps.length === 0) {
+    showNotification("Add at least one step for the plan.", "error");
+    return;
+  }
+  localStorage.setItem(getSidebarStorageKey('teacher_lightning_plan'), JSON.stringify({
+    steps: steps,
+    updatedAt: new Date().toISOString()
+  }));
+  updateSidebarToolStatus("Lightning Plan saved.");
+  showNotification("Lightning Plan saved.", "success");
+  closeLightningPlanModal();
+  renderSidebarTools();
+}
+
+function shareLightningPlan() {
+  const planRaw = localStorage.getItem(getSidebarStorageKey('teacher_lightning_plan'));
+  if (!planRaw) {
+    showNotification("No Lightning Plan to share.", "error");
+    return;
+  }
+  let plan = null;
+  try { plan = JSON.parse(planRaw); } catch (e) {}
+  if (!plan || !plan.steps || !plan.steps.length) {
+    showNotification("No Lightning Plan to share.", "error");
+    return;
+  }
+  const content = `Today's Lightning Plan:\n${plan.steps.map((step, idx) => `${idx + 1}) ${step}`).join('\n')}`;
+  postAnnouncement("Lightning Plan", content);
+}
+
+function removeLightningPlan() {
+  localStorage.removeItem(getSidebarStorageKey('teacher_lightning_plan'));
+  updateSidebarToolStatus("Lightning Plan removed.");
+  renderSidebarTools();
+  showNotification("Lightning Plan removed.", "success");
+}
+
+function openExitTicket() {
+  const prompts = [
+    "Summarize today's key idea in one sentence.",
+    "What was the most confusing part of today's lesson?",
+    "Solve this quick check: ________ (write your answer).",
+    "What strategy helped you most today?",
+    "Give one real-world example of todayâ€™s topic.",
+    "Rate your understanding (1â€“5) and explain why."
+  ];
+  const questions = [];
+  while (questions.length < 3) {
+    const candidate = prompts[Math.floor(Math.random() * prompts.length)];
+    if (!questions.includes(candidate)) questions.push(candidate);
+  }
+  localStorage.setItem(getSidebarStorageKey('teacher_exit_ticket'), JSON.stringify({
+    questions: questions,
+    updatedAt: new Date().toISOString()
+  }));
+  updateSidebarToolStatus("Exit Ticket generated.");
+  showNotification("Exit Ticket ready to share.", "success");
+  renderSidebarTools();
+}
+
+function shareExitTicket() {
+  const raw = localStorage.getItem(getSidebarStorageKey('teacher_exit_ticket'));
+  if (!raw) {
+    showNotification("No Exit Ticket to share.", "error");
+    return;
+  }
+  let data = null;
+  try { data = JSON.parse(raw); } catch (e) {}
+  if (!data || !data.questions || !data.questions.length) {
+    showNotification("No Exit Ticket to share.", "error");
+    return;
+  }
+  const content = data.questions.map((q, idx) => `${idx + 1}) ${q}`).join('\n');
+  postAnnouncement("Exit Ticket", content);
+}
+
+// Override Exit Ticket functions with fixed questions + response capture section
+function openExitTicketV2() {
+  const questions = [
+    "Summarize today's key idea in one sentence.",
+    "Rate your understanding (1-5) and explain why.",
+    "Give one real-world example of today's topic."
+  ];
+  const payload = {
+    questions: questions,
+    updatedAt: new Date().toISOString()
+  };
+  localStorage.setItem(getSidebarStorageKey('teacher_exit_ticket'), JSON.stringify(payload));
+  saveExitTicketSession(payload);
+  updateSidebarToolStatus("Exit Ticket generated.");
+  showNotification("Exit Ticket ready to share.", "success");
+  renderExitTicketSection();
+  renderSidebarTools();
+}
+
+function shareExitTicketV2() {
+  const raw = localStorage.getItem(getSidebarStorageKey('teacher_exit_ticket'));
+  if (!raw) {
+    showNotification("No Exit Ticket to share.", "error");
+    return;
+  }
+  let data = null;
+  try { data = JSON.parse(raw); } catch (e) {}
+  if (!data || !data.questions || !data.questions.length) {
+    showNotification("No Exit Ticket to share.", "error");
+    return;
+  }
+  const content = data.questions.map((q, idx) => `${idx + 1}) ${q}`).join('\n');
+  postAnnouncement("Exit Ticket", content);
+}
+
+function removeExitTicket() {
+  localStorage.removeItem(getSidebarStorageKey('teacher_exit_ticket'));
+  localStorage.removeItem(getSidebarStorageKey('teacher_exit_ticket_responses'));
+  updateSidebarToolStatus("Exit Ticket removed.");
+  renderExitTicketSection();
+  renderSidebarTools();
+  showNotification("Exit Ticket removed.", "success");
+}
+
+openExitTicket = openExitTicketV2;
+shareExitTicket = shareExitTicketV2;
+
+function buildExitTicketLink() {
+  if (!currentClassCode) return '';
+  return `${window.location.origin}/student_checkin.html?exitTicket=${currentClassCode}`;
+}
+
+function copyExitTicketLink() {
+  const link = buildExitTicketLink();
+  if (!link) {
+    showNotification("Select a class first", "error");
+    return;
+  }
+  navigator.clipboard.writeText(link).then(() => {
+    showNotification("Exit Ticket link copied!", "success");
+  });
+}
+
+function saveExitTicketSession(payload) {
+  if (!currentClassCode) return;
+  if (isDemoMode) return;
+  if (!database) return;
+  database.ref(`exitTickets/${currentClassCode}/current`).set(payload).catch(() => {});
+}
+
+function renderExitTicketSection() {
+  const questionsEl = document.getElementById('exitTicketQuestions');
+  const linkEl = document.getElementById('exitTicketLink');
+  const responsesEl = document.getElementById('exitTicketResponses');
+  if (linkEl) linkEl.value = buildExitTicketLink();
+  const raw = localStorage.getItem(getSidebarStorageKey('teacher_exit_ticket'));
+  let data = null;
+  try { data = raw ? JSON.parse(raw) : null; } catch (e) {}
+  if (questionsEl) {
+    if (!data || !data.questions) {
+      questionsEl.textContent = 'Generate a ticket to show questions.';
+    } else {
+      questionsEl.innerHTML = data.questions.map(q => `• ${q}`).join('<br>');
+    }
+  }
+  if (responsesEl) {
+    loadExitTicketResponses();
+    const stored = localStorage.getItem(getSidebarStorageKey('teacher_exit_ticket_responses'));
+    let responses = [];
+    try { responses = stored ? JSON.parse(stored) : []; } catch (e) {}
+    if (!responses.length) {
+      responsesEl.textContent = 'No responses yet.';
+    } else {
+      responsesEl.innerHTML = responses.slice(0, 20).map(r => `
+        <div class="item" style="margin-bottom: var(--spacing-sm);">
+          <div class="item-header">
+            <div class="item-title">${r.student || 'Student'}</div>
+            <div class="item-date">${formatShortDate(r.submittedAt)}</div>
+          </div>
+          <div class="item-content">${r.answers.map((a, idx) => `${idx + 1}) ${a}`).join('<br>')}</div>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+// Override nav text helper to include Exit Tickets
+function getNavItemText(sectionId) {
+  const navTexts = {
+    'dashboard': '📊',
+    'presentation': 'Presentation Mode',
+    'announcements': '📢',
+    'assignments': '📚',
+    'resources': '📁',
+    'polls': '🗳️',
+    'students': '👥',
+    'analytics': '📈',
+    'exitTickets': 'Exit Tickets',
+    'settings': '⚙️'
+  };
+  return navTexts[sectionId] || '';
+}
+
+function loadExitTicketResponses() {
+  if (!currentClassCode || isDemoMode || !database) return;
+  if (exitTicketListenerActive) return;
+  exitTicketListenerActive = true;
+  database.ref(`exitTickets/${currentClassCode}/responses`).on('value', (snapshot) => {
+    const responses = [];
+    if (snapshot.exists()) {
+      snapshot.forEach(child => {
+        responses.push(child.val());
+      });
+    }
+    responses.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+    localStorage.setItem(getSidebarStorageKey('teacher_exit_ticket_responses'), JSON.stringify(responses));
+    renderExitTicketSection();
+  });
+}
+
+function startFocusSprint() {
+  const minutesRaw = prompt("Focus Sprint length in minutes (5-30):", "10");
+  if (!minutesRaw) return;
+  const minutes = Math.min(30, Math.max(5, parseInt(minutesRaw, 10)));
+  const sprint = {
+    startedAt: new Date().toISOString(),
+    durationMinutes: minutes,
+    remainingSeconds: minutes * 60,
+    active: true
+  };
+  localStorage.setItem(getSidebarStorageKey('teacher_focus_sprint'), JSON.stringify(sprint));
+  showNotification(`Focus Sprint started for ${minutes} minutes.`, "success");
+  runFocusSprintTimer();
+  renderSidebarTools();
+}
+
+function runFocusSprintTimer() {
+  if (focusSprintTimer) clearInterval(focusSprintTimer);
+  focusSprintTimer = setInterval(() => {
+    const sprintRaw = localStorage.getItem(getSidebarStorageKey('teacher_focus_sprint'));
+    if (!sprintRaw) {
+      clearInterval(focusSprintTimer);
+      focusSprintTimer = null;
+      return;
+    }
+    let sprint = null;
+    try { sprint = JSON.parse(sprintRaw); } catch (e) {}
+    if (!sprint || !sprint.active) {
+      clearInterval(focusSprintTimer);
+      focusSprintTimer = null;
+      return;
+    }
+    sprint.remainingSeconds = Math.max(0, (sprint.remainingSeconds || 0) - 1);
+    localStorage.setItem(getSidebarStorageKey('teacher_focus_sprint'), JSON.stringify(sprint));
+    if (sprint.remainingSeconds === 0) {
+      sprint.active = false;
+      localStorage.setItem(getSidebarStorageKey('teacher_focus_sprint'), JSON.stringify(sprint));
+      clearInterval(focusSprintTimer);
+      focusSprintTimer = null;
+      showNotification("Focus Sprint complete. Great work!", "success");
+    }
+    renderSidebarTools();
+  }, 1000);
+}
+
+function stopFocusSprint() {
+  localStorage.setItem(getSidebarStorageKey('teacher_focus_sprint'), JSON.stringify({
+    startedAt: new Date().toISOString(),
+    durationMinutes: 0,
+    remainingSeconds: 0,
+    active: false
+  }));
+  if (focusSprintTimer) {
+    clearInterval(focusSprintTimer);
+    focusSprintTimer = null;
+  }
+  updateSidebarToolStatus("Focus Sprint ended.");
+  renderSidebarTools();
+}
+
+function getToolkitState() {
+  if (!currentClassCode) return null;
+  try {
+    const raw = localStorage.getItem(`teacher_toolkit_${currentClassCode}`);
+    return raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function loadToolkitState() {
+  const state = getToolkitState();
+  if (!state) return;
+  toolkitRandomStudentId = state.randomStudentId || null;
+  toolkitGroups = state.groups || [];
+  toolkitNotes = state.notes || '';
+  toolkitPriorityItems = state.priorityItems || [];
+}
+
+function saveToolkitState(extra = {}) {
+  if (!currentClassCode) return;
+  const payload = {
+    randomStudentId: toolkitRandomStudentId,
+    groups: toolkitGroups,
+    notes: toolkitNotes,
+    priorityItems: toolkitPriorityItems,
+    notesUpdatedAt: extra.notesUpdatedAt || getToolkitState()?.notesUpdatedAt || null
+  };
+  localStorage.setItem(`teacher_toolkit_${currentClassCode}`, JSON.stringify(payload));
+}
+
+function saveToolkitNotes() {
+  const notesField = document.getElementById('toolkitQuickNotes');
+  if (!notesField) return;
+  toolkitNotes = notesField.value.trim();
+  saveToolkitState({ notesUpdatedAt: new Date().toISOString() });
+  renderTeacherToolkit();
+  showNotification("Notes saved", "success");
+}
+
+function addPriorityItem() {
+  const input = document.getElementById('priorityItemInput');
+  if (!input) return;
+  const value = input.value.trim();
+  if (!value) return;
+  toolkitPriorityItems.push(value);
+  input.value = '';
+  saveToolkitState();
+  renderTeacherToolkit();
+}
+
+function removePriorityItem(index) {
+  toolkitPriorityItems.splice(index, 1);
+  saveToolkitState();
+  renderTeacherToolkit();
 }
 
 function renderStudents() {
@@ -10547,6 +12266,10 @@ function updateStats() {
     checkClassMilestones();
     // Update the streak chain
     updateClassStreakChain(); // Add this line
+    // Update presentation mode stats
+    renderPresentation();
+    renderTeacherToolkit();
+    updateThemeUnlocks();
   } catch (error) {
     console.error("Error updating stats:", error);
   }
@@ -11466,10 +13189,185 @@ function updateSyncStatus(text, type = "info") {
   }
 }
 
+const THEME_CLASSES = ['light', 'dark', 'ocean', 'forest', 'sunset', 'purple', 'aurora', 'obsidian', 'celestial'];
+const SPECIAL_THEMES = {
+  aurora: {
+    label: 'Aurora',
+    emoji: 'âœ¨',
+    requirement: 'Reach 30 class streak links.',
+    check: () => getStreakChainLinks() >= 30
+  },
+  obsidian: {
+    label: 'Obsidian',
+    emoji: 'ðŸ•¤',
+    requirement: 'Win 3 class challenges.',
+    check: () => getChallengeWins() >= 3
+  },
+  celestial: {
+    label: 'Celestial',
+    emoji: 'ðŸŒŒ',
+    requirement: 'Have 15 active students and an average streak of 7+.',
+    check: () => {
+      const stats = getClassStatsForThemes();
+      return stats.activeStudents >= 15 && stats.avgStreak >= 7;
+    }
+  }
+};
+
+function getCurrentTheme() {
+  return THEME_CLASSES.find(theme => document.body.classList.contains(theme)) || 'light';
+}
+
+function applyThemeClass(theme, { save = true, notify = true } = {}) {
+  THEME_CLASSES.forEach(name => document.body.classList.remove(name));
+  document.body.classList.add(theme);
+  if (save) {
+    localStorage.setItem('teacherTheme', theme);
+    localStorage.setItem('teacher_theme', theme);
+  }
+  if (notify) showNotification(`Switched to ${theme} theme`, "success");
+}
+
+function getUnlockedThemes() {
+  if (!currentClassCode) return {};
+  try {
+    const raw = localStorage.getItem(`teacher_unlocked_themes_${currentClassCode}`);
+    return raw ? JSON.parse(raw) : {};
+  } catch (error) {
+    return {};
+  }
+}
+
+function saveUnlockedThemes(store) {
+  if (!currentClassCode) return;
+  localStorage.setItem(`teacher_unlocked_themes_${currentClassCode}`, JSON.stringify(store));
+}
+
+function isSpecialTheme(theme) {
+  return Boolean(SPECIAL_THEMES[theme]);
+}
+
+function isThemeUnlocked(theme) {
+  if (!isSpecialTheme(theme)) return true;
+  const store = getUnlockedThemes();
+  return Boolean(store[theme]);
+}
+
+function getStreakChainLinks() {
+  const chainEl = document.getElementById('totalChainLinks');
+  if (chainEl && chainEl.textContent) {
+    const parsed = parseInt(chainEl.textContent, 10);
+    if (!isNaN(parsed)) return parsed;
+  }
+  if (!currentClassCode) return 0;
+  try {
+    const raw = localStorage.getItem(`class_${currentClassCode}_streak_chain`);
+    if (!raw) return 0;
+    const parsed = JSON.parse(raw);
+    return parseInt(parsed?.chainData?.totalLinks || 0, 10) || 0;
+  } catch (error) {
+    return 0;
+  }
+}
+
+function getChallengeWins() {
+  if (typeof completedChallenges !== 'undefined' && completedChallenges.length) {
+    return completedChallenges.filter(challenge => challenge.result && challenge.result.winner === currentClassCode).length;
+  }
+  if (typeof allChallenges !== 'undefined') {
+    return allChallenges.filter(challenge => challenge.status === 'completed' && challenge.result && challenge.result.winner === currentClassCode).length;
+  }
+  return 0;
+}
+
+function getClassStatsForThemes() {
+  const realStudents = students.filter(s => !s.isTeacher);
+  const totalStudents = realStudents.length;
+  const avgStreak = totalStudents > 0
+    ? Math.round(realStudents.reduce((sum, s) => sum + (s.streak || 0), 0) / totalStudents)
+    : 0;
+  const activeStudents = realStudents.filter(student => {
+    const last = parseLastActiveDate(student.lastActive);
+    if (!last) return false;
+    const diffDays = (Date.now() - last.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays <= 7;
+  }).length;
+  return { totalStudents, avgStreak, activeStudents };
+}
+
+function updateThemeSelectorLabels() {
+  const selector = document.querySelector('.theme-selector');
+  if (!selector) return;
+  const options = selector.querySelectorAll('option');
+  options.forEach(option => {
+    const theme = option.value;
+    if (!isSpecialTheme(theme)) return;
+    const themeInfo = SPECIAL_THEMES[theme];
+    const locked = !isThemeUnlocked(theme);
+    option.textContent = `${themeInfo.emoji} ${themeInfo.label}${locked ? ' (Locked)' : ''}`;
+  });
+}
+
+function updateThemeUnlocks() {
+  if (!currentClassCode) return;
+  const store = getUnlockedThemes();
+  let updated = false;
+
+  Object.keys(SPECIAL_THEMES).forEach(theme => {
+    if (store[theme]) return;
+    if (SPECIAL_THEMES[theme].check()) {
+      store[theme] = true;
+      updated = true;
+      showNotification(`Unlocked ${SPECIAL_THEMES[theme].label} theme!`, "success");
+    }
+  });
+
+  if (updated) saveUnlockedThemes(store);
+  updateThemeSelectorLabels();
+}
+
+function openThemePreview(theme) {
+  themePreviewTheme = theme;
+  previousTheme = getCurrentTheme();
+  applyThemeClass(theme, { save: false, notify: false });
+  document.body.classList.add('theme-preview');
+  const overlay = document.getElementById('themePreviewOverlay');
+  const title = document.getElementById('themePreviewTitle');
+  const requirement = document.getElementById('themePreviewRequirement');
+  if (title) title.textContent = `${SPECIAL_THEMES[theme]?.label || 'Locked Theme'} Preview`;
+  if (requirement) requirement.textContent = SPECIAL_THEMES[theme]?.requirement || 'Complete the requirement to unlock this theme.';
+  if (overlay) overlay.style.display = 'flex';
+}
+
+function closeThemePreview() {
+  const overlay = document.getElementById('themePreviewOverlay');
+  if (overlay) overlay.style.display = 'none';
+  document.body.classList.remove('theme-preview');
+  const themeToRestore = previousTheme || 'light';
+  applyThemeClass(themeToRestore, { save: true, notify: false });
+  themePreviewTheme = null;
+  previousTheme = null;
+  const selector = document.querySelector('.theme-selector');
+  if (selector) selector.value = themeToRestore;
+}
+
+function handleThemeSelection(theme) {
+  if (isSpecialTheme(theme) && !isThemeUnlocked(theme)) {
+    openThemePreview(theme);
+    return;
+  }
+  changeTheme(theme);
+}
+
 function changeTheme(theme) {
-  document.body.className = theme;
-  localStorage.setItem('teacherTheme', theme);
-  showNotification(`Switched to ${theme} theme`, "success");
+  if (isSpecialTheme(theme) && !isThemeUnlocked(theme)) {
+    applyThemeClass('light', { save: true, notify: false });
+    const selector = document.querySelector('.theme-selector');
+    if (selector) selector.value = 'light';
+    showNotification("That theme is locked. Complete the requirement to unlock it.", "warning");
+    return;
+  }
+  applyThemeClass(theme, { save: true, notify: true });
 }
 
 function copyClassCode() {
@@ -11718,6 +13616,14 @@ function updateDashboardHeader(sectionId) {
     case 'dashboard':
       header.querySelector('h1').textContent = 'Welcome to Your Classroom';
       subtitle.textContent = 'Manage announcements, assignments, and track student progress';
+      break;
+    case 'exitTickets':
+      header.querySelector('h1').textContent = 'Exit Tickets';
+      subtitle.textContent = 'Collect quick reflections and understanding checks';
+      break;
+    case 'presentation':
+      header.querySelector('h1').textContent = 'Presentation Mode';
+      subtitle.textContent = 'Live class overview for your current class';
       break;
     case 'announcements':
       header.querySelector('h1').textContent = 'Announcements';
@@ -15948,20 +17854,35 @@ showSection = function(sectionId) {
     
     // Find and activate the clicked nav item
     const navItems = document.querySelectorAll('.nav-item');
-    for (let item of navItems) {
-        if (item.textContent.includes(getNavItemText(sectionId))) {
-            item.classList.add('active');
-            break;
+    if (sectionId === 'presentation') {
+        navItems.forEach(item => {
+            if (item.textContent.includes('Presentation Mode')) {
+                item.classList.add('active');
+            }
+        });
+    } else {
+        for (let item of navItems) {
+            if (item.textContent.includes(getNavItemText(sectionId))) {
+                item.classList.add('active');
+                break;
+            }
         }
     }
     
     // Update header
     updateDashboardHeader(sectionId);
+    setPresentationMode(sectionId === 'presentation');
     
     // Load specific data for section
     switch(sectionId) {
         case 'dashboard':
             // Already loaded
+            break;
+        case 'presentation':
+            renderPresentation();
+            break;
+        case 'exitTickets':
+            renderExitTicketSection();
             break;
         case 'announcements':
             renderAllAnnouncements();
@@ -16681,6 +18602,15 @@ function saveAllDataToLocalStorage() {
                 lastUpdated: backupTimestamp,
                 chainData: getStreakChainData()
             }));
+
+            // Toolkit data
+            localStorage.setItem(`teacher_toolkit_${currentClassCode}`, JSON.stringify({
+                randomStudentId: toolkitRandomStudentId,
+                groups: toolkitGroups,
+                notes: toolkitNotes,
+                priorityItems: toolkitPriorityItems,
+                notesUpdatedAt: getToolkitState()?.notesUpdatedAt || null
+            }));
         }
         
         // 4. Save theme and UI state
@@ -16778,6 +18708,16 @@ function loadAllDataFromLocalStorage() {
                 liveActivity = JSON.parse(savedActivity);
                 activityIds = new Set(liveActivity.map(a => a.id));
             }
+
+            // Load toolkit
+            const savedToolkit = localStorage.getItem(`teacher_toolkit_${currentClassCode}`);
+            if (savedToolkit) {
+                const parsedToolkit = JSON.parse(savedToolkit);
+                toolkitRandomStudentId = parsedToolkit.randomStudentId || null;
+                toolkitGroups = parsedToolkit.groups || [];
+                toolkitNotes = parsedToolkit.notes || '';
+                toolkitPriorityItems = parsedToolkit.priorityItems || [];
+            }
             
             // Load challenges
             const savedAllChallenges = localStorage.getItem(`class_${currentClassCode}_challenges_all`);
@@ -16825,6 +18765,7 @@ function loadAllDataFromLocalStorage() {
         const lastBackup = localStorage.getItem('last_backup_timestamp');
         if (lastBackup) {
             const backupDate = new Date(lastBackup);
+            updateSyncStatus(`Last saved ${backupDate.toLocaleTimeString()}`, "success");
             console.log(`📅 Last backup: ${backupDate.toLocaleString()}`);
         }
         
@@ -16894,6 +18835,7 @@ initializeTeacher = async function() {
     console.log("🎯 Enhanced teacher initialization with localStorage...");
     
     // First, try to load existing data from localStorage
+    initLocalStorageSchema();
     const dataLoaded = loadAllDataFromLocalStorage();
     
     if (dataLoaded && teacherClasses.length > 0) {
@@ -20142,6 +22084,7 @@ function loadCheckinSessionState() {
 function clearCheckinSessionState() {
     localStorage.removeItem('active_checkin_session');
     sessionCode = null;
+    initLocalStorageSchema();
     sessionData = null;
     selectedEmotion = null;
 }
@@ -21181,42 +23124,82 @@ updateUI = safeUpdateUI;
 
 // ========== FIXED INITIALIZE TEACHER FUNCTION ==========
 // Wrap the error-prone parts in try-catch blocks
+function loadTeacherClassesFromLocalStorageSafe() {
+    try {
+        let data = null;
+        if (teacherId) {
+            data = localStorage.getItem(`teacher_classes_${teacherId}`);
+        }
+        if (!data) {
+            data = localStorage.getItem('teacher_all_classes');
+        }
+        if (data) {
+            teacherClasses = JSON.parse(data);
+            console.log(`ðŸ“š Loaded ${teacherClasses.length} classes from localStorage`);
+        }
+
+        const savedClassIndex = localStorage.getItem('teacher_current_class_index');
+        if (savedClassIndex) {
+            selectedClassIndex = parseInt(savedClassIndex, 10);
+        }
+        const savedClassCode = localStorage.getItem('teacher_current_class_code');
+        if (savedClassCode) {
+            currentClassCode = savedClassCode;
+        }
+        const savedClassId = localStorage.getItem('teacher_current_class_id');
+        if (savedClassId) {
+            currentClassId = savedClassId;
+        }
+    } catch (error) {
+        console.error("Error loading teacher classes from localStorage:", error);
+    }
+}
+
 function safeInitializeTeacher() {
     console.log("🎯 Initializing teacher dashboard (safe mode)...");
     
     // Show loading state
     showNotification("Loading your classes...", "info");
     
+    const dataLoaded = loadAllDataFromLocalStorage();
+    const hasLocalClasses = teacherClasses && teacherClasses.length > 0;
+    const hasSavedClasses = Boolean(
+        localStorage.getItem('teacher_all_classes') ||
+        (teacherId && localStorage.getItem(`teacher_classes_${teacherId}`))
+    );
+    
     // Load classes based on mode
     if (isDemoMode) {
-        loadTeacherClassesFromLocalStorage();
+        loadTeacherClassesFromLocalStorageSafe();
     } else {
         // Try Firebase, fallback to localStorage
         try {
             loadClassesFromFirebase().catch(() => {
-                loadTeacherClassesFromLocalStorage();
+                loadTeacherClassesFromLocalStorageSafe();
             });
         } catch (error) {
-            loadTeacherClassesFromLocalStorage();
+            loadTeacherClassesFromLocalStorageSafe();
         }
     }
     
-    // If no classes, create a default one
+    // If no classes, create a default one (only if no local data)
     if (!teacherClasses || teacherClasses.length === 0) {
-        console.log("No classes found, creating default class...");
-        createDefaultClass().catch(() => {
-            // Fallback demo class
-            teacherClasses = [{
-                id: 'demo_class_1',
-                name: "Math 101",
-                code: "MATH101",
-                createdAt: new Date().toISOString(),
-                studentCount: 8
-            }];
-            currentClassCode = teacherClasses[0].code;
-            currentClassId = teacherClasses[0].id;
-            selectedClassIndex = 0;
-        });
+        if (!hasLocalClasses && !hasSavedClasses) {
+            console.log("No classes found, creating default class...");
+            createDefaultClass().catch(() => {
+                // Fallback demo class
+                teacherClasses = [{
+                    id: 'demo_class_1',
+                    name: "Math 101",
+                    code: "MATH101",
+                    createdAt: new Date().toISOString(),
+                    studentCount: 8
+                }];
+                currentClassCode = teacherClasses[0].code;
+                currentClassId = teacherClasses[0].id;
+                selectedClassIndex = 0;
+            });
+        }
     }
     
     // Set current class
@@ -21258,6 +23241,7 @@ function safeInitializeTeacher() {
     // Update theme
     const savedTheme = localStorage.getItem('teacherTheme') || 'light';
     changeTheme(savedTheme);
+    updateThemeUnlocks();
     
     // Update mobile title
     updateMobileTitle();
@@ -21289,8 +23273,10 @@ function safeUseDemoMode() {
     isDemoMode = true;
     sessionCode = null;
     
-    // Generate demo teacher ID
-    teacherId = "demo_teacher_" + Math.random().toString(36).substr(2, 9);
+    // Generate demo teacher ID (persist across refresh)
+    const savedDemoId = localStorage.getItem('demo_teacher_id');
+    teacherId = savedDemoId || ("demo_teacher_" + Math.random().toString(36).substr(2, 9));
+    localStorage.setItem('demo_teacher_id', teacherId);
     teacherName = "Demo Teacher";
     currentUser = {
         uid: teacherId,
@@ -21580,5 +23566,40 @@ if (typeof updateClassStreakChain === 'undefined') {
 
 console.log("✅ All fixes applied - teachermode.js is now crash-resistant");
 </script>
+  <!-- Theme Preview Overlay -->
+  <div id="themePreviewOverlay" class="theme-preview-overlay">
+    <div class="theme-preview-card">
+      <h3 id="themePreviewTitle">Locked Theme</h3>
+      <p id="themePreviewRequirement">Complete the requirement to unlock this theme.</p>
+      <button class="btn btn-secondary" onclick="closeThemePreview()">Close Preview</button>
+    </div>
+  </div>
+  <!-- Lightning Plan Modal -->
+  <div id="lightningPlanModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3>Lightning Plan</h3>
+        <p>Set up to 3 critical steps for today.</p>
+      </div>
+      <div class="form-group">
+        <label for="lightningStep1">Step 1</label>
+        <input type="text" id="lightningStep1" placeholder="Warm-up or recap">
+      </div>
+      <div class="form-group">
+        <label for="lightningStep2">Step 2</label>
+        <input type="text" id="lightningStep2" placeholder="Core instruction">
+      </div>
+      <div class="form-group">
+        <label for="lightningStep3">Step 3</label>
+        <input type="text" id="lightningStep3" placeholder="Practice or reflection">
+      </div>
+      <div style="display: flex; gap: var(--spacing-sm);">
+        <button class="btn btn-secondary" onclick="closeLightningPlanModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveLightningPlan()">Save Plan</button>
+      </div>
+    </div>
+  </div>
+  <audio id="focusBellAudio" src="bell.mp3" preload="auto"></audio>
 </body>
 </html>
+
