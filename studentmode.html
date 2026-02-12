@@ -3,14 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <title>Grindly | Student Mode</title>
-<meta name="viewport">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="dns-prefetch" href="https://www.gstatic.com">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <!-- Chart.js for Statistics -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
 
 
 <style>
@@ -1230,6 +1237,388 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+}
+
+/* ===== FOCUS MODE ===== */
+body.focus-mode .sidebar,
+body.focus-mode .top-nav {
+  display: none;
+}
+
+body.focus-mode .app-layout {
+  grid-template-columns: 1fr;
+}
+
+body.focus-mode .main-content {
+  max-width: 1100px;
+}
+
+body.focus-mode .controls-bar .focus-toggle {
+  background: var(--gradient-success);
+  color: #ffffff;
+}
+
+body.focus-fullscreen {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ===== QUICK NOTES ===== */
+.quick-notes-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.quick-notes-card textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: var(--spacing-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  resize: vertical;
+  font-size: 0.95rem;
+}
+
+.quick-notes-card textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.quick-notes-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: var(--spacing-sm);
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+/* ===== FOCUS TOOLKIT ===== */
+.focus-mode-panel {
+  display: none;
+}
+
+body.focus-mode .focus-mode-panel {
+  display: block;
+}
+
+.focus-mode-panel {
+  padding-bottom: 6rem;
+}
+
+body.focus-mode .main-content {
+  overflow-y: auto;
+  max-height: 100vh;
+  height: 100vh;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.focus-fullscreen .main-content {
+  overflow-y: auto;
+  height: 100vh;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.focus-fullscreen {
+  overflow: hidden;
+}
+
+body.focus-blocker-enabled,
+body.focus-blocker-enabled html {
+  overflow: hidden !important;
+}
+
+.focus-mode-panel {
+  min-height: 120vh;
+}
+
+.main-content {
+  position: relative;
+  z-index: 2;
+}
+
+.focus-portal-video {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.focus-mode-panel {
+  position: relative;
+  z-index: 1;
+}
+
+.portal-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.portal-overlay.active {
+  display: block;
+  animation: portalFade 1.8s ease forwards;
+}
+
+.portal-ring {
+  position: fixed;
+  width: 140vmax;
+  height: 140vmax;
+  border-radius: 50%;
+  border: 6px solid rgba(255, 255, 255, 0.45);
+  box-shadow:
+    0 0 40px rgba(99, 102, 241, 0.6),
+    0 0 120px rgba(59, 130, 246, 0.35),
+    inset 0 0 40px rgba(255, 255, 255, 0.35);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 3;
+  animation: portalPulse 6s ease-in-out infinite;
+}
+
+.portal-vortex {
+  position: fixed;
+  width: 110vmax;
+  height: 110vmax;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6), rgba(99,102,241,0.2) 40%, rgba(15,23,42,0.9) 70%);
+  filter: blur(0.5px);
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 2;
+  animation: portalSpin 10s linear infinite;
+}
+
+body.focus-mode .focus-portal-video {
+  animation: portalDrift 12s ease-in-out infinite;
+}
+
+body.focus-mode .focus-mode-panel {
+  animation: portalZoom 1.6s ease forwards;
+}
+
+body.focus-mode .portal-overlay .portal-ring {
+  animation: portalCover 1.6s ease forwards;
+}
+
+body.focus-mode .portal-overlay .portal-vortex {
+  animation: portalCoverVortex 1.6s ease forwards;
+}
+
+@keyframes portalPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+}
+
+@keyframes portalSpin {
+  0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+  100% { transform: translate(-50%, -50%) rotate(360deg) scale(1.02); }
+}
+
+@keyframes portalDrift {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.06) rotate(1deg); }
+}
+
+@keyframes portalZoom {
+  0% { transform: translateY(10px) scale(0.98); opacity: 0.2; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes portalCover {
+  0% { transform: translate(-50%, -50%) scale(0.15); opacity: 0; }
+  40% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+}
+
+@keyframes portalCoverVortex {
+  0% { transform: translate(-50%, -50%) scale(0.2) rotate(0deg); opacity: 0.3; }
+  100% { transform: translate(-50%, -50%) scale(2.4) rotate(360deg); opacity: 0; }
+}
+
+@keyframes portalFade {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+body.focus-mode .dashboard-header,
+body.focus-mode .dashboard-grid,
+body.focus-mode .footer {
+  display: none;
+}
+
+.focus-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.focus-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow);
+}
+
+.focus-card h3 {
+  margin-bottom: var(--spacing-sm);
+  font-size: 1.05rem;
+}
+
+.focus-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.focus-tree {
+  font-size: 2.8rem;
+  line-height: 1;
+}
+
+.ritual-list {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.ritual-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.energy-scale {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.energy-scale button {
+  min-width: 44px;
+}
+
+.teach-bullets {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.teach-bullets input {
+  width: 100%;
+}
+
+.focus-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  margin-top: var(--spacing-sm);
+}
+
+.focus-timer-display {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  margin: var(--spacing-sm) 0;
+}
+
+.focus-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-sm);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.focus-lock-banner {
+  background: var(--accent-light);
+  border: 1px dashed var(--accent);
+  border-radius: var(--radius);
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  font-size: 0.9rem;
+}
+
+.brain-dump-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.brain-dump-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.sound-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.sound-chip {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  background: var(--bg);
+  transition: var(--transition-fast);
+}
+
+.sound-chip.active {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  color: var(--accent-dark);
+}
+
+.focus-plan-item {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.focus-plan-item input[type="text"] {
+  flex: 1;
+}
+
+.blocker-list {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }
 
 /* ===== DASHBOARD HEADER ===== */
@@ -4952,6 +5341,9 @@ body, #studentMemoryWhiteboard, #studentStickyNotesContainer {
 <div class="sidebar-btn nav-item" onclick="window.location.href='student_checkin.html'" >
     😊 Quick Check-in
 </div>
+      <div class="sidebar-btn nav-item" onclick="showSection('exitTicket'); closeMobileMenu();">
+        📝 Exit Ticket
+      </div>
       <div class="nav-item" onclick="showSection('statistics'); closeMobileMenu();">
         📈 Statistics
       </div>
@@ -5041,6 +5433,185 @@ body, #studentMemoryWhiteboard, #studentStickyNotesContainer {
   
   <!-- Main Content -->
   <main class="main-content">
+    <!-- Focus Mode Toolkit -->
+    <section class="focus-mode-panel">
+      <video class="focus-portal-video" autoplay muted loop playsinline>
+        <source src="portal.mp4" type="video/mp4">
+      </video>
+      <div id="portalOverlay" class="portal-overlay" aria-hidden="true">
+        <div class="portal-ring"></div>
+        <div class="portal-vortex"></div>
+      </div>
+      <div class="focus-header">
+        <h2>Focus Portal</h2>
+        <div class="quick-notes-actions">
+          <button class="btn btn-secondary" onclick="toggleFocusMode()">Exit Focus</button>
+        </div>
+      </div>
+      <div id="focusLockBanner" class="focus-lock-banner" style="display: none;"></div>
+      <div class="focus-grid">
+        <div class="focus-card">
+              <h3>Focus Commitment Lock</h3>
+              <div class="form-group">
+                <label for="focusTopic">What are you studying?</label>
+                <input type="text" id="focusTopic" placeholder="e.g., Algebra practice">
+              </div>
+              <div class="form-group">
+                <label for="focusCommitMinutes">Commitment (minutes)</label>
+                <input type="number" id="focusCommitMinutes" min="15" max="180" step="5" value="50">
+              </div>
+              <div class="focus-actions">
+                <button class="btn btn-success" onclick="startFocusCommitment()">Lock In</button>
+                <button class="btn btn-warning" onclick="requestEmergencyUnlock()">Emergency Unlock</button>
+              </div>
+              <div class="quick-notes-meta">
+                <span id="focusCommitStatus">No active commitment</span>
+                <span id="emergencyUnlockTimer"></span>
+              </div>
+        </div>
+
+        <div class="focus-card">
+              <h3>Deep Focus Timer</h3>
+              <div class="focus-timer-display" id="focusTimerDisplay">50:00</div>
+              <div class="form-group">
+                <label>Focus / Break (minutes)</label>
+                <div style="display: flex; gap: var(--spacing-sm);">
+                  <input type="number" id="focusMinutes" min="25" max="90" step="5" value="50" style="flex: 1;">
+                  <input type="number" id="breakMinutes" min="5" max="20" step="1" value="10" style="flex: 1;">
+                </div>
+              </div>
+              <div class="focus-actions">
+                <button class="btn btn-primary" onclick="startFocusTimer()">Start</button>
+                <button class="btn btn-secondary" onclick="pauseFocusTimer()">Pause</button>
+                <button class="btn btn-warning" onclick="resetFocusTimer()">Reset</button>
+              </div>
+              <div class="focus-metrics">
+                <div>Mode: <strong id="focusTimerMode">Focus</strong></div>
+                <div>Sessions today: <strong id="focusSessionsToday">0</strong></div>
+                <div>Daily streak: <strong id="focusStreak">0</strong></div>
+                <div>Next break: <strong id="focusNextBreak">10m</strong></div>
+              </div>
+        </div>
+
+        <div class="focus-card">
+          <h3>Session Goal</h3>
+          <div class="form-group">
+            <label for="focusGoalInput">Daily deep sessions goal</label>
+            <input type="number" id="focusGoalInput" min="1" max="12" step="1" value="3">
+          </div>
+          <div class="focus-actions">
+            <button class="btn btn-primary" onclick="saveFocusGoal()">Set Goal</button>
+          </div>
+          <div class="quick-notes-meta">
+            <span id="focusGoalProgress">0 / 0</span>
+            <span id="focusGoalMessage"></span>
+          </div>
+        </div>
+
+        <div class="focus-card">
+          <h3>Future Identity Reminder</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Attach study to identity. You act according to who you believe you are.</p>
+          <div class="form-group">
+            <label for="futureIdentityInput">Your future identity</label>
+            <input type="text" id="futureIdentityInput" placeholder="Future Doctor / AI Engineer / Historian">
+          </div>
+          <div class="focus-actions">
+            <button class="btn btn-primary" onclick="saveFutureIdentity()">Save Identity</button>
+          </div>
+          <div class="quick-notes-meta">
+            <span id="futureIdentityText">You’re building Future You.</span>
+          </div>
+        </div>
+
+        <div class="focus-card">
+          <h3>Mental Energy Tracker</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Rate your energy before a session. We learn your peak hours.</p>
+          <div class="energy-scale" id="energyScale">
+            <button class="btn btn-secondary" onclick="logEnergy(1)">1</button>
+            <button class="btn btn-secondary" onclick="logEnergy(2)">2</button>
+            <button class="btn btn-secondary" onclick="logEnergy(3)">3</button>
+            <button class="btn btn-secondary" onclick="logEnergy(4)">4</button>
+            <button class="btn btn-secondary" onclick="logEnergy(5)">5</button>
+          </div>
+          <div class="form-group" style="margin-top: var(--spacing-md);">
+            <label for="hardestSubjectInput">Hardest subject</label>
+            <input type="text" id="hardestSubjectInput" placeholder="e.g., Chemistry">
+          </div>
+          <div class="quick-notes-meta">
+            <span id="energyInsight">Log your energy to see peak hours.</span>
+          </div>
+        </div>
+
+        <div class="focus-card">
+          <h3>Study Ritual Builder</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Build a repeatable focus routine.</p>
+          <div class="ritual-list">
+            <label class="ritual-item"><input type="checkbox" id="ritualSound"> Play focus sound</label>
+            <label class="ritual-item"><input type="checkbox" id="ritualWater"> Drink water</label>
+            <label class="ritual-item"><input type="checkbox" id="ritualStretch"> Quick stretch</label>
+            <label class="ritual-item"><input type="checkbox" id="ritualDesk"> Clear desk checklist</label>
+          </div>
+          <div class="focus-actions" style="margin-top: var(--spacing-md);">
+            <button class="btn btn-primary" onclick="completeRitual()">Start Ritual</button>
+            <button class="btn btn-secondary" onclick="resetRitual()">Reset</button>
+          </div>
+          <div class="quick-notes-meta">
+            <span id="ritualStatus">Ritual not started</span>
+          </div>
+        </div>
+
+        <div class="focus-card">
+          <h3>Visual Growth Tree</h3>
+          <div class="focus-tree" id="growthTree">🌱</div>
+          <div class="quick-notes-meta">
+            <span id="growthTreeStatus">Grow your tree by completing Learn By Teaching.</span>
+          </div>
+        </div>
+
+        <div class="focus-card">
+              <h3>Distraction Blocker Mode</h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted);">
+                Lock the dashboard to focus-only tools. Emergency unlock takes 60 seconds.
+              </p>
+              <div class="focus-actions">
+                <button class="btn btn-success" onclick="toggleDistractionBlocker()" id="blockerToggleBtn">Enable Blocker</button>
+              </div>
+              <div class="form-group" style="margin-top: var(--spacing-md);">
+                <label for="blockedSitesInput">Blocked list (reminder)</label>
+                <input type="text" id="blockedSitesInput" placeholder="instagram.com, youtube.com, tiktok.com">
+              </div>
+              <div class="blocker-list" id="blockedSitesList"></div>
+        </div>
+
+        <div class="focus-card">
+              <h3>Study Sound Environment</h3>
+              <div class="sound-grid">
+                <button class="sound-chip" onclick="startFocusSound('brown')">Brown Noise</button>
+                <button class="sound-chip" onclick="startFocusSound('rain')">Rain</button>
+                <button class="sound-chip" onclick="startFocusSound('library')">Library Ambience</button>
+                <button class="sound-chip" onclick="startFocusSound('music')">Instrumental Focus</button>
+              </div>
+              <div class="form-group" style="margin-top: var(--spacing-md);">
+                <label for="soundVolume">Volume</label>
+                <input type="range" id="soundVolume" min="0" max="100" value="35">
+              </div>
+              <button class="btn btn-secondary" onclick="stopFocusSound()">Stop Sound</button>
+        </div>
+
+        <div class="focus-card">
+              <h3>Brain Dump</h3>
+              <div class="form-group">
+                <label for="brainDumpInput">Capture distracting thoughts</label>
+                <input type="text" id="brainDumpInput" placeholder="Add a thought and press Enter">
+              </div>
+              <div class="focus-actions">
+                <button class="btn btn-primary" onclick="addBrainDumpItem()">Add</button>
+                <button class="btn btn-warning" onclick="clearBrainDump()">Clear All</button>
+              </div>
+              <div class="brain-dump-list" id="brainDumpList"></div>
+        </div>
+      </div>
+    </section>
     
     <!-- Dashboard Header -->
     <div class="dashboard-header" id="dashboardHeader">
@@ -5054,6 +5625,7 @@ body, #studentMemoryWhiteboard, #studentStickyNotesContainer {
           Home
         </button>
         <button class="btn btn-success" onclick="showSection('myclasses')">🎓 Manage Classes</button>
+        <button class="btn btn-secondary focus-toggle" id="focusModeBtn" onclick="toggleFocusMode()">Focus Portal</button>
         <button class="btn btn-secondary" onclick="refreshData()">🔄 Refresh</button>
         <button class="btn btn-warning" onclick="exportData()">📤 Export Data</button>
       </div>
@@ -5112,6 +5684,24 @@ body, #studentMemoryWhiteboard, #studentStickyNotesContainer {
           </div>
         </div>
 
+        <!-- Quick Notes -->
+        <div class="content-card quick-notes-card" style="margin-top: var(--spacing-xl);">
+          <div class="content-header">
+            <h2>Quick Notes</h2>
+            <div class="quick-notes-actions">
+              <button class="btn btn-secondary" onclick="copyQuickNotes()">Copy</button>
+              <button class="btn btn-warning" onclick="clearQuickNotes()">Clear</button>
+            </div>
+          </div>
+          <div class="content-body">
+            <textarea id="quickNotesInput" placeholder="Capture ideas, reminders, or homework steps. Autosaves locally."></textarea>
+            <div class="quick-notes-meta">
+              <span id="quickNotesStatus">Saved</span>
+              <span>Shortcut: Shift+N to focus</span>
+            </div>
+          </div>
+        </div>
+
         <!-- Study Stats Compare -->
         <div class="content-card" style="margin-top: var(--spacing-xl);">
           <div class="content-header">
@@ -5120,6 +5710,46 @@ body, #studentMemoryWhiteboard, #studentStickyNotesContainer {
           <div class="content-body profile-content-body">
             <div class="pro-tip" id="compareMsg1">You studied 20% more than average.</div>
             <div class="pro-tip" id="compareMsg2">Top 10% of users this week.</div>
+          </div>
+        </div>
+
+        <!-- Learn By Teaching Mode -->
+        <div class="content-card" style="margin-top: var(--spacing-xl);">
+          <div class="content-header">
+            <h2>🧩 Learn By Teaching</h2>
+          </div>
+          <div class="content-body">
+            <p style="color: var(--text-muted); margin-bottom: var(--spacing-md);">
+              Explain the topic in 60 seconds or write 5 bullet points. If you can’t explain it, you don’t understand it.
+            </p>
+            <div class="form-group">
+              <label for="teachTopicInput">Topic</label>
+              <input type="text" id="teachTopicInput" placeholder="e.g., Photosynthesis">
+            </div>
+            <div class="form-group">
+              <label>5 Bullet Points</label>
+              <div class="teach-bullets">
+                <input type="text" id="teachBullet1" placeholder="Bullet 1">
+                <input type="text" id="teachBullet2" placeholder="Bullet 2">
+                <input type="text" id="teachBullet3" placeholder="Bullet 3">
+                <input type="text" id="teachBullet4" placeholder="Bullet 4">
+                <input type="text" id="teachBullet5" placeholder="Bullet 5">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>60-second Voice Summary (optional)</label>
+              <div class="focus-actions">
+                <button class="btn btn-secondary" id="teachRecordBtn" onclick="toggleTeachRecording()">Start Recording</button>
+                <span id="teachRecordStatus">Not recording</span>
+              </div>
+              <audio id="teachPlayback" controls style="width: 100%; margin-top: var(--spacing-sm); display: none;"></audio>
+            </div>
+            <div class="focus-actions">
+              <button class="btn btn-success" onclick="completeTeachMode()">I Explained It</button>
+            </div>
+            <div class="quick-notes-meta">
+              <span id="teachModeStatus">Tree grows when you complete this.</span>
+            </div>
           </div>
         </div>
 
@@ -5435,6 +6065,47 @@ body, #studentMemoryWhiteboard, #studentStickyNotesContainer {
             
             <div class="assignment-list" id="fullAssignmentList">
               <!-- Full assignment list will appear here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exit Ticket Section -->
+      <div id="exitTicket" class="dashboard-content" style="grid-column: span 12; display: none;">
+        <div class="content-card">
+          <div class="content-header">
+            <h2>Exit Ticket</h2>
+            <button class="btn btn-secondary" onclick="renderExitTicketStudentSection()">Refresh</button>
+          </div>
+          <div class="content-body">
+            <div class="pro-tip">
+              <strong>Exit Ticket</strong>
+              Answer these quick questions to help your teacher see what landed today.
+            </div>
+            <div class="form-card" style="margin-top: var(--spacing-md);">
+              <h3>Questions</h3>
+              <div id="exitTicketStudentQuestions">Loading questions...</div>
+            </div>
+            <div class="form-card" id="exitTicketFormCard" style="margin-top: var(--spacing-md);">
+              <h3>Your Responses</h3>
+              <div class="form-group">
+                <label for="exitTicketAnswer1">Answer 1</label>
+                <textarea id="exitTicketAnswer1" rows="3" placeholder="Your response..."></textarea>
+              </div>
+              <div class="form-group">
+                <label for="exitTicketAnswer2">Answer 2</label>
+                <textarea id="exitTicketAnswer2" rows="3" placeholder="Your response..."></textarea>
+              </div>
+              <div class="form-group">
+                <label for="exitTicketAnswer3">Answer 3</label>
+                <textarea id="exitTicketAnswer3" rows="3" placeholder="Your response..."></textarea>
+              </div>
+              <button class="btn btn-primary" onclick="submitExitTicketStudent()">Submit Exit Ticket</button>
+              <div id="exitTicketStudentStatus" style="margin-top: var(--spacing-sm); font-size: 0.9rem;"></div>
+            </div>
+            <div id="exitTicketThankYou" class="form-card" style="margin-top: var(--spacing-md); display: none;">
+              <h3>Thank You</h3>
+              <p>Your response has been submitted.</p>
             </div>
           </div>
         </div>
@@ -6291,10 +6962,11 @@ body, #studentMemoryWhiteboard, #studentStickyNotesContainer {
 <div class="chatbot-fab" aria-live="polite">
     <div class="chatbot-bubble" id="chatbotBubble">You’ve got this.</div>
     <button class="chatbot-btn" id="chatbotBtn" aria-label="Encouragement bot">
-        <img class="chatbot-img" src="ai-chatbot-transparent.png" alt="Chatbot">
+        <img class="chatbot-img" src="ai-chatbot-transparent.png" alt="Chatbot" loading="lazy" width="56" height="56">
     </button>
 </div>
 <audio id="applauseAudio" src="applause.mp3" preload="auto"></audio>
+<audio id="portalSwoosh" src="portal-swoosh.mp3" preload="auto"></audio>
 <div class="clap-overlay" id="clapOverlay" aria-hidden="true">
   <video class="clap-video" id="clapVideo" src="clapping.mp4" playsinline muted></video>
   <canvas class="clap-canvas" id="clapCanvas"></canvas>
@@ -6408,6 +7080,10 @@ async function uploadImageToImgBB(blob) {
             const result = reader.result;
             resolve(result.split(',')[1]); // base64 only
         };
+        if (sectionId === 'exitTicket' && itemText.includes('Exit Ticket')) {
+            item.classList.add('active');
+            return;
+        }
         reader.onerror = reject;
         reader.readAsDataURL(blob);
     });
@@ -6443,6 +7119,30 @@ let auth = null;
 let userClasses = [];
 let currentClassCode = null;
 let selectedClassIndex = 0;
+
+const STORAGE_SCHEMA_VERSION = 2;
+
+function initLocalStorageSchema() {
+    try {
+        const stored = parseInt(localStorage.getItem('lifeos_schema_version') || '1', 10);
+        if (stored >= STORAGE_SCHEMA_VERSION) return;
+
+        if (stored < 2) {
+            const legacyName = localStorage.getItem('student_name');
+            const newName = localStorage.getItem('studentName');
+            if (legacyName && !newName) {
+                localStorage.setItem('studentName', legacyName);
+            }
+            if (newName && !legacyName) {
+                localStorage.setItem('student_name', newName);
+            }
+        }
+
+        localStorage.setItem('lifeos_schema_version', String(STORAGE_SCHEMA_VERSION));
+    } catch (error) {
+        console.error("Schema migration failed:", error);
+    }
+}
 
 // Initialize with proper default values to prevent undefined errors
 let studyData = {
@@ -7506,11 +8206,985 @@ async function logLiveActivity(type, payload = {}) {
     }
 }
 
+// ========== QUICK NOTES + FOCUS MODE ==========
+const QUICK_NOTES_KEY = 'studentQuickNotes';
+const FOCUS_MODE_KEY = 'studentFocusMode';
+let quickNotesSaveTimer = null;
+
+function isTypingTarget(target) {
+    return target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
+}
+
+function updateQuickNotesStatus(text) {
+    const statusEl = document.getElementById('quickNotesStatus');
+    if (statusEl) statusEl.textContent = text;
+}
+
+function saveQuickNotes() {
+    const input = document.getElementById('quickNotesInput');
+    if (!input) return;
+
+    localStorage.setItem(QUICK_NOTES_KEY, input.value);
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    updateQuickNotesStatus(`Saved ${time}`);
+}
+
+function initializeQuickNotes() {
+    const input = document.getElementById('quickNotesInput');
+    if (!input) return;
+
+    input.value = localStorage.getItem(QUICK_NOTES_KEY) || '';
+    updateQuickNotesStatus(input.value ? 'Loaded' : 'Saved');
+
+    input.addEventListener('input', () => {
+        updateQuickNotesStatus('Saving...');
+        if (quickNotesSaveTimer) clearTimeout(quickNotesSaveTimer);
+        quickNotesSaveTimer = setTimeout(saveQuickNotes, 400);
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.shiftKey && e.key.toLowerCase() === 'n') {
+            if (isTypingTarget(document.activeElement)) return;
+            e.preventDefault();
+            input.focus();
+        }
+    });
+}
+
+function copyQuickNotes() {
+    const input = document.getElementById('quickNotesInput');
+    if (!input) return;
+
+    if (!input.value.trim()) {
+        showNotification("Notes are empty.", "info");
+        return;
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(input.value).then(() => {
+            showNotification("Notes copied to clipboard.", "success");
+        }).catch(() => {
+            showNotification("Couldn't copy notes. Try again.", "error");
+        });
+        return;
+    }
+
+    const temp = document.createElement('textarea');
+    temp.value = input.value;
+    document.body.appendChild(temp);
+    temp.select();
+    try {
+        document.execCommand('copy');
+        showNotification("Notes copied to clipboard.", "success");
+    } catch (err) {
+        showNotification("Couldn't copy notes. Try again.", "error");
+    } finally {
+        document.body.removeChild(temp);
+    }
+}
+
+function clearQuickNotes() {
+    const input = document.getElementById('quickNotesInput');
+    if (!input) return;
+
+    if (!input.value.trim()) {
+        showNotification("Notes are already empty.", "info");
+        return;
+    }
+
+    input.value = '';
+    saveQuickNotes();
+    showNotification("Notes cleared.", "success");
+}
+
+function setFocusMode(isOn) {
+    document.body.classList.toggle('focus-mode', isOn);
+    localStorage.setItem(FOCUS_MODE_KEY, isOn ? 'true' : 'false');
+
+    const btn = document.getElementById('focusModeBtn');
+    if (btn) {
+        btn.textContent = isOn ? 'Exit Focus' : 'Focus Portal';
+        btn.title = 'Shift+F';
+    }
+    updateCommitmentUI();
+}
+
+function toggleFocusMode() {
+    const entering = !document.body.classList.contains('focus-mode');
+    setFocusMode(entering);
+    if (entering) {
+        playPortalSwoosh();
+        triggerPortalEntry();
+    }
+}
+
+function initializeFocusMode() {
+    const saved = localStorage.getItem(FOCUS_MODE_KEY) === 'true';
+    setFocusMode(saved);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.shiftKey && e.key.toLowerCase() === 'f') {
+            if (isTypingTarget(document.activeElement)) return;
+            e.preventDefault();
+            toggleFocusMode();
+        }
+    });
+}
+
+// ========== FOCUS TOOLKIT ==========
+const FOCUS_STATE_KEY = 'studentFocusTimer';
+const FOCUS_SESSIONS_KEY = 'studentFocusSessions';
+const BRAIN_DUMP_KEY = 'studentBrainDump';
+const BLOCKER_KEY = 'studentDistractionBlocker';
+const BLOCKER_ENABLED_KEY = 'studentDistractionBlockerEnabled';
+const FOCUS_GOAL_KEY = 'studentFocusGoal';
+const IDENTITY_KEY = 'studentFutureIdentity';
+const ENERGY_LOG_KEY = 'studentEnergyLog';
+const RITUAL_KEY = 'studentRitualState';
+const TREE_KEY = 'studentGrowthTreeLevel';
+const TREE_LAST_KEY = 'studentGrowthTreeLastDate';
+const TEACH_LAST_KEY = 'studentTeachLastDate';
+const TEACH_AUDIO_KEY = 'studentTeachAudioDuration';
+const FOCUS_COMMITMENT_KEY = 'studentFocusCommitment';
+const EMERGENCY_UNLOCK_KEY = 'studentEmergencyUnlockAt';
+
+let focusTimerState = {
+    mode: 'focus',
+    focusMinutes: 50,
+    breakMinutes: 10,
+    remainingSeconds: 3000,
+    running: false
+};
+let focusTimerInterval = null;
+let focusAudioContext = null;
+let focusSoundNodes = [];
+let fullscreenGuardActive = false;
+let teachRecorder = null;
+let teachAudioChunks = [];
+let teachRecordingSeconds = 0;
+let teachRecordingTimer = null;
+let portalOverlayTimer = null;
+
+function loadFocusTimerState() {
+    const saved = localStorage.getItem(FOCUS_STATE_KEY);
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            focusTimerState = { ...focusTimerState, ...parsed };
+        } catch (e) { /* ignore */ }
+    }
+}
+
+function saveFocusTimerState() {
+    localStorage.setItem(FOCUS_STATE_KEY, JSON.stringify(focusTimerState));
+}
+
+function formatTime(seconds) {
+    const min = Math.floor(seconds / 60);
+    const sec = Math.max(0, seconds % 60);
+    return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+}
+
+function updateFocusTimerUI() {
+    const display = document.getElementById('focusTimerDisplay');
+    const modeEl = document.getElementById('focusTimerMode');
+    const nextBreakEl = document.getElementById('focusNextBreak');
+    if (display) display.textContent = formatTime(focusTimerState.remainingSeconds);
+    if (modeEl) modeEl.textContent = focusTimerState.mode === 'focus' ? 'Focus' : 'Break';
+    if (nextBreakEl) nextBreakEl.textContent = `${focusTimerState.breakMinutes}m`;
+}
+
+function getSessionsData() {
+    const raw = localStorage.getItem(FOCUS_SESSIONS_KEY);
+    if (!raw) return { sessionsByDate: {}, streak: 0 };
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        return { sessionsByDate: {}, streak: 0 };
+    }
+}
+
+function saveSessionsData(data) {
+    localStorage.setItem(FOCUS_SESSIONS_KEY, JSON.stringify(data));
+}
+
+function getTodayKey() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function updateFocusMetrics() {
+    const data = getSessionsData();
+    const today = getTodayKey();
+    const todayCount = data.sessionsByDate[today] || 0;
+
+    const sessionsEl = document.getElementById('focusSessionsToday');
+    const streakEl = document.getElementById('focusStreak');
+    if (sessionsEl) sessionsEl.textContent = todayCount;
+    if (streakEl) streakEl.textContent = data.streak || 0;
+    updateFocusGoalProgress(todayCount);
+}
+
+function getFocusGoal() {
+    const stored = Number(localStorage.getItem(FOCUS_GOAL_KEY));
+    return stored > 0 ? stored : 3;
+}
+
+function saveFocusGoal() {
+    const input = document.getElementById('focusGoalInput');
+    if (!input) return;
+    const value = Math.max(1, Math.min(12, Number(input.value) || 3));
+    localStorage.setItem(FOCUS_GOAL_KEY, String(value));
+    updateFocusGoalProgress();
+    showNotification("Focus goal updated.", "success");
+}
+
+function updateFocusGoalProgress(forcedCount) {
+    const goal = getFocusGoal();
+    const data = getSessionsData();
+    const today = getTodayKey();
+    const count = typeof forcedCount === 'number' ? forcedCount : (data.sessionsByDate[today] || 0);
+    const progressEl = document.getElementById('focusGoalProgress');
+    const msgEl = document.getElementById('focusGoalMessage');
+    if (progressEl) progressEl.textContent = `${count} / ${goal}`;
+    if (msgEl) msgEl.textContent = count >= goal ? 'Goal hit. Great work.' : `${goal - count} to go`;
+}
+
+function initializeFutureIdentity() {
+    const input = document.getElementById('futureIdentityInput');
+    const output = document.getElementById('futureIdentityText');
+    if (!input || !output) return;
+    const saved = localStorage.getItem(IDENTITY_KEY) || '';
+    input.value = saved;
+    output.textContent = saved ? `You’re building ${saved}.` : 'You’re building Future You.';
+    input.addEventListener('input', () => {
+        const value = input.value.trim();
+        localStorage.setItem(IDENTITY_KEY, value);
+        output.textContent = value ? `You’re building ${value}.` : 'You’re building Future You.';
+    });
+}
+
+function saveFutureIdentity() {
+    const input = document.getElementById('futureIdentityInput');
+    const output = document.getElementById('futureIdentityText');
+    if (!input || !output) return;
+    const value = input.value.trim();
+    localStorage.setItem(IDENTITY_KEY, value);
+    output.textContent = value ? `You’re building ${value}.` : 'You’re building Future You.';
+    showNotification("Identity saved.", "success");
+}
+
+function completeFocusSession() {
+    const data = getSessionsData();
+    const today = getTodayKey();
+    data.sessionsByDate[today] = (data.sessionsByDate[today] || 0) + 1;
+
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    if (data.sessionsByDate[yesterday]) {
+        data.streak = (data.streak || 0) + 1;
+    } else if (!data.sessionsByDate[today] || data.sessionsByDate[today] === 1) {
+        data.streak = 1;
+    }
+
+    saveSessionsData(data);
+    updateFocusMetrics();
+}
+
+function tickFocusTimer() {
+    if (!focusTimerState.running) return;
+    focusTimerState.remainingSeconds -= 1;
+    if (focusTimerState.remainingSeconds <= 0) {
+        if (focusTimerState.mode === 'focus') {
+            completeFocusSession();
+            focusTimerState.mode = 'break';
+            focusTimerState.remainingSeconds = focusTimerState.breakMinutes * 60;
+            showNotification("Break time. Recharge quickly.", "info");
+        } else {
+            focusTimerState.mode = 'focus';
+            focusTimerState.remainingSeconds = focusTimerState.focusMinutes * 60;
+            showNotification("Back to focus. You got this.", "success");
+        }
+    }
+    updateFocusTimerUI();
+    saveFocusTimerState();
+}
+
+function startFocusTimer() {
+    const focusInput = document.getElementById('focusMinutes');
+    const breakInput = document.getElementById('breakMinutes');
+    if (focusInput && breakInput) {
+        focusTimerState.focusMinutes = Math.max(25, Number(focusInput.value) || 50);
+        focusTimerState.breakMinutes = Math.max(5, Number(breakInput.value) || 10);
+    }
+    if (!focusTimerState.running) {
+        focusTimerState.running = true;
+        focusTimerInterval = setInterval(tickFocusTimer, 1000);
+    }
+    if (focusTimerState.remainingSeconds <= 0) {
+        focusTimerState.remainingSeconds = focusTimerState.focusMinutes * 60;
+    }
+    saveFocusTimerState();
+    updateFocusTimerUI();
+}
+
+function pauseFocusTimer() {
+    focusTimerState.running = false;
+    if (focusTimerInterval) {
+        clearInterval(focusTimerInterval);
+        focusTimerInterval = null;
+    }
+    saveFocusTimerState();
+}
+
+function resetFocusTimer() {
+    pauseFocusTimer();
+    focusTimerState.mode = 'focus';
+    focusTimerState.remainingSeconds = focusTimerState.focusMinutes * 60;
+    saveFocusTimerState();
+    updateFocusTimerUI();
+}
+
+function renderBlockedSites() {
+    const listEl = document.getElementById('blockedSitesList');
+    if (!listEl) return;
+    const raw = localStorage.getItem(BLOCKER_KEY);
+    const items = raw ? raw.split(',').map(s => s.trim()).filter(Boolean) : [];
+    listEl.innerHTML = items.length ? items.map(item => `<span>${item}</span>`).join('') : '<span>No sites listed yet.</span>';
+}
+
+function toggleDistractionBlocker() {
+    const current = localStorage.getItem(BLOCKER_KEY) || '';
+    const input = document.getElementById('blockedSitesInput');
+    if (input && input.value.trim()) {
+        localStorage.setItem(BLOCKER_KEY, input.value.trim());
+    }
+    const enabled = document.body.classList.toggle('focus-blocker-enabled');
+    localStorage.setItem(BLOCKER_ENABLED_KEY, enabled ? 'true' : 'false');
+    const btn = document.getElementById('blockerToggleBtn');
+    if (btn) btn.textContent = enabled ? 'Disable Blocker' : 'Enable Blocker';
+    if (enabled) {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        enterFocusFullscreen();
+    }
+    if (!enabled) {
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+        exitFocusFullscreen();
+    }
+    showNotification(enabled ? "Distraction blocker enabled." : "Distraction blocker disabled.", "info");
+    renderBlockedSites();
+}
+
+function loadBlockerState() {
+    const input = document.getElementById('blockedSitesInput');
+    const saved = localStorage.getItem(BLOCKER_KEY);
+    if (input && saved) input.value = saved;
+    const enabled = localStorage.getItem(BLOCKER_ENABLED_KEY) === 'true';
+    document.body.classList.toggle('focus-blocker-enabled', enabled);
+    const btn = document.getElementById('blockerToggleBtn');
+    if (btn) btn.textContent = enabled ? 'Disable Blocker' : 'Enable Blocker';
+    if (enabled) {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        enterFocusFullscreen();
+    }
+    renderBlockedSites();
+}
+
+function getCommitment() {
+    const raw = localStorage.getItem(FOCUS_COMMITMENT_KEY);
+    if (!raw) return null;
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        return null;
+    }
+}
+
+function setCommitment(commitment) {
+    if (commitment) {
+        localStorage.setItem(FOCUS_COMMITMENT_KEY, JSON.stringify(commitment));
+    } else {
+        localStorage.removeItem(FOCUS_COMMITMENT_KEY);
+    }
+    updateCommitmentUI();
+}
+
+function updateCommitmentUI() {
+    const banner = document.getElementById('focusLockBanner');
+    const status = document.getElementById('focusCommitStatus');
+    const commitment = getCommitment();
+    if (!commitment || Date.now() > commitment.endAt) {
+        if (commitment && Date.now() > commitment.endAt) {
+            setCommitment(null);
+        }
+        if (banner) banner.style.display = 'none';
+        if (status) status.textContent = 'No active commitment';
+        return;
+    }
+    const minutesLeft = Math.ceil((commitment.endAt - Date.now()) / 60000);
+    if (banner) {
+        banner.style.display = 'block';
+        banner.textContent = `Locked in: ${commitment.topic} · ${minutesLeft} min remaining`;
+    }
+    if (status) status.textContent = `Active: ${commitment.topic}`;
+}
+
+function startFocusCommitment() {
+    const topicInput = document.getElementById('focusTopic');
+    const minutesInput = document.getElementById('focusCommitMinutes');
+    const topic = topicInput ? topicInput.value.trim() : '';
+    const minutes = minutesInput ? Number(minutesInput.value) : 0;
+    if (!topic) {
+        showNotification("Enter what you're studying first.", "error");
+        return;
+    }
+    if (!minutes || minutes < 15) {
+        showNotification("Commitment must be at least 15 minutes.", "error");
+        return;
+    }
+    const commitment = {
+        topic,
+        startAt: Date.now(),
+        endAt: Date.now() + minutes * 60000
+    };
+    setCommitment(commitment);
+    setFocusMode(true);
+    startFocusTimer();
+    showNotification("Commitment locked in. Stay focused.", "success");
+}
+
+function requestEmergencyUnlock() {
+    const unlockAt = Date.now() + 60000;
+    localStorage.setItem(EMERGENCY_UNLOCK_KEY, String(unlockAt));
+    updateEmergencyUnlockTimer();
+    showNotification("Emergency unlock available in 60 seconds.", "warning");
+}
+
+function canExitFocusMode() {
+    const commitment = getCommitment();
+    const blockerEnabled = document.body.classList.contains('focus-blocker-enabled');
+    const commitmentActive = commitment && Date.now() <= commitment.endAt;
+    if (!commitmentActive && !blockerEnabled) {
+        return true;
+    }
+    const unlockAt = Number(localStorage.getItem(EMERGENCY_UNLOCK_KEY)) || 0;
+    if (unlockAt && Date.now() >= unlockAt) {
+        return true;
+    }
+    if (!unlockAt) requestEmergencyUnlock();
+    return false;
+}
+
+function updateEmergencyUnlockTimer() {
+    const timerEl = document.getElementById('emergencyUnlockTimer');
+    const unlockAt = Number(localStorage.getItem(EMERGENCY_UNLOCK_KEY)) || 0;
+    if (!timerEl) return;
+    if (!unlockAt) {
+        timerEl.textContent = '';
+        return;
+    }
+    const secondsLeft = Math.max(0, Math.ceil((unlockAt - Date.now()) / 1000));
+    timerEl.textContent = secondsLeft > 0 ? `Unlock in ${secondsLeft}s` : 'Unlock ready';
+}
+
+function initializeEmergencyUnlockTicker() {
+    setInterval(updateEmergencyUnlockTimer, 1000);
+}
+
+function toggleFocusMode() {
+    if (document.body.classList.contains('focus-mode')) {
+        if (!canExitFocusMode()) {
+            showNotification("Commitment active. Emergency unlock required.", "warning");
+            return;
+        }
+        localStorage.removeItem(EMERGENCY_UNLOCK_KEY);
+        if (document.body.classList.contains('focus-blocker-enabled')) {
+            showNotification("Disable the distraction blocker before exiting focus mode.", "warning");
+            return;
+        }
+    }
+    setFocusMode(!document.body.classList.contains('focus-mode'));
+}
+
+function createNoiseBuffer(context) {
+    const bufferSize = 2 * context.sampleRate;
+    const buffer = context.createBuffer(1, bufferSize, context.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i += 1) {
+        data[i] = Math.random() * 2 - 1;
+    }
+    return buffer;
+}
+
+function stopFocusSound() {
+    focusSoundNodes.forEach(node => {
+        try { node.stop && node.stop(); } catch (e) { /* ignore */ }
+        try { node.disconnect && node.disconnect(); } catch (e) { /* ignore */ }
+    });
+    focusSoundNodes = [];
+    if (focusAudioContext) {
+        focusAudioContext.close().catch(() => {});
+        focusAudioContext = null;
+    }
+    document.querySelectorAll('.sound-chip').forEach(btn => btn.classList.remove('active'));
+}
+
+function startFocusSound(type) {
+    stopFocusSound();
+    focusAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const gain = focusAudioContext.createGain();
+    const volume = document.getElementById('soundVolume');
+    gain.gain.value = volume ? Number(volume.value) / 100 : 0.35;
+    gain.connect(focusAudioContext.destination);
+
+    if (type === 'music') {
+        const osc1 = focusAudioContext.createOscillator();
+        const osc2 = focusAudioContext.createOscillator();
+        osc1.type = 'sine';
+        osc2.type = 'triangle';
+        osc1.frequency.value = 220;
+        osc2.frequency.value = 330;
+        osc1.connect(gain);
+        osc2.connect(gain);
+        osc1.start();
+        osc2.start();
+        focusSoundNodes.push(osc1, osc2, gain);
+    } else {
+        const noise = focusAudioContext.createBufferSource();
+        noise.buffer = createNoiseBuffer(focusAudioContext);
+        noise.loop = true;
+        const filter = focusAudioContext.createBiquadFilter();
+        filter.type = type === 'brown' ? 'lowpass' : 'bandpass';
+        filter.frequency.value = type === 'rain' ? 800 : 1200;
+        noise.connect(filter);
+        filter.connect(gain);
+        noise.start();
+        focusSoundNodes.push(noise, filter, gain);
+    }
+
+    document.querySelectorAll('.sound-chip').forEach(btn => {
+        const label = btn.textContent.toLowerCase();
+        if ((type === 'music' && label.includes('instrumental')) || (type !== 'music' && label.includes(type))) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+function updateSoundVolume() {
+    const volume = document.getElementById('soundVolume');
+    if (!volume || !focusAudioContext) return;
+    focusSoundNodes.forEach(node => {
+        if (node.gain) node.gain.value = Number(volume.value) / 100;
+    });
+}
+
+function loadBrainDump() {
+    const raw = localStorage.getItem(BRAIN_DUMP_KEY);
+    if (!raw) return [];
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveBrainDump(items) {
+    localStorage.setItem(BRAIN_DUMP_KEY, JSON.stringify(items));
+}
+
+function renderBrainDump() {
+    const list = document.getElementById('brainDumpList');
+    if (!list) return;
+    const items = loadBrainDump();
+    list.innerHTML = items.length ? items.map((item, index) => `
+        <div class="brain-dump-item">
+          <span>${escapeHtml(item)}</span>
+          <button class="btn btn-secondary" onclick="removeBrainDumpItem(${index})">Done</button>
+        </div>
+    `).join('') : '<div style="color: var(--text-muted); font-size: 0.85rem;">Nothing dumped yet.</div>';
+}
+
+function addBrainDumpItem() {
+    const input = document.getElementById('brainDumpInput');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+    const items = loadBrainDump();
+    items.unshift(text);
+    saveBrainDump(items);
+    input.value = '';
+    renderBrainDump();
+}
+
+function removeBrainDumpItem(index) {
+    const items = loadBrainDump();
+    items.splice(index, 1);
+    saveBrainDump(items);
+    renderBrainDump();
+}
+
+function clearBrainDump() {
+    saveBrainDump([]);
+    renderBrainDump();
+}
+
+function initializeFocusToolkit() {
+    loadFocusTimerState();
+    if (!focusTimerState.running) {
+        focusTimerState.remainingSeconds = (focusTimerState.mode === 'break' ? focusTimerState.breakMinutes : focusTimerState.focusMinutes) * 60;
+        saveFocusTimerState();
+    }
+    const focusInput = document.getElementById('focusMinutes');
+    const breakInput = document.getElementById('breakMinutes');
+    if (focusInput) focusInput.value = focusTimerState.focusMinutes;
+    if (breakInput) breakInput.value = focusTimerState.breakMinutes;
+    updateFocusTimerUI();
+    updateFocusMetrics();
+    updateCommitmentUI();
+    loadBlockerState();
+    renderBrainDump();
+    initializeEmergencyUnlockTicker();
+
+    const goalInput = document.getElementById('focusGoalInput');
+    if (goalInput) {
+        goalInput.value = getFocusGoal();
+        updateFocusGoalProgress();
+    }
+
+    initializeFutureIdentity();
+
+    if (focusTimerState.running && !focusTimerInterval) {
+        focusTimerInterval = setInterval(tickFocusTimer, 1000);
+    }
+
+    const soundVolume = document.getElementById('soundVolume');
+    if (soundVolume) soundVolume.addEventListener('input', updateSoundVolume);
+
+    const brainInput = document.getElementById('brainDumpInput');
+    if (brainInput) {
+        brainInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addBrainDumpItem();
+            }
+        });
+    }
+
+    const blockedInput = document.getElementById('blockedSitesInput');
+    if (blockedInput) {
+        blockedInput.addEventListener('change', () => {
+            if (blockedInput.value.trim()) {
+                localStorage.setItem(BLOCKER_KEY, blockedInput.value.trim());
+            }
+            renderBlockedSites();
+        });
+    }
+
+    initializeEnergyTracker();
+    initializeRitualBuilder();
+    updateGrowthTreeUI();
+
+    document.addEventListener('fullscreenchange', () => {
+        if (document.body.classList.contains('focus-blocker-enabled') && !document.fullscreenElement) {
+            enterFocusFullscreen();
+        }
+    });
+
+    window.addEventListener('beforeunload', (e) => {
+        if (document.body.classList.contains('focus-blocker-enabled')) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+}
+
+function playPortalSwoosh() {
+    const audio = document.getElementById('portalSwoosh');
+    const tryPlay = (el) => {
+        if (!el) return false;
+        el.currentTime = 0;
+        el.volume = 0.7;
+        el.play().catch(() => {});
+        return true;
+    };
+    if (tryPlay(audio)) return;
+    const fallback = new Audio('portal.mp3');
+    fallback.volume = 0.7;
+    fallback.play().catch(() => {});
+}
+
+function triggerPortalEntry() {
+    const overlay = document.getElementById('portalOverlay');
+    if (!overlay) return;
+    overlay.classList.remove('active');
+    void overlay.offsetWidth;
+    overlay.classList.add('active');
+    if (portalOverlayTimer) clearTimeout(portalOverlayTimer);
+    portalOverlayTimer = setTimeout(() => {
+        overlay.classList.remove('active');
+    }, 1800);
+}
+
+// ===== Mental Energy Tracker =====
+function getEnergyLog() {
+    const raw = localStorage.getItem(ENERGY_LOG_KEY);
+    if (!raw) return [];
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveEnergyLog(entries) {
+    localStorage.setItem(ENERGY_LOG_KEY, JSON.stringify(entries));
+}
+
+function logEnergy(score) {
+    const entries = getEnergyLog();
+    entries.push({ score, hour: new Date().getHours(), ts: Date.now() });
+    saveEnergyLog(entries);
+    updateEnergyInsight();
+    showNotification("Energy logged.", "success");
+}
+
+function getPeakHour(entries) {
+    const buckets = {};
+    entries.forEach(entry => {
+        if (!buckets[entry.hour]) buckets[entry.hour] = { total: 0, count: 0 };
+        buckets[entry.hour].total += entry.score;
+        buckets[entry.hour].count += 1;
+    });
+    let bestHour = null;
+    let bestAvg = -1;
+    Object.keys(buckets).forEach(hourKey => {
+        const avg = buckets[hourKey].total / buckets[hourKey].count;
+        if (avg > bestAvg) {
+            bestAvg = avg;
+            bestHour = Number(hourKey);
+        }
+    });
+    return { hour: bestHour, avg: bestAvg };
+}
+
+function updateEnergyInsight() {
+    const insightEl = document.getElementById('energyInsight');
+    const hardestInput = document.getElementById('hardestSubjectInput');
+    if (!insightEl) return;
+    const entries = getEnergyLog();
+    if (entries.length < 3) {
+        insightEl.textContent = 'Log a few sessions to find your peak hour.';
+        return;
+    }
+    const peak = getPeakHour(entries);
+    if (peak.hour === null) return;
+    const nowHour = new Date().getHours();
+    const subject = hardestInput ? hardestInput.value.trim() : '';
+    if (nowHour === peak.hour && subject) {
+        insightEl.textContent = `Peak hour now. Tackle: ${subject}.`;
+    } else {
+        insightEl.textContent = `Peak hour: ${peak.hour}:00 (${peak.avg.toFixed(1)}/5). Schedule hard work then.`;
+    }
+}
+
+function initializeEnergyTracker() {
+    const hardestInput = document.getElementById('hardestSubjectInput');
+    if (hardestInput) {
+        const saved = localStorage.getItem('studentHardestSubject') || '';
+        hardestInput.value = saved;
+        hardestInput.addEventListener('input', () => {
+            localStorage.setItem('studentHardestSubject', hardestInput.value.trim());
+            updateEnergyInsight();
+        });
+    }
+    updateEnergyInsight();
+}
+
+// ===== Study Ritual Builder =====
+function loadRitualState() {
+    const raw = localStorage.getItem(RITUAL_KEY);
+    if (!raw) return { sound: false, water: false, stretch: false, desk: false };
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        return { sound: false, water: false, stretch: false, desk: false };
+    }
+}
+
+function saveRitualState(state) {
+    localStorage.setItem(RITUAL_KEY, JSON.stringify(state));
+}
+
+function initializeRitualBuilder() {
+    const state = loadRitualState();
+    const map = [
+        { key: 'sound', id: 'ritualSound' },
+        { key: 'water', id: 'ritualWater' },
+        { key: 'stretch', id: 'ritualStretch' },
+        { key: 'desk', id: 'ritualDesk' }
+    ];
+    map.forEach(item => {
+        const el = document.getElementById(item.id);
+        if (!el) return;
+        el.checked = Boolean(state[item.key]);
+        el.addEventListener('change', () => {
+            const updated = loadRitualState();
+            updated[item.key] = el.checked;
+            saveRitualState(updated);
+        });
+    });
+}
+
+function completeRitual() {
+    const status = document.getElementById('ritualStatus');
+    if (status) status.textContent = 'Ritual complete. Ready to focus.';
+    showNotification("Ritual complete. Start your session.", "success");
+}
+
+function resetRitual() {
+    saveRitualState({ sound: false, water: false, stretch: false, desk: false });
+    initializeRitualBuilder();
+    const status = document.getElementById('ritualStatus');
+    if (status) status.textContent = 'Ritual not started';
+}
+
+// ===== Growth Tree (shared) =====
+function getTreeLevel() {
+    return Number(localStorage.getItem(TREE_KEY)) || 0;
+}
+
+function setTreeLevel(level) {
+    localStorage.setItem(TREE_KEY, String(Math.max(0, level)));
+}
+
+function applyTreeDecay() {
+    const last = localStorage.getItem(TREE_LAST_KEY);
+    if (!last) return;
+    const lastDate = new Date(last);
+    const today = new Date();
+    const diffDays = Math.floor((today - lastDate) / 86400000);
+    if (diffDays >= 1) {
+        const newLevel = Math.max(0, getTreeLevel() - diffDays);
+        setTreeLevel(newLevel);
+        localStorage.setItem(TREE_LAST_KEY, today.toISOString().slice(0, 10));
+    }
+}
+
+function getTreeEmoji(level) {
+    if (level <= 0) return '🌱';
+    if (level <= 2) return '🌿';
+    if (level <= 4) return '🌳';
+    if (level <= 7) return '🌲';
+    return '🌴';
+}
+
+function updateGrowthTreeUI() {
+    applyTreeDecay();
+    const level = getTreeLevel();
+    const treeEl = document.getElementById('growthTree');
+    const statusEl = document.getElementById('growthTreeStatus');
+    if (treeEl) treeEl.textContent = getTreeEmoji(level);
+    if (statusEl) statusEl.textContent = `Tree level: ${level}. Complete Learn By Teaching to grow.`;
+}
+
+function growTree() {
+    const level = getTreeLevel() + 1;
+    setTreeLevel(level);
+    localStorage.setItem(TREE_LAST_KEY, new Date().toISOString().slice(0, 10));
+    updateGrowthTreeUI();
+}
+
+// ===== Learn By Teaching =====
+function countTeachBullets() {
+    let count = 0;
+    for (let i = 1; i <= 5; i += 1) {
+        const el = document.getElementById(`teachBullet${i}`);
+        if (el && el.value.trim()) count += 1;
+    }
+    return count;
+}
+
+async function toggleTeachRecording() {
+    const btn = document.getElementById('teachRecordBtn');
+    const status = document.getElementById('teachRecordStatus');
+    if (!btn || !status) return;
+    if (teachRecorder && teachRecorder.state === 'recording') {
+        teachRecorder.stop();
+        return;
+    }
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        teachRecorder = new MediaRecorder(stream);
+        teachAudioChunks = [];
+        teachRecordingSeconds = 0;
+        status.textContent = 'Recording...';
+        btn.textContent = 'Stop Recording';
+        teachRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) teachAudioChunks.push(e.data);
+        };
+        teachRecorder.onstop = () => {
+            stream.getTracks().forEach(track => track.stop());
+            const blob = new Blob(teachAudioChunks, { type: 'audio/webm' });
+            const url = URL.createObjectURL(blob);
+            const audioEl = document.getElementById('teachPlayback');
+            if (audioEl) {
+                audioEl.src = url;
+                audioEl.style.display = 'block';
+            }
+            localStorage.setItem(TEACH_AUDIO_KEY, String(teachRecordingSeconds));
+            status.textContent = `Recorded ${teachRecordingSeconds}s`;
+            btn.textContent = 'Start Recording';
+            if (teachRecordingTimer) clearInterval(teachRecordingTimer);
+            teachRecordingTimer = null;
+        };
+        teachRecorder.start();
+        teachRecordingTimer = setInterval(() => {
+            teachRecordingSeconds += 1;
+            status.textContent = `Recording... ${teachRecordingSeconds}s`;
+        }, 1000);
+    } catch (err) {
+        showNotification("Microphone permission needed for recording.", "error");
+    }
+}
+
+function completeTeachMode() {
+    const bullets = countTeachBullets();
+    const recordingSeconds = Number(localStorage.getItem(TEACH_AUDIO_KEY)) || 0;
+    if (bullets < 5 && recordingSeconds < 60) {
+        showNotification("Add 5 bullets or record 60 seconds.", "warning");
+        return;
+    }
+    localStorage.setItem(TEACH_LAST_KEY, new Date().toISOString().slice(0, 10));
+    growTree();
+    const status = document.getElementById('teachModeStatus');
+    if (status) status.textContent = 'Great explanation. Tree grew.';
+    showNotification("Teach mode complete. Tree grew.", "success");
+}
+
+function enterFocusFullscreen() {
+    if (fullscreenGuardActive) return;
+    fullscreenGuardActive = true;
+    document.body.classList.add('focus-fullscreen');
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+    }
+    setTimeout(() => { fullscreenGuardActive = false; }, 500);
+}
+
+function exitFocusFullscreen() {
+    document.body.classList.remove('focus-fullscreen');
+    if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+    }
+}
+
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', async function() {
     console.log("🎓 Student Mode initializing...");
     
     // FIRST: Load persisted data BEFORE Firebase initialization
+    initLocalStorageSchema();
     const dataLoaded = loadPersistedData();
     console.log("📂 Data loaded from localStorage:", dataLoaded);
     
@@ -7576,6 +9250,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         initUI();
         loadAllData();
         setupEventListeners();
+        initializeQuickNotes();
+        initializeFocusMode();
+        initializeFocusToolkit();
         setupAutoSave();
         setupChartAutoRefresh();
         
@@ -11200,6 +12877,9 @@ function loadSectionData(sectionId) {
             updateReferralUI();
             updateRainbowUI();
             break;
+        case 'exitTicket':
+            renderExitTicketStudentSection();
+            break;
     }
 }
     
@@ -11547,8 +13227,12 @@ function updateSyncStatus(text, type = "info") {
 function changeTheme(theme) {
     const current = localStorage.getItem('studentTheme') || 'light';
     const referrals = getReferralCount();
+    const wasFocus = document.body.classList.contains('focus-mode');
+    const wasBlocker = document.body.classList.contains('focus-blocker-enabled');
     if (theme === 'premium' && referrals < REFERRAL_TARGET) {
         document.body.className = 'premium';
+        if (wasFocus) document.body.classList.add('focus-mode');
+        if (wasBlocker) document.body.classList.add('focus-blocker-enabled');
         openReferralModal();
         return;
     }
@@ -11566,6 +13250,8 @@ function changeTheme(theme) {
     } else {
         document.body.className = theme;
     }
+    if (wasFocus) document.body.classList.add('focus-mode');
+    if (wasBlocker) document.body.classList.add('focus-blocker-enabled');
     localStorage.setItem('studentTheme', theme);
     
     // Recreate charts with new theme colors
@@ -11743,7 +13429,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ========== INITIALIZATION COMPLETE ==========
 console.log("✅ Student Mode initialized successfully!");
 // Add to all pages (guard analytics when SDK isn't loaded)
-if (firebase.analytics) {
+if (window.firebase && firebase.analytics) {
   firebase.analytics().logEvent('page_view', { page_location: window.location.href });
 }
 
@@ -11785,6 +13471,73 @@ function loadStudentMemoryWall() {
     } catch (error) {
         console.error("Error loading memory wall for students:", error);
     }
+}
+
+function openExitTicketFromStudent() {
+  showSection('exitTicket');
+}
+
+async function renderExitTicketStudentSection() {
+  const questionsEl = document.getElementById('exitTicketStudentQuestions');
+  const statusEl = document.getElementById('exitTicketStudentStatus');
+  if (statusEl) statusEl.textContent = '';
+  if (!currentClassCode) {
+    if (questionsEl) questionsEl.textContent = 'Join a class to view Exit Tickets.';
+    return;
+  }
+  if (questionsEl) questionsEl.textContent = 'Loading questions...';
+  try {
+    if (!database) throw new Error('No database');
+    const snap = await database.ref(`exitTickets/${currentClassCode}/current`).once('value');
+    if (!snap.exists()) {
+      if (questionsEl) questionsEl.textContent = 'No Exit Ticket available yet.';
+      return;
+    }
+    const data = snap.val();
+    const questions = data.questions || [];
+    if (!questions.length) {
+      if (questionsEl) questionsEl.textContent = 'No Exit Ticket questions found.';
+      return;
+    }
+    if (questionsEl) {
+      questionsEl.innerHTML = questions.map((q, idx) => `<div style="margin-bottom: 8px;"><strong>${idx + 1}.</strong> ${q}</div>`).join('');
+    }
+  } catch (error) {
+    if (questionsEl) questionsEl.textContent = 'Unable to load Exit Ticket. Please try again.';
+  }
+}
+
+async function submitExitTicketStudent() {
+  const statusEl = document.getElementById('exitTicketStudentStatus');
+  const thankYouEl = document.getElementById('exitTicketThankYou');
+  const formCard = document.getElementById('exitTicketFormCard');
+  if (!currentClassCode) {
+    if (statusEl) statusEl.textContent = 'Join a class to submit.';
+    return;
+  }
+  const answers = [
+    document.getElementById('exitTicketAnswer1').value.trim(),
+    document.getElementById('exitTicketAnswer2').value.trim(),
+    document.getElementById('exitTicketAnswer3').value.trim()
+  ];
+  if (!answers[0] && !answers[1] && !answers[2]) {
+    if (statusEl) statusEl.textContent = 'Please answer at least one question.';
+    return;
+  }
+  const payload = {
+    answers: answers,
+    submittedAt: new Date().toISOString(),
+    student: localStorage.getItem('studentName') || 'Student'
+  };
+  try {
+    if (!database) throw new Error('No database');
+    await database.ref(`exitTickets/${currentClassCode}/responses`).push().set(payload);
+    if (statusEl) statusEl.textContent = 'Exit Ticket submitted. Thank you!';
+    if (formCard) formCard.style.display = 'none';
+    if (thankYouEl) thankYouEl.style.display = 'block';
+  } catch (error) {
+    if (statusEl) statusEl.textContent = 'Unable to submit. Please try again.';
+  }
 }
 
 
