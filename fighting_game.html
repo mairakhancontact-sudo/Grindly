@@ -1,0 +1,2454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>⚡ KENJI VS SAKURA - EPIC BATTLE ⚡</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0b1a, #1a0033);
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .game-container {
+            position: relative;
+            padding: 10px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: 1000px;
+            max-height: 60vh;
+            aspect-ratio: 1000/600;
+            border-radius: 30px;
+            box-shadow: 
+                0 0 0 4px #fbbf24,
+                0 0 0 8px rgba(251,191,36,0.3),
+                0 20px 40px rgba(0,0,0,0.8);
+            background: linear-gradient(180deg, #0a1a2a 0%, #1a2a3a 100%);
+            cursor: none;
+            touch-action: none;
+        }
+        
+        /* Character Selection Modal */
+        .character-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.98);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .character-modal.hidden {
+            display: none;
+        }
+        
+        .character-select-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 4px solid #fbbf24;
+            border-radius: 30px;
+            padding: clamp(20px, 5vh, 40px);
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+            animation: modalPop 0.6s ease;
+        }
+        
+        @keyframes modalPop {
+            0% { transform: scale(0.8) rotate(-5deg); opacity: 0; }
+            50% { transform: scale(1.1) rotate(2deg); }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+        
+        .character-select-title {
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            font-weight: 900;
+            color: #fbbf24;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(251,191,36,0.5);
+            animation: titlePulse 2s infinite;
+        }
+        
+        @keyframes titlePulse {
+            0%, 100% { text-shadow: 0 0 30px #fbbf24; }
+            50% { text-shadow: 0 0 60px #fbbf24, 0 0 90px #ff6b6b; }
+        }
+        
+        .character-options {
+            display: flex;
+            gap: clamp(10px, 3vw, 40px);
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .character-option {
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: clamp(15px, 3vh, 30px);
+            border-radius: 20px;
+            background: rgba(0,0,0,0.5);
+            border: 3px solid transparent;
+            width: min(100%, 300px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .character-option::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(251,191,36,0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            transform: rotate(45deg);
+        }
+        
+        .character-option:hover::before {
+            opacity: 1;
+            animation: spin 3s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(45deg); }
+            to { transform: rotate(405deg); }
+        }
+        
+        .character-option:hover {
+            transform: scale(1.05) translateY(-5px);
+            border-color: #fbbf24;
+            background: rgba(251,191,36,0.15);
+            box-shadow: 0 20px 40px rgba(251,191,36,0.3);
+        }
+        
+        .character-option.selected {
+            border-color: #fbbf24;
+            background: rgba(251,191,36,0.2);
+            box-shadow: 0 0 50px rgba(251,191,36,0.5);
+            animation: selectedPulse 1.5s infinite;
+        }
+        
+        @keyframes selectedPulse {
+            0%, 100% { box-shadow: 0 0 30px #fbbf24; }
+            50% { box-shadow: 0 0 60px #fbbf24, 0 0 90px #ff6b6b; }
+        }
+        
+        .character-option.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+            border-color: #ef4444;
+            animation: lockedShake 0.5s ease;
+            pointer-events: none;
+        }
+        
+        .character-option.locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .character-option.locked::before {
+            display: none;
+        }
+        
+        @keyframes lockedShake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
+        
+        .character-preview {
+            width: min(200px, 80%);
+            height: auto;
+            aspect-ratio: 200/250;
+            margin: 0 auto 15px;
+            position: relative;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(3rem, 8vw, 5rem);
+            border: 3px solid #fbbf24;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .character-option:hover .character-preview {
+            transform: rotate(5deg) scale(1.05);
+            border-color: #ffd700;
+        }
+        
+        .character-preview::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { top: -100%; left: -100%; }
+            20% { top: 100%; left: 100%; }
+            100% { top: 100%; left: 100%; }
+        }
+        
+        .character-name {
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 0 #000;
+        }
+        
+        .character-desc {
+            color: #94a3b8;
+            margin-bottom: 10px;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+        }
+        
+        .character-stats {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            color: #fbbf24;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            flex-wrap: wrap;
+        }
+        
+        .character-taken {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: clamp(0.7rem, 2vw, 1rem);
+            font-weight: 700;
+            border: 2px solid #fbbf24;
+            box-shadow: 0 0 20px rgba(239,68,68,0.5);
+            animation: takenPulse 1.5s infinite;
+            z-index: 10;
+        }
+        
+        @keyframes takenPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .confirm-btn {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: black;
+            border: none;
+            padding: 15px 40px;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid #000;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .confirm-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .confirm-btn:hover::before {
+            left: 100%;
+        }
+        
+        .confirm-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px #fbbf24;
+        }
+        
+        .confirm-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .confirm-btn:disabled::before {
+            display: none;
+        }
+        
+        .battle-info-bar {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            border: 3px solid #fbbf24;
+            border-radius: 10px;
+            padding: 5px 15px;
+            color: #fbbf24;
+            font-size: clamp(10px, 2vw, 14px);
+            z-index: 1000;
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 0 30px rgba(251,191,36,0.3);
+            animation: slideDown 0.5s ease;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        
+        .player-indicator {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #fbbf24;
+            border-radius: 20px;
+            padding: 5px 15px;
+            color: #fbbf24;
+            font-size: clamp(10px, 2vw, 14px);
+            z-index: 1000;
+            animation: glow 2s infinite;
+            white-space: nowrap;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 10px #fbbf24; }
+            50% { box-shadow: 0 0 30px #fbbf24; }
+        }
+        
+        .hud {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+            gap: 5px;
+        }
+        
+        .player-hud {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #fbbf24;
+            border-radius: 15px;
+            padding: 8px 12px;
+            width: 40%;
+            max-width: 300px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 30px rgba(251,191,36,0.3);
+        }
+        
+        .player-hud.left {
+            border-color: #ef4444;
+        }
+        
+        .player-hud.right {
+            border-color: #ff69b4;
+        }
+        
+        .player-name-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .player-name {
+            font-size: clamp(12px, 3vw, 24px);
+            font-weight: 900;
+            text-shadow: 2px 2px 0 #000;
+        }
+        
+        .player-level {
+            background: #fbbf24;
+            color: black;
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-size: clamp(8px, 2vw, 12px);
+            font-weight: 700;
+        }
+        
+        .left .player-name {
+            color: #ef4444;
+        }
+        
+        .right .player-name {
+            color: #ff69b4;
+        }
+        
+        .health-bar {
+            width: 100%;
+            height: clamp(15px, 3vh, 25px);
+            background: #000;
+            border: 2px solid #fbbf24;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .health-fill {
+            height: 100%;
+            width: 100%;
+            transition: width 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .left .health-fill {
+            background: linear-gradient(90deg, #ef4444, #ff8a8a);
+        }
+        
+        .right .health-fill {
+            background: linear-gradient(90deg, #ff69b4, #ffb6c1);
+        }
+        
+        .special-bar {
+            width: 100%;
+            height: clamp(8px, 2vh, 15px);
+            background: #000;
+            border: 2px solid #fbbf24;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .special-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #fbbf24, #ffd700);
+            transition: width 0.2s ease;
+        }
+        
+        .timer {
+            font-size: clamp(24px, 6vw, 48px);
+            font-weight: 900;
+            color: #fbbf24;
+            text-shadow: 2px 2px 0 #000;
+            background: rgba(0,0,0,0.8);
+            padding: 5px 15px;
+            border-radius: 30px;
+            border: 2px solid #fbbf24;
+            box-shadow: 0 0 30px rgba(251,191,36,0.3);
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .combo-counter {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(24px, 6vw, 48px);
+            font-weight: 900;
+            color: #fbbf24;
+            text-shadow: 2px 2px 0 #000, 0 0 20px #ff0000;
+            z-index: 20;
+            animation: comboPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: none;
+            white-space: nowrap;
+        }
+        
+        @keyframes comboPop {
+            0% { transform: translateX(-50%) scale(0) rotate(-180deg); }
+            50% { transform: translateX(-50%) scale(2) rotate(10deg); }
+            100% { transform: translateX(-50%) scale(1) rotate(0); }
+        }
+        
+        /* Button Controls Panel - Mobile Optimized */
+        .button-controls-panel {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 10px;
+            padding: 8px;
+            background: rgba(0,0,0,0.8);
+            border-radius: 40px;
+            border: 2px solid #fbbf24;
+            box-shadow: 0 0 30px rgba(251,191,36,0.3);
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 900px;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .control-divider {
+            width: 1px;
+            height: 30px;
+            background: #fbbf24;
+            margin: 0 5px;
+        }
+        
+        .action-btn {
+            background: linear-gradient(135deg, #333, #222);
+            color: white;
+            border: 2px solid #fbbf24;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: clamp(12px, 2.5vw, 18px);
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 60px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .action-btn:active {
+            transform: scale(0.95);
+            background: linear-gradient(135deg, #444, #333);
+        }
+        
+        .action-btn.block {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+        
+        /* Special Moves Container - Mobile Optimized */
+        .special-moves-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.9);
+            border-radius: 20px;
+            border: 2px solid #fbbf24;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 900px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        
+        .special-move-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: 2px solid #fbbf24;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: clamp(10px, 2vw, 16px);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
+            flex: 0 1 auto;
+            touch-action: manipulation;
+        }
+        
+        .special-move-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .special-move-btn.rare {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        
+        .special-move-btn.epic {
+            background: linear-gradient(135deg, #a855f7, #9333ea);
+        }
+        
+        .special-move-btn.legendary {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            animation: legendaryPulse 2s infinite;
+        }
+        
+        .special-move-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .move-icon {
+            font-size: clamp(20px, 4vw, 32px);
+            margin-bottom: 2px;
+        }
+        
+        .move-name {
+            font-size: clamp(8px, 1.8vw, 14px);
+            margin-bottom: 2px;
+        }
+        
+        .move-cost {
+            font-size: clamp(7px, 1.5vw, 12px);
+            color: #fbbf24;
+        }
+        
+        .no-moves-message {
+            color: #fbbf24;
+            font-size: clamp(12px, 2.5vw, 16px);
+            padding: 15px;
+            text-align: center;
+            width: 100%;
+        }
+        
+        @keyframes legendaryPulse {
+            0%, 100% { box-shadow: 0 0 10px #f97316; }
+            50% { box-shadow: 0 0 20px #f97316, 0 0 30px #fbbf24; }
+        }
+        
+        /* Battle Message */
+        .battle-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            color: #fbbf24;
+            padding: 15px 30px;
+            border-radius: 40px;
+            border: 3px solid #fbbf24;
+            font-size: clamp(16px, 4vw, 28px);
+            font-weight: 700;
+            z-index: 10000;
+            animation: messageAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            pointer-events: none;
+            text-align: center;
+            white-space: nowrap;
+            box-shadow: 0 0 50px rgba(251,191,36,0.5);
+        }
+        
+        @keyframes messageAppear {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(-180deg); }
+            50% { transform: translate(-50%, -50%) scale(1.3) rotate(10deg); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0); }
+        }
+        
+        .xp-display {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #fbbf24;
+            border-radius: 15px;
+            padding: 4px 8px;
+            color: #fbbf24;
+            font-weight: 700;
+            font-size: clamp(10px, 2vw, 14px);
+            z-index: 100;
+            animation: glow 2s infinite;
+        }
+        
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10000;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            animation: overlayAppear 0.5s ease;
+            padding: 20px;
+        }
+        
+        .game-overlay.show {
+            display: flex;
+        }
+        
+        .victory-text {
+            font-size: clamp(32px, 8vw, 72px);
+            font-weight: 900;
+            color: #fbbf24;
+            text-shadow: 4px 4px 0 #000, 0 0 30px #ffd700;
+            margin-bottom: 20px;
+            animation: victoryPulse 1s infinite;
+            text-align: center;
+        }
+        
+        @keyframes victoryPulse {
+            0%, 100% { transform: scale(1); text-shadow: 4px 4px 0 #000, 0 0 30px #ffd700; }
+            50% { transform: scale(1.1); text-shadow: 6px 6px 0 #000, 0 0 50px #ffd700; }
+        }
+        
+        .xp-gained {
+            font-size: clamp(16px, 4vw, 28px);
+            color: #f59e0b;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 #000;
+            animation: xpFloat 2s infinite;
+        }
+        
+        @keyframes xpFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .restart-btn {
+            background: linear-gradient(135deg, #ef4444, #ff69b4);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: clamp(14px, 3.5vw, 24px);
+            font-weight: 700;
+            border-radius: 40px;
+            border: 3px solid #fbbf24;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            touch-action: manipulation;
+        }
+        
+        .restart-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: #ef4444;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 2px solid #fbbf24;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            text-decoration: none;
+            z-index: 1000;
+            font-size: clamp(10px, 2vw, 14px);
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:active {
+            transform: scale(0.95);
+            background: #dc2626;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fbbf24;
+            font-size: clamp(16px, 4vw, 24px);
+            text-align: center;
+            z-index: 1000;
+            animation: loadingPulse 1.5s infinite;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: loadingDots 1.5s infinite;
+        }
+        
+        @keyframes loadingDots {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+        }
+        
+        .sound-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 2px solid #fbbf24;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: clamp(10px, 2vw, 14px);
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+        
+        .sound-toggle:active {
+            transform: scale(0.95);
+            background: rgba(0,0,0,0.9);
+        }
+        
+        .restart-hint {
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            color: #fbbf24;
+            font-size: clamp(8px, 1.5vw, 12px);
+            opacity: 0.7;
+        }
+        
+        /* Landscape orientation optimizations */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .game-container {
+                padding: 5px;
+            }
+            
+            canvas {
+                max-height: 50vh;
+            }
+            
+            .button-controls-panel {
+                margin-top: 5px;
+                padding: 5px;
+            }
+            
+            .action-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+                min-width: 50px;
+            }
+            
+            .special-move-btn {
+                padding: 4px 8px;
+                min-width: 60px;
+            }
+            
+            .move-icon {
+                font-size: 16px;
+            }
+            
+            .player-hud {
+                padding: 4px 8px;
+            }
+            
+            .timer {
+                font-size: 24px;
+                padding: 2px 10px;
+            }
+            
+            .combo-counter {
+                top: 60px;
+                font-size: 24px;
+            }
+            
+            .hud {
+                top: 5px;
+            }
+        }
+        
+        /* Prevent zoom on double tap */
+        .action-btn, .special-move-btn, .restart-btn, .sound-toggle, .back-btn, .character-option, .confirm-btn {
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body>
+    <!-- Character Selection Modal -->
+    <div class="character-modal" id="characterModal">
+        <div class="character-select-card">
+            <div class="character-select-title">⚔️ CHOOSE YOUR WARRIOR ⚔️</div>
+            <div id="characterTakenMessage" style="color: #fbbf24; margin-bottom: 15px; font-size: clamp(12px, 3vw, 18px); min-height: 30px;"></div>
+            <div class="character-options">
+                <!-- Kenji Option -->
+                <div class="character-option" id="chooseKenji" onclick="selectCharacter('kenji')">
+                    <div class="character-preview">⚔️</div>
+                    <div class="character-name">KENJI</div>
+                    <div class="character-desc">The Shadow Warrior</div>
+                    <div class="character-stats">
+                        <span>💪 9</span>
+                        <span>⚡ 7</span>
+                        <span>🛡️ 8</span>
+                    </div>
+                    <div id="kenjiTaken" class="character-taken" style="display: none;">🔒 TAKEN</div>
+                </div>
+                
+                <!-- Sakura Option -->
+                <div class="character-option" id="chooseSakura" onclick="selectCharacter('sakura')">
+                    <div class="character-preview">🌸</div>
+                    <div class="character-name">SAKURA</div>
+                    <div class="character-desc">The Cherry Blossom</div>
+                    <div class="character-stats">
+                        <span>💪 7</span>
+                        <span>⚡ 9</span>
+                        <span>🛡️ 7</span>
+                    </div>
+                    <div id="sakuraTaken" class="character-taken" style="display: none;">🔒 TAKEN</div>
+                </div>
+            </div>
+            <button class="confirm-btn" id="confirmCharacterBtn" onclick="confirmCharacter()" disabled>⚡ SELECT FIGHTER ⚡</button>
+        </div>
+    </div>
+
+    <div class="battle-info-bar" id="battleInfo" style="display: none;">
+        <div class="battle-info-item">
+            <span>⚔️</span>
+            <span id="battleCode">LOADING</span>
+        </div>
+        <div class="battle-info-item">
+            <span>🏆</span>
+            <span id="roundDisplay">ROUND 1</span>
+        </div>
+    </div>
+
+    <div class="player-indicator" id="playerIndicator" style="display: none;">LOADING...</div>
+
+    <a href="studentmode.html" class="back-btn" style="display: none;">← BACK</a>
+    <div class="sound-toggle" id="soundToggle" onclick="toggleSound()" style="display: none;">🔊 SOUND ON</div>
+    <div class="restart-hint" style="display: none;">RESTART: R</div>
+    
+    <div class="game-container">
+        <div class="loading" id="loading" style="display: none;">LOADING FIGHTERS</div>
+        <canvas id="gameCanvas" width="1000" height="600" style="display: none;"></canvas>
+        
+        <div class="hud" style="display: none;" id="hud">
+            <div class="player-hud left">
+                <div class="player-name-row">
+                    <div class="player-name" id="player1Name">KENJI</div>
+                    <div class="player-level" id="player1Level">Lv.1</div>
+                </div>
+                <div class="health-bar">
+                    <div class="health-fill left" id="p1HealthFill" style="width: 100%"></div>
+                </div>
+                <div class="special-bar">
+                    <div class="special-fill" id="p1SpecialFill" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="timer" id="timerDisplay">99</div>
+            
+            <div class="player-hud right">
+                <div class="player-name-row">
+                    <div class="player-name" id="player2Name">SAKURA</div>
+                    <div class="player-level" id="player2Level">Lv.1</div>
+                </div>
+                <div class="health-bar">
+                    <div class="health-fill right" id="p2HealthFill" style="width: 100%"></div>
+                </div>
+                <div class="special-bar">
+                    <div class="special-fill" id="p2SpecialFill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="combo-counter" id="comboCounter">0 HIT</div>
+        
+        <!-- Button Controls Panel -->
+        <div class="button-controls-panel" id="buttonControls" style="display: none;">
+            <div class="control-group">
+                <button class="action-btn" id="btnLeft" ontouchstart="window.gameInstance?.buttonPress('left')" onclick="window.gameInstance?.buttonPress('left')">←</button>
+                <button class="action-btn" id="btnRight" ontouchstart="window.gameInstance?.buttonPress('right')" onclick="window.gameInstance?.buttonPress('right')">→</button>
+            </div>
+            
+            <div class="control-divider"></div>
+            
+            <div class="control-group">
+                <button class="action-btn" id="btnPunch" ontouchstart="window.gameInstance?.buttonPress('punch')" onclick="window.gameInstance?.buttonPress('punch')">👊</button>
+                <button class="action-btn" id="btnKick" ontouchstart="window.gameInstance?.buttonPress('kick')" onclick="window.gameInstance?.buttonPress('kick')">🦵</button>
+            </div>
+            
+            <div class="control-divider"></div>
+            
+            <div class="control-group">
+                <button class="action-btn block" id="btnBlock" ontouchstart="window.gameInstance?.buttonPress('block')" onclick="window.gameInstance?.buttonPress('block')">🛡️</button>
+            </div>
+        </div>
+        
+        <!-- Special Moves Container -->
+        <div id="specialMovesContainer" class="special-moves-container" style="display: none;"></div>
+        
+        <div class="game-overlay" id="gameOverlay">
+            <div class="victory-text" id="victoryText"></div>
+            <div class="xp-gained" id="xpGained">+0 XP</div>
+            <button class="restart-btn" onclick="restartGame()">⚡ FIGHT AGAIN ⚡</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== MOVE DATABASE ==========
+        const MOVE_DATABASE = {
+            // Basic moves (always available)
+            punch: { id: 'punch', name: 'PUNCH', icon: '👊', damage: 15, manaCost: 0, rarity: 'common' },
+            kick: { id: 'kick', name: 'KICK', icon: '🦵', damage: 20, manaCost: 5, rarity: 'common' },
+            
+            // Special moves from shop
+            heavy_punch: { id: 'heavy_punch', name: 'HEAVY PUNCH', icon: '💪', damage: 30, manaCost: 10, rarity: 'common' },
+            power_kick: { id: 'power_kick', name: 'POWER KICK', icon: '🦶', damage: 40, manaCost: 15, rarity: 'common' },
+            fire_punch: { id: 'fire_punch', name: 'FIRE PUNCH', icon: '🔥', damage: 45, manaCost: 20, rarity: 'rare' },
+            thunder_kick: { id: 'thunder_kick', name: 'THUNDER KICK', icon: '⚡', damage: 50, manaCost: 25, rarity: 'rare' },
+            ice_blast: { id: 'ice_blast', name: 'ICE BLAST', icon: '❄️', damage: 35, manaCost: 30, rarity: 'epic' },
+            dragon_fury: { id: 'dragon_fury', name: 'DRAGON FURY', icon: '🐉', damage: 70, manaCost: 40, rarity: 'legendary' },
+            healing_light: { id: 'healing_light', name: 'HEALING LIGHT', icon: '✨', heal: 40, manaCost: 25, rarity: 'rare' }
+        };
+
+        // ========== FIREBASE CONFIG ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAIPxgXPZmGdPvB98TLFRfTAClgXWEIM0",
+            authDomain: "student-teacher-app-4e7c9.firebaseapp.com",
+            databaseURL: "https://student-teacher-app-4e7c9-default-rtdb.firebaseio.com",
+            projectId: "student-teacher-app-4e7c9"
+        };
+
+        // ========== EPIC SOUND SYSTEM ==========
+        let soundEnabled = true;
+        let audioContext = null;
+        
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+        
+        function playSound(type, volume = 0.5) {
+            if (!soundEnabled) return;
+            
+            initAudio();
+            
+            try {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                const filter = audioContext.createBiquadFilter();
+                
+                oscillator.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                gainNode.gain.value = volume;
+                
+                switch(type) {
+                    case 'punch':
+                        oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime + 0.1);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                        oscillator.type = 'sawtooth';
+                        filter.type = 'lowpass';
+                        filter.frequency.value = 800;
+                        break;
+                        
+                    case 'kick':
+                        oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.15);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
+                        oscillator.type = 'triangle';
+                        filter.type = 'lowpass';
+                        filter.frequency.value = 600;
+                        break;
+                        
+                    case 'special':
+                        const osc1 = audioContext.createOscillator();
+                        const osc2 = audioContext.createOscillator();
+                        const gain1 = audioContext.createGain();
+                        const gain2 = audioContext.createGain();
+                        const filter1 = audioContext.createBiquadFilter();
+                        const filter2 = audioContext.createBiquadFilter();
+                        
+                        osc1.type = 'sawtooth';
+                        osc2.type = 'sine';
+                        
+                        filter1.type = 'bandpass';
+                        filter2.type = 'bandpass';
+                        filter1.frequency.value = 800;
+                        filter2.frequency.value = 1200;
+                        
+                        osc1.connect(filter1);
+                        osc2.connect(filter2);
+                        filter1.connect(gain1);
+                        filter2.connect(gain2);
+                        gain1.connect(audioContext.destination);
+                        gain2.connect(audioContext.destination);
+                        
+                        osc1.frequency.setValueAtTime(400, audioContext.currentTime);
+                        osc1.frequency.linearRampToValueAtTime(800, audioContext.currentTime + 0.2);
+                        osc1.frequency.linearRampToValueAtTime(200, audioContext.currentTime + 0.4);
+                        
+                        osc2.frequency.setValueAtTime(600, audioContext.currentTime);
+                        osc2.frequency.linearRampToValueAtTime(1000, audioContext.currentTime + 0.2);
+                        osc2.frequency.linearRampToValueAtTime(300, audioContext.currentTime + 0.4);
+                        
+                        gain1.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gain1.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                        gain2.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                        
+                        osc1.start();
+                        osc2.start();
+                        osc1.stop(audioContext.currentTime + 0.5);
+                        osc2.stop(audioContext.currentTime + 0.5);
+                        return;
+                        
+                    case 'block':
+                        oscillator.frequency.setValueAtTime(100, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.05);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                        oscillator.type = 'square';
+                        filter.type = 'lowpass';
+                        filter.frequency.value = 400;
+                        break;
+                        
+                    case 'hit':
+                        oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.1);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                        oscillator.type = 'sawtooth';
+                        filter.type = 'bandpass';
+                        filter.frequency.value = 500;
+                        break;
+                        
+                    case 'critical':
+                        const critOsc1 = audioContext.createOscillator();
+                        const critOsc2 = audioContext.createOscillator();
+                        const critGain = audioContext.createGain();
+                        
+                        critOsc1.type = 'sawtooth';
+                        critOsc2.type = 'triangle';
+                        
+                        critOsc1.frequency.setValueAtTime(600, audioContext.currentTime);
+                        critOsc1.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.2);
+                        critOsc2.frequency.setValueAtTime(800, audioContext.currentTime);
+                        critOsc2.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.2);
+                        
+                        critOsc1.connect(critGain);
+                        critOsc2.connect(critGain);
+                        critGain.connect(audioContext.destination);
+                        
+                        critGain.gain.setValueAtTime(0.5, audioContext.currentTime);
+                        critGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        
+                        critOsc1.start();
+                        critOsc2.start();
+                        critOsc1.stop(audioContext.currentTime + 0.3);
+                        critOsc2.stop(audioContext.currentTime + 0.3);
+                        return;
+                        
+                    case 'ko':
+                        const koOsc1 = audioContext.createOscillator();
+                        const koOsc2 = audioContext.createOscillator();
+                        const koGain = audioContext.createGain();
+                        const koFilter = audioContext.createBiquadFilter();
+                        
+                        koOsc1.type = 'sawtooth';
+                        koOsc2.type = 'triangle';
+                        koFilter.type = 'lowpass';
+                        koFilter.frequency.value = 2000;
+                        
+                        koOsc1.connect(koFilter);
+                        koOsc2.connect(koFilter);
+                        koFilter.connect(koGain);
+                        koGain.connect(audioContext.destination);
+                        
+                        koOsc1.frequency.setValueAtTime(200, audioContext.currentTime);
+                        koOsc1.frequency.linearRampToValueAtTime(50, audioContext.currentTime + 0.8);
+                        koOsc2.frequency.setValueAtTime(300, audioContext.currentTime);
+                        koOsc2.frequency.linearRampToValueAtTime(100, audioContext.currentTime + 0.8);
+                        
+                        koGain.gain.setValueAtTime(0.6, audioContext.currentTime);
+                        koGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                        
+                        koOsc1.start();
+                        koOsc2.start();
+                        koOsc1.stop(audioContext.currentTime + 1);
+                        koOsc2.stop(audioContext.currentTime + 1);
+                        return;
+                        
+                    case 'victory':
+                        const vicOsc1 = audioContext.createOscillator();
+                        const vicOsc2 = audioContext.createOscillator();
+                        const vicGain = audioContext.createGain();
+                        
+                        vicOsc1.type = 'sine';
+                        vicOsc2.type = 'triangle';
+                        
+                        vicOsc1.frequency.setValueAtTime(440, audioContext.currentTime);
+                        vicOsc1.frequency.linearRampToValueAtTime(880, audioContext.currentTime + 0.3);
+                        vicOsc2.frequency.setValueAtTime(554.37, audioContext.currentTime);
+                        vicOsc2.frequency.linearRampToValueAtTime(1108.73, audioContext.currentTime + 0.3);
+                        
+                        vicOsc1.connect(vicGain);
+                        vicOsc2.connect(vicGain);
+                        vicGain.connect(audioContext.destination);
+                        
+                        vicGain.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        vicGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
+                        
+                        vicOsc1.start();
+                        vicOsc2.start();
+                        vicOsc1.stop(audioContext.currentTime + 0.8);
+                        vicOsc2.stop(audioContext.currentTime + 0.8);
+                        return;
+                        
+                    case 'select':
+                        oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(783.99, audioContext.currentTime + 0.1);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                        oscillator.type = 'sine';
+                        filter.type = 'lowpass';
+                        filter.frequency.value = 2000;
+                        break;
+                        
+                    case 'locked':
+                        oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.1);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                        oscillator.type = 'square';
+                        filter.type = 'bandpass';
+                        filter.frequency.value = 400;
+                        break;
+                        
+                    case 'warning':
+                        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                        oscillator.type = 'sine';
+                        filter.type = 'bandpass';
+                        filter.frequency.value = 1000;
+                        break;
+                }
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + (type === 'ko' ? 1 : 0.3));
+                
+            } catch(e) {
+                console.log('Sound error:', e);
+            }
+        }
+
+        window.toggleSound = function() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundToggle').textContent = soundEnabled ? '🔊 SOUND ON' : '🔇 SOUND OFF';
+            if (soundEnabled) playSound('select');
+        };
+
+        // ========== GLOBAL VARIABLES ==========
+        let selectedCharacter = null;
+        let playerRole = null;
+        let playerId = null;
+        let playerName = "Player";
+        let battleCode = null;
+        let battleRef = null;
+        let database = null;
+        let positionUpdateInterval = null;
+        
+        // Get battle parameters from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        battleCode = urlParams.get('code');
+        playerRole = urlParams.get('role');
+        playerName = urlParams.get('name') || 'Player';
+        playerId = urlParams.get('id');
+        
+        console.log("🎮 Fighting game loaded:", { battleCode, playerRole, playerName, playerId });
+        
+        // ========== CHARACTER SELECTION WITH PROPER LOCKING ==========
+        window.selectCharacter = function(character) {
+            if (document.getElementById(`choose${character.charAt(0).toUpperCase() + character.slice(1)}`).classList.contains('locked')) {
+                playSound('locked');
+                document.getElementById('characterTakenMessage').textContent = `❌ ${character.toUpperCase()} is already taken!`;
+                document.getElementById('characterTakenMessage').style.color = '#ef4444';
+                setTimeout(() => {
+                    document.getElementById('characterTakenMessage').textContent = '';
+                }, 2000);
+                return;
+            }
+            
+            playSound('select');
+            selectedCharacter = character;
+            
+            document.querySelectorAll('.character-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            document.getElementById(`choose${character.charAt(0).toUpperCase() + character.slice(1)}`).classList.add('selected');
+            
+            const confirmBtn = document.getElementById('confirmCharacterBtn');
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = `⚡ FIGHT AS ${character.toUpperCase()} ⚡`;
+        };
+        
+        window.confirmCharacter = async function() {
+            if (!selectedCharacter) return;
+            
+            playSound('select');
+            
+            // Initialize Firebase first
+            await initFirebaseAndStart();
+            
+            // Check which character is taken
+            const snapshot = await battleRef.child('characters').once('value');
+            const characters = snapshot.val() || {};
+            
+            // Check if character is already taken
+            if (characters.player1 === selectedCharacter || characters.player2 === selectedCharacter) {
+                playSound('locked');
+                document.getElementById('characterTakenMessage').textContent = `❌ ${selectedCharacter.toUpperCase()} is already taken!`;
+                document.getElementById('characterTakenMessage').style.color = '#ef4444';
+                return;
+            }
+            
+            // Assign player to first available slot
+            if (!characters.player1) {
+                await battleRef.child('characters/player1').set(selectedCharacter);
+                playerRole = 'player1';
+            } else if (!characters.player2) {
+                await battleRef.child('characters/player2').set(selectedCharacter);
+                playerRole = 'player2';
+            } else {
+                playSound('locked');
+                alert('Game is full!');
+                return;
+            }
+            
+            proceedToGame();
+        };
+
+        async function initFirebaseAndStart() {
+            try {
+                // Initialize Firebase
+                if (typeof firebase === 'undefined') {
+                    await loadFirebaseScripts();
+                }
+                
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                
+                database = firebase.database();
+                battleRef = database.ref('battles/' + battleCode);
+                
+                console.log("✅ Firebase connected for battle:", battleCode);
+                
+                // Listen for character selection changes
+                battleRef.child('characters').on('value', (snapshot) => {
+                    const chars = snapshot.val() || {};
+                    updateCharacterSelectionUI(chars);
+                });
+                
+            } catch (error) {
+                console.error("❌ Firebase error:", error);
+            }
+        }
+
+        function updateCharacterSelectionUI(characters) {
+            const kenjiTaken = document.getElementById('kenjiTaken');
+            const sakuraTaken = document.getElementById('sakuraTaken');
+            const kenjiOption = document.getElementById('chooseKenji');
+            const sakuraOption = document.getElementById('chooseSakura');
+            const messageEl = document.getElementById('characterTakenMessage');
+            
+            // Update Kenji
+            if (characters.player1 === 'kenji' || characters.player2 === 'kenji') {
+                kenjiTaken.style.display = 'block';
+                kenjiOption.classList.add('locked');
+                if (!characters.player1 || !characters.player2) {
+                    messageEl.textContent = '⚔️ Kenji is taken! Sakura is available.';
+                    messageEl.style.color = '#fbbf24';
+                }
+            } else {
+                kenjiTaken.style.display = 'none';
+                kenjiOption.classList.remove('locked');
+            }
+            
+            // Update Sakura
+            if (characters.player1 === 'sakura' || characters.player2 === 'sakura') {
+                sakuraTaken.style.display = 'block';
+                sakuraOption.classList.add('locked');
+                if (!characters.player1 || !characters.player2) {
+                    messageEl.textContent = '🌸 Sakura is taken! Kenji is available.';
+                    messageEl.style.color = '#fbbf24';
+                }
+            } else {
+                sakuraTaken.style.display = 'none';
+                sakuraOption.classList.remove('locked');
+            }
+            
+            // Both taken
+            if (characters.player1 && characters.player2) {
+                messageEl.textContent = '⚠️ BOTH WARRIORS ARE TAKEN ⚠️';
+                messageEl.style.color = '#ef4444';
+                document.getElementById('confirmCharacterBtn').disabled = true;
+            }
+            
+            // If both available
+            if (!characters.player1 && !characters.player2) {
+                messageEl.textContent = '⚡ Choose your warrior first ⚡';
+                messageEl.style.color = '#fbbf24';
+            }
+        }
+
+        function proceedToGame() {
+            console.log(`Player selected: ${selectedCharacter} as ${playerRole}`);
+            
+            playSound('victory');
+            
+            document.getElementById('characterModal').classList.add('hidden');
+            
+            document.getElementById('battleInfo').style.display = 'flex';
+            document.getElementById('playerIndicator').style.display = 'block';
+            document.querySelector('.back-btn').style.display = 'block';
+            document.getElementById('soundToggle').style.display = 'block';
+            document.querySelector('.restart-hint').style.display = 'block';
+            
+            document.getElementById('battleCode').textContent = battleCode || 'ARENA';
+            
+            if (selectedCharacter === 'kenji') {
+                document.getElementById('playerIndicator').textContent = '👤 YOU ARE KENJI - THE SHADOW WARRIOR';
+                document.getElementById('player1Name').textContent = 'KENJI (YOU)';
+            } else {
+                document.getElementById('playerIndicator').textContent = '👤 YOU ARE SAKURA - THE CHERRY BLOSSOM';
+                document.getElementById('player2Name').textContent = 'SAKURA (YOU)';
+            }
+            
+            window.gamePlayerRole = playerRole;
+            window.gamePlayerId = playerId;
+            window.gameBattleCode = battleCode;
+            
+            // Load player's equipped moves
+            const equippedMoves = loadEquippedMoves();
+            
+            // Store moves in Firebase
+            const movePath = playerRole === 'player1' ? 'player1/moves' : 'player2/moves';
+            battleRef.child(movePath).set(equippedMoves);
+            
+            startGameInstance();
+        }
+
+        function loadFirebaseScripts() {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js';
+                script.onload = () => {
+                    const dbScript = document.createElement('script');
+                    dbScript.src = 'https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js';
+                    dbScript.onload = resolve;
+                    dbScript.onerror = reject;
+                    document.head.appendChild(dbScript);
+                };
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        // ========== LOAD EQUIPPED MOVES ==========
+        function loadEquippedMoves() {
+            console.log("🔍 Loading equipped moves from localStorage...");
+            
+            try {
+                // Get equipped move IDs
+                const equippedIds = JSON.parse(localStorage.getItem('battleEquippedMoves') || '["punch","kick"]');
+                console.log("🎮 Equipped move IDs:", equippedIds);
+                
+                // Get owned special moves
+                const ownedMoves = JSON.parse(localStorage.getItem('battleOwnedMoves') || '[]');
+                console.log("📦 Owned special moves:", ownedMoves);
+                
+                // Combine basic moves with owned special moves
+                const allMoves = [
+                    MOVE_DATABASE.punch,
+                    MOVE_DATABASE.kick,
+                    ...ownedMoves
+                ];
+                
+                // Filter to only equipped moves
+                const equippedMoves = allMoves.filter(move => equippedIds.includes(move.id));
+                
+                console.log("✅ Loaded equipped moves:", equippedMoves.map(m => m.name).join(', ') || 'None');
+                
+                return equippedMoves;
+            } catch (e) {
+                console.error("❌ Error loading moves:", e);
+                return [MOVE_DATABASE.punch, MOVE_DATABASE.kick];
+            }
+        }
+        
+        function startGameInstance() {
+            new FightingGame(window.gamePlayerRole || playerRole);
+        }
+        
+        window.restartGame = function() {
+            location.reload();
+        };
+        
+        // ========== FIGHTING GAME CLASS WITH FIXED WINNER DECLARATION ==========
+        
+        class FightingGame {
+            constructor(role) {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                
+                this.playerRole = role;
+                this.playerId = window.gamePlayerId || playerId;
+                this.battleRef = battleRef;
+                this.gameOver = false;
+                
+                // Load player's own moves
+                this.myMoves = loadEquippedMoves();
+                this.opponentMoves = [];
+                
+                console.log("🎮 FightingGame initialized with role:", this.playerRole);
+                console.log("🎮 My moves:", this.myMoves.map(m => m.name).join(', '));
+                
+                this.frame = 0;
+                this.timer = 99;
+                
+                this.combo = { count: 0, timer: 0 };
+                this.shakeIntensity = 0;
+                this.maxShake = 25;
+                
+                // Button states
+                this.buttonStates = {
+                    left: false,
+                    right: false,
+                    punch: false,
+                    kick: false,
+                    block: false
+                };
+                
+                this.particles = [];
+                this.hitEffects = [];
+                this.specialEffects = [];
+                this.blockEffects = [];
+                this.shockwaves = [];
+                
+                // Character images
+                this.images = {
+                    kenji: {
+                        idle: this.loadImage('assets/Kenji/poses/idle_0.png'),
+                        walk: this.loadImage('assets/Kenji/poses/adventurer_walk1.png'),
+                        run: this.loadImage('assets/Kenji/poses/adventurer_walk2.png'),
+                        jump: this.loadImage('assets/Kenji/poses/adventurer_jump.png'),
+                        punch: this.loadImage('assets/Kenji/poses/adventurer_action2.png'),
+                        kick: this.loadImage('assets/Kenji/poses/adventurer_kick.png'),
+                        hit: this.loadImage('assets/Kenji/poses/adventurer_hang.png'),
+                        special: this.loadImage('assets/Kenji/poses/adventurer_action2.png')
+                    },
+                    sakura: {
+                        idle: this.loadImage('assets/sakura/poses/female_idle.png'),
+                        walk: this.loadImage('assets/sakura/poses/female_walk1.png'),
+                        run: this.loadImage('assets/sakura/poses/female_skid.png'),
+                        jump: this.loadImage('assets/sakura/poses/female_jump.png'),
+                        punch: this.loadImage('assets/sakura/poses/female_action2.png'),
+                        kick: this.loadImage('assets/sakura/poses/female_kick.png'),
+                        hit: this.loadImage('assets/sakura/poses/female_hang.png'),
+                        special: this.loadImage('assets/sakura/poses/female_action2.png')
+                    }
+                };
+                
+                this.players = [
+                    { 
+                        id: 'kenji', 
+                        x: 250, 
+                        y: 350, 
+                        health: 100, 
+                        maxHealth: 100, 
+                        special: 100, 
+                        maxSpecial: 100, 
+                        state: 'idle', 
+                        stateTimer: 0,
+                        facing: 1, 
+                        speed: 5, 
+                        images: this.images.kenji, 
+                        attackTimer: 0, 
+                        isBlocking: false,
+                        controlledBy: 'player1',
+                        hitLocked: false
+                    },
+                    { 
+                        id: 'sakura', 
+                        x: 750, 
+                        y: 350, 
+                        health: 100, 
+                        maxHealth: 100, 
+                        special: 100, 
+                        maxSpecial: 100, 
+                        state: 'idle', 
+                        stateTimer: 0,
+                        facing: -1, 
+                        speed: 5, 
+                        images: this.images.sakura, 
+                        attackTimer: 0, 
+                        isBlocking: false,
+                        controlledBy: 'player2',
+                        hitLocked: false
+                    }
+                ];
+                
+                window.gameInstance = this;
+                
+                this.loadedImages = 0;
+                this.totalImages = 16;
+                
+                this.setupButtonListeners();
+                this.loadAllImages();
+            }
+            
+            loadImage(src) {
+                let img = new Image();
+                img.onload = () => {
+                    this.loadedImages++;
+                    if (this.loadedImages === this.totalImages) {
+                        this.startGame();
+                    }
+                };
+                img.onerror = () => {
+                    console.log('Failed to load:', src);
+                    this.loadedImages++;
+                    if (this.loadedImages === this.totalImages) {
+                        this.startGame();
+                    }
+                };
+                img.src = src;
+                return img;
+            }
+            
+            loadAllImages() {}
+            
+            startGame() {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('gameCanvas').style.display = 'block';
+                document.getElementById('hud').style.display = 'flex';
+                document.getElementById('buttonControls').style.display = 'flex';
+                this.createSpecialMovesUI();
+                this.startPositionSync();
+                this.listenForUpdates();
+                this.gameLoop();
+                playSound('select');
+            }
+            
+            // Position sync
+            startPositionSync() {
+                if (positionUpdateInterval) clearInterval(positionUpdateInterval);
+                
+                positionUpdateInterval = setInterval(() => {
+                    if (this.gameOver || !this.battleRef) return;
+                    
+                    const myPlayer = this.players.find(p => p.controlledBy === this.playerRole);
+                    if (!myPlayer) return;
+                    
+                    if (!myPlayer.hitLocked) {
+                        const positionData = {};
+                        positionData[myPlayer.id] = { 
+                            x: myPlayer.x
+                        };
+                        
+                        this.battleRef.child('positions').update(positionData).catch(() => {});
+                    }
+                }, 50);
+            }
+            
+            listenForUpdates() {
+                if (!this.battleRef) return;
+                
+                // Listen for health updates
+                this.battleRef.child('player1/health').on('value', (snapshot) => {
+                    const health = snapshot.val();
+                    if (health !== null && this.players[0].health !== health) {
+                        this.players[0].health = health;
+                        document.getElementById('p1HealthFill').style.width = health + '%';
+                        this.checkGameOver();
+                    }
+                });
+                
+                this.battleRef.child('player2/health').on('value', (snapshot) => {
+                    const health = snapshot.val();
+                    if (health !== null && this.players[1].health !== health) {
+                        this.players[1].health = health;
+                        document.getElementById('p2HealthFill').style.width = health + '%';
+                        this.checkGameOver();
+                    }
+                });
+                
+                // Listen for mana updates
+                this.battleRef.child('player1/mana').on('value', (snapshot) => {
+                    const mana = snapshot.val();
+                    if (mana !== null && this.players[0].special !== mana) {
+                        this.players[0].special = mana;
+                        document.getElementById('p1SpecialFill').style.width = mana + '%';
+                    }
+                });
+                
+                this.battleRef.child('player2/mana').on('value', (snapshot) => {
+                    const mana = snapshot.val();
+                    if (mana !== null && this.players[1].special !== mana) {
+                        this.players[1].special = mana;
+                        document.getElementById('p2SpecialFill').style.width = mana + '%';
+                    }
+                });
+                
+                // Position sync listener
+                this.battleRef.child('positions').on('value', (snapshot) => {
+                    const positions = snapshot.val();
+                    if (positions && !this.gameOver) {
+                        if (this.playerRole === 'player1') {
+                            if (positions.sakura && this.players[1]) {
+                                this.players[1].x = positions.sakura.x;
+                            }
+                        } else {
+                            if (positions.kenji && this.players[0]) {
+                                this.players[0].x = positions.kenji.x;
+                            }
+                        }
+                    }
+                });
+            }
+            
+            createSpecialMovesUI() {
+                const container = document.getElementById('specialMovesContainer');
+                if (!container) return;
+                
+                container.style.display = 'flex';
+                container.innerHTML = '';
+                
+                const specialMoves = this.myMoves.filter(m => m.id !== 'punch' && m.id !== 'kick');
+                
+                if (specialMoves.length === 0) {
+                    const message = document.createElement('div');
+                    message.className = 'no-moves-message';
+                    message.innerHTML = '⚡ NO SPECIAL MOVES EQUIPPED ⚡<br>Visit the MOVE SHOP to buy and equip moves!';
+                    container.appendChild(message);
+                    return;
+                }
+                
+                const title = document.createElement('div');
+                title.style.cssText = `
+                    color: #fbbf24;
+                    font-weight: 700;
+                    font-size: 14px;
+                    margin-right: 8px;
+                    display: flex;
+                    align-items: center;
+                    text-shadow: 2px 2px 0 #000;
+                `;
+                title.innerHTML = '⚡ SPECIAL MOVES ⚡';
+                container.appendChild(title);
+                
+                specialMoves.forEach(move => {
+                    const button = document.createElement('button');
+                    button.className = `special-move-btn ${move.rarity || 'common'}`;
+                    button.setAttribute('data-move-id', move.id);
+                    
+                    button.innerHTML = `
+                        <span class="move-icon">${move.icon}</span>
+                        <span class="move-name">${move.name}</span>
+                        <span class="move-cost">⚡ ${move.manaCost}</span>
+                    `;
+                    
+                    button.onclick = () => {
+                        console.log(`🔘 Clicked: ${move.name}`);
+                        this.useSpecialMove(move);
+                    };
+                    
+                    button.ontouchstart = (e) => {
+                        e.preventDefault();
+                        console.log(`🔘 Touched: ${move.name}`);
+                        this.useSpecialMove(move);
+                    };
+                    
+                    container.appendChild(button);
+                });
+            }
+            
+            useSpecialMove(move) {
+                console.log(`🎯 Using move: ${move.name}`);
+                
+                const myPlayer = this.players.find(p => p.controlledBy === this.playerRole);
+                const opponent = this.players.find(p => p.controlledBy !== this.playerRole);
+                
+                if (!myPlayer || !opponent || this.gameOver) return;
+                
+                if (myPlayer.hitLocked || myPlayer.state === 'hit' || myPlayer.attackTimer > 0) {
+                    this.showBattleMessage('❌ CANNOT ACT NOW!', '#ef4444');
+                    return;
+                }
+                
+                if (!move.heal) {
+                    const distance = Math.abs(myPlayer.x - opponent.x);
+                    if (distance > 200) {
+                        this.showBattleMessage('❌ TOO FAR AWAY!', '#ef4444');
+                        return;
+                    }
+                }
+                
+                if (myPlayer.special < move.manaCost) {
+                    this.showBattleMessage(`❌ NEED ${move.manaCost} MP!`, '#ef4444');
+                    return;
+                }
+                
+                myPlayer.special -= move.manaCost;
+                
+                if (move.heal) {
+                    const oldHealth = myPlayer.health;
+                    myPlayer.health = Math.min(100, myPlayer.health + move.heal);
+                    
+                    console.log(`💚 HEAL: ${oldHealth} → ${myPlayer.health} (+${move.heal})`);
+                    this.showBattleMessage(`💚 ${move.name} +${move.heal} HP!`, '#10b981');
+                    playSound('special');
+                    
+                    if (myPlayer.id === 'kenji') {
+                        document.getElementById('p1HealthFill').style.width = myPlayer.health + '%';
+                    } else {
+                        document.getElementById('p2HealthFill').style.width = myPlayer.health + '%';
+                    }
+                    
+                } else {
+                    const oldHealth = opponent.health;
+                    opponent.health = Math.max(0, opponent.health - move.damage);
+                    
+                    console.log(`💥 ATTACK: ${oldHealth} → ${opponent.health} (-${move.damage})`);
+                    
+                    // Check for critical hit
+                    const isCritical = Math.random() < 0.2;
+                    if (isCritical) {
+                        const critDamage = Math.floor(move.damage * 0.5);
+                        opponent.health = Math.max(0, opponent.health - critDamage);
+                        this.showBattleMessage(`✨ CRITICAL HIT! +${critDamage} DAMAGE!`, '#ffd700');
+                        playSound('critical');
+                    } else {
+                        this.showBattleMessage(`💥 ${move.name} -${move.damage}!`, '#ef4444');
+                        playSound('hit');
+                    }
+                    
+                    if (opponent.id === 'kenji') {
+                        document.getElementById('p1HealthFill').style.width = opponent.health + '%';
+                    } else {
+                        document.getElementById('p2HealthFill').style.width = opponent.health + '%';
+                    }
+                    
+                    opponent.hitLocked = true;
+                    opponent.state = 'hit';
+                    opponent.stateTimer = 15;
+                    
+                    // Knockback
+                    let knockbackX = opponent.x;
+                    if (myPlayer.x < opponent.x) {
+                        knockbackX = opponent.x + 80;
+                    } else {
+                        knockbackX = opponent.x - 80;
+                    }
+                    knockbackX = Math.max(100, Math.min(900, knockbackX));
+                    opponent.x = knockbackX;
+                    
+                    this.shakeIntensity = 25;
+                    
+                    // Hit effects
+                    for (let i = 0; i < 20; i++) {
+                        this.particles.push({
+                            x: opponent.x,
+                            y: opponent.y - 50,
+                            vx: (Math.random() - 0.5) * 20,
+                            vy: (Math.random() - 0.5) * 20 - 5,
+                            life: 1,
+                            color: isCritical ? '#ffd700' : '#8b0000'
+                        });
+                    }
+                    
+                    this.hitEffects.push({ x: opponent.x, y: opponent.y - 50, size: isCritical ? 60 : 40, life: 1 });
+                }
+                
+                myPlayer.attackTimer = 20;
+                myPlayer.state = 'special';
+                myPlayer.stateTimer = 15;
+                
+                document.getElementById('p1SpecialFill').style.width = this.players[0].special + '%';
+                document.getElementById('p2SpecialFill').style.width = this.players[1].special + '%';
+                
+                // Send updates to Firebase
+                if (this.battleRef) {
+                    const healthPath = opponent.id === 'kenji' ? 'player1/health' : 'player2/health';
+                    const manaPath = myPlayer.id === 'kenji' ? 'player1/mana' : 'player2/mana';
+                    
+                    this.battleRef.child(healthPath).set(opponent.health);
+                    this.battleRef.child(manaPath).set(myPlayer.special);
+                    
+                    const positionPath = opponent.id === 'kenji' ? 'positions/kenji' : 'positions/sakura';
+                    this.battleRef.child(positionPath).set({ x: opponent.x });
+                    
+                    this.battleRef.child('lastMove').set({
+                        player: this.playerRole,
+                        move: move,
+                        timestamp: Date.now()
+                    });
+                }
+                
+                // Check for game over after move
+                this.checkGameOver();
+            }
+            
+            checkGameOver() {
+                if (this.gameOver) return;
+                
+                // Check if Kenji (player1) is defeated
+                if (this.players[0].health <= 0) {
+                    this.gameOver = true;
+                    const winner = 'SAKURA';
+                    const playerWon = this.playerRole === 'player2';
+                    
+                    document.getElementById('victoryText').textContent = playerWon ? 'VICTORY!' : 'DEFEAT!';
+                    document.getElementById('gameOverlay').classList.add('show');
+                    
+                    // Calculate XP gained
+                    const xpGained = playerWon ? 100 : 25;
+                    document.getElementById('xpGained').textContent = `+${xpGained} XP`;
+                    
+                    playSound('ko', 0.8);
+                    
+                    // Update XP in localStorage
+                    try {
+                        const rpgData = JSON.parse(localStorage.getItem('trueRpgData') || '{}');
+                        rpgData.totalXP = (rpgData.totalXP || 0) + xpGained;
+                        if (playerWon) {
+                            rpgData.wins = (rpgData.wins || 0) + 1;
+                        } else {
+                            rpgData.losses = (rpgData.losses || 0) + 1;
+                        }
+                        localStorage.setItem('trueRpgData', JSON.stringify(rpgData));
+                    } catch (e) {}
+                    
+                    // Stop position sync
+                    if (positionUpdateInterval) {
+                        clearInterval(positionUpdateInterval);
+                        positionUpdateInterval = null;
+                    }
+                    
+                    return true;
+                }
+                
+                // Check if Sakura (player2) is defeated
+                if (this.players[1].health <= 0) {
+                    this.gameOver = true;
+                    const winner = 'KENJI';
+                    const playerWon = this.playerRole === 'player1';
+                    
+                    document.getElementById('victoryText').textContent = playerWon ? 'VICTORY!' : 'DEFEAT!';
+                    document.getElementById('gameOverlay').classList.add('show');
+                    
+                    // Calculate XP gained
+                    const xpGained = playerWon ? 100 : 25;
+                    document.getElementById('xpGained').textContent = `+${xpGained} XP`;
+                    
+                    playSound('ko', 0.8);
+                    
+                    // Update XP in localStorage
+                    try {
+                        const rpgData = JSON.parse(localStorage.getItem('trueRpgData') || '{}');
+                        rpgData.totalXP = (rpgData.totalXP || 0) + xpGained;
+                        if (playerWon) {
+                            rpgData.wins = (rpgData.wins || 0) + 1;
+                        } else {
+                            rpgData.losses = (rpgData.losses || 0) + 1;
+                        }
+                        localStorage.setItem('trueRpgData', JSON.stringify(rpgData));
+                    } catch (e) {}
+                    
+                    // Stop position sync
+                    if (positionUpdateInterval) {
+                        clearInterval(positionUpdateInterval);
+                        positionUpdateInterval = null;
+                    }
+                    
+                    return true;
+                }
+                
+                return false;
+            }
+            
+            showBattleMessage(message, color) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'battle-message';
+                msgDiv.style.color = color;
+                msgDiv.textContent = message;
+                document.body.appendChild(msgDiv);
+                
+                setTimeout(() => msgDiv.remove(), 2000);
+            }
+            
+            buttonPress(action) {
+                if (this.gameOver) return;
+                
+                const myPlayer = this.players.find(p => p.controlledBy === this.playerRole);
+                const opponent = this.players.find(p => p.controlledBy !== this.playerRole);
+                
+                if (!myPlayer || !opponent) return;
+                
+                if (action === 'left') {
+                    this.buttonStates.left = true;
+                    setTimeout(() => this.buttonStates.left = false, 100);
+                } else if (action === 'right') {
+                    this.buttonStates.right = true;
+                    setTimeout(() => this.buttonStates.right = false, 100);
+                } else if (action === 'punch') {
+                    this.buttonStates.punch = true;
+                    setTimeout(() => this.buttonStates.punch = false, 200);
+                    this.performAttack(myPlayer, opponent, 15, 'punch');
+                } else if (action === 'kick') {
+                    this.buttonStates.kick = true;
+                    setTimeout(() => this.buttonStates.kick = false, 200);
+                    this.performAttack(myPlayer, opponent, 12, 'kick');
+                } else if (action === 'block') {
+                    this.buttonStates.block = true;
+                    setTimeout(() => this.buttonStates.block = false, 100);
+                }
+            }
+            
+            setupButtonListeners() {
+                window.gameInstance = this;
+            }
+            
+            performAttack(attacker, defender, damage, type) {
+                let distance = Math.abs(attacker.x - defender.x);
+                
+                if (distance < 130) {
+                    let isBlocking = defender.isBlocking;
+                    let finalDamage = isBlocking ? Math.floor(damage * 0.2) : damage;
+                    
+                    defender.health = Math.max(0, defender.health - finalDamage);
+                    
+                    defender.hitLocked = true;
+                    defender.state = 'hit';
+                    defender.stateTimer = 15;
+                    
+                    attacker.state = type;
+                    attacker.stateTimer = 15;
+                    attacker.attackTimer = 20;
+                    
+                    if (!isBlocking) {
+                        attacker.special = Math.min(attacker.maxSpecial, attacker.special + 8);
+                    }
+                    
+                    let knockbackX = defender.x;
+                    if (attacker.x < defender.x) {
+                        knockbackX = defender.x + 50;
+                    } else {
+                        knockbackX = defender.x - 50;
+                    }
+                    
+                    knockbackX = Math.max(100, Math.min(900, knockbackX));
+                    defender.x = knockbackX;
+                    
+                    this.shakeIntensity = isBlocking ? 10 : 20;
+                    
+                    playSound(isBlocking ? 'block' : type, 0.5);
+                    
+                    if (!isBlocking) {
+                        this.combo.count++;
+                        this.combo.timer = 30;
+                        document.getElementById('comboCounter').style.display = 'block';
+                        document.getElementById('comboCounter').textContent = this.combo.count + ' HIT COMBO!';
+                        
+                        if (this.combo.count % 5 === 0) {
+                            playSound('critical');
+                        }
+                    }
+                    
+                    document.getElementById('p1HealthFill').style.width = this.players[0].health + '%';
+                    document.getElementById('p2HealthFill').style.width = this.players[1].health + '%';
+                    
+                    // Send to Firebase
+                    if (this.battleRef) {
+                        const healthPath = defender.id === 'kenji' ? 'player1/health' : 'player2/health';
+                        const manaPath = attacker.id === 'kenji' ? 'player1/mana' : 'player2/mana';
+                        
+                        this.battleRef.child(healthPath).set(defender.health);
+                        this.battleRef.child(manaPath).set(attacker.special);
+                        
+                        const positionPath = defender.id === 'kenji' ? 'positions/kenji' : 'positions/sakura';
+                        this.battleRef.child(positionPath).set({ x: defender.x });
+                    }
+                    
+                    // Check for game over after attack
+                    this.checkGameOver();
+                }
+            }
+            
+            update() {
+                if (this.gameOver) return;
+                
+                this.frame++;
+                
+                if (this.shakeIntensity > 0) {
+                    this.shakeIntensity *= 0.9;
+                }
+                
+                if (this.frame % 60 === 0 && this.timer > 0) {
+                    this.timer--;
+                    document.getElementById('timerDisplay').textContent = this.timer;
+                    
+                    // Warning when time is low
+                    if (this.timer <= 10) {
+                        playSound('warning', 0.2);
+                    }
+                }
+                
+                if (this.timer <= 0) {
+                    // Time's up - determine winner by health
+                    if (this.players[0].health > this.players[1].health) {
+                        this.players[1].health = 0; // Sakura loses
+                    } else if (this.players[1].health > this.players[0].health) {
+                        this.players[0].health = 0; // Kenji loses
+                    } else {
+                        // Tie - both lose? Random winner
+                        if (Math.random() < 0.5) {
+                            this.players[0].health = 0;
+                        } else {
+                            this.players[1].health = 0;
+                        }
+                    }
+                    this.checkGameOver();
+                }
+                
+                this.players.forEach(p => {
+                    if (p.stateTimer > 0) {
+                        p.stateTimer--;
+                        if (p.stateTimer <= 0) {
+                            p.state = 'idle';
+                            p.hitLocked = false;
+                        }
+                    }
+                });
+                
+                this.players.forEach(p => {
+                    if (p.attackTimer > 0) p.attackTimer--;
+                });
+                
+                if (this.combo.timer > 0) {
+                    this.combo.timer--;
+                    if (this.combo.timer <= 0) {
+                        this.combo.count = 0;
+                        document.getElementById('comboCounter').style.display = 'none';
+                    }
+                }
+                
+                // Update particles
+                this.particles = this.particles.filter(p => p.life > 0);
+                this.particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life -= 0.02;
+                });
+                
+                this.hitEffects = this.hitEffects.filter(e => e.life > 0);
+                this.hitEffects.forEach(e => e.life -= 0.02);
+                
+                this.specialEffects = this.specialEffects.filter(e => e.life > 0);
+                this.specialEffects.forEach(e => {
+                    e.x += e.vx;
+                    e.y += e.vy;
+                    e.life -= 0.02;
+                });
+                
+                this.blockEffects = this.blockEffects.filter(e => e.life > 0);
+                this.blockEffects.forEach(e => {
+                    e.x += e.vx;
+                    e.y += e.vy;
+                    e.life -= 0.02;
+                });
+                
+                this.shockwaves = this.shockwaves.filter(s => s.life > 0);
+                this.shockwaves.forEach(s => {
+                    s.radius += 10;
+                    s.life -= 0.02;
+                });
+                
+                const myPlayer = this.players.find(p => p.controlledBy === this.playerRole);
+                const opponent = this.players.find(p => p.controlledBy !== this.playerRole);
+                
+                if (myPlayer && opponent) {
+                    this.updatePlayer(myPlayer, opponent, this.playerRole === 'player1');
+                }
+                
+                // Update UI
+                document.getElementById('p1HealthFill').style.width = this.players[0].health + '%';
+                document.getElementById('p2HealthFill').style.width = this.players[1].health + '%';
+                document.getElementById('p1SpecialFill').style.width = this.players[0].special + '%';
+                document.getElementById('p2SpecialFill').style.width = this.players[1].special + '%';
+            }
+            
+            updatePlayer(player, opponent, isPlayer1) {
+                player.isBlocking = this.buttonStates.block;
+                
+                let moveSpeed = 0;
+                if (player.state !== 'hit' && player.stateTimer <= 0 && !player.hitLocked) {
+                    if (this.buttonStates.left) moveSpeed = -player.speed;
+                    if (this.buttonStates.right) moveSpeed = player.speed;
+                }
+                
+                if (moveSpeed !== 0 && player.state !== 'hit' && !player.hitLocked) {
+                    player.x += moveSpeed;
+                    player.x = Math.max(100, Math.min(900, player.x));
+                    
+                    if (player.stateTimer <= 0) {
+                        player.state = 'walk';
+                    }
+                } else {
+                    if (player.stateTimer <= 0 && player.state !== 'hit') {
+                        player.state = 'idle';
+                    }
+                }
+                
+                player.facing = opponent.x > player.x ? 1 : -1;
+                player.y = 350 + Math.sin(this.frame * 0.1 + (isPlayer1 ? 0 : 3)) * 3;
+                
+                if (player.special < player.maxSpecial) {
+                    player.special = Math.min(player.maxSpecial, player.special + 0.1);
+                }
+            }
+            
+            draw() {
+                this.ctx.save();
+                
+                if (this.shakeIntensity > 0) {
+                    this.ctx.translate(
+                        (Math.random() - 0.5) * this.shakeIntensity * 2,
+                        (Math.random() - 0.5) * this.shakeIntensity
+                    );
+                }
+                
+                this.ctx.clearRect(0, 0, 1000, 600);
+                this.drawBackground();
+                
+                this.players.forEach(p => {
+                    this.ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                    this.ctx.beginPath();
+                    this.ctx.ellipse(p.x, 400, 35, 10, 0, 0, Math.PI * 2);
+                    this.ctx.fill();
+                });
+                
+                this.shockwaves.forEach(s => {
+                    this.ctx.save();
+                    this.ctx.globalAlpha = s.life * 0.5;
+                    this.ctx.strokeStyle = '#ffffff';
+                    this.ctx.lineWidth = 3;
+                    this.ctx.beginPath();
+                    this.ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                    this.ctx.stroke();
+                    this.ctx.restore();
+                });
+                
+                this.players.forEach(p => this.drawPlayer(p));
+                
+                this.specialEffects.forEach(e => {
+                    this.ctx.save();
+                    this.ctx.globalAlpha = e.life;
+                    this.ctx.fillStyle = e.color;
+                    this.ctx.shadowColor = '#ffd700';
+                    this.ctx.shadowBlur = 15;
+                    this.ctx.beginPath();
+                    this.ctx.arc(e.x, e.y, 10, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                });
+                
+                this.blockEffects.forEach(e => {
+                    this.ctx.save();
+                    this.ctx.globalAlpha = e.life;
+                    this.ctx.fillStyle = e.color;
+                    this.ctx.shadowColor = '#22c55e';
+                    this.ctx.shadowBlur = 15;
+                    this.ctx.beginPath();
+                    this.ctx.arc(e.x, e.y, 6, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                });
+                
+                this.hitEffects.forEach(e => {
+                    this.ctx.save();
+                    this.ctx.globalAlpha = e.life;
+                    this.ctx.fillStyle = '#ffd700';
+                    this.ctx.shadowColor = '#ff0000';
+                    this.ctx.shadowBlur = 30;
+                    this.ctx.beginPath();
+                    this.ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                });
+                
+                this.particles.forEach(p => {
+                    this.ctx.save();
+                    this.ctx.globalAlpha = p.life;
+                    this.ctx.fillStyle = p.color;
+                    this.ctx.shadowColor = p.color === '#8b0000' ? '#ff0000' : '#fbbf24';
+                    this.ctx.shadowBlur = 10;
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                });
+                
+                this.ctx.restore();
+            }
+            
+            drawBackground() {
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, 600);
+                gradient.addColorStop(0, '#0a1a2a');
+                gradient.addColorStop(0.7, '#1a2a3a');
+                gradient.addColorStop(1, '#2a1a1a');
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, 1000, 600);
+                
+                this.ctx.fillStyle = '#2a1a1a';
+                this.ctx.fillRect(0, 400, 1000, 200);
+                
+                this.ctx.strokeStyle = '#fbbf24';
+                this.ctx.lineWidth = 2;
+                this.ctx.setLineDash([20, 20]);
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, 400);
+                this.ctx.lineTo(1000, 400);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+            }
+            
+            drawPlayer(p) {
+                let img = p.images[p.state] || p.images.idle;
+                
+                if (img && img.complete) {
+                    this.ctx.save();
+                    this.ctx.translate(p.x, p.y);
+                    
+                    if (p.facing === -1) {
+                        this.ctx.scale(-1, 1);
+                    }
+                    
+                    this.ctx.drawImage(img, -50, -120, 100, 150);
+                    
+                    if (p.controlledBy === this.playerRole) {
+                        this.ctx.strokeStyle = '#fbbf24';
+                        this.ctx.lineWidth = 3;
+                        this.ctx.setLineDash([5, 5]);
+                        this.ctx.beginPath();
+                        this.ctx.ellipse(0, -80, 35, 35, 0, 0, Math.PI * 2);
+                        this.ctx.stroke();
+                        this.ctx.setLineDash([]);
+                    }
+                    
+                    if (p.isBlocking) {
+                        this.ctx.shadowColor = '#22c55e';
+                        this.ctx.shadowBlur = 30;
+                        this.ctx.strokeStyle = '#22c55e';
+                        this.ctx.lineWidth = 4;
+                        this.ctx.beginPath();
+                        this.ctx.ellipse(0, -40, 45, 60, 0, 0, Math.PI * 2);
+                        this.ctx.stroke();
+                        
+                        this.ctx.strokeStyle = '#fbbf24';
+                        this.ctx.lineWidth = 2;
+                        this.ctx.beginPath();
+                        this.ctx.ellipse(0, -40, 35, 50, 0, 0, Math.PI * 2);
+                        this.ctx.stroke();
+                        
+                        this.ctx.fillStyle = 'rgba(34,197,94,0.2)';
+                        this.ctx.beginPath();
+                        this.ctx.ellipse(0, -40, 45, 60, 0, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    }
+                    
+                    if (p.state === 'punch') {
+                        this.ctx.shadowColor = '#ffd700';
+                        this.ctx.shadowBlur = 20;
+                        this.ctx.fillStyle = 'rgba(255,200,0,0.5)';
+                        this.ctx.beginPath();
+                        this.ctx.ellipse(70, -30, 40, 25, 0, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    } else if (p.state === 'kick') {
+                        this.ctx.shadowColor = '#ffa500';
+                        this.ctx.shadowBlur = 20;
+                        this.ctx.fillStyle = 'rgba(255,150,0,0.5)';
+                        this.ctx.beginPath();
+                        this.ctx.ellipse(70, 0, 35, 45, 0.3, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    } else if (p.state === 'special') {
+                        this.ctx.shadowColor = '#ffd700';
+                        this.ctx.shadowBlur = 40;
+                        this.ctx.fillStyle = 'rgba(255,215,0,0.7)';
+                        this.ctx.beginPath();
+                        this.ctx.ellipse(90, -20, 50, 35, 0, 0, Math.PI * 2);
+                        this.ctx.fill();
+                        
+                        this.ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                        this.ctx.beginPath();
+                        this.ctx.ellipse(90, -20, 30, 20, 0, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    }
+                    
+                    this.ctx.restore();
+                } else {
+                    this.ctx.fillStyle = p.id === 'kenji' ? '#ef4444' : '#ff69b4';
+                    this.ctx.fillRect(p.x - 30, p.y - 80, 60, 120);
+                }
+            }
+            
+            gameLoop() {
+                this.update();
+                this.draw();
+                requestAnimationFrame(() => this.gameLoop());
+            }
+        }
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes damageFloat {
+                0% { transform: translateY(0) scale(0.5); opacity: 1; }
+                50% { transform: translateY(-80px) scale(1.5); opacity: 0.8; }
+                100% { transform: translateY(-150px) scale(2); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
