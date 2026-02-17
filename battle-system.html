@@ -5,7 +5,7 @@
     <title>Grindly | Battle Arena</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* ===== BATTLE SYSTEM STYLES - EXACTLY LIKE BEFORE ===== */
+        /* ===== BATTLE SYSTEM STYLES - SAME AS BEFORE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -276,6 +276,12 @@
             color: white;
         }
 
+        .battle-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .waiting-room {
             text-align: center;
             padding: 50px;
@@ -369,6 +375,15 @@
             to { transform: rotate(360deg); }
         }
 
+        .error-message {
+            color: #ef4444;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(239,68,68,0.1);
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+
         .toast {
             position: fixed;
             top: 20px;
@@ -390,13 +405,41 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        .error-message {
-            color: #ef4444;
-            margin: 15px 0;
+        .mana-bar-container {
+            background: rgba(0,0,0,0.5);
+            border-radius: 15px;
             padding: 15px;
-            background: rgba(239,68,68,0.1);
-            border-radius: 10px;
-            font-size: 0.8rem;
+            margin: 20px 0;
+            border: 2px solid var(--battle-gold);
+        }
+
+        .mana-bar {
+            height: 30px;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid var(--battle-gold);
+        }
+
+        .mana-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6);
+            background-size: 200% 100%;
+            animation: manaPulse 2s infinite;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        @keyframes manaPulse {
+            0% { background-position: 0% 0; }
+            50% { background-position: 100% 0; }
+            100% { background-position: 0% 0; }
+        }
+
+        .mana-text {
+            color: var(--battle-gold);
+            margin-top: 10px;
+            font-size: 0.9rem;
         }
 
         @media (max-width: 768px) {
@@ -437,9 +480,9 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // ===== BATTLE SYSTEM WITH COMPLETE DATA FOR FIREBASE RULES =====
+        // ===== BATTLE SYSTEM CONNECTED TO QUEST SYSTEM =====
         (function() {
-            console.log("⚔️ Battle System loaded with complete data");
+            console.log("⚔️ Battle System loaded with Quest System connection");
 
             // Firebase Config
             const firebaseConfig = {
@@ -464,36 +507,56 @@
             let battleCheckInterval = null;
             let redirectAttempted = false;
 
-            // Get player info
+            // ===== QUEST SYSTEM DATA CONNECTION =====
+            function getQuestData() {
+                try {
+                    // Try both possible storage keys
+                    const data = localStorage.getItem('studentRpgData') || localStorage.getItem('trueRpgData');
+                    if (data) {
+                        return JSON.parse(data);
+                    }
+                } catch (e) {
+                    console.error("Error loading quest data:", e);
+                }
+                
+                // Return default if no data found
+                return {
+                    level: 1,
+                    mana: 50,
+                    maxMana: 100,
+                    strength: 5,
+                    intelligence: 5,
+                    wisdom: 5,
+                    luck: 5,
+                    wins: 0,
+                    losses: 0,
+                    diceRolls: 0
+                };
+            }
+
+            function saveQuestData(data) {
+                try {
+                    // Save to both keys for compatibility
+                    localStorage.setItem('studentRpgData', JSON.stringify(data));
+                    localStorage.setItem('trueRpgData', JSON.stringify(data));
+                } catch (e) {
+                    console.error("Error saving quest data:", e);
+                }
+            }
+
+            function updateQuestMana(amount) {
+                const data = getQuestData();
+                data.mana = Math.max(0, Math.min(data.maxMana || 100, (data.mana || 50) + amount));
+                saveQuestData(data);
+                return data.mana;
+            }
+
             function getPlayerId() {
                 return localStorage.getItem('studentUserId') || 'player_' + Date.now();
             }
 
             function getPlayerName() {
                 return localStorage.getItem('studentName') || 'Player';
-            }
-
-            function getRpgData() {
-                try {
-                    const saved = localStorage.getItem('trueRpgData');
-                    if (saved) {
-                        return JSON.parse(saved);
-                    }
-                } catch (e) {}
-                return { 
-                    level: 1, 
-                    mana: 50, 
-                    strength: 5, 
-                    intelligence: 5, 
-                    wisdom: 5, 
-                    luck: 5,
-                    wins: 0,
-                    losses: 0
-                };
-            }
-
-            function saveRpgData(data) {
-                localStorage.setItem('trueRpgData', JSON.stringify(data));
             }
 
             function showNotification(message, type = 'info') {
@@ -513,29 +576,39 @@
                 return code;
             }
 
-            // Show main menu
+            // Show main menu with quest data
             function showMainMenu() {
-                const rpgData = getRpgData();
+                const questData = getQuestData();
+                const mana = questData.mana || 50;
+                const maxMana = questData.maxMana || 100;
+                const manaPercent = (mana / maxMana) * 100;
                 
                 document.getElementById('battleContent').innerHTML = `
                     <div class="main-menu">
                         <div class="menu-title">⚔️ BATTLE ARENA</div>
                         
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-icon">💙</div>
-                                <div class="stat-label">MANA</div>
-                                <div class="stat-value">${Math.round(rpgData.mana)}</div>
+                        <div class="mana-bar-container">
+                            <div class="mana-bar">
+                                <div class="mana-fill" style="width: ${manaPercent}%;"></div>
                             </div>
+                            <div class="mana-text">💙 MANA: ${Math.round(mana)} / ${maxMana}</div>
+                        </div>
+                        
+                        <div class="stats-grid">
                             <div class="stat-card">
                                 <div class="stat-icon">🏆</div>
                                 <div class="stat-label">LEVEL</div>
-                                <div class="stat-value">${rpgData.level}</div>
+                                <div class="stat-value">${questData.level || 1}</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-icon">⚔️</div>
                                 <div class="stat-label">WINS</div>
-                                <div class="stat-value">${rpgData.wins || 0}</div>
+                                <div class="stat-value">${questData.wins || 0}</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">💔</div>
+                                <div class="stat-label">LOSSES</div>
+                                <div class="stat-value">${questData.losses || 0}</div>
                             </div>
                         </div>
                         
@@ -565,25 +638,31 @@
                         <h2 style="color: #fbbf24; margin-bottom: 30px;">ENTER BATTLE CODE</h2>
                         <input type="text" class="code-input" id="joinBattleCode" placeholder="------" maxlength="6">
                         <div>
-                            <button class="battle-btn" onclick="window.joinBattle()">JOIN BATTLE</button>
-                            <button class="battle-btn secondary" onclick="window.showMainMenu()">CANCEL</button>
+                            <button class="battle-btn" onclick="window.joinBattle()">⚔️ JOIN</button>
+                            <button class="battle-btn secondary" onclick="window.showMainMenu()">↩️ CANCEL</button>
                         </div>
                         <div id="battleJoinError" class="error-message"></div>
                     </div>
                 `;
+                
+                setTimeout(() => {
+                    document.getElementById('joinBattleCode')?.focus();
+                }, 100);
             }
 
-            // Create battle - WITH COMPLETE DATA FOR FIREBASE RULES
+            // Create battle - with mana check from quest system
             async function createBattle() {
-                const rpgData = getRpgData();
+                const questData = getQuestData();
+                const mana = questData.mana || 50;
                 
-                if (rpgData.mana < 20) {
-                    showNotification("Not enough mana! Need 20 mana to create a battle.", "error");
+                if (mana < 20) {
+                    showNotification("❌ Not enough mana! Need 20 mana to create a battle.", "error");
                     return;
                 }
                 
-                rpgData.mana -= 20;
-                saveRpgData(rpgData);
+                // Deduct mana from quest system
+                questData.mana = mana - 20;
+                saveQuestData(questData);
                 
                 const code = generateBattleCode();
                 currentBattleCode = code;
@@ -593,22 +672,25 @@
                     <div class="code-view">
                         <h2 style="color: #fbbf24; margin-bottom: 30px;">YOUR BATTLE CODE</h2>
                         <div class="code-display" id="generatedBattleCode">${code}</div>
-                        <button class="battle-btn" onclick="window.copyBattleCode()">📋 COPY</button>
-                        <button class="battle-btn" onclick="window.waitForOpponent()" id="waitForOpponentBtn">WAIT FOR OPPONENT</button>
-                        <button class="battle-btn secondary" onclick="window.cancelBattle()">CANCEL</button>
+                        <div style="margin: 20px 0;">
+                            <button class="battle-btn" onclick="window.copyBattleCode()">📋 COPY</button>
+                        </div>
+                        <div>
+                            <button class="battle-btn" onclick="window.waitForOpponent()">⏳ WAIT FOR OPPONENT</button>
+                            <button class="battle-btn secondary" onclick="window.cancelBattle()">❌ CANCEL</button>
+                        </div>
                     </div>
                 `;
                 
-                await createBattleInFirebase(code, rpgData);
+                await createBattleInFirebase(code, questData);
             }
 
-            // Create battle in Firebase - WITH ALL REQUIRED FIELDS
-            async function createBattleInFirebase(code, rpgData) {
+            // Create battle in Firebase
+            async function createBattleInFirebase(code, questData) {
                 try {
                     const playerId = getPlayerId();
                     const playerName = getPlayerName();
                     
-                    // Complete battle data with ALL required fields for Firebase rules
                     const battleData = {
                         metadata: {
                             code: code,
@@ -622,11 +704,11 @@
                             id: playerId,
                             name: playerName,
                             gender: 'boy',
-                            level: rpgData.level || 1,
-                            strength: rpgData.strength || 5,
-                            intelligence: rpgData.intelligence || 5,
-                            wisdom: rpgData.wisdom || 5,
-                            luck: rpgData.luck || 5,
+                            level: questData.level || 1,
+                            strength: questData.strength || 5,
+                            intelligence: questData.intelligence || 5,
+                            wisdom: questData.wisdom || 5,
+                            luck: questData.luck || 5,
                             health: 100,
                             maxHealth: 100,
                             mana: 0,
@@ -642,25 +724,19 @@
                         }
                     };
                     
-                    console.log("Creating battle with data:", battleData);
-                    
-                    // Set the battle data
                     await database.ref('battles/' + code).set(battleData);
-                    console.log("✅ Battle created successfully:", code);
+                    console.log("✅ Battle created:", code);
                     
-                    // Verify it was created
-                    const verifySnapshot = await database.ref('battles/' + code).once('value');
-                    if (verifySnapshot.exists()) {
-                        console.log("✅ Battle verified in Firebase");
-                        showNotification("Battle created successfully!", "success");
-                    } else {
-                        console.error("❌ Battle not found after creation");
-                        showNotification("Battle created but verification failed", "warning");
-                    }
+                    showNotification("✅ Battle created! Share the code with a friend.", "success");
                     
                 } catch (error) {
                     console.error("❌ Error creating battle:", error);
                     showNotification("Failed to create battle: " + error.message, "error");
+                    
+                    // Refund mana if battle creation failed
+                    const questData = getQuestData();
+                    questData.mana = (questData.mana || 50) + 20;
+                    saveQuestData(questData);
                 }
             }
 
@@ -678,12 +754,12 @@
                 
                 document.getElementById('battleContent').innerHTML = `
                     <div class="waiting-room">
-                        <h2 style="color: #fbbf24; margin-bottom: 40px;">WAITING FOR OPPONENT</h2>
+                        <h2 style="color: #fbbf24; margin-bottom: 40px;">⏳ WAITING FOR OPPONENT</h2>
                         
                         <div class="waiting-players">
                             <div class="waiting-player">
                                 <div class="waiting-avatar">👤</div>
-                                <div style="color: white; margin-top: 15px;">${playerName}</div>
+                                <div style="color: white; margin-top: 15px; font-size: 1.2rem;">${playerName}</div>
                                 <div style="color: #10b981; margin-top: 10px;">✅ READY</div>
                             </div>
                             
@@ -698,7 +774,7 @@
                         
                         <div class="waiting-status">Code: ${currentBattleCode} • Looking for opponent...</div>
                         
-                        <button class="battle-btn danger" onclick="window.cancelBattle()">CANCEL</button>
+                        <button class="battle-btn danger" onclick="window.cancelBattle()">❌ CANCEL</button>
                     </div>
                 `;
                 
@@ -741,7 +817,7 @@
                         document.getElementById('battleContent').innerHTML = `
                             <div class="active-view">
                                 <div class="loading"></div>
-                                <h2 style="color: #fbbf24; margin: 30px 0;">OPPONENT FOUND!</h2>
+                                <h2 style="color: #fbbf24; margin: 30px 0;">🎮 OPPONENT FOUND!</h2>
                                 <p style="color: white; margin-bottom: 20px;">${battle.player2.name} has joined!</p>
                                 <p style="color: var(--text-muted);">Redirecting to battle arena...</p>
                             </div>
@@ -766,46 +842,43 @@
                 const code = input.value.toUpperCase().trim();
                 
                 if (!code || code.length !== 6) {
-                    if (errorEl) errorEl.textContent = "Invalid code. Please enter 6 characters.";
+                    if (errorEl) errorEl.textContent = "❌ Invalid code. Please enter 6 characters.";
                     return;
                 }
                 
                 try {
-                    console.log("Attempting to join battle:", code);
-                    
                     const snapshot = await database.ref('battles/' + code).once('value');
                     const battle = snapshot.val();
                     
                     if (!battle) {
-                        if (errorEl) errorEl.textContent = "Battle not found";
+                        if (errorEl) errorEl.textContent = "❌ Battle not found";
                         return;
                     }
                     
                     if (battle.metadata?.status !== 'waiting') {
-                        if (errorEl) errorEl.textContent = "Battle already started";
+                        if (errorEl) errorEl.textContent = "❌ Battle already started";
                         return;
                     }
                     
                     const playerId = getPlayerId();
                     
                     if (battle.player1?.id === playerId) {
-                        if (errorEl) errorEl.textContent = "You cannot join your own battle";
+                        if (errorEl) errorEl.textContent = "❌ You cannot join your own battle";
                         return;
                     }
                     
                     const playerName = getPlayerName();
-                    const rpgData = getRpgData();
+                    const questData = getQuestData();
                     
-                    // Add player2 with ALL required fields
                     await database.ref('battles/' + code + '/player2').set({
                         id: playerId,
                         name: playerName,
                         gender: 'girl',
-                        level: rpgData.level || 1,
-                        strength: rpgData.strength || 5,
-                        intelligence: rpgData.intelligence || 5,
-                        wisdom: rpgData.wisdom || 5,
-                        luck: rpgData.luck || 5,
+                        level: questData.level || 1,
+                        strength: questData.strength || 5,
+                        intelligence: questData.intelligence || 5,
+                        wisdom: questData.wisdom || 5,
+                        luck: questData.luck || 5,
                         health: 100,
                         maxHealth: 100,
                         mana: 0,
@@ -813,15 +886,12 @@
                         side: 'right'
                     });
                     
-                    // Update status
                     await database.ref('battles/' + code + '/metadata/status').set('fighting');
-                    
-                    console.log("✅ Joined battle successfully");
                     
                     document.getElementById('battleContent').innerHTML = `
                         <div class="active-view">
                             <div class="loading"></div>
-                            <h2 style="color: #fbbf24; margin: 30px 0;">JOINED BATTLE!</h2>
+                            <h2 style="color: #fbbf24; margin: 30px 0;">🎮 JOINED BATTLE!</h2>
                             <p style="color: white; margin-bottom: 20px;">Battle against ${battle.player1.name}</p>
                             <p style="color: var(--text-muted);">Redirecting to battle arena...</p>
                         </div>
@@ -833,7 +903,7 @@
                     
                 } catch (error) {
                     console.error("Error joining battle:", error);
-                    if (errorEl) errorEl.textContent = "Failed to join battle: " + error.message;
+                    if (errorEl) errorEl.textContent = "❌ Failed to join battle";
                 }
             }
 
@@ -841,7 +911,7 @@
             function copyBattleCode() {
                 if (!currentBattleCode) return;
                 navigator.clipboard.writeText(currentBattleCode).then(() => {
-                    showNotification("Code copied: " + currentBattleCode, "success");
+                    showNotification("✅ Code copied: " + currentBattleCode, "success");
                 });
             }
 
@@ -855,7 +925,15 @@
                 if (currentBattleCode) {
                     try {
                         await database.ref('battles/' + currentBattleCode).remove();
-                        console.log("Battle cancelled:", currentBattleCode);
+                        console.log("✅ Battle cancelled:", currentBattleCode);
+                        
+                        // Refund mana
+                        const questData = getQuestData();
+                        questData.mana = (questData.mana || 50) + 20;
+                        saveQuestData(questData);
+                        
+                        showNotification("✅ Mana refunded: +20", "success");
+                        
                     } catch (error) {
                         console.error("Error removing battle:", error);
                     }
