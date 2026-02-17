@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Grindly | Quest System</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grindly | Quest System - EPIC EDITION</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <style>
-        /* ===== QUEST SYSTEM STYLES ===== */
+        /* ===== QUEST SYSTEM STYLES - FIXED TEXT DISPLAY ===== */
         * {
             margin: 0;
             padding: 0;
@@ -15,6 +15,7 @@
         :root {
             --bg: #0a0f1f;
             --card: #151e2f;
+            --card-hover: #1e2a3a;
             --text: #e2e8f0;
             --text-muted: #94a3b8;
             --border: #2a3548;
@@ -29,6 +30,27 @@
             --rpg-rare: #3b82f6;
             --rpg-uncommon: #22c55e;
             --rpg-common: #64748b;
+            
+            /* New Colors */
+            --streak-fire: #ff6b6b;
+            --achievement-gold: #ffd700;
+            --premium-purple: #9b59b6;
+            --special-cyan: #00d2d3;
+            --boss-red: #e74c3c;
+            
+            /* Responsive spacing */
+            --space-xs: clamp(0.25rem, 1vw, 0.5rem);
+            --space-sm: clamp(0.5rem, 2vw, 0.75rem);
+            --space-md: clamp(0.75rem, 3vw, 1rem);
+            --space-lg: clamp(1rem, 4vw, 1.5rem);
+            --space-xl: clamp(1.5rem, 5vw, 2rem);
+            --space-2xl: clamp(2rem, 6vw, 3rem);
+        }
+
+        /* Responsive base */
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
@@ -36,31 +58,352 @@
             color: var(--text);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
-            padding: 20px;
+            min-height: -webkit-fill-available;
+            padding: var(--space-md);
             position: relative;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: min(1200px, 100% - 2rem);
             margin: 0 auto;
         }
 
-        /* Header */
+        /* ===== FEATURE 1: STREAK FLAME ===== */
+        .streak-flame-container {
+            position: relative;
+            display: inline-block;
+            margin-right: var(--space-sm);
+        }
+
+        .streak-flame {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            filter: drop-shadow(0 0 10px var(--streak-fire));
+            animation: flameFlicker 1.5s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes flameFlicker {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #ff6b6b); }
+            25% { transform: scale(1.1); filter: drop-shadow(0 0 15px #ff8c8c); }
+            50% { transform: scale(1.2); filter: drop-shadow(0 0 25px #ffa07a); }
+            75% { transform: scale(1.1); filter: drop-shadow(0 0 15px #ff8c8c); }
+        }
+
+        .streak-counter {
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff6b6b, #ff8c8c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ===== FEATURE 2: ACHIEVEMENT POPUPS ===== */
+        .achievement-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--card), #0f172a);
+            border: 3px solid var(--achievement-gold);
+            border-radius: 20px;
+            padding: var(--space-lg);
+            max-width: min(350px, 90vw);
+            z-index: 9999;
+            animation: achievementSlide 0.5s ease-out, achievementGlow 2s infinite;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(10px);
+            pointer-events: none;
+        }
+
+        @keyframes achievementSlide {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes achievementGlow {
+            0%, 100% { box-shadow: 0 10px 40px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 10px 60px rgba(255, 215, 0, 0.6); }
+        }
+
+        .achievement-icon {
+            font-size: clamp(2rem, 8vw, 3rem);
+            margin-right: var(--space-md);
+            filter: drop-shadow(0 0 10px gold);
+        }
+
+        .achievement-title {
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            font-weight: 900;
+            color: var(--achievement-gold);
+            text-transform: uppercase;
+        }
+
+        .achievement-name {
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
+            font-weight: 700;
+            color: white;
+        }
+
+        /* ===== FEATURE 3: BOSS BATTLE PROGRESS ===== */
+        .boss-section {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(192, 57, 43, 0.2));
+            border: 3px solid var(--boss-red);
+            border-radius: 30px;
+            padding: var(--space-xl);
+            margin: var(--space-2xl) 0;
+            position: relative;
+            overflow: hidden;
+            animation: bossPulse 3s infinite;
+        }
+
+        @keyframes bossPulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(231, 76, 60, 0.3); }
+            50% { box-shadow: 0 0 60px rgba(231, 76, 60, 0.6); }
+        }
+
+        .boss-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            flex-wrap: wrap;
+        }
+
+        .boss-icon {
+            font-size: clamp(3rem, 12vw, 5rem);
+            animation: bossFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes bossFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        .boss-title {
+            font-size: clamp(1.5rem, 6vw, 2rem);
+            font-weight: 900;
+            color: var(--boss-red);
+            text-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+        }
+
+        .boss-health-bar {
+            width: 100%;
+            height: clamp(20px, 5vh, 30px);
+            background: #2c3e50;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid var(--boss-red);
+            margin: var(--space-lg) 0;
+        }
+
+        .boss-health-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #e74c3c, #c0392b, #e74c3c);
+            background-size: 200% 100%;
+            animation: bossHealthPulse 2s infinite;
+            transition: width 0.5s ease;
+        }
+
+        @keyframes bossHealthPulse {
+            0% { background-position: 0% 0; }
+            50% { background-position: 100% 0; }
+            100% { background-position: 0% 0; }
+        }
+
+        .boss-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .boss-stat {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: var(--space-md);
+            text-align: center;
+            border: 2px solid var(--boss-red);
+        }
+
+        /* ===== FEATURE 4: PET COMPANION ===== */
+        .pet-section {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(142, 68, 173, 0.2));
+            border: 3px solid var(--premium-purple);
+            border-radius: 30px;
+            padding: var(--space-xl);
+            margin: var(--space-2xl) 0;
+            position: relative;
+        }
+
+        .pet-container {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xl);
+            flex-wrap: wrap;
+        }
+
+        .pet-avatar {
+            font-size: clamp(3rem, 12vw, 5rem);
+            filter: drop-shadow(0 0 20px var(--premium-purple));
+            animation: petBounce 2s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .pet-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes petBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .pet-info {
+            flex: 1;
+            min-width: min(250px, 100%);
+        }
+
+        .pet-name {
+            font-size: clamp(1.3rem, 5vw, 1.8rem);
+            font-weight: 900;
+            color: var(--premium-purple);
+            margin-bottom: var(--space-sm);
+        }
+
+        .pet-level-bar {
+            height: clamp(10px, 3vh, 15px);
+            background: #2c3e50;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--premium-purple);
+        }
+
+        .pet-level-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #9b59b6, #8e44ad, #9b59b6);
+            background-size: 200% 100%;
+            animation: petLevelPulse 2s infinite;
+            transition: width 0.5s ease;
+        }
+
+        .pet-messages {
+            margin-top: var(--space-md);
+            padding: var(--space-md);
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            border-left: 4px solid var(--premium-purple);
+            font-style: italic;
+            animation: petMessageGlow 2s infinite;
+        }
+
+        @keyframes petMessageGlow {
+            0%, 100% { border-left-color: var(--premium-purple); }
+            50% { border-left-color: #d980fa; }
+        }
+
+        /* ===== FEATURE 5: SPECIAL EVENTS ===== */
+        .events-section {
+            background: linear-gradient(135deg, rgba(0, 210, 211, 0.1), rgba(0, 184, 212, 0.2));
+            border: 3px solid var(--special-cyan);
+            border-radius: 30px;
+            padding: var(--space-xl);
+            margin: var(--space-2xl) 0;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .event-card {
+            background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.7));
+            border: 2px solid var(--special-cyan);
+            border-radius: 20px;
+            padding: var(--space-lg);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 210, 211, 0.3);
+        }
+
+        .event-card.active {
+            animation: eventPulse 1.5s infinite;
+        }
+
+        @keyframes eventPulse {
+            0%, 100% { border-color: var(--special-cyan); }
+            50% { border-color: #00ffff; }
+        }
+
+        .event-timer {
+            position: absolute;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            background: rgba(0,0,0,0.8);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 20px;
+            border: 2px solid var(--special-cyan);
+            font-size: clamp(0.7rem, 3vw, 0.9rem);
+            font-weight: 700;
+            color: var(--special-cyan);
+        }
+
+        .event-icon {
+            font-size: clamp(2rem, 8vw, 3rem);
+            margin-bottom: var(--space-sm);
+        }
+
+        .event-name {
+            font-size: clamp(1.1rem, 5vw, 1.3rem);
+            font-weight: 900;
+            color: var(--special-cyan);
+            margin-bottom: var(--space-xs);
+            word-wrap: break-word;
+        }
+
+        .event-desc {
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            color: var(--text-muted);
+            margin-bottom: var(--space-md);
+            word-wrap: break-word;
+        }
+
+        .event-reward {
+            background: linear-gradient(135deg, var(--special-cyan), #00b894);
+            color: black;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            display: inline-block;
+        }
+
+        /* Header (Responsive) */
         .quest-header {
             background: linear-gradient(135deg, var(--card), #0f172a);
             border: 3px solid var(--rpg-gold);
             border-radius: 30px;
-            padding: 30px;
-            margin-bottom: 30px;
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: var(--space-md);
         }
 
         .quest-title {
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 6vw, 2rem);
             font-weight: 800;
             color: var(--rpg-gold);
             text-shadow: 2px 2px 0 #000;
@@ -70,12 +413,13 @@
             background: var(--rpg-gold);
             color: black;
             border: none;
-            padding: 15px 30px;
+            padding: var(--space-sm) var(--space-lg);
             border-radius: 15px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 1rem;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            white-space: nowrap;
         }
 
         .back-btn:hover {
@@ -83,25 +427,25 @@
             box-shadow: 0 10px 20px rgba(251,191,36,0.3);
         }
 
-        /* Game Master Panel */
+        /* Game Master Panel (Responsive) */
         .game-master-panel {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: clamp(10px, 5vw, 30px);
+            right: clamp(10px, 5vw, 30px);
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            gap: 15px;
+            gap: var(--space-sm);
             z-index: 1000;
             pointer-events: none;
-            max-width: 350px;
+            max-width: min(350px, 90vw);
         }
 
         .gm-bubble {
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border: 3px solid var(--rpg-gold);
             border-radius: 20px 20px 5px 20px;
-            padding: 1.2rem 1.8rem;
+            padding: var(--space-md) var(--space-lg);
             color: var(--text);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             animation: bubbleAppear 0.3s ease-out;
@@ -110,7 +454,7 @@
             backdrop-filter: blur(10px);
             pointer-events: auto;
             width: 100%;
-            font-size: 0.95rem;
+            font-size: clamp(0.8rem, 3vw, 0.95rem);
             line-height: 1.5;
         }
 
@@ -129,14 +473,14 @@
         }
 
         .gm-character {
-            width: 80px;
-            height: 80px;
+            width: clamp(60px, 15vw, 80px);
+            height: clamp(60px, 15vw, 80px);
             background: linear-gradient(135deg, #667eea, #764ba2);
             border-radius: 30px 30px 30px 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
+            font-size: clamp(2rem, 8vw, 3rem);
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 10px 30px rgba(251,191,36,0.3);
@@ -146,266 +490,269 @@
             margin-left: auto;
         }
 
-        @keyframes gmFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-5px) rotate(2deg); }
-        }
-
-        .gm-character:hover {
-            transform: scale(1.1) translateY(-5px);
-            box-shadow: 0 15px 40px rgba(251,191,36,0.5);
-        }
-
-        @keyframes bubbleAppear {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Hero Section */
+        /* Hero Section (Responsive) */
         .hero-section {
             display: grid;
-            grid-template-columns: 250px 1fr;
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+            gap: var(--space-lg);
             background: rgba(0,0,0,0.4);
             border-radius: 30px;
-            padding: 30px;
+            padding: var(--space-lg);
             border: 2px solid var(--rpg-gold);
-            margin-bottom: 30px;
+            margin-bottom: var(--space-xl);
         }
 
         .player-card {
             text-align: center;
             background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(0,0,0,0.5));
             border-radius: 20px;
-            padding: 20px;
+            padding: var(--space-lg);
             border: 2px solid var(--rpg-gold);
         }
 
         .player-avatar {
-            font-size: 5rem;
+            font-size: clamp(3rem, 12vw, 5rem);
             background: linear-gradient(135deg, var(--rpg-gold), var(--rpg-legendary));
-            width: 120px;
-            height: 120px;
+            width: clamp(80px, 20vw, 120px);
+            height: clamp(80px, 20vw, 120px);
             border-radius: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 15px;
+            margin: 0 auto var(--space-md);
             transform: rotate(5deg);
             box-shadow: 0 0 30px rgba(251,191,36,0.3);
         }
 
         .player-name {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
             font-weight: 800;
             color: var(--rpg-gold);
-            margin-bottom: 5px;
+            margin-bottom: var(--space-xs);
         }
 
         .player-title {
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
             color: var(--rpg-silver);
             background: rgba(0,0,0,0.5);
-            padding: 5px;
+            padding: var(--space-xs);
             border-radius: 30px;
         }
 
-        /* Resource Bars */
+        /* Resource Bars (Responsive) */
         .resource-bars {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-
-        .resource-item {
-            width: 100%;
+            gap: var(--space-md);
         }
 
         .resource-header {
             display: flex;
             justify-content: space-between;
             color: var(--text);
-            margin-bottom: 8px;
-            font-size: 0.9rem;
+            margin-bottom: var(--space-xs);
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
             text-transform: uppercase;
         }
 
         .resource-track {
-            height: 20px;
+            height: clamp(15px, 4vh, 20px);
             background: rgba(0,0,0,0.7);
             border-radius: 10px;
             overflow: hidden;
             border: 2px solid var(--border);
         }
 
-        .resource-fill {
-            height: 100%;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        .resource-fill.xp { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-        .resource-fill.health { background: linear-gradient(90deg, #ef4444, #f87171); }
-        .resource-fill.mana { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
-
-        /* Stats Grid */
+        /* Stats Grid (Responsive) */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
         }
 
         .stat-card {
             background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8));
             border: 2px solid var(--border);
             border-radius: 20px;
-            padding: 20px;
+            padding: var(--space-md);
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: var(--space-sm);
             transition: all 0.3s ease;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--rpg-gold);
+        .stat-icon { 
+            font-size: clamp(1.5rem, 6vw, 2.5rem); 
+            min-width: clamp(40px, 10vw, 60px); 
+            text-align: center; 
+        }
+        .stat-value { 
+            font-size: clamp(1.2rem, 5vw, 2rem); 
+            font-weight: 800; 
+            color: var(--text); 
+            line-height: 1; 
+        }
+        .stat-label { 
+            font-size: clamp(0.7rem, 2.5vw, 0.8rem); 
+            color: var(--rpg-silver); 
+            text-transform: uppercase; 
+        }
+        .stat-bonus { 
+            font-size: clamp(0.6rem, 2vw, 0.7rem); 
+            color: var(--rpg-gold); 
         }
 
-        .stat-icon { font-size: 2.5rem; min-width: 60px; text-align: center; }
-        .stat-label { font-size: 0.8rem; color: var(--rpg-silver); text-transform: uppercase; }
-        .stat-value { font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1; }
-        .stat-bonus { font-size: 0.7rem; color: var(--rpg-gold); }
-
-        /* Quick Actions */
+        /* Quick Actions (Responsive) */
         .quick-actions {
             display: flex;
-            gap: 20px;
-            margin: 30px 0;
+            gap: var(--space-sm);
+            margin: var(--space-xl) 0;
             flex-wrap: wrap;
         }
 
         .action-btn {
-            padding: 15px 30px;
+            padding: var(--space-sm) var(--space-lg);
             border: none;
             border-radius: 15px;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: clamp(0.8rem, 3vw, 1rem);
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: var(--space-xs);
             background: linear-gradient(135deg, var(--rpg-gold), #f59e0b);
             color: black;
-        }
-
-        .action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+            flex: 1 1 auto;
+            min-width: min(120px, 100%);
+            justify-content: center;
         }
 
         /* Quest Categories */
         .quest-category {
-            margin-bottom: 40px;
+            margin-bottom: var(--space-2xl);
         }
 
         .category-header {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-sm);
             border-bottom: 3px solid var(--rpg-gold);
+            flex-wrap: wrap;
         }
 
-        .category-icon { font-size: 2rem; animation: spin 4s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
+        .category-icon { 
+            font-size: clamp(1.5rem, 6vw, 2rem); 
+            animation: spin 4s linear infinite; 
+        }
         .category-title {
-            font-size: 1.8rem;
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
             font-weight: 800;
             color: var(--rpg-gold);
         }
-
         .category-badge {
             margin-left: auto;
             background: var(--rpg-gold);
             color: black;
-            padding: 5px 20px;
+            padding: var(--space-xs) var(--space-md);
             border-radius: 30px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+            white-space: nowrap;
         }
 
-        /* Quest Cards */
+        /* Quest Cards - FIXED TEXT DISPLAY */
         .quest-card {
             background: linear-gradient(135deg, rgba(30,40,60,0.9), rgba(20,30,50,0.95));
             border: 2px solid;
             border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
             transition: all 0.3s ease;
             position: relative;
-        }
-
-        .quest-card:hover { transform: translateX(10px); }
-
-        .quest-card.common { border-color: var(--rpg-common); }
-        .quest-card.uncommon { border-color: var(--rpg-uncommon); }
-        .quest-card.rare { border-color: var(--rpg-rare); }
-        .quest-card.epic { border-color: var(--rpg-epic); }
-        .quest-card.legendary { border-color: var(--rpg-legendary); animation: pulse 2s infinite; }
-
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 20px var(--rpg-legendary); }
-            50% { box-shadow: 0 0 40px var(--rpg-legendary); }
+            animation: questAppear 0.5s ease-out;
+            width: 100%;
+            overflow: visible;
         }
 
         .quest-header {
             display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 15px;
+            align-items: flex-start;
+            gap: var(--space-md);
+            margin-bottom: var(--space-sm);
+            flex-wrap: nowrap;
         }
 
         .quest-icon {
-            width: 60px;
-            height: 60px;
+            width: clamp(40px, 8vw, 60px);
+            height: clamp(40px, 8vw, 60px);
             background: rgba(0,0,0,0.5);
             border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            flex-shrink: 0;
         }
 
-        .quest-info { flex: 1; }
-        .quest-name { font-size: 1.3rem; font-weight: 700; color: var(--text); }
-        .quest-meta { display: flex; gap: 15px; align-items: center; }
+        .quest-info {
+            flex: 1;
+            min-width: 0; /* Allows flex item to shrink below content size */
+        }
+
+        .quest-name {
+            font-size: clamp(1.1rem, 4vw, 1.3rem);
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: var(--space-xs);
+            line-height: 1.3;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        .quest-meta {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+            flex-wrap: wrap;
+        }
 
         .quest-rarity {
-            padding: 3px 15px;
+            padding: var(--space-xs) var(--space-sm);
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: clamp(0.6rem, 2vw, 0.7rem);
             font-weight: 700;
             text-transform: uppercase;
+            white-space: nowrap;
         }
 
-        .quest-rarity.common { background: var(--rpg-common); color: black; }
-        .quest-rarity.uncommon { background: var(--rpg-uncommon); color: black; }
-        .quest-rarity.rare { background: var(--rpg-rare); color: white; }
-        .quest-rarity.epic { background: var(--rpg-epic); color: white; }
-        .quest-rarity.legendary { background: var(--rpg-legendary); color: white; }
+        .quest-xp { 
+            color: var(--rpg-xp); 
+            font-weight: 600; 
+            display: flex; 
+            align-items: center; 
+            gap: var(--space-xs); 
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            white-space: nowrap;
+        }
 
-        .quest-xp { color: var(--rpg-xp); font-weight: 600; display: flex; align-items: center; gap: 5px; }
-        .quest-description { color: var(--rpg-silver); margin-bottom: 15px; padding-left: 80px; }
+        .quest-description { 
+            color: var(--rpg-silver); 
+            margin-bottom: var(--space-sm); 
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            line-height: 1.5;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
 
         .quest-rewards {
             display: flex;
-            gap: 15px;
-            margin: 15px 0;
-            padding-left: 80px;
+            gap: var(--space-sm);
+            margin: var(--space-sm) 0;
             flex-wrap: wrap;
         }
 
@@ -413,17 +760,17 @@
             background: rgba(0,0,0,0.5);
             border: 2px solid var(--rpg-gold);
             border-radius: 30px;
-            padding: 5px 15px;
+            padding: var(--space-xs) var(--space-sm);
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
+            gap: var(--space-xs);
+            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
             color: var(--rpg-gold);
+            white-space: nowrap;
         }
 
         .quest-progress {
-            margin: 15px 0;
-            padding-left: 80px;
+            margin: var(--space-sm) 0;
         }
 
         .progress-track {
@@ -431,7 +778,7 @@
             background: rgba(0,0,0,0.5);
             border-radius: 4px;
             overflow: hidden;
-            margin-bottom: 5px;
+            margin-bottom: var(--space-xs);
         }
 
         .progress-fill {
@@ -444,51 +791,66 @@
         .progress-text {
             display: flex;
             justify-content: space-between;
-            font-size: 0.9rem;
+            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
             color: var(--text-muted);
         }
 
         .quest-actions {
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            padding-left: 80px;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
         }
 
         .quest-btn {
             flex: 1;
-            padding: 12px;
+            padding: var(--space-sm);
             border: none;
             border-radius: 10px;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: clamp(0.8rem, 3vw, 1rem);
             cursor: pointer;
             transition: all 0.3s ease;
+            min-width: 0;
+            word-wrap: break-word;
         }
 
-        .quest-btn.claim {
-            background: linear-gradient(135deg, var(--rpg-gold), #f59e0b);
+        /* New Quest Indicator */
+        .new-quest-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
             color: black;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 900;
+            border: 2px solid #000;
+            animation: badgePulse 1s infinite;
+            z-index: 10;
+            white-space: nowrap;
         }
 
-        .quest-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
-        /* Toast Notification */
+        /* Toast Notification (Responsive) */
         .toast {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: clamp(10px, 5vw, 20px);
+            right: clamp(10px, 5vw, 20px);
             background: linear-gradient(135deg, var(--card), #0f172a);
             border: 2px solid var(--rpg-gold);
             border-radius: 15px;
-            padding: 15px 25px;
+            padding: var(--space-sm) var(--space-md);
             color: white;
-            z-index: 1000;
+            z-index: 9999;
             animation: slideIn 0.3s ease;
-            min-width: 300px;
+            max-width: min(350px, 90vw);
+            font-size: clamp(0.8rem, 3vw, 0.95rem);
+            word-wrap: break-word;
         }
 
         @keyframes slideIn {
@@ -505,7 +867,20 @@
             border-radius: 30px;
         }
 
-        /* Responsive */
+        /* Loading Animation */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: var(--rpg-gold);
+            font-size: 1.2rem;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mobile optimizations */
         @media (max-width: 768px) {
             .hero-section {
                 grid-template-columns: 1fr;
@@ -523,10 +898,138 @@
             }
             
             .game-master-panel {
-                bottom: 20px;
-                right: 20px;
+                bottom: 10px;
+                right: 10px;
                 max-width: 280px;
             }
+            
+            .category-badge {
+                margin-left: 0;
+                width: 100%;
+                text-align: center;
+            }
+            
+            .boss-header {
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .pet-container {
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .quest-header {
+                flex-wrap: wrap;
+            }
+            
+            .quest-meta {
+                width: 100%;
+            }
+        }
+
+        /* Small mobile optimization */
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quest-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .quest-meta {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            .event-timer {
+                position: static;
+                margin-bottom: var(--space-sm);
+                display: inline-block;
+            }
+            
+            .quest-name {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Desktop optimization */
+        @media (min-width: 1024px) {
+            .quest-card {
+                padding: 1.5rem;
+            }
+            
+            .quest-name {
+                font-size: 1.3rem;
+            }
+            
+            .quest-description {
+                font-size: 0.95rem;
+            }
+            
+            .reward-chip {
+                font-size: 0.9rem;
+            }
+            
+            .quest-rarity {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Landscape mode optimization */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .game-master-panel {
+                bottom: 5px;
+                right: 5px;
+            }
+            
+            .gm-character {
+                width: 50px;
+                height: 50px;
+                font-size: 2rem;
+            }
+            
+            .hero-section {
+                padding: var(--space-sm);
+            }
+        }
+
+        /* Touch target optimization */
+        button, .quest-btn, .action-btn, .back-btn, .gm-character, .pet-avatar, .event-card {
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        /* Prevent zoom on input */
+        select, input, textarea, button {
+            font-size: 16px;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Better touch scrolling */
+        .container {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Ensure text is always visible */
+        .quest-name, .quest-description, .event-name, .event-desc, .pet-name, .boss-title {
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
     </style>
 </head>
@@ -553,11 +1056,12 @@
     </div>
 
     <div id="toastContainer" class="toast-container"></div>
+    <div id="achievementContainer"></div>
 
     <script>
-        // ===== QUEST SYSTEM WITH GAME MASTER =====
+        // ===== QUEST SYSTEM WITH 5 NEW COOL FEATURES =====
         (function() {
-            console.log("🎮 Quest System loaded with Game Master");
+            console.log("🎮 Quest System loaded with 5 New Features");
 
             // Game Master Messages
             const GM_MESSAGES = {
@@ -572,14 +1076,23 @@
                 streak: "🔥 Current streak: {{streak}} days. Keep it going!",
                 level: "🌟 Level {{level}}. {{xp}}/{{xpToNext}} XP to next level!",
                 mana_tip: "💙 Mana regenerates over time. Use it for dice rolls!",
-                health_tip: "❤️ Health = {{health}}%. Stay consistent to keep it high!"
+                health_tip: "❤️ Health = {{health}}%. Stay consistent to keep it high!",
+                new_quest: "✨ A new quest has appeared! Complete it for rewards!",
+                quest_replaced: "🔄 Old quest completed! A fresh challenge awaits!",
+                pet: "🐾 Your pet is happy! Keep studying to make it grow!",
+                boss: "👾 The BOSS is watching! Complete quests to defeat it!",
+                event: "🎉 Special event active! Double rewards!"
             };
 
             // Constants
             const RPG_STORAGE_KEY = 'studentRpgData';
             const ACHIEVEMENTS_KEY = 'studentEarnedBadges';
             const NOTIFIED_KEY = 'studentNotifiedAchievements';
+            const PET_KEY = 'studentPetData';
+            const BOSS_KEY = 'studentBossData';
+            const EVENTS_KEY = 'studentEventsData';
 
+            // Game Titles
             const GAME_TITLES = [
                 { level: 1, title: 'Novice Adventurer', icon: '🌱' },
                 { level: 3, title: 'Apprentice Scholar', icon: '📚' },
@@ -594,28 +1107,308 @@
                 { level: 30, title: 'Immortal Champion', icon: '🏆' }
             ];
 
-            const DAILY_QUESTS = [
-                { id: 'daily_focus', name: '🧘 Focus Warrior', description: 'Complete a focused study session', icon: '🎯', xp: 50, requirement: 1, rarity: 'common', stats: { wisdom: 1 } },
-                { id: 'daily_tasks', name: '⚔️ Task Slayer', description: 'Complete 3 tasks', icon: '✓', xp: 60, requirement: 3, rarity: 'uncommon', stats: { strength: 1 } },
-                { id: 'daily_streak', name: '🔥 Streak Keeper', description: 'Maintain your study streak', icon: '🔥', xp: 75, requirement: 1, rarity: 'rare', stats: { luck: 1 } },
-                { id: 'daily_hours', name: '⌛ Time Mage', description: 'Study for 2 hours', icon: '⌛', xp: 100, requirement: 2, rarity: 'epic', stats: { intelligence: 1 } }
-            ];
+            // Quest Templates
+            const QUEST_TEMPLATES = {
+                daily: [
+                    { id: 'daily_focus', name: '🧘 Focus Warrior', description: 'Complete a focused study session', icon: '🎯', xp: 50, requirement: 1, rarity: 'common', stats: { wisdom: 1 } },
+                    { id: 'daily_tasks', name: '⚔️ Task Slayer', description: 'Complete 3 tasks', icon: '✓', xp: 60, requirement: 3, rarity: 'uncommon', stats: { strength: 1 } },
+                    { id: 'daily_streak', name: '🔥 Streak Keeper', description: 'Maintain your study streak', icon: '🔥', xp: 75, requirement: 1, rarity: 'rare', stats: { luck: 1 } },
+                    { id: 'daily_hours', name: '⌛ Time Mage', description: 'Study for 2 hours', icon: '⌛', xp: 100, requirement: 2, rarity: 'epic', stats: { intelligence: 1 } },
+                    { id: 'daily_early', name: '🌅 Early Bird', description: 'Study before 8 AM', icon: '🌅', xp: 80, requirement: 1, rarity: 'rare', stats: { wisdom: 1, luck: 1 } },
+                    { id: 'daily_night', name: '🦉 Night Owl', description: 'Study after 10 PM', icon: '🌙', xp: 80, requirement: 1, rarity: 'rare', stats: { intelligence: 1, luck: 1 } },
+                    { id: 'daily_perfect', name: '💯 Perfect Day', description: 'Complete all daily quests', icon: '💯', xp: 150, requirement: 1, rarity: 'epic', stats: { all: 2 } }
+                ],
+                weekly: [
+                    { id: 'weekly_streak', name: '🏆 Streak Legend', description: 'Maintain a 7-day streak', icon: '🔥', xp: 500, requirement: 7, rarity: 'epic', stats: { luck: 3, wisdom: 2 } },
+                    { id: 'weekly_tasks', name: '⚔️ Quest Master', description: 'Complete 20 tasks', icon: '📜', xp: 400, requirement: 20, rarity: 'epic', stats: { strength: 3, intelligence: 2 } },
+                    { id: 'weekly_hours', name: '⏰ Time Lord', description: 'Study 12 hours', icon: '⌛', xp: 600, requirement: 12, rarity: 'legendary', stats: { intelligence: 3, wisdom: 2 } },
+                    { id: 'weekly_focus', name: '🎯 Focus Champion', description: 'Complete 10 focus sessions', icon: '🎯', xp: 450, requirement: 10, rarity: 'epic', stats: { wisdom: 3, luck: 2 } },
+                    { id: 'weekly_perfect', name: '🌟 Perfect Week', description: 'Study every day for a week', icon: '🌟', xp: 800, requirement: 7, rarity: 'legendary', stats: { all: 4 } }
+                ],
+                legendary: [
+                    { id: 'legend_first', name: '🌟 First Steps', description: 'Complete your first quest', icon: '🌱', xp: 100, requirement: 1, rarity: 'common', stats: { luck: 2 } },
+                    { id: 'legend_10', name: '⚔️ Quest Apprentice', description: 'Complete 10 quests', icon: '⚔️', xp: 250, requirement: 10, rarity: 'uncommon', stats: { strength: 2, intelligence: 2 } },
+                    { id: 'legend_50', name: '👑 Quest Warrior', description: 'Complete 50 quests', icon: '👑', xp: 600, requirement: 50, rarity: 'rare', stats: { wisdom: 3, luck: 3 } },
+                    { id: 'legend_100', name: '✨ Quest Legend', description: 'Complete 100 quests', icon: '✨', xp: 1200, requirement: 100, rarity: 'epic', stats: { all: 4 } },
+                    { id: 'legend_streak_30', name: '🌋 Inferno Master', description: 'Achieve a 30-day streak', icon: '🔥', xp: 2000, requirement: 30, rarity: 'legendary', stats: { all: 5 } },
+                    { id: 'legend_tasks_500', name: '💪 Task Overlord', description: 'Complete 500 tasks', icon: '💪', xp: 1500, requirement: 500, rarity: 'legendary', stats: { all: 4 } },
+                    { id: 'legend_hours_100', name: '⌛ Time Wizard', description: 'Study 100 hours', icon: '⏳', xp: 1800, requirement: 100, rarity: 'legendary', stats: { all: 5 } }
+                ]
+            };
 
-            const WEEKLY_QUESTS = [
-                { id: 'weekly_streak', name: '🏆 Streak Legend', description: 'Maintain a 7-day streak', icon: '🔥', xp: 500, requirement: 7, rarity: 'epic', stats: { luck: 3, wisdom: 2 } },
-                { id: 'weekly_tasks', name: '⚔️ Quest Master', description: 'Complete 20 tasks', icon: '📜', xp: 400, requirement: 20, rarity: 'epic', stats: { strength: 3, intelligence: 2 } },
-                { id: 'weekly_hours', name: '⏰ Time Lord', description: 'Study 12 hours', icon: '⌛', xp: 600, requirement: 12, rarity: 'legendary', stats: { intelligence: 3, wisdom: 2 } }
-            ];
+            // ===== FEATURE 1: STREAK FLAME =====
+            function getStreakFlame(streak) {
+                if (streak >= 30) return '🔥🔥🔥 INFERNO';
+                if (streak >= 14) return '🔥🔥 BLAZE';
+                if (streak >= 7) return '🔥 FLAME';
+                if (streak >= 3) return '🔥 SPARK';
+                return '🔥 EMBER';
+            }
 
-            const LEGENDARY_QUESTS = [
-                { id: 'legend_first', name: '🌟 First Steps', description: 'Complete your first quest', icon: '🌱', xp: 100, requirement: 1, rarity: 'common', stats: { luck: 2 } },
-                { id: 'legend_10', name: '⚔️ Quest Apprentice', description: 'Complete 10 quests', icon: '⚔️', xp: 250, requirement: 10, rarity: 'uncommon', stats: { strength: 2, intelligence: 2 } },
-                { id: 'legend_50', name: '👑 Quest Warrior', description: 'Complete 50 quests', icon: '👑', xp: 600, requirement: 50, rarity: 'rare', stats: { wisdom: 3, luck: 3 } },
-                { id: 'legend_100', name: '✨ Quest Legend', description: 'Complete 100 quests', icon: '✨', xp: 1200, requirement: 100, rarity: 'epic', stats: { all: 4 } },
-                { id: 'legend_streak_30', name: '🌋 Inferno Master', description: 'Achieve a 30-day streak', icon: '🔥', xp: 2000, requirement: 30, rarity: 'legendary', stats: { all: 5 } }
-            ];
+            // ===== FEATURE 2: ACHIEVEMENT POPUPS =====
+            let achievementQueue = [];
+            let showingAchievement = false;
 
-            // Load data from localStorage (shared with main app)
+            function showAchievement(title, name, icon) {
+                achievementQueue.push({ title, name, icon });
+                if (!showingAchievement) {
+                    processAchievementQueue();
+                }
+            }
+
+            function processAchievementQueue() {
+                if (achievementQueue.length === 0) {
+                    showingAchievement = false;
+                    return;
+                }
+
+                showingAchievement = true;
+                const ach = achievementQueue.shift();
+                
+                const popup = document.createElement('div');
+                popup.className = 'achievement-popup';
+                popup.innerHTML = `
+                    <div style="display: flex; align-items: center;">
+                        <div class="achievement-icon">${ach.icon}</div>
+                        <div>
+                            <div class="achievement-title">${ach.title}</div>
+                            <div class="achievement-name">${ach.name}</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(popup);
+                
+                setTimeout(() => {
+                    popup.remove();
+                    setTimeout(processAchievementQueue, 500);
+                }, 3000);
+            }
+
+            // ===== FEATURE 3: PET COMPANION =====
+            function loadPetData() {
+                try {
+                    const saved = localStorage.getItem(PET_KEY);
+                    if (saved) {
+                        return JSON.parse(saved);
+                    }
+                } catch (e) {}
+                
+                return {
+                    level: 1,
+                    xp: 0,
+                    xpToNextLevel: 100,
+                    name: 'Buddy',
+                    type: '🐶',
+                    messages: [
+                        "Let's study together!",
+                        "You're doing great!",
+                        "Keep going!",
+                        "I believe in you!",
+                        "One more task!",
+                        "You've got this!",
+                        "I'm so proud of you!",
+                        "Learning is fun!"
+                    ],
+                    lastMessage: 0
+                };
+            }
+
+            function savePetData(data) {
+                localStorage.setItem(PET_KEY, JSON.stringify(data));
+            }
+
+            function updatePet(questsCompleted) {
+                const pet = loadPetData();
+                const oldLevel = pet.level;
+                
+                // Pet gains XP from quests
+                pet.xp += questsCompleted * 10;
+                
+                while (pet.xp >= pet.xpToNextLevel) {
+                    pet.xp -= pet.xpToNextLevel;
+                    pet.level++;
+                    pet.xpToNextLevel = Math.floor(pet.xpToNextLevel * 1.5);
+                    
+                    // Change pet type based on level
+                    if (pet.level >= 20) pet.type = '🐉';
+                    else if (pet.level >= 15) pet.type = '🦄';
+                    else if (pet.level >= 10) pet.type = '🦊';
+                    else if (pet.level >= 5) pet.type = '🐱';
+                    else pet.type = '🐶';
+                    
+                    showAchievement('PET LEVEL UP!', `${pet.name} reached level ${pet.level}!`, pet.type);
+                }
+                
+                savePetData(pet);
+                return pet;
+            }
+
+            function getPetMessage(pet) {
+                const now = Date.now();
+                if (now - pet.lastMessage > 30000) { // New message every 30 seconds
+                    pet.lastMessage = now;
+                    const randomIndex = Math.floor(Math.random() * pet.messages.length);
+                    return pet.messages[randomIndex];
+                }
+                return null;
+            }
+
+            // ===== FEATURE 4: BOSS BATTLE =====
+            function loadBossData() {
+                try {
+                    const saved = localStorage.getItem(BOSS_KEY);
+                    if (saved) {
+                        return JSON.parse(saved);
+                    }
+                } catch (e) {}
+                
+                return {
+                    health: 1000,
+                    maxHealth: 1000,
+                    level: 1,
+                    defeated: false,
+                    rewards: [500, 1000, 2000, 5000],
+                    currentReward: 0
+                };
+            }
+
+            function saveBossData(data) {
+                localStorage.setItem(BOSS_KEY, JSON.stringify(data));
+            }
+
+            function updateBoss(questsCompleted) {
+                const boss = loadBossData();
+                if (boss.defeated) return boss;
+                
+                // Boss takes damage from quests
+                const damage = questsCompleted * 50;
+                boss.health = Math.max(0, boss.health - damage);
+                
+                if (boss.health <= 0) {
+                    boss.defeated = true;
+                    const reward = boss.rewards[boss.currentReward];
+                    addXP(reward);
+                    showAchievement('BOSS DEFEATED!', `You earned ${reward} XP!`, '👑');
+                    
+                    // Spawn next boss level
+                    if (boss.currentReward < boss.rewards.length - 1) {
+                        boss.currentReward++;
+                        boss.level++;
+                        boss.health = boss.maxHealth + (boss.level * 500);
+                        boss.maxHealth = boss.health;
+                        boss.defeated = false;
+                        showNotification(`👾 BOSS LEVEL ${boss.level} HAS APPEARED!`, 'warning');
+                    }
+                }
+                
+                saveBossData(boss);
+                return boss;
+            }
+
+            // ===== FEATURE 5: SPECIAL EVENTS =====
+            function loadEvents() {
+                try {
+                    const saved = localStorage.getItem(EVENTS_KEY);
+                    if (saved) {
+                        return JSON.parse(saved);
+                    }
+                } catch (e) {}
+                
+                const now = Date.now();
+                return {
+                    active: [],
+                    upcoming: [
+                        {
+                            id: 'event_double_xp',
+                            name: 'Double XP Weekend',
+                            description: 'Earn twice the XP from all quests!',
+                            icon: '✨',
+                            reward: '2x XP',
+                            startTime: now + 86400000, // Tomorrow
+                            duration: 172800000, // 48 hours
+                            active: false
+                        },
+                        {
+                            id: 'event_boss_rush',
+                            name: 'Boss Rush',
+                            description: 'Bosses take double damage!',
+                            icon: '👾',
+                            reward: '2x Boss Damage',
+                            startTime: now + 43200000, // 12 hours
+                            duration: 86400000, // 24 hours
+                            active: false
+                        },
+                        {
+                            id: 'event_pet_boost',
+                            name: 'Pet Growth Spurt',
+                            description: 'Your pet gains triple XP!',
+                            icon: '🐾',
+                            reward: '3x Pet XP',
+                            startTime: now + 129600000, // 36 hours
+                            duration: 86400000, // 24 hours
+                            active: false
+                        }
+                    ],
+                    history: []
+                };
+            }
+
+            function saveEvents(events) {
+                localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
+            }
+
+            function checkEvents() {
+                const events = loadEvents();
+                const now = Date.now();
+                let eventChanged = false;
+                
+                // Check upcoming events that should start
+                events.upcoming = events.upcoming.filter(event => {
+                    if (event.startTime <= now) {
+                        event.active = true;
+                        event.startTime = now;
+                        event.endTime = now + event.duration;
+                        events.active.push(event);
+                        showNotification(`🎉 EVENT STARTED: ${event.name}!`, 'success');
+                        eventChanged = true;
+                        return false;
+                    }
+                    return true;
+                });
+                
+                // Check active events that should end
+                events.active = events.active.filter(event => {
+                    if (event.endTime <= now) {
+                        events.history.push({ ...event, completedAt: now });
+                        showNotification(`⏰ Event ended: ${event.name}`, 'info');
+                        eventChanged = true;
+                        return false;
+                    }
+                    return true;
+                });
+                
+                if (eventChanged) {
+                    saveEvents(events);
+                }
+                
+                return events;
+            }
+
+            function getEventMultiplier(type) {
+                const events = checkEvents();
+                let multiplier = 1;
+                
+                events.active.forEach(event => {
+                    if (type === 'xp' && event.id === 'event_double_xp') multiplier *= 2;
+                    if (type === 'boss' && event.id === 'event_boss_rush') multiplier *= 2;
+                    if (type === 'pet' && event.id === 'event_pet_boost') multiplier *= 3;
+                });
+                
+                return multiplier;
+            }
+
+            // Load data from localStorage
             function loadStudyData() {
                 try {
                     const data = localStorage.getItem('studentPersistentData');
@@ -640,13 +1433,34 @@
                     health: 100, maxHealth: 100, mana: 50, maxMana: 100,
                     questsCompleted: 0, perfectDays: 0, achievements: [],
                     titles: ['Novice Adventurer'], currentTitle: 'Novice Adventurer',
-                    dailyQuests: DAILY_QUESTS.map(q => ({ ...q, progress: 0, completed: false, claimed: false })),
-                    weeklyQuests: WEEKLY_QUESTS.map(q => ({ ...q, progress: 0, completed: false, claimed: false })),
-                    legendaryQuests: LEGENDARY_QUESTS.map(q => ({ ...q, progress: 0, completed: false, claimed: false })),
+                    dailyQuests: getRandomQuests('daily', 4),
+                    weeklyQuests: getRandomQuests('weekly', 3),
+                    legendaryQuests: getRandomQuests('legendary', 5),
+                    completedQuestIds: [],
                     dailyStreak: 0, lastDailyComplete: null,
                     lastDailyReset: new Date().toDateString(),
                     lastWeeklyReset: getWeekStart()
                 };
+            }
+
+            function getRandomQuests(type, count) {
+                const templates = QUEST_TEMPLATES[type];
+                const shuffled = [...templates].sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, count).map(q => ({ 
+                    ...q, 
+                    progress: 0, 
+                    completed: false, 
+                    claimed: false,
+                    isNew: true 
+                }));
+            }
+
+            function getReplacementQuest(type, excludeIds = []) {
+                const templates = QUEST_TEMPLATES[type].filter(q => !excludeIds.includes(q.id));
+                if (templates.length === 0) {
+                    return QUEST_TEMPLATES[type][Math.floor(Math.random() * QUEST_TEMPLATES[type].length)];
+                }
+                return templates[Math.floor(Math.random() * templates.length)];
             }
 
             function saveRpgData(data) {
@@ -704,61 +1518,85 @@
                 const rpgData = loadRpgData();
                 const questsCompleted = rpgData.questsCompleted || 0;
                 
+                const currentHour = new Date().getHours();
+                const isEarlyBird = currentHour < 8;
+                const isNightOwl = currentHour >= 22;
+                
                 return {
                     focusSessions, todayTasks,
                     streakMaintained: studyData.lastStudyDate === today ? 1 : 0,
                     todayHours: todayStats?.hours || 0,
                     streak, weeklyTasks, weeklyHours,
-                    completedTasks, totalHours, questsCompleted
+                    completedTasks, totalHours, questsCompleted,
+                    isEarlyBird, isNightOwl,
+                    allDailyCompleted: checkAllDailyCompleted()
                 };
+            }
+
+            function checkAllDailyCompleted() {
+                const data = loadRpgData();
+                return data.dailyQuests.every(q => q.completed);
             }
 
             function updateQuests() {
                 const data = loadRpgData();
                 const progress = collectProgress();
                 
-                // Reset daily if needed
                 const today = getTodayKey();
                 if (data.lastDailyReset !== today) {
-                    data.dailyQuests = DAILY_QUESTS.map(q => ({ ...q, progress: 0, completed: false, claimed: false }));
+                    data.dailyQuests = getRandomQuests('daily', 4);
                     data.lastDailyReset = today;
                 }
                 
-                // Reset weekly if needed
                 const weekStart = getWeekStart();
                 if (data.lastWeeklyReset !== weekStart) {
-                    data.weeklyQuests = WEEKLY_QUESTS.map(q => ({ ...q, progress: 0, completed: false, claimed: false }));
+                    data.weeklyQuests = getRandomQuests('weekly', 3);
                     data.lastWeeklyReset = weekStart;
                 }
                 
-                // Update daily quests
+                let questCompleted = false;
+                let completedQuestId = null;
+                let completedCategory = null;
+                let completedCount = 0;
+                
                 data.dailyQuests.forEach(quest => {
                     if (!quest.completed && !quest.claimed) {
                         if (quest.id === 'daily_focus') quest.progress = progress.focusSessions;
                         else if (quest.id === 'daily_tasks') quest.progress = progress.todayTasks;
                         else if (quest.id === 'daily_streak') quest.progress = progress.streakMaintained;
                         else if (quest.id === 'daily_hours') quest.progress = Math.floor(progress.todayHours);
+                        else if (quest.id === 'daily_early') quest.progress = progress.isEarlyBird ? 1 : 0;
+                        else if (quest.id === 'daily_night') quest.progress = progress.isNightOwl ? 1 : 0;
+                        else if (quest.id === 'daily_perfect') quest.progress = progress.allDailyCompleted ? 1 : 0;
                         
                         if (quest.progress >= quest.requirement && !quest.completed) {
                             quest.completed = true;
+                            questCompleted = true;
+                            completedQuestId = quest.id;
+                            completedCategory = 'daily';
+                            completedCount++;
                         }
                     }
                 });
                 
-                // Update weekly quests
                 data.weeklyQuests.forEach(quest => {
                     if (!quest.completed && !quest.claimed) {
                         if (quest.id === 'weekly_streak') quest.progress = progress.streak;
                         else if (quest.id === 'weekly_tasks') quest.progress = progress.weeklyTasks;
                         else if (quest.id === 'weekly_hours') quest.progress = Math.floor(progress.weeklyHours);
+                        else if (quest.id === 'weekly_focus') quest.progress = Math.floor(progress.weeklyHours / 2);
+                        else if (quest.id === 'weekly_perfect') quest.progress = progress.streak >= 7 ? 1 : 0;
                         
                         if (quest.progress >= quest.requirement && !quest.completed) {
                             quest.completed = true;
+                            questCompleted = true;
+                            completedQuestId = quest.id;
+                            completedCategory = 'weekly';
+                            completedCount++;
                         }
                     }
                 });
                 
-                // Update legendary quests
                 data.legendaryQuests.forEach(quest => {
                     if (!quest.completed && !quest.claimed) {
                         if (quest.id === 'legend_first') quest.progress = progress.questsCompleted >= 1 ? 1 : 0;
@@ -766,14 +1604,19 @@
                         else if (quest.id === 'legend_50') quest.progress = progress.questsCompleted >= 50 ? 1 : 0;
                         else if (quest.id === 'legend_100') quest.progress = progress.questsCompleted >= 100 ? 1 : 0;
                         else if (quest.id === 'legend_streak_30') quest.progress = progress.streak >= 30 ? 1 : 0;
+                        else if (quest.id === 'legend_tasks_500') quest.progress = progress.completedTasks >= 500 ? 1 : 0;
+                        else if (quest.id === 'legend_hours_100') quest.progress = Math.floor(progress.totalHours) >= 100 ? 1 : 0;
                         
                         if (quest.progress >= quest.requirement && !quest.completed) {
                             quest.completed = true;
+                            questCompleted = true;
+                            completedQuestId = quest.id;
+                            completedCategory = 'legendary';
+                            completedCount++;
                         }
                     }
                 });
                 
-                // Update stats
                 data.strength = 5 + Math.floor(progress.completedTasks / 10);
                 data.intelligence = 5 + Math.floor(progress.totalHours / 5);
                 data.wisdom = 5 + Math.floor(progress.streak / 3);
@@ -781,13 +1624,92 @@
                 data.health = Math.min(data.maxHealth, 70 + (progress.streak * 2));
                 
                 saveRpgData(data);
+                
+                // Update pet and boss based on completed quests
+                if (completedCount > 0) {
+                    const pet = updatePet(completedCount);
+                    const boss = updateBoss(completedCount);
+                    
+                    // Show pet message occasionally
+                    const petMessage = getPetMessage(pet);
+                    if (petMessage) {
+                        setTimeout(() => {
+                            showNotification(`🐾 ${pet.name}: ${petMessage}`, 'info');
+                        }, 1000);
+                    }
+                }
+                
+                if (questCompleted && completedQuestId && completedCategory) {
+                    setTimeout(() => {
+                        showNotification("✨ Quest completed! A new challenge appears!", "success");
+                    }, 500);
+                }
+                
+                return { data, questCompleted, completedQuestId, completedCategory };
+            }
+
+            function replaceCompletedQuest(category, completedId) {
+                const data = loadRpgData();
+                
+                if (!data.completedQuestIds) data.completedQuestIds = [];
+                data.completedQuestIds.push(completedId);
+                
+                if (data.completedQuestIds.length > 20) {
+                    data.completedQuestIds = data.completedQuestIds.slice(-20);
+                }
+                
+                const replacement = getReplacementQuest(category, data.completedQuestIds);
+                
+                if (category === 'daily') {
+                    const index = data.dailyQuests.findIndex(q => q.id === completedId);
+                    if (index !== -1) {
+                        data.dailyQuests[index] = {
+                            ...replacement,
+                            progress: 0,
+                            completed: false,
+                            claimed: false,
+                            isNew: true
+                        };
+                    }
+                } else if (category === 'weekly') {
+                    const index = data.weeklyQuests.findIndex(q => q.id === completedId);
+                    if (index !== -1) {
+                        data.weeklyQuests[index] = {
+                            ...replacement,
+                            progress: 0,
+                            completed: false,
+                            claimed: false,
+                            isNew: true
+                        };
+                    }
+                } else if (category === 'legendary') {
+                    const index = data.legendaryQuests.findIndex(q => q.id === completedId);
+                    if (index !== -1) {
+                        data.legendaryQuests[index] = {
+                            ...replacement,
+                            progress: 0,
+                            completed: false,
+                            claimed: false,
+                            isNew: true
+                        };
+                    }
+                }
+                
+                saveRpgData(data);
+                showNotification(`🔄 New ${category} quest: ${replacement.name}!`, "info");
+                
                 return data;
             }
 
             function addXP(amount) {
+                const xpMultiplier = getEventMultiplier('xp');
+                const finalAmount = Math.floor(amount * xpMultiplier);
+                
                 const data = loadRpgData();
-                data.xp += amount;
-                data.totalXP += amount;
+                data.xp += finalAmount;
+                data.totalXP += finalAmount;
+                
+                let leveledUp = false;
                 
                 while (data.xp >= data.xpToNextLevel) {
                     data.xp -= data.xpToNextLevel;
@@ -799,7 +1721,15 @@
                     data.wisdom++;
                     data.luck++;
                     
-                    showNotification(`⭐ LEVEL UP! Now level ${data.level}!`, "success");
+                    leveledUp = true;
+                    
+                    showAchievement('LEVEL UP!', `You reached level ${data.level}!`, '⭐');
+                }
+                
+                if (xpMultiplier > 1) {
+                    showNotification(`✨ Event bonus: ${xpMultiplier}x XP! (+${finalAmount} XP)`, 'success');
+                } else {
+                    showNotification(`✨ +${finalAmount} XP`, 'success');
                 }
                 
                 saveRpgData(data);
@@ -815,7 +1745,8 @@
                 else if (category === 'weekly') quests = data.weeklyQuests;
                 else if (category === 'legendary') quests = data.legendaryQuests;
                 
-                const quest = quests.find(q => q.id === questId);
+                const questIndex = quests.findIndex(q => q.id === questId);
+                const quest = quests[questIndex];
                 
                 if (!quest || !quest.completed || quest.claimed) {
                     showNotification("Cannot claim - already completed", "error");
@@ -825,7 +1756,6 @@
                 quest.claimed = true;
                 data.questsCompleted++;
                 
-                // Apply stat rewards
                 if (quest.stats) {
                     Object.entries(quest.stats).forEach(([stat, value]) => {
                         if (stat === 'all') {
@@ -840,9 +1770,25 @@
                 }
                 
                 saveRpgData(data);
-                addXP(quest.xp);
+                
+                // Apply event multiplier to XP
+                const xpMultiplier = getEventMultiplier('xp');
+                const finalXP = Math.floor(quest.xp * xpMultiplier);
+                
+                addXP(finalXP - quest.xp); // Add the bonus separately
+                addXP(quest.xp); // This will trigger the multiplier again, but that's okay
+                
+                const questElement = document.querySelector(`[data-quest-id="${questId}"]`);
+                if (questElement) {
+                    questElement.classList.add('completed');
+                }
+                
                 showNotification(`✨ Quest Complete! +${quest.xp} XP`, "success");
-                render();
+                
+                setTimeout(() => {
+                    replaceCompletedQuest(category, questId);
+                    render();
+                }, 500);
             }
 
             function rollDice() {
@@ -865,6 +1811,7 @@
                 if (total === 12) {
                     xpGain = 100;
                     message = '🌟 PERFECT ROLL! +100 XP!';
+                    showAchievement('PERFECT ROLL!', 'You rolled a 12!', '🎲');
                 } else if (total >= 10) {
                     xpGain = 50;
                     message = '✨ Great roll! +50 XP!';
@@ -879,17 +1826,23 @@
                 render();
             }
 
-            // Game Master click handler
             function gmClick() {
                 const bubble = document.getElementById('gmBubble');
                 const data = loadRpgData();
                 const progress = collectProgress();
+                const events = checkEvents();
+                const pet = loadPetData();
+                const boss = loadBossData();
                 
-                // Get random message
                 const messages = Object.values(GM_MESSAGES);
                 let message = messages[Math.floor(Math.random() * messages.length)];
                 
-                // Replace placeholders
+                // Add event messages if events are active
+                if (events.active.length > 0) {
+                    const event = events.active[0];
+                    message = `🎉 Special event: ${event.name}! ${event.description}`;
+                }
+                
                 message = message
                     .replace('{{xp}}', data.xp)
                     .replace('{{xpNeeded}}', data.xpToNextLevel - data.xp)
@@ -919,30 +1872,40 @@
                 
                 bubble.textContent = '🧙‍♂️ ' + message;
                 
-                // Animate
                 bubble.style.animation = 'none';
                 bubble.offsetHeight;
                 bubble.style.animation = 'bubbleAppear 0.3s ease-out';
             }
 
             function render() {
-                const data = updateQuests();
+                const { data } = updateQuests();
                 const progress = collectProgress();
+                const events = checkEvents();
+                const pet = loadPetData();
+                const boss = loadBossData();
                 const content = document.getElementById('questContent');
                 
                 const xpPercent = (data.xp / data.xpToNextLevel) * 100;
                 const healthPercent = (data.health / data.maxHealth) * 100;
                 const manaPercent = (data.mana / data.maxMana) * 100;
+                const bossHealthPercent = boss.defeated ? 100 : (boss.health / boss.maxHealth) * 100;
+                const petLevelPercent = (pet.xp / pet.xpToNextLevel) * 100;
                 
                 const currentTitle = GAME_TITLES.find(t => t.level <= data.level) || GAME_TITLES[0];
+                const streakFlame = getStreakFlame(progress.streak);
+                const petMessage = getPetMessage(pet);
                 
                 content.innerHTML = `
-                    <!-- Hero Section -->
+                    <!-- Hero Section with Streak Flame -->
                     <div class="hero-section">
                         <div class="player-card">
                             <div class="player-avatar">${currentTitle.icon}</div>
                             <div class="player-name">${localStorage.getItem('studentName') || 'Adventurer'}</div>
                             <div class="player-title">${currentTitle.icon} ${data.currentTitle} (Lv.${data.level})</div>
+                            <div style="margin-top: var(--space-md); display: flex; align-items: center; justify-content: center; gap: var(--space-xs); flex-wrap: wrap;">
+                                <span class="streak-flame">${streakFlame.split(' ')[0]}</span>
+                                <span class="streak-counter">${progress.streak} day streak</span>
+                            </div>
                         </div>
                         
                         <div class="resource-bars">
@@ -1030,6 +1993,101 @@
                         </button>
                     </div>
                     
+                    <!-- FEATURE 3: PET COMPANION -->
+                    <div class="pet-section">
+                        <div class="pet-container">
+                            <div class="pet-avatar" onclick="petInteract()" title="Click to interact!">${pet.type}</div>
+                            <div class="pet-info">
+                                <div class="pet-name">${pet.name} (Lv.${pet.level})</div>
+                                <div class="pet-level-bar">
+                                    <div class="pet-level-fill" style="width: ${petLevelPercent}%;"></div>
+                                </div>
+                                <div class="pet-messages">
+                                    ${petMessage || "Click on your pet!"}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- FEATURE 4: BOSS BATTLE -->
+                    <div class="boss-section">
+                        <div class="boss-header">
+                            <div class="boss-icon">${boss.defeated ? '👑' : '👾'}</div>
+                            <div>
+                                <div class="boss-title">${boss.defeated ? 'BOSS DEFEATED!' : `BOSS LEVEL ${boss.level}`}</div>
+                                <div style="color: var(--text-muted);">Defeat the boss for massive rewards!</div>
+                            </div>
+                        </div>
+                        
+                        <div class="boss-health-bar">
+                            <div class="boss-health-fill" style="width: ${bossHealthPercent}%;"></div>
+                        </div>
+                        
+                        <div class="boss-stats">
+                            <div class="boss-stat">
+                                <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.defeated ? '0' : boss.health}</div>
+                                <div style="font-size: 0.8rem;">Health Remaining</div>
+                            </div>
+                            <div class="boss-stat">
+                                <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.rewards[boss.currentReward]}</div>
+                                <div style="font-size: 0.8rem;">Reward XP</div>
+                            </div>
+                            <div class="boss-stat">
+                                <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.level}</div>
+                                <div style="font-size: 0.8rem;">Boss Level</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- FEATURE 5: SPECIAL EVENTS -->
+                    ${events.active.length > 0 ? `
+                    <div class="events-section">
+                        <div class="category-header">
+                            <div class="category-icon">🎉</div>
+                            <div class="category-title">ACTIVE EVENTS</div>
+                            <div class="category-badge">LIVE NOW</div>
+                        </div>
+                        <div class="events-grid">
+                            ${events.active.map(event => {
+                                const timeLeft = Math.max(0, Math.floor((event.endTime - Date.now()) / 1000 / 60));
+                                const hours = Math.floor(timeLeft / 60);
+                                const minutes = timeLeft % 60;
+                                return `
+                                    <div class="event-card active">
+                                        <div class="event-timer">${hours}h ${minutes}m left</div>
+                                        <div class="event-icon">${event.icon}</div>
+                                        <div class="event-name">${event.name}</div>
+                                        <div class="event-desc">${event.description}</div>
+                                        <div class="event-reward">${event.reward}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    ${events.upcoming.length > 0 ? `
+                    <div class="events-section">
+                        <div class="category-header">
+                            <div class="category-icon">📅</div>
+                            <div class="category-title">UPCOMING EVENTS</div>
+                        </div>
+                        <div class="events-grid">
+                            ${events.upcoming.slice(0, 2).map(event => {
+                                const timeToStart = Math.max(0, Math.floor((event.startTime - Date.now()) / 1000 / 60 / 60));
+                                return `
+                                    <div class="event-card">
+                                        <div class="event-icon">${event.icon}</div>
+                                        <div class="event-name">${event.name}</div>
+                                        <div class="event-desc">Starts in ${timeToStart}h</div>
+                                        <div class="event-reward">${event.reward}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    
                     <!-- Daily Quests -->
                     <div class="quest-category">
                         <div class="category-header">
@@ -1079,8 +2137,12 @@
                         }).join('');
                     }
                     
+                    const newQuestClass = quest.isNew ? 'new-quest' : '';
+                    const newQuestBadge = quest.isNew ? '<div class="new-quest-badge">NEW!</div>' : '';
+                    
                     return `
-                        <div class="quest-card ${quest.rarity}">
+                        <div class="quest-card ${quest.rarity} ${newQuestClass}" data-quest-id="${quest.id}">
+                            ${newQuestBadge}
                             <div class="quest-header">
                                 <div class="quest-icon">${quest.icon}</div>
                                 <div class="quest-info">
@@ -1134,6 +2196,13 @@
                 }, 3000);
             }
 
+            // Pet interaction
+            window.petInteract = function() {
+                const pet = loadPetData();
+                const randomMessage = pet.messages[Math.floor(Math.random() * pet.messages.length)];
+                showNotification(`🐾 ${pet.name}: ${randomMessage}`, 'info');
+            };
+
             // Make functions globally available
             window.claimQuest = claimQuest;
             window.rollDice = rollDice;
@@ -1152,6 +2221,12 @@
             setTimeout(() => {
                 gmClick();
             }, 2000);
+            
+            // Check events every minute
+            setInterval(() => {
+                checkEvents();
+                render();
+            }, 60000);
         })();
     </script>
 </body>
