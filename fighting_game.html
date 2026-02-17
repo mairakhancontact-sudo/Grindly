@@ -1855,8 +1855,10 @@
             }
         }
 
+        // ========== FIXED proceedToGame FUNCTION ==========
         function proceedToGame() {
             console.log(`Player selected: ${selectedCharacter} as ${playerRole}`);
+            console.log(`Player role: ${playerRole}, Selected character: ${selectedCharacter}`);
             playSound('victory');
             
             document.getElementById('characterModal').classList.add('hidden');
@@ -1868,15 +1870,29 @@
             
             document.getElementById('battleCode').textContent = battleCode || 'ARENA';
             
-            // CORRECT player name display based on actual selection
-            if (selectedCharacter === 'kenji') {
-                document.getElementById('playerIndicator').textContent = '👤 YOU ARE KENJI - THE SHADOW WARRIOR';
-                document.getElementById('player1Name').textContent = 'KENJI (YOU)';
-                document.getElementById('player2Name').textContent = 'SAKURA';
+            // FIXED: Correct player name display based on role and selected character
+            if (playerRole === 'player1') {
+                // Player 1 is on LEFT side
+                if (selectedCharacter === 'kenji') {
+                    document.getElementById('playerIndicator').textContent = '👤 YOU ARE KENJI - THE SHADOW WARRIOR (LEFT SIDE)';
+                    document.getElementById('player1Name').textContent = 'KENJI (YOU)';
+                    document.getElementById('player2Name').textContent = 'SAKURA';
+                } else {
+                    document.getElementById('playerIndicator').textContent = '👤 YOU ARE SAKURA - THE CHERRY BLOSSOM (LEFT SIDE)';
+                    document.getElementById('player1Name').textContent = 'SAKURA (YOU)';
+                    document.getElementById('player2Name').textContent = 'KENJI';
+                }
             } else {
-                document.getElementById('playerIndicator').textContent = '👤 YOU ARE SAKURA - THE CHERRY BLOSSOM';
-                document.getElementById('player2Name').textContent = 'SAKURA (YOU)';
-                document.getElementById('player1Name').textContent = 'KENJI';
+                // Player 2 is on RIGHT side
+                if (selectedCharacter === 'kenji') {
+                    document.getElementById('playerIndicator').textContent = '👤 YOU ARE KENJI - THE SHADOW WARRIOR (RIGHT SIDE)';
+                    document.getElementById('player2Name').textContent = 'KENJI (YOU)';
+                    document.getElementById('player1Name').textContent = 'SAKURA';
+                } else {
+                    document.getElementById('playerIndicator').textContent = '👤 YOU ARE SAKURA - THE CHERRY BLOSSOM (RIGHT SIDE)';
+                    document.getElementById('player2Name').textContent = 'SAKURA (YOU)';
+                    document.getElementById('player1Name').textContent = 'KENJI';
+                }
             }
             
             window.gamePlayerRole = playerRole;
@@ -1933,7 +1949,7 @@
             location.reload();
         };
         
-        // ========== FIGHTING GAME CLASS WITH SLOW HEALTH AND FAST RAGE ==========
+        // ========== FIGHTING GAME CLASS WITH FIXED CHARACTER ASSIGNMENT ==========
         
         class FightingGame {
             constructor(role) {
@@ -1986,8 +2002,8 @@
                 this.maxRageTimer = 300; // 5 seconds at 60fps
                 this.rageMeter = 0;
                 this.maxRageMeter = 100;
-                this.rageGainPerHit = 25; // FAST RAGE (was 8)
-                this.rageGainPerCombo = 40; // FAST RAGE (was 12)
+                this.rageGainPerHit = 25; // FAST RAGE
+                this.rageGainPerCombo = 40; // FAST RAGE
                 
                 // BLOOD PARTICLES
                 this.bloodParticles = [];
@@ -2025,10 +2041,10 @@
                     }
                 };
                 
-                // Players with rage meter
+                // Initialize players with default positions
                 this.players = [
                     { 
-                        id: 'kenji', 
+                        id: null, // Will be set from Firebase
                         x: 300, 
                         y: 400, 
                         health: 100, 
@@ -2041,14 +2057,14 @@
                         stateTimer: 0,
                         facing: 1,
                         speed: this.moveSpeed, 
-                        images: this.images.kenji, 
+                        images: null, // Will be set from Firebase
                         attackTimer: 0, 
                         isBlocking: false,
                         controlledBy: 'player1',
                         hitLocked: false
                     },
                     { 
-                        id: 'sakura', 
+                        id: null, // Will be set from Firebase
                         x: 900, 
                         y: 400, 
                         health: 100, 
@@ -2061,7 +2077,7 @@
                         stateTimer: 0,
                         facing: -1,
                         speed: this.moveSpeed, 
-                        images: this.images.sakura, 
+                        images: null, // Will be set from Firebase
                         attackTimer: 0, 
                         isBlocking: false,
                         controlledBy: 'player2',
@@ -2076,7 +2092,41 @@
                 
                 this.setupButtonListeners();
                 this.setupKeyboardControls();
-                this.checkImagesLoaded();
+                
+                // Load character assignments from Firebase
+                this.loadCharacterAssignments();
+            }
+            
+            // NEW: Load character assignments from Firebase
+            loadCharacterAssignments() {
+                this.battleRef.child('characters').once('value', (snapshot) => {
+                    const chars = snapshot.val() || {};
+                    console.log("Character assignments from Firebase:", chars);
+                    
+                    // Assign player 1 (left side)
+                    if (chars.player1 === 'kenji') {
+                        this.players[0].id = 'kenji';
+                        this.players[0].images = this.images.kenji;
+                        console.log("Player 1 (left) assigned to KENJI");
+                    } else if (chars.player1 === 'sakura') {
+                        this.players[0].id = 'sakura';
+                        this.players[0].images = this.images.sakura;
+                        console.log("Player 1 (left) assigned to SAKURA");
+                    }
+                    
+                    // Assign player 2 (right side)
+                    if (chars.player2 === 'kenji') {
+                        this.players[1].id = 'kenji';
+                        this.players[1].images = this.images.kenji;
+                        console.log("Player 2 (right) assigned to KENJI");
+                    } else if (chars.player2 === 'sakura') {
+                        this.players[1].id = 'sakura';
+                        this.players[1].images = this.images.sakura;
+                        console.log("Player 2 (right) assigned to SAKURA");
+                    }
+                    
+                    console.log("Final player assignments:", this.players);
+                });
             }
             
             loadImage(src) {
@@ -2102,7 +2152,14 @@
                     ctx.fillText(src.includes('kenji') ? '⚔️' : '🌸', 35, 70);
                     const fallbackImg = new Image();
                     fallbackImg.src = canvas.toDataURL();
-                    this.images[src.includes('kenji') ? 'kenji' : 'sakura'][src.split('_')[0]] = fallbackImg;
+                    
+                    // Store the fallback image in the correct location
+                    if (src.includes('kenji')) {
+                        this.images.kenji[src.split('_')[0]] = fallbackImg;
+                    } else {
+                        this.images.sakura[src.split('_')[0]] = fallbackImg;
+                    }
+                    
                     if (this.loadedImages === this.totalImages) {
                         this.startGame();
                     }
@@ -3124,6 +3181,16 @@
             }
             
             drawPlayer(p) {
+                if (!p.id || !p.images) {
+                    // Player not yet assigned from Firebase, draw placeholder
+                    this.ctx.fillStyle = '#666';
+                    this.ctx.fillRect(p.x - 50, p.y - 120, 100, 120);
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = 'bold 20px Arial';
+                    this.ctx.fillText('Loading...', p.x - 40, p.y - 50);
+                    return;
+                }
+                
                 const img = p.images[p.state] || p.images.idle;
                 const x = p.x - 50;
                 const y = p.y - 120;
