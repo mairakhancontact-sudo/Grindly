@@ -14597,8 +14597,802 @@ function loadStudentMemoryWall() {
     scrollbar-color: var(--accent) var(--bg) !important;
 }
 </style>
+
+  <!-- ===== STUDENT DASHBOARD CLASSIFICATION ===== -->
+<style>
+/* View Buttons */
+.student-view-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: var(--card);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.student-view-bar h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+}
+
+.student-view-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.student-view-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.student-view-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  transform: translateY(-2px);
+}
+
+.student-view-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+/* Section visibility */
+.study-progress-section,
+.tasks-section,
+.classroom-section,
+.tools-section {
+  transition: opacity 0.3s ease;
+}
+
+.hide-study .study-progress-section,
+.hide-tasks .tasks-section,
+.hide-class .classroom-section,
+.hide-tools .tools-section {
+  display: none !important;
+}
+
+/* Quick Stats - one line */
+.quick-stats {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 12px !important;
+  margin-bottom: 24px !important;
+}
+
+.stat-card {
+  background: var(--card) !important;
+  border-radius: 12px !important;
+  padding: 16px 12px !important;
+  border: 1px solid var(--border) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.stat-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 10px !important;
+  font-size: 1.2rem !important;
+}
+
+.stat-number {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  margin-bottom: 4px !important;
+}
+
+.stat-label {
+  font-size: 0.75rem !important;
+}
+
+@media (max-width: 768px) {
+  .student-view-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .student-view-options {
+    width: 100%;
+  }
+  
+  .student-view-btn {
+    flex: 1;
+    justify-content: center;
+  }
+  
+  .quick-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+</style>
+
+<script>
+(function() {
+  console.log('📊 Classifying student dashboard...');
+  
+  function classifyDashboard() {
+    const dashboard = document.getElementById('dashboard');
+    if (!dashboard) return;
+    
+    // Don't run if already done
+    if (document.getElementById('student-view-bar')) return;
+    
+    // Add view buttons with actual dashboard content names
+    const viewBar = document.createElement('div');
+    viewBar.id = 'student-view-bar';
+    viewBar.className = 'student-view-bar';
+    viewBar.innerHTML = `
+      <h2>My Dashboard</h2>
+      <div class="student-view-options">
+        <button class="student-view-btn active" onclick="switchDashboardView('all')">
+          <span>📊</span> All
+        </button>
+        <button class="student-view-btn" onclick="switchDashboardView('study')">
+          <span>🔥</span> Study Progress
+        </button>
+        <button class="student-view-btn" onclick="switchDashboardView('tasks')">
+          <span>✅</span> Tasks & Assignments
+        </button>
+        <button class="student-view-btn" onclick="switchDashboardView('tools')">
+          <span>🛠️</span> Study Tools
+        </button>
+      </div>
+    `;
+    dashboard.insertBefore(viewBar, dashboard.firstChild);
+    
+    // Add section classes after a short delay
+    setTimeout(addSectionClasses, 500);
+  }
+  
+  function addSectionClasses() {
+    console.log('Adding section classes...');
+    
+    const dashboard = document.getElementById('dashboard');
+    if (!dashboard) return;
+    
+    // Remove any existing classes
+    document.querySelectorAll('.study-progress-section, .tasks-section, .classroom-section, .tools-section').forEach(el => {
+      el.classList.remove('study-progress-section', 'tasks-section', 'classroom-section', 'tools-section');
+    });
+    
+    // STUDY PROGRESS SECTION (streak, stats, goals, study hours)
+    const quickStats = dashboard.querySelector('.quick-stats');
+    if (quickStats) quickStats.classList.add('study-progress-section');
+    
+    const streakCard = dashboard.querySelector('.streak-card');
+    if (streakCard) streakCard.classList.add('study-progress-section');
+    
+    const goalCard = dashboard.querySelector('.goal-card');
+    if (goalCard) goalCard.classList.add('study-progress-section');
+    
+    // TASKS SECTION
+    const allCards = dashboard.querySelectorAll('.content-card');
+    allCards.forEach(card => {
+      const header = card.querySelector('.content-header h2');
+      if (header) {
+        const text = header.textContent || '';
+        if (text.includes('My Tasks')) {
+          card.classList.add('tasks-section');
+        }
+        if (text.includes('My Assignments')) {
+          card.classList.add('tasks-section');
+        }
+        if (text.includes('Add Study Hours')) {
+          card.classList.add('study-progress-section');
+        }
+        if (text.includes('Study Stats Compare')) {
+          card.classList.add('tools-section');
+        }
+        if (text.includes('Learn By Teaching')) {
+          card.classList.add('tools-section');
+        }
+      }
+    });
+    
+    // TOOLS SECTION (quick notes, badges, motivation, profile, stats compare, teach mode)
+    const quickNotes = dashboard.querySelector('.quick-notes-card');
+    if (quickNotes) quickNotes.classList.add('tools-section');
+    
+    const badgesCard = dashboard.querySelector('.badges-card');
+    if (badgesCard) badgesCard.classList.add('tools-section');
+    
+    const motivationCard = dashboard.querySelector('.motivation-card');
+    if (motivationCard) motivationCard.classList.add('tools-section');
+    
+    const profileForm = dashboard.querySelector('.form-card:has(h2:contains("My Profile"))');
+    if (profileForm) profileForm.classList.add('tools-section');
+    
+    const statsCompare = dashboard.querySelector('.content-card:has(h2:contains("Study Stats Compare"))');
+    if (statsCompare) statsCompare.classList.add('tools-section');
+    
+    const teachMode = dashboard.querySelector('.content-card:has(h2:contains("Learn By Teaching"))');
+    if (teachMode) teachMode.classList.add('tools-section');
+    
+    // Pro tips and footer are always visible (added to all sections)
+    const proTips = dashboard.querySelectorAll('.pro-tip');
+    proTips.forEach(tip => {
+      tip.classList.add('study-progress-section', 'tasks-section', 'tools-section');
+    });
+    
+    const footer = dashboard.querySelector('.footer');
+    if (footer) {
+      footer.classList.add('study-progress-section', 'tasks-section', 'tools-section');
+    }
+    
+    console.log('✅ Classes added - each section now has its own unique content');
+  }
+  
+  // Switch view function
+  window.switchDashboardView = function(view) {
+    console.log('Switching to:', view);
+    
+    // Update button states
+    document.querySelectorAll('.student-view-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Remove all hide classes
+    document.body.classList.remove('hide-study', 'hide-tasks', 'hide-tools');
+    
+    // Add appropriate hide classes
+    if (view === 'study') {
+      document.body.classList.add('hide-tasks', 'hide-tools');
+    } else if (view === 'tasks') {
+      document.body.classList.add('hide-study', 'hide-tools');
+    } else if (view === 'tools') {
+      document.body.classList.add('hide-study', 'hide-tasks');
+    }
+    // 'all' view - no hide classes
+  };
+  
+  // Run when dashboard is ready
+  function tryClassify(attempt = 1) {
+    const dashboard = document.getElementById('dashboard');
+    if (dashboard && dashboard.children.length > 0) {
+      classifyDashboard();
+    } else if (attempt < 20) {
+      setTimeout(() => tryClassify(attempt + 1), 500);
+    }
+  }
+  
+  // Start trying
+  setTimeout(() => tryClassify(1), 2000);
+  
+  // Also run when switching to dashboard
+  const originalShowSection = window.showSection;
+  if (originalShowSection) {
+    window.showSection = function(sectionId) {
+      originalShowSection(sectionId);
+      if (sectionId === 'dashboard') {
+        setTimeout(() => {
+          if (!document.getElementById('student-view-bar')) {
+            classifyDashboard();
+          }
+        }, 500);
+      }
+    };
+  }
+})();
+</script>
+
+
+<!-- ===== STUDENT SIDEBAR ORGANIZATION ===== -->
+<style>
+/* Sidebar Sections */
+.sidebar-section {
+  margin-bottom: 20px !important;
+  background: var(--card);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.sidebar-section:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.sidebar-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px !important;
+  background: linear-gradient(135deg, rgba(79,70,229,0.02) 0%, rgba(16,185,129,0.02) 100%);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s ease;
+}
+
+.sidebar-section-header:hover {
+  background: linear-gradient(135deg, rgba(79,70,229,0.05) 0%, rgba(16,185,129,0.05) 100%);
+}
+
+.sidebar-section-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-section-header h3 span {
+  font-size: 1.2rem;
+}
+
+.sidebar-section-header .collapse-icon {
+  font-size: 1rem;
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+}
+
+.sidebar-section-header.collapsed .collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.sidebar-section-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  max-height: 1000px;
+  padding: 16px;
+}
+
+.sidebar-section-content.collapsed {
+  max-height: 0 !important;
+  padding: 0 16px !important;
+}
+
+/* Section color accents */
+.sidebar-section[data-section="nav"] .sidebar-section-header {
+  border-left: 4px solid #3498db;
+}
+.sidebar-section[data-section="stats"] .sidebar-section-header {
+  border-left: 4px solid #2ecc71;
+}
+.sidebar-section[data-section="stories"] .sidebar-section-header {
+  border-left: 4px solid #f39c12;
+}
+.sidebar-section[data-section="heatmap"] .sidebar-section-header {
+  border-left: 4px solid #9b59b6;
+}
+.sidebar-section[data-section="theme"] .sidebar-section-header {
+  border-left: 4px solid #e74c3c;
+}
+
+/* Class stats card - neat design */
+.sidebar-stats {
+  background: var(--bg) !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  border: 1px solid var(--border);
+  margin-bottom: 0 !important;
+}
+
+.sidebar-stats h3 {
+  font-size: 0.9rem !important;
+  margin-bottom: 12px !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0 !important;
+  border-bottom: 1px solid var(--border);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-value {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 4px 12px;
+  border-radius: 30px;
+}
+
+/* Stories section */
+.stories-section {
+  background: var(--bg) !important;
+  border: 1px solid var(--border);
+  border-radius: 12px !important;
+  padding: 16px !important;
+  margin-bottom: 0 !important;
+}
+
+.stories-section h3 {
+  font-size: 0.9rem !important;
+  margin-bottom: 12px !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.story-item {
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.story-item:hover {
+  transform: translateX(4px);
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.story-name {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.story-quote {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Heatmap section */
+.heatmap-section {
+  background: var(--bg) !important;
+  border: 1px solid var(--border);
+  border-radius: 12px !important;
+  padding: 16px !important;
+  margin-bottom: 0 !important;
+}
+
+.heatmap-section h3 {
+  font-size: 0.9rem !important;
+  margin-bottom: 12px !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.heatmap-cell {
+  width: 100%;
+  padding-top: 100%;
+  border-radius: 4px;
+  background: var(--border);
+  position: relative;
+}
+
+.heatmap-cell.level-0 { background: rgba(148, 163, 184, 0.25); }
+.heatmap-cell.level-1 { background: rgba(16, 185, 129, 0.25); }
+.heatmap-cell.level-2 { background: rgba(16, 185, 129, 0.5); }
+.heatmap-cell.level-3 { background: rgba(16, 185, 129, 0.75); }
+.heatmap-cell.level-4 { background: rgba(16, 185, 129, 0.95); }
+
+/* Theme selector */
+.theme-selector {
+  width: 100%;
+  padding: 12px !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--border) !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* Sidebar spacing */
+.sidebar {
+  padding: 20px !important;
+}
+
+.sidebar-header {
+  margin-bottom: 24px !important;
+  text-align: center;
+}
+
+.class-switcher {
+  margin-bottom: 24px !important;
+}
+
+.sidebar-nav {
+  margin: 0 !important;
+}
+
+/* Animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sidebar-section-content:not(.collapsed) {
+  animation: slideDown 0.3s ease;
+}
+
+/* ===== RESPONSIVE & MODERN POLISH ===== */
+/* Clean scrollbars */
+.sidebar::-webkit-scrollbar,
+.main-content::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.main-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.main-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+.main-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .stat-card:hover,
+  .btn:hover,
+  .nav-item:hover,
+  .content-card:hover {
+    transform: none !important;
+  }
+}
+
+/* Mobile safe areas */
+@supports (padding: max(0px)) {
+  @media (max-width: 767px) {
+    .main-content {
+      padding-left: max(var(--spacing-md), env(safe-area-inset-left)) !important;
+      padding-right: max(var(--spacing-md), env(safe-area-inset-right)) !important;
+      padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom)) !important;
+    }
+  }
+}
+</style>
+
+<script>
+(function() {
+  console.log('📋 Organizing student sidebar...');
+  
+  function organizeStudentSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    if (!sidebar) {
+      console.log('Sidebar not found');
+      return false;
+    }
+    
+    // Don't reorganize if already done
+    if (sidebar.querySelector('.sidebar-section')) {
+      console.log('Sidebar already organized');
+      return true;
+    }
+    
+    // Get all original sidebar content
+    const sidebarHeader = sidebar.querySelector('.sidebar-header');
+    const classSwitcher = sidebar.querySelector('.class-switcher');
+    const sidebarNav = sidebar.querySelector('.sidebar-nav');
+    const sidebarStats = sidebar.querySelector('.sidebar-stats');
+    const storiesSection = sidebar.querySelector('.stories-section');
+    const heatmapSection = sidebar.querySelector('.heatmap-section');
+    const themeSelector = sidebar.querySelector('.theme-selector');
+    
+    // Clear sidebar
+    sidebar.innerHTML = '';
+    
+    // Add header and class switcher at top (not in collapsible sections)
+    if (sidebarHeader) sidebar.appendChild(sidebarHeader.cloneNode(true));
+    if (classSwitcher) sidebar.appendChild(classSwitcher.cloneNode(true));
+    
+    // SECTION 1: Navigation
+    if (sidebarNav) {
+      const navSection = document.createElement('div');
+      navSection.className = 'sidebar-section';
+      navSection.setAttribute('data-section', 'nav');
+      navSection.innerHTML = `
+        <div class="sidebar-section-header" onclick="toggleSidebarSection('sidebar-nav-content')">
+          <h3><span>📋</span> Navigation</h3>
+          <span class="collapse-icon" id="sidebar-nav-icon">▼</span>
+        </div>
+        <div class="sidebar-section-content" id="sidebar-nav-content"></div>
+      `;
+      navSection.querySelector('.sidebar-section-content').appendChild(sidebarNav.cloneNode(true));
+      sidebar.appendChild(navSection);
+    }
+    
+    // SECTION 2: Today's Stats
+    if (sidebarStats) {
+      const statsSection = document.createElement('div');
+      statsSection.className = 'sidebar-section';
+      statsSection.setAttribute('data-section', 'stats');
+      statsSection.innerHTML = `
+        <div class="sidebar-section-header" onclick="toggleSidebarSection('sidebar-stats-content')">
+          <h3><span>📊</span> Today's Stats</h3>
+          <span class="collapse-icon" id="sidebar-stats-icon">▼</span>
+        </div>
+        <div class="sidebar-section-content" id="sidebar-stats-content"></div>
+      `;
+      statsSection.querySelector('.sidebar-section-content').appendChild(sidebarStats.cloneNode(true));
+      sidebar.appendChild(statsSection);
+    }
+    
+    // SECTION 3: Inspiring Stories
+    if (storiesSection) {
+      const storiesSectionDiv = document.createElement('div');
+      storiesSectionDiv.className = 'sidebar-section';
+      storiesSectionDiv.setAttribute('data-section', 'stories');
+      storiesSectionDiv.innerHTML = `
+        <div class="sidebar-section-header" onclick="toggleSidebarSection('sidebar-stories-content')">
+          <h3><span>🌟</span> Inspiring Stories</h3>
+          <span class="collapse-icon" id="sidebar-stories-icon">▼</span>
+        </div>
+        <div class="sidebar-section-content" id="sidebar-stories-content"></div>
+      `;
+      storiesSectionDiv.querySelector('.sidebar-section-content').appendChild(storiesSection.cloneNode(true));
+      sidebar.appendChild(storiesSectionDiv);
+    }
+    
+    // SECTION 4: Study Heatmap
+    if (heatmapSection) {
+      const heatmapSectionDiv = document.createElement('div');
+      heatmapSectionDiv.className = 'sidebar-section';
+      heatmapSectionDiv.setAttribute('data-section', 'heatmap');
+      heatmapSectionDiv.innerHTML = `
+        <div class="sidebar-section-header" onclick="toggleSidebarSection('sidebar-heatmap-content')">
+          <h3><span>🗓️</span> Study Heatmap</h3>
+          <span class="collapse-icon" id="sidebar-heatmap-icon">▼</span>
+        </div>
+        <div class="sidebar-section-content" id="sidebar-heatmap-content"></div>
+      `;
+      heatmapSectionDiv.querySelector('.sidebar-section-content').appendChild(heatmapSection.cloneNode(true));
+      sidebar.appendChild(heatmapSectionDiv);
+    }
+    
+    // SECTION 5: Theme
+    if (themeSelector) {
+      const themeSection = document.createElement('div');
+      themeSection.className = 'sidebar-section';
+      themeSection.setAttribute('data-section', 'theme');
+      themeSection.innerHTML = `
+        <div class="sidebar-section-header" onclick="toggleSidebarSection('sidebar-theme-content')">
+          <h3><span>🎨</span> Theme</h3>
+          <span class="collapse-icon" id="sidebar-theme-icon">▼</span>
+        </div>
+        <div class="sidebar-section-content" id="sidebar-theme-content"></div>
+      `;
+      const themeWrapper = document.createElement('div');
+      themeWrapper.style.padding = '8px 0';
+      themeWrapper.appendChild(themeSelector.cloneNode(true));
+      themeSection.querySelector('.sidebar-section-content').appendChild(themeWrapper);
+      sidebar.appendChild(themeSection);
+    }
+    
+    // Load saved states
+    loadSidebarStates();
+    
+    console.log('✅ Student sidebar organized into 5 sections');
+    return true;
+  }
+  
+  // Toggle sidebar section
+  window.toggleSidebarSection = function(contentId) {
+    const content = document.getElementById(contentId);
+    const icon = document.getElementById(contentId.replace('content', 'icon'));
+    const header = icon?.closest('.sidebar-section-header');
+    
+    if (content) {
+      content.classList.toggle('collapsed');
+      if (icon) {
+        icon.style.transform = content.classList.contains('collapsed') ? 'rotate(-90deg)' : 'rotate(0)';
+      }
+      if (header) {
+        header.classList.toggle('collapsed', content.classList.contains('collapsed'));
+      }
+      
+      // Save state
+      try {
+        localStorage.setItem('sidebar-' + contentId, content.classList.contains('collapsed'));
+      } catch (e) {}
+    }
+  };
+  
+  // Load saved sidebar states
+  function loadSidebarStates() {
+    const sections = ['nav', 'stats', 'stories', 'heatmap', 'theme'];
+    
+    sections.forEach(section => {
+      try {
+        const saved = localStorage.getItem(`sidebar-sidebar-${section}-content`);
+        if (saved === 'true') {
+          const content = document.getElementById(`sidebar-${section}-content`);
+          const icon = document.getElementById(`sidebar-${section}-icon`);
+          
+          if (content) {
+            content.classList.add('collapsed');
+            if (icon) icon.style.transform = 'rotate(-90deg)';
+          }
+        }
+      } catch (e) {}
+    });
+  }
+  
+  // Try to organize sidebar when ready
+  function tryOrganize(attempt = 1) {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && sidebar.children.length > 0) {
+      organizeStudentSidebar();
+    } else if (attempt < 20) {
+      setTimeout(() => tryOrganize(attempt + 1), 500);
+    }
+  }
+  // Start trying
+  setTimeout(() => tryOrganize(1), 1500);
+  
+  // Also try when page loads
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if (!document.querySelector('.sidebar-section')) {
+        organizeStudentSidebar();
+      }
+    }, 2000);
+  });
+})();
+</script>
 </body>
 </html>
+
 
 
 
