@@ -5360,6 +5360,18 @@ body, #studentMemoryWhiteboard, #studentStickyNotesContainer {
       <div class="nav-item" onclick="window.location.href='studygroup.html'; closeMobileMenu();">
         👥 Study Group
       </div>
+      <!-- NEW BUTTONS -->
+    <div class="nav-item" onclick="window.location.href='quest-system.html'" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-weight: 800; border: 2px solid #fbbf24; margin-top: 10px;">
+        🎮 RPG QUESTS
+    </div>
+    
+    <div class="nav-item" onclick="window.location.href='moves-system.html'" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; font-weight: 800; border: 2px solid #fbbf24; margin-top: 5px;">
+        🎮 MY MOVES / SHOP
+    </div>
+    
+    <div class="nav-item" onclick="window.location.href='battle-system.html'" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; font-weight: 800; border: 2px solid #fbbf24; margin-top: 5px;">
+        ⚔️ BATTLE ARENA
+    </div>
     </nav>
     
     <div class="sidebar-stats">
@@ -14549,9 +14561,45 @@ function loadStudentMemoryWall() {
 </script>
 <div id="confettiLayer" aria-hidden="true"></div>
 <div id="premiumSparkleLayer" class="premium-sparkle-layer" aria-hidden="true"></div>
+<!-- Add this at the very end of your studentmode.html, just before the closing </body> tag -->
 
+<style>
+/* Make the navigation section scrollable */
+.sidebar-nav {
+    max-height: 400px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 8px !important;
+}
+
+/* Custom scrollbar styling */
+.sidebar-nav::-webkit-scrollbar {
+    width: 6px !important;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+    background: var(--bg) !important;
+    border-radius: 3px !important;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: var(--accent) !important;
+    border-radius: 3px !important;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-dark) !important;
+}
+
+/* Firefox scrollbar */
+.sidebar-nav {
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--accent) var(--bg) !important;
+}
+</style>
 </body>
 </html>
+
 
 
 
