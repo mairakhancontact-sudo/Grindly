@@ -23609,7 +23609,1008 @@ console.log("✅ All fixes applied - teachermode.js is now crash-resistant");
     </div>
   </div>
   <audio id="focusBellAudio" src="bell.mp3" preload="auto"></audio>
+  <style>
+/* ===== MODERN SPACING SYSTEM ===== */
+:root {
+  --space-section: 32px;
+  --space-card: 24px;
+  --space-element: 16px;
+  --space-sm: 8px;
+  --space-xs: 4px;
+}
+
+/* Main container padding */
+.main-content {
+  padding: var(--space-card) !important;
+}
+
+.dashboard-content {
+  padding: var(--space-card) !important;
+  margin-bottom: var(--space-section) !important;
+}
+
+/* Card styling */
+.content-card, .form-card, .stat-card {
+  border-radius: 20px !important;
+  padding: var(--space-card) !important;
+  margin-bottom: var(--space-element) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important;
+  transition: all 0.2s ease;
+}
+
+.content-card:hover, .form-card:hover, .stat-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.04) !important;
+}
+
+/* ===== COLLAPSIBLE SECTIONS ===== */
+.dashboard-section,
+.sidebar-section {
+  margin-bottom: var(--space-section) !important;
+  background: var(--card);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px !important;
+  cursor: pointer;
+  border-bottom: 2px solid rgba(0,0,0,0.03);
+  transition: background 0.2s ease;
+}
+
+.section-header:hover {
+  background: rgba(0,0,0,0.01);
+}
+
+.section-header h2,
+.section-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 !important;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.section-header .collapse-icon {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+}
+
+.section-header.collapsed .collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.section-content {
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+  max-height: 2000px;
+  opacity: 1;
+  padding: 24px;
+}
+
+.section-content.collapsed {
+  max-height: 0 !important;
+  opacity: 0;
+  padding: 0 24px !important;
+}
+
+/* ===== CLASS STATS CARD ===== */
+.sidebar-stats {
+  background: var(--bg) !important;
+  border-radius: 16px !important;
+  padding: 20px !important;
+  margin-bottom: 16px !important;
+  border: 1px solid var(--border);
+}
+
+.sidebar-stats h3 {
+  font-size: 0.95rem !important;
+  margin-bottom: 16px !important;
+  color: var(--text);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0 !important;
+  border-bottom: 1px solid var(--border);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-row span:first-child {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.stat-value {
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 4px 12px;
+  border-radius: 30px;
+}
+
+/* ===== PRO TIP CARDS ===== */
+.pro-tip {
+  background: var(--bg) !important;
+  border-left: 4px solid var(--accent) !important;
+  border-radius: 12px !important;
+  padding: 16px 20px !important;
+  margin-bottom: 12px !important;
+  font-size: 0.9rem;
+  box-shadow: none !important;
+}
+
+.pro-tip strong {
+  color: var(--accent);
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+/* ===== BUTTON STYLES ===== */
+.btn, .btn-primary, .btn-secondary, .btn-success, 
+.btn-warning, .btn-danger, .btn-submit, .btn-challenge {
+  padding: 12px 24px !important;
+  border-radius: 30px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  border: 1px solid transparent !important;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+}
+
+.btn-primary {
+  background: var(--accent) !important;
+  color: white !important;
+}
+
+.btn-secondary {
+  background: transparent !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+}
+
+.btn-secondary:hover {
+  background: var(--accent-light) !important;
+  border-color: var(--accent) !important;
+}
+
+/* ===== SIDEBAR SECTION LABELS ===== */
+.sidebar-section[data-section="nav"] .section-header { 
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), transparent); 
+}
+.sidebar-section[data-section="tools"] .section-header { 
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.05), transparent); 
+}
+.sidebar-section[data-section="stats"] .section-header { 
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.05), transparent); 
+}
+.sidebar-section[data-section="tips"] .section-header { 
+  background: linear-gradient(135deg, rgba(241, 196, 15, 0.05), transparent); 
+}
+.sidebar-section[data-section="account"] .section-header { 
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.05), transparent); 
+}
+
+/* ===== DASHBOARD SECTION LABELS ===== */
+.section-header[data-section="overview"] { border-left: 4px solid #3498db; }
+.section-header[data-section="tools"] { border-left: 4px solid #2ecc71; }
+.section-header[data-section="content"] { border-left: 4px solid #f39c12; }
+.section-header[data-section="analytics"] { border-left: 4px solid #9b59b6; }
+
+/* ===== THEME SELECTOR ===== */
+.theme-selector {
+  width: 100%;
+  padding: 12px 16px !important;
+  border-radius: 30px !important;
+  border: 1px solid var(--border) !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+/* ===== LOGOUT BUTTON ===== */
+.logout-btn {
+  width: 100%;
+  padding: 14px !important;
+  border-radius: 30px !important;
+  background: var(--danger) !important;
+  color: white !important;
+  border: none !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px !important;
+}
+
+.logout-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(231, 76, 60, 0.2) !important;
+}
+
+/* ===== RESPONSIVE & MODERN POLISH ===== */
+@media (max-width: 640px) {
+  .section-header {
+    padding: 16px 20px !important;
+  }
+  
+  .section-content {
+    padding: 20px !important;
+  }
+  
+  .section-content.collapsed {
+    padding: 0 20px !important;
+  }
+}
+
+/* Clean scrollbars (webkit) */
+.sidebar::-webkit-scrollbar,
+.main-content::-webkit-scrollbar,
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.main-content::-webkit-scrollbar-track,
+.modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.main-content::-webkit-scrollbar-thumb,
+.modal-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+.main-content::-webkit-scrollbar-thumb:hover,
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Prevent layout shift from scrollbar on desktop */
+@media (min-width: 1025px) {
+  html {
+    scrollbar-gutter: stable;
+  }
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Reduced motion preference - respect user preference */
+@media (prefers-reduced-motion: reduce) {
+  .stat-card:hover,
+  .btn:hover,
+  .nav-item:hover,
+  .content-card:hover,
+  .form-card:hover {
+    transform: none !important;
+  }
+}
+</style>
+
+<!-- ===== SIDEBAR REORGANIZATION ===== -->
+<script>
+(function() {
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', reorganizeLayout);
+  } else {
+    reorganizeLayout();
+  }
+  
+  function reorganizeLayout() {
+    console.log('🔄 Reorganizing layout...');
+    
+    // Wait a moment for original content to load
+    setTimeout(() => {
+      reorganizeSidebar();
+      reorganizeDashboard();
+      loadSavedStates();
+    }, 500);
+  }
+  
+  function reorganizeSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    if (!sidebar) return;
+    
+    // Get all original sidebar content
+    const sidebarHeader = sidebar.querySelector('.sidebar-header');
+    const classSwitcher = sidebar.querySelector('.class-switcher');
+    const sidebarNav = sidebar.querySelector('.sidebar-nav');
+    const allSidebarStats = sidebar.querySelectorAll('.sidebar-stats');
+    const allProTips = sidebar.querySelectorAll('.pro-tip');
+    const challengesSection = sidebar.querySelector('.challenges-section');
+    const themeSelector = sidebar.querySelector('select.theme-selector');
+    const logoutBtn = sidebar.querySelector('.logout-btn');
+    
+    // Separate specific sections
+    let classStats = null;
+    let heatmapSection = null;
+    let toolsSection = null;
+    let engagementSection = null;
+    
+    allSidebarStats.forEach(stat => {
+      if (stat.querySelector('h3')?.textContent.includes('Class Stats')) {
+        classStats = stat.cloneNode(true);
+      } else if (stat.querySelector('h3')?.textContent.includes('Engagement Heatmap')) {
+        heatmapSection = stat.cloneNode(true);
+      } else if (stat.querySelector('h3')?.textContent.includes('Sidebar Tools')) {
+        toolsSection = stat.cloneNode(true);
+      } else {
+        engagementSection = stat.cloneNode(true);
+      }
+    });
+    
+    // Separate pro tips
+    const proTips = [];
+    const celebrationTip = sidebar.querySelector('#celebrationProTip');
+    const regularTips = [];
+    
+    allProTips.forEach(tip => {
+      if (tip.id === 'celebrationProTip') {
+        celebrationTip?.remove(); // Will be handled separately
+      } else {
+        regularTips.push(tip.cloneNode(true));
+      }
+    });
+    
+    // Clear sidebar
+    sidebar.innerHTML = '';
+    
+    // Add header and class switcher
+    if (sidebarHeader) sidebar.appendChild(sidebarHeader.cloneNode(true));
+    if (classSwitcher) sidebar.appendChild(classSwitcher.cloneNode(true));
+    
+    // SECTION 1: Navigation
+    const navSection = document.createElement('div');
+    navSection.className = 'sidebar-section';
+    navSection.setAttribute('data-section', 'nav');
+    navSection.innerHTML = `
+      <div class="section-header" onclick="toggleSection('sidebar-nav-section')">
+        <h3><span>📋</span> Main Navigation</h3>
+        <span class="collapse-icon" id="sidebar-nav-section-icon">▼</span>
+      </div>
+      <div class="section-content" id="sidebar-nav-section"></div>
+    `;
+    if (sidebarNav) navSection.querySelector('.section-content').appendChild(sidebarNav.cloneNode(true));
+    sidebar.appendChild(navSection);
+    
+    // SECTION 2: Classroom Tools & Challenges
+    const toolsNav = document.createElement('div');
+    toolsNav.className = 'sidebar-section';
+    toolsNav.setAttribute('data-section', 'tools');
+    toolsNav.innerHTML = `
+      <div class="section-header" onclick="toggleSection('sidebar-tools-section')">
+        <h3><span>🛠️</span> Classroom Tools</h3>
+        <span class="collapse-icon" id="sidebar-tools-section-icon">▼</span>
+      </div>
+      <div class="section-content" id="sidebar-tools-section"></div>
+    `;
+    const toolsContent = toolsNav.querySelector('.section-content');
+    if (toolsSection) toolsContent.appendChild(toolsSection);
+    if (challengesSection) toolsContent.appendChild(challengesSection.cloneNode(true));
+    if (engagementSection) toolsContent.appendChild(engagementSection);
+    sidebar.appendChild(toolsNav);
+    
+    // SECTION 3: Stats & Analytics
+    const statsSection = document.createElement('div');
+    statsSection.className = 'sidebar-section';
+    statsSection.setAttribute('data-section', 'stats');
+    statsSection.innerHTML = `
+      <div class="section-header" onclick="toggleSection('sidebar-stats-section')">
+        <h3><span>📊</span> Stats & Analytics</h3>
+        <span class="collapse-icon" id="sidebar-stats-section-icon">▼</span>
+      </div>
+      <div class="section-content" id="sidebar-stats-section"></div>
+    `;
+    const statsContent = statsSection.querySelector('.section-content');
+    
+    // Add Class Stats (neatly formatted)
+    if (classStats) {
+      const statsClone = classStats.cloneNode(true);
+      statsContent.appendChild(statsClone);
+    }
+    
+    // Add Heatmap (only once)
+    if (heatmapSection) {
+      statsContent.appendChild(heatmapSection);
+    }
+    
+    // Add theme selector
+    if (themeSelector) {
+      const themeWrapper = document.createElement('div');
+      themeWrapper.style.marginTop = '16px';
+      themeWrapper.appendChild(themeSelector.cloneNode(true));
+      statsContent.appendChild(themeWrapper);
+    }
+    
+    sidebar.appendChild(statsSection);
+    
+    // SECTION 4: Pro Tips
+    if (regularTips.length > 0 || celebrationTip) {
+      const tipsSection = document.createElement('div');
+      tipsSection.className = 'sidebar-section';
+      tipsSection.setAttribute('data-section', 'tips');
+      tipsSection.innerHTML = `
+        <div class="section-header" onclick="toggleSection('sidebar-tips-section')">
+          <h3><span>💡</span> Pro Tips</h3>
+          <span class="collapse-icon" id="sidebar-tips-section-icon">▼</span>
+        </div>
+        <div class="section-content" id="sidebar-tips-section"></div>
+      `;
+      const tipsContent = tipsSection.querySelector('.section-content');
+      
+      regularTips.forEach(tip => tipsContent.appendChild(tip));
+      if (celebrationTip) {
+        const celebrationClone = celebrationTip.cloneNode(true);
+        celebrationClone.style.display = 'block';
+        tipsContent.appendChild(celebrationClone);
+      }
+      
+      sidebar.appendChild(tipsSection);
+    }
+    
+    // SECTION 5: Account
+    const accountSection = document.createElement('div');
+    accountSection.className = 'sidebar-section';
+    accountSection.setAttribute('data-section', 'account');
+    accountSection.innerHTML = `
+      <div class="section-header" onclick="toggleSection('sidebar-account-section')">
+        <h3><span>👤</span> Account</h3>
+        <span class="collapse-icon" id="sidebar-account-section-icon">▼</span>
+      </div>
+      <div class="section-content" id="sidebar-account-section"></div>
+    `;
+    const accountContent = accountSection.querySelector('.section-content');
+    
+    if (logoutBtn) {
+      const logoutWrapper = document.createElement('div');
+      logoutWrapper.style.padding = '8px 0';
+      logoutWrapper.appendChild(logoutBtn.cloneNode(true));
+      accountContent.appendChild(logoutWrapper);
+    }
+    
+    sidebar.appendChild(accountSection);
+  }
+  
+  function reorganizeDashboard() {
+    const dashboard = document.getElementById('dashboard');
+    if (!dashboard) return;
+    
+    const quickStats = dashboard.querySelector('.quick-stats');
+    const proTips = dashboard.querySelectorAll('.pro-tip');
+    const teacherToolkit = dashboard.querySelector('.content-card:has(h2:contains("Teacher Toolkit"))');
+    const formsSection = dashboard.querySelector('.forms-section');
+    const contentSection = dashboard.querySelector('.content-section');
+    const streakChain = dashboard.querySelector('.streak-chain-container');
+    
+    // Clear dashboard but keep quick stats
+    dashboard.innerHTML = '';
+    if (quickStats) dashboard.appendChild(quickStats.cloneNode(true));
+    
+    // Section 1: Overview
+    const overviewSection = createDashboardSection('overview', '📊', 'Class Overview');
+    dashboard.appendChild(overviewSection);
+    
+    // Section 2: Teacher Tools
+    const toolsSection = createDashboardSection('tools', '🛠️', 'Teacher Toolkit');
+    if (teacherToolkit) toolsSection.querySelector('.section-content').appendChild(teacherToolkit.cloneNode(true));
+    dashboard.appendChild(toolsSection);
+    
+    // Section 3: Content Management
+    const contentManagement = createDashboardSection('content', '📚', 'Content Management');
+    const contentDiv = contentManagement.querySelector('.section-content');
+    if (formsSection) contentDiv.appendChild(formsSection.cloneNode(true));
+    if (contentSection) contentDiv.appendChild(contentSection.cloneNode(true));
+    dashboard.appendChild(contentManagement);
+    
+    // Section 4: Analytics
+    const analyticsSection = createDashboardSection('analytics', '📈', 'Analytics');
+    if (streakChain) analyticsSection.querySelector('.section-content').appendChild(streakChain.cloneNode(true));
+    dashboard.appendChild(analyticsSection);
+    
+    // Add footer
+    const footer = dashboard.querySelector('.footer');
+    if (footer) dashboard.appendChild(footer.cloneNode(true));
+  }
+  
+  function createDashboardSection(id, icon, title) {
+    const section = document.createElement('div');
+    section.className = 'dashboard-section';
+    section.innerHTML = `
+      <div class="section-header" data-section="${id}" onclick="toggleSection('dashboard-${id}-section')">
+        <h2><span>${icon}</span> ${title}</h2>
+        <span class="collapse-icon" id="dashboard-${id}-section-icon">▼</span>
+      </div>
+      <div class="section-content" id="dashboard-${id}-section"></div>
+    `;
+    return section;
+  }
+  
+  // Toggle function for sections
+  window.toggleSection = function(sectionId) {
+    const content = document.getElementById(sectionId);
+    const icon = document.getElementById(sectionId + '-icon');
+    const header = icon?.closest('.section-header');
+    
+    if (content) {
+      content.classList.toggle('collapsed');
+      if (icon) {
+        icon.style.transform = content.classList.contains('collapsed') ? 'rotate(-90deg)' : 'rotate(0)';
+      }
+      if (header) {
+        header.classList.toggle('collapsed', content.classList.contains('collapsed'));
+      }
+      
+      // Save state
+      try {
+        localStorage.setItem('sidebar-section-' + sectionId, content.classList.contains('collapsed'));
+      } catch (e) {}
+    }
+  };
+  
+  function loadSavedStates() {
+    // Load all saved collapsed states
+    const sections = [
+      'sidebar-nav-section',
+      'sidebar-tools-section', 
+      'sidebar-stats-section',
+      'sidebar-tips-section',
+      'sidebar-account-section',
+      'dashboard-overview-section',
+      'dashboard-tools-section',
+      'dashboard-content-section',
+      'dashboard-analytics-section'
+    ];
+    
+    sections.forEach(sectionId => {
+      try {
+        const saved = localStorage.getItem('sidebar-section-' + sectionId);
+        if (saved === 'true') {
+          const content = document.getElementById(sectionId);
+          const icon = document.getElementById(sectionId + '-icon');
+          if (content) {
+            content.classList.add('collapsed');
+            if (icon) icon.style.transform = 'rotate(-90deg)';
+          }
+        }
+      } catch (e) {}
+    });
+  }
+})();
+
+// ===== FIX MOJIBAKE AND ADD SIMPLE EMOJIS =====
+(function() {
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fixMojibake);
+  } else {
+    fixMojibake();
+  }
+  
+  function fixMojibake() {
+    console.log('🔧 Fixing mojibake characters...');
+    
+    // Common mojibake patterns and their correct emoji replacements
+    const replacements = {
+      // ToolKit mojibakes
+      'ðŸŽ¯': '🎯',
+      'ðŸ¤': '🤝',
+      'âœ…': '✅',
+      'ðŸ“Š': '📊',
+      'ðŸš¨': '🚨',
+      'ðŸ†': '🏆',
+      'ðŸ“': '📝',
+      'ðŸ“Œ': '📌',
+      
+      // Common mojibakes
+      'ðŸ“¢': '📢',
+      'ðŸ“š': '📚',
+      'ðŸ“': '📁',
+      'ðŸ—³️': '🗳️',
+      'ðŸ‘¥': '👥',
+      'ðŸ“ˆ': '📈',
+      'âš™ï¸': '⚙️',
+      'ðŸ“': '📝',
+      'ðŸ“‹': '📋',
+      'ðŸ“Š': '📊',
+      'ðŸ“‰': '📉',
+      'ðŸ“Œ': '📌',
+      'ðŸ“Ž': '📍',
+      'ðŸ“': '🔖',
+      'ðŸ“': '📐',
+      'ðŸ“‘': '📑',
+      'ðŸ“’': '📒',
+      'ðŸ““': '📓',
+      'ðŸ“”': '📔',
+      'ðŸ“•': '📕',
+      'ðŸ“–': '📖',
+      'ðŸ“—': '📗',
+      'ðŸ“˜': '📘',
+      'ðŸ“™': '📙',
+      
+      // Arrows and symbols
+      'â†': '←',
+      'â†’': '→',
+      'â†‘': '↑',
+      'â†“': '↓',
+      'âœ”ï¸': '✔️',
+      'âœ–ï¸': '✖️',
+      'âŒ': '❌',
+      'âœ…': '✅',
+      'âš ï¸': '⚠️',
+      'â„¹ï¸': 'ℹ️',
+      
+      // Additional teacher toolkit mojibakes
+      'ðŸŽ¯': '🎯', // Instant Student Picker
+      'ðŸ¤': '🤝', // Group Generator
+      'ðŸ“Š': '📊', // Class Pulse
+      'ðŸš¨': '🚨', // At-Risk Outreach
+      'ðŸ†': '🏆', // Weekly Wins
+      'ðŸ“': '📝', // Quick Notes
+      'ðŸ“Œ': '📌', // Priority List
+      
+      // Check-in emojis
+      'ðŸ˜Š': '😊',
+      'ðŸ˜': '😐',
+      'ðŸ˜•': '😕',
+      
+      // Numbers
+      'ðŸ‘Ž': '👍',
+      'ðŸ‘': '👎',
+      'ðŸ‘': '👏',
+      'ðŸ™Œ': '🙌',
+      
+      // Time
+      'ðŸ•’': '🕒',
+      'ðŸ•': '🕐',
+      'ðŸ•‘': '🕑',
+      
+      // Miscellaneous
+      'ðŸ”—': '🔔',
+      'ðŸ“³': '📳',
+      'ðŸ“±': '📱',
+      'ðŸ’»': '💻',
+      'ðŸ–¥ï¸': '🖥️',
+      'ðŸ–¨ï¸': '🖨️',
+      'ðŸ“¸': '📸',
+      'ðŸ“º': '📺',
+      'ðŸ“»': '📻',
+      
+      // Weather
+      'â˜€ï¸': '☀️',
+      'â˜ï¸': '☁️',
+      'â˜”ï¸': '☔',
+      'âš¡': '⚡',
+      
+      // Hearts
+      'â¤ï¸': '❤️',
+      'ðŸ’™': '💙',
+      'ðŸ’š': '💚',
+      'ðŸ’›': '💛',
+      'ðŸ’œ': '💜',
+      
+      // Food
+      'ðŸŽ': '🍎',
+      'ðŸŒ': '🍌',
+      'ðŸ“': '🍓',
+      'ðŸ‰': '🍉',
+      'ðŸ”': '🍔',
+      'ðŸ•': '🍕',
+      'ðŸº': '🍺',
+      'ðŸ·': '🍷',
+      
+      // Animals
+      'ðŸ¶': '🐶',
+      'ðŸ±': '🐱',
+      'ðŸ­': '🐭',
+      'ðŸ¹': '🐹',
+      'ðŸ°': '🐰',
+      'ðŸ¦Š': '🦊',
+      'ðŸ¾': '🐾',
+      'ðŸ¦': '🦁',
+      'ðŸ¨': '🐨',
+      'ðŸ¼': '🐼',
+      
+      // Sports
+      'âš½': '⚽',
+      'âš¾': '⚾',
+      'â€': '🏀',
+      'ðŸ€': '🏀',
+      'ðŸ': '🏐',
+      'ðŸˆ': '🏈',
+      'ðŸ‰': '🏉',
+      'ðŸŽ¾': '🎾',
+      'ðŸŽ½': '🎽',
+      'ðŸŽ¯': '🎯',
+      
+      // Flags
+      'ðŸ‡ºðŸ‡¸': '🇺🇸',
+      'ðŸ‡¬ðŸ‡§': '🇬🇧',
+      'ðŸ‡«ðŸ‡·': '🇫🇷',
+      'ðŸ‡©ðŸ‡ª': '🇩🇪',
+      'ðŸ‡¯ðŸ‡µ': '🇯🇵',
+      'ðŸ‡¨ðŸ‡³': '🇨🇳',
+      'ðŸ‡®ðŸ‡¹': '🇮🇹',
+      'ðŸ‡ªðŸ‡¸': '🇪🇸',
+      
+      // Celebration
+      'ðŸŽ‰': '🎉',
+      'ðŸŽŠ': '🎊',
+      'ðŸŽˆ': '🎈',
+      'ðŸŽ': '🎁',
+      'ðŸŽ€': '🎀',
+      'ðŸŽƒ': '🎃',
+      'ðŸŽ„': '🎄',
+      'ðŸŽ…': '🎅',
+      'ðŸŽ†': '🎆',
+      'ðŸŽ‡': '🎇',
+      'ðŸŽŒ': '🎌',
+      'ðŸŽ': '🎍',
+      'ðŸŽŽ': '🎎',
+      'ðŸŽ': '🎏',
+      'ðŸŽ': '🎐',
+      'ðŸŽ‘': '🎑',
+      'ðŸŽ’': '🎒',
+      'ðŸŽ“': '🎓',
+      
+      // Music
+      'ðŸŽ¶': '🎶',
+      'ðŸŽµ': '🎵',
+      'ðŸŽ¤': '🎤',
+      'ðŸŽ§': '🎧',
+      'ðŸŽ¨': '🎨',
+      'ðŸŽ­': '🎭',
+      'ðŸŽ®': '🎮',
+      'ðŸŽ¯': '🎯',
+      'ðŸŽ°': '🎰',
+      'ðŸŽ±': '🎱',
+      'ðŸŽ²': '🎲',
+      'ðŸŽ³': '🎳',
+      'ðŸŽ´': '🎴',
+      'ðŸŽµ': '🎵',
+      'ðŸŽ¶': '🎶',
+      
+      // Travel
+      'âœˆï¸': '✈️',
+      'ðŸš—': '🚗',
+      'ðŸš²': '🚲',
+      'ðŸš…': '🚅',
+      'ðŸšˆ': '🚈',
+      'ðŸš': '🚐',
+      'ðŸš‘': '🚑',
+      'ðŸš’': '🚒',
+      'ðŸš“': '🚓',
+      'ðŸš”': '🚔',
+      'ðŸš•': '🚕',
+      'ðŸš–': '🚖',
+      'ðŸš˜': '🚘',
+      'ðŸš™': '🚙',
+      'ðŸšš': '🚚',
+      'ðŸš›': '🚛',
+      'ðŸšœ': '🚜',
+      
+      // Moon phases
+      'ðŸŒ‘': '🌑',
+      'ðŸŒ’': '🌒',
+      'ðŸŒ“': '🌓',
+      'ðŸŒ”': '🌔',
+      'ðŸŒ•': '🌕',
+      'ðŸŒ–': '🌖',
+      'ðŸŒ—': '🌗',
+      'ðŸŒ˜': '🌘',
+      'ðŸŒ™': '🌙',
+      'ðŸŒš': '🌚',
+      'ðŸŒ›': '🌛',
+      'ðŸŒœ': '🌜',
+      
+      // Stars
+      'â­': '⭐',
+      'ðŸŒŸ': '🌟',
+      'ðŸŒ ': '🌠',
+      'ðŸŒŒ': '🌌',
+      
+      // Nature
+      'ðŸŒ¿': '🌿',
+      'ðŸ‚': '🍂',
+      'ðŸƒ': '🍃',
+      'ðŸ„': '🍄',
+      'ðŸŒº': '🌺',
+      'ðŸŒ»': '🌻',
+      'ðŸŒ¼': '🌼',
+      'ðŸŒ½': '🌽',
+      'ðŸŒ¾': '🌾',
+      
+      // Faces
+      'ðŸ˜€': '😀',
+      'ðŸ˜ƒ': '😃',
+      'ðŸ˜„': '😄',
+      'ðŸ˜†': '😆',
+      'ðŸ˜‰': '😉',
+      'ðŸ˜Š': '😊',
+      'ðŸ˜‹': '😋',
+      'ðŸ˜Œ': '😌',
+      'ðŸ˜': '😍',
+      'ðŸ˜Ž': '😎',
+      'ðŸ˜': '😏',
+      'ðŸ˜': '😐',
+      'ðŸ˜‘': '😑',
+      'ðŸ˜’': '😒',
+      'ðŸ˜“': '😓',
+      'ðŸ˜”': '😔',
+      'ðŸ˜•': '😕',
+      'ðŸ˜–': '😖',
+      'ðŸ˜—': '😗',
+      'ðŸ˜˜': '😘',
+      'ðŸ˜™': '😙',
+      'ðŸ˜š': '😚',
+      'ðŸ˜›': '😛',
+      'ðŸ˜œ': '😜',
+      'ðŸ˜': '😝',
+      'ðŸ˜ž': '😞',
+      'ðŸ˜Ÿ': '😟',
+      'ðŸ˜ ': '😠',
+      'ðŸ˜¡': '😡',
+      'ðŸ˜¢': '😢',
+      'ðŸ˜£': '😣',
+      'ðŸ˜¤': '😤',
+      'ðŸ˜¥': '😥',
+      'ðŸ˜¦': '😦',
+      'ðŸ˜§': '😧',
+      'ðŸ˜¨': '😨',
+      'ðŸ˜©': '😩',
+      'ðŸ˜ª': '😪',
+      'ðŸ˜«': '😫',
+      'ðŸ˜¬': '😬',
+      'ðŸ˜­': '😭',
+      'ðŸ˜®': '😮',
+      'ðŸ˜¯': '😯',
+      'ðŸ˜°': '😰',
+      'ðŸ˜±': '😱',
+      'ðŸ˜²': '😲',
+      'ðŸ˜³': '😳',
+      'ðŸ˜´': '😴',
+      'ðŸ˜µ': '😵',
+      'ðŸ˜¶': '😶',
+      'ðŸ˜·': '😷',
+      'ðŸ˜¸': '😸',
+      'ðŸ˜¹': '😹',
+      'ðŸ˜º': '😺',
+      'ðŸ˜»': '😻',
+      'ðŸ˜¼': '😼',
+      'ðŸ˜½': '😽',
+      'ðŸ˜¾': '😾',
+      'ðŸ˜¿': '😿',
+      'ðŸ™€': '🙀',
+      'ðŸ™': '🙁',
+      'ðŸ™‚': '🙂',
+      'ðŸ™ƒ': '🙃',
+      'ðŸ™„': '🙄',
+      'ðŸ™…': '🙅',
+      'ðŸ™†': '🙆',
+      'ðŸ™‡': '🙇',
+      'ðŸ™ˆ': '🙈',
+      'ðŸ™‰': '🙉',
+      'ðŸ™Š': '🙊',
+      'ðŸ™‹': '🙋',
+      'ðŸ™Œ': '🙌',
+      'ðŸ™': '🙍',
+      'ðŸ™Ž': '🙎',
+      'ðŸ™': '🙏'
+    };
+    
+    // Function to replace text in an element
+    function replaceTextInElement(element) {
+      if (element.nodeType === Node.TEXT_NODE) {
+        let text = element.nodeValue;
+        let modified = false;
+        
+        // Replace each mojibake pattern
+        for (const [bad, good] of Object.entries(replacements)) {
+          if (text.includes(bad)) {
+            text = text.split(bad).join(good);
+            modified = true;
+          }
+        }
+        
+        if (modified) {
+          element.nodeValue = text;
+        }
+      } else if (element.nodeType === Node.ELEMENT_NODE && 
+                 !['SCRIPT', 'STYLE', 'NOSCRIPT', 'IFRAME', 'CODE', 'PRE'].includes(element.tagName)) {
+        // Process child nodes
+        element.childNodes.forEach(child => replaceTextInElement(child));
+        
+        // Also check attributes that might contain text
+        if (element.placeholder) {
+          for (const [bad, good] of Object.entries(replacements)) {
+            if (element.placeholder.includes(bad)) {
+              element.placeholder = element.placeholder.split(bad).join(good);
+            }
+          }
+        }
+        
+        if (element.value && element.tagName === 'INPUT' && element.type === 'text') {
+          for (const [bad, good] of Object.entries(replacements)) {
+            if (element.value.includes(bad)) {
+              element.value = element.value.split(bad).join(good);
+            }
+          }
+        }
+      }
+    }
+    
+    // Start from body
+    replaceTextInElement(document.body);
+    
+    // Also fix title
+    if (document.title) {
+      for (const [bad, good] of Object.entries(replacements)) {
+        if (document.title.includes(bad)) {
+          document.title = document.title.split(bad).join(good);
+        }
+      }
+    }
+    
+    console.log('✅ Mojibake fixed!');
+    
+    // Add mutation observer for dynamically added content
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach(mutation => {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach(node => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              replaceTextInElement(node);
+            }
+          });
+        }
+      });
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+})();
+
+</script>
 </body>
 </html>
+
 
 
