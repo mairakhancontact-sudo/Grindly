@@ -5,7 +5,7 @@
     <title>Grindly | Quest System - EPIC EDITION</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <style>
-        /* ===== QUEST SYSTEM STYLES - FIXED TEXT DISPLAY ===== */
+        /* ===== QUEST SYSTEM STYLES - FIXED MOBILE LOADING ===== */
         * {
             margin: 0;
             padding: 0;
@@ -683,7 +683,7 @@
             align-items: flex-start;
             gap: var(--space-md);
             margin-bottom: var(--space-sm);
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
         }
 
         .quest-icon {
@@ -700,7 +700,7 @@
 
         .quest-info {
             flex: 1;
-            min-width: 0; /* Allows flex item to shrink below content size */
+            min-width: 200px;
         }
 
         .quest-name {
@@ -858,21 +858,41 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
+        /* Loading Animation - FIXED for mobile */
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--rpg-gold);
+            font-size: 1.2rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            margin: 20px 0;
+            animation: loadingPulse 1.5s infinite;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: loadingDots 1.5s infinite;
+        }
+
+        @keyframes loadingDots {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+        }
+
+        @keyframes loadingPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 60px;
+            padding: 60px 20px;
             color: var(--text-muted);
             background: rgba(0,0,0,0.3);
             border-radius: 30px;
-        }
-
-        /* Loading Animation */
-        .loading {
-            text-align: center;
-            padding: 60px;
-            color: var(--rpg-gold);
-            font-size: 1.2rem;
         }
 
         @keyframes spin {
@@ -890,17 +910,10 @@
                 grid-template-columns: repeat(2, 1fr);
             }
             
-            .quest-description,
-            .quest-rewards,
-            .quest-progress,
-            .quest-actions {
-                padding-left: 0;
-            }
-            
             .game-master-panel {
                 bottom: 10px;
                 right: 10px;
-                max-width: 280px;
+                max-width: 250px;
             }
             
             .category-badge {
@@ -934,6 +947,10 @@
             .quest-meta {
                 width: 100%;
             }
+            
+            .quest-info {
+                min-width: 100%;
+            }
         }
 
         /* Small mobile optimization */
@@ -959,7 +976,7 @@
             }
             
             .quest-name {
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
         }
 
@@ -1059,7 +1076,7 @@
     <div id="achievementContainer"></div>
 
     <script>
-        // ===== QUEST SYSTEM WITH 5 NEW COOL FEATURES =====
+        // ===== QUEST SYSTEM WITH 5 NEW COOL FEATURES - FIXED MOBILE LOADING =====
         (function() {
             console.log("🎮 Quest System loaded with 5 New Features");
 
@@ -1415,7 +1432,9 @@
                     if (data) {
                         return JSON.parse(data);
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.warn("Failed to load study data:", e);
+                }
                 return { studyData: { streak: 0, totalStudyHours: 0, studySessions: [], dailyStats: [] }, tasks: [] };
             }
 
@@ -1425,7 +1444,9 @@
                     if (saved) {
                         return JSON.parse(saved);
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.warn("Failed to load RPG data:", e);
+                }
                 
                 return {
                     level: 1, xp: 0, xpToNextLevel: 100, totalXP: 0,
@@ -1464,7 +1485,11 @@
             }
 
             function saveRpgData(data) {
-                localStorage.setItem(RPG_STORAGE_KEY, JSON.stringify(data));
+                try {
+                    localStorage.setItem(RPG_STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.warn("Failed to save RPG data:", e);
+                }
             }
 
             function getWeekStart() {
@@ -1487,12 +1512,20 @@
                 
                 const focusSessions = studyData.studySessions?.filter(s => {
                     if (!s?.date) return false;
-                    return new Date(s.date).toDateString() === today && (s.hours || 0) >= 0.4;
+                    try {
+                        return new Date(s.date).toDateString() === today && (s.hours || 0) >= 0.4;
+                    } catch {
+                        return false;
+                    }
                 }).length || 0;
                 
                 const todayTasks = tasks.filter(t => {
                     if (!t?.completed || !t?.completedAt) return false;
-                    return new Date(t.completedAt).toDateString() === today;
+                    try {
+                        return new Date(t.completedAt).toDateString() === today;
+                    } catch {
+                        return false;
+                    }
                 }).length || 0;
                 
                 const weekAgo = new Date();
@@ -1500,14 +1533,20 @@
                 
                 const weeklyTasks = tasks.filter(t => {
                     if (!t?.completed || !t?.completedAt) return false;
-                    return new Date(t.completedAt) >= weekAgo;
+                    try {
+                        return new Date(t.completedAt) >= weekAgo;
+                    } catch {
+                        return false;
+                    }
                 }).length || 0;
                 
                 const weeklyHours = studyData.dailyStats?.reduce((sum, day) => {
                     if (!day?.date) return sum;
-                    if (new Date(day.date) >= weekAgo) {
-                        return sum + (day.hours || 0);
-                    }
+                    try {
+                        if (new Date(day.date) >= weekAgo) {
+                            return sum + (day.hours || 0);
+                        }
+                    } catch {}
                     return sum;
                 }, 0) || 0;
                 
@@ -1561,6 +1600,8 @@
                 
                 data.dailyQuests.forEach(quest => {
                     if (!quest.completed && !quest.claimed) {
+                        const oldProgress = quest.progress;
+                        
                         if (quest.id === 'daily_focus') quest.progress = progress.focusSessions;
                         else if (quest.id === 'daily_tasks') quest.progress = progress.todayTasks;
                         else if (quest.id === 'daily_streak') quest.progress = progress.streakMaintained;
@@ -1581,6 +1622,8 @@
                 
                 data.weeklyQuests.forEach(quest => {
                     if (!quest.completed && !quest.claimed) {
+                        const oldProgress = quest.progress;
+                        
                         if (quest.id === 'weekly_streak') quest.progress = progress.streak;
                         else if (quest.id === 'weekly_tasks') quest.progress = progress.weeklyTasks;
                         else if (quest.id === 'weekly_hours') quest.progress = Math.floor(progress.weeklyHours);
@@ -1599,6 +1642,8 @@
                 
                 data.legendaryQuests.forEach(quest => {
                     if (!quest.completed && !quest.claimed) {
+                        const oldProgress = quest.progress;
+                        
                         if (quest.id === 'legend_first') quest.progress = progress.questsCompleted >= 1 ? 1 : 0;
                         else if (quest.id === 'legend_10') quest.progress = progress.questsCompleted >= 10 ? 1 : 0;
                         else if (quest.id === 'legend_50') quest.progress = progress.questsCompleted >= 50 ? 1 : 0;
@@ -1878,246 +1923,256 @@
             }
 
             function render() {
-                const { data } = updateQuests();
-                const progress = collectProgress();
-                const events = checkEvents();
-                const pet = loadPetData();
-                const boss = loadBossData();
-                const content = document.getElementById('questContent');
-                
-                const xpPercent = (data.xp / data.xpToNextLevel) * 100;
-                const healthPercent = (data.health / data.maxHealth) * 100;
-                const manaPercent = (data.mana / data.maxMana) * 100;
-                const bossHealthPercent = boss.defeated ? 100 : (boss.health / boss.maxHealth) * 100;
-                const petLevelPercent = (pet.xp / pet.xpToNextLevel) * 100;
-                
-                const currentTitle = GAME_TITLES.find(t => t.level <= data.level) || GAME_TITLES[0];
-                const streakFlame = getStreakFlame(progress.streak);
-                const petMessage = getPetMessage(pet);
-                
-                content.innerHTML = `
-                    <!-- Hero Section with Streak Flame -->
-                    <div class="hero-section">
-                        <div class="player-card">
-                            <div class="player-avatar">${currentTitle.icon}</div>
-                            <div class="player-name">${localStorage.getItem('studentName') || 'Adventurer'}</div>
-                            <div class="player-title">${currentTitle.icon} ${data.currentTitle} (Lv.${data.level})</div>
-                            <div style="margin-top: var(--space-md); display: flex; align-items: center; justify-content: center; gap: var(--space-xs); flex-wrap: wrap;">
-                                <span class="streak-flame">${streakFlame.split(' ')[0]}</span>
-                                <span class="streak-counter">${progress.streak} day streak</span>
-                            </div>
-                        </div>
-                        
-                        <div class="resource-bars">
-                            <div class="resource-item">
-                                <div class="resource-header">
-                                    <span>✨ XP to Level ${data.level + 1}</span>
-                                    <span>${data.xp}/${data.xpToNextLevel}</span>
-                                </div>
-                                <div class="resource-track">
-                                    <div class="resource-fill xp" style="width: ${xpPercent}%;"></div>
+                try {
+                    const { data } = updateQuests();
+                    const progress = collectProgress();
+                    const events = checkEvents();
+                    const pet = loadPetData();
+                    const boss = loadBossData();
+                    const content = document.getElementById('questContent');
+                    
+                    if (!content) return;
+                    
+                    const xpPercent = (data.xp / data.xpToNextLevel) * 100;
+                    const healthPercent = (data.health / data.maxHealth) * 100;
+                    const manaPercent = (data.mana / data.maxMana) * 100;
+                    const bossHealthPercent = boss.defeated ? 100 : (boss.health / boss.maxHealth) * 100;
+                    const petLevelPercent = (pet.xp / pet.xpToNextLevel) * 100;
+                    
+                    const currentTitle = GAME_TITLES.find(t => t.level <= data.level) || GAME_TITLES[0];
+                    const streakFlame = getStreakFlame(progress.streak);
+                    const petMessage = getPetMessage(pet);
+                    
+                    content.innerHTML = `
+                        <!-- Hero Section with Streak Flame -->
+                        <div class="hero-section">
+                            <div class="player-card">
+                                <div class="player-avatar">${currentTitle.icon}</div>
+                                <div class="player-name">${localStorage.getItem('studentName') || 'Adventurer'}</div>
+                                <div class="player-title">${currentTitle.icon} ${data.currentTitle} (Lv.${data.level})</div>
+                                <div style="margin-top: var(--space-md); display: flex; align-items: center; justify-content: center; gap: var(--space-xs); flex-wrap: wrap;">
+                                    <span class="streak-flame">${streakFlame.split(' ')[0]}</span>
+                                    <span class="streak-counter">${progress.streak} day streak</span>
                                 </div>
                             </div>
                             
-                            <div class="resource-item">
-                                <div class="resource-header">
-                                    <span>❤️ Health</span>
-                                    <span>${Math.round(data.health)}/${Math.round(data.maxHealth)}</span>
+                            <div class="resource-bars">
+                                <div class="resource-item">
+                                    <div class="resource-header">
+                                        <span>✨ XP to Level ${data.level + 1}</span>
+                                        <span>${data.xp}/${data.xpToNextLevel}</span>
+                                    </div>
+                                    <div class="resource-track">
+                                        <div class="resource-fill xp" style="width: ${xpPercent}%;"></div>
+                                    </div>
                                 </div>
-                                <div class="resource-track">
-                                    <div class="resource-fill health" style="width: ${healthPercent}%;"></div>
+                                
+                                <div class="resource-item">
+                                    <div class="resource-header">
+                                        <span>❤️ Health</span>
+                                        <span>${Math.round(data.health)}/${Math.round(data.maxHealth)}</span>
+                                    </div>
+                                    <div class="resource-track">
+                                        <div class="resource-fill health" style="width: ${healthPercent}%;"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="resource-item">
+                                    <div class="resource-header">
+                                        <span>💙 Mana</span>
+                                        <span>${Math.round(data.mana)}/${Math.round(data.maxMana)}</span>
+                                    </div>
+                                    <div class="resource-track">
+                                        <div class="resource-fill mana" style="width: ${manaPercent}%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stats Cards -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">💪</div>
+                                <div class="stat-content">
+                                    <div class="stat-label">Strength</div>
+                                    <div class="stat-value">${data.strength}</div>
+                                    <div class="stat-bonus">${progress.completedTasks} tasks</div>
                                 </div>
                             </div>
                             
-                            <div class="resource-item">
-                                <div class="resource-header">
-                                    <span>💙 Mana</span>
-                                    <span>${Math.round(data.mana)}/${Math.round(data.maxMana)}</span>
+                            <div class="stat-card">
+                                <div class="stat-icon">🧠</div>
+                                <div class="stat-content">
+                                    <div class="stat-label">Intelligence</div>
+                                    <div class="stat-value">${data.intelligence}</div>
+                                    <div class="stat-bonus">${Math.round(progress.totalHours)} hrs</div>
                                 </div>
-                                <div class="resource-track">
-                                    <div class="resource-fill mana" style="width: ${manaPercent}%;"></div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">📚</div>
+                                <div class="stat-content">
+                                    <div class="stat-label">Wisdom</div>
+                                    <div class="stat-value">${data.wisdom}</div>
+                                    <div class="stat-bonus">${progress.streak} day streak</div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Stats Cards -->
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon">💪</div>
-                            <div class="stat-content">
-                                <div class="stat-label">Strength</div>
-                                <div class="stat-value">${data.strength}</div>
-                                <div class="stat-bonus">${progress.completedTasks} tasks</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">🧠</div>
-                            <div class="stat-content">
-                                <div class="stat-label">Intelligence</div>
-                                <div class="stat-value">${data.intelligence}</div>
-                                <div class="stat-bonus">${Math.round(progress.totalHours)} hrs</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">📚</div>
-                            <div class="stat-content">
-                                <div class="stat-label">Wisdom</div>
-                                <div class="stat-value">${data.wisdom}</div>
-                                <div class="stat-bonus">${progress.streak} day streak</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">🍀</div>
-                            <div class="stat-content">
-                                <div class="stat-label">Luck</div>
-                                <div class="stat-value">${data.luck}</div>
-                                <div class="stat-bonus">${data.perfectDays} perfect days</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Quick Actions -->
-                    <div class="quick-actions">
-                        <button class="action-btn" onclick="window.rollDice()" ${data.mana < 5 ? 'disabled' : ''}>
-                            🎲 Roll Dice (5 Mana)
-                        </button>
-                        <button class="action-btn" onclick="window.gmClick()">
-                            🧙 Ask Game Master
-                        </button>
-                        <button class="action-btn" onclick="window.location.reload()">
-                            🔄 Refresh
-                        </button>
-                    </div>
-                    
-                    <!-- FEATURE 3: PET COMPANION -->
-                    <div class="pet-section">
-                        <div class="pet-container">
-                            <div class="pet-avatar" onclick="petInteract()" title="Click to interact!">${pet.type}</div>
-                            <div class="pet-info">
-                                <div class="pet-name">${pet.name} (Lv.${pet.level})</div>
-                                <div class="pet-level-bar">
-                                    <div class="pet-level-fill" style="width: ${petLevelPercent}%;"></div>
-                                </div>
-                                <div class="pet-messages">
-                                    ${petMessage || "Click on your pet!"}
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">🍀</div>
+                                <div class="stat-content">
+                                    <div class="stat-label">Luck</div>
+                                    <div class="stat-value">${data.luck}</div>
+                                    <div class="stat-bonus">${data.perfectDays} perfect days</div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- FEATURE 4: BOSS BATTLE -->
-                    <div class="boss-section">
-                        <div class="boss-header">
-                            <div class="boss-icon">${boss.defeated ? '👑' : '👾'}</div>
-                            <div>
-                                <div class="boss-title">${boss.defeated ? 'BOSS DEFEATED!' : `BOSS LEVEL ${boss.level}`}</div>
-                                <div style="color: var(--text-muted);">Defeat the boss for massive rewards!</div>
-                            </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="quick-actions">
+                            <button class="action-btn" onclick="window.rollDice()" ${data.mana < 5 ? 'disabled' : ''}>
+                                🎲 Roll Dice (5 Mana)
+                            </button>
+                            <button class="action-btn" onclick="window.gmClick()">
+                                🧙 Ask Game Master
+                            </button>
+                            <button class="action-btn" onclick="window.location.reload()">
+                                🔄 Refresh
+                            </button>
                         </div>
                         
-                        <div class="boss-health-bar">
-                            <div class="boss-health-fill" style="width: ${bossHealthPercent}%;"></div>
-                        </div>
-                        
-                        <div class="boss-stats">
-                            <div class="boss-stat">
-                                <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.defeated ? '0' : boss.health}</div>
-                                <div style="font-size: 0.8rem;">Health Remaining</div>
-                            </div>
-                            <div class="boss-stat">
-                                <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.rewards[boss.currentReward]}</div>
-                                <div style="font-size: 0.8rem;">Reward XP</div>
-                            </div>
-                            <div class="boss-stat">
-                                <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.level}</div>
-                                <div style="font-size: 0.8rem;">Boss Level</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- FEATURE 5: SPECIAL EVENTS -->
-                    ${events.active.length > 0 ? `
-                    <div class="events-section">
-                        <div class="category-header">
-                            <div class="category-icon">🎉</div>
-                            <div class="category-title">ACTIVE EVENTS</div>
-                            <div class="category-badge">LIVE NOW</div>
-                        </div>
-                        <div class="events-grid">
-                            ${events.active.map(event => {
-                                const timeLeft = Math.max(0, Math.floor((event.endTime - Date.now()) / 1000 / 60));
-                                const hours = Math.floor(timeLeft / 60);
-                                const minutes = timeLeft % 60;
-                                return `
-                                    <div class="event-card active">
-                                        <div class="event-timer">${hours}h ${minutes}m left</div>
-                                        <div class="event-icon">${event.icon}</div>
-                                        <div class="event-name">${event.name}</div>
-                                        <div class="event-desc">${event.description}</div>
-                                        <div class="event-reward">${event.reward}</div>
+                        <!-- FEATURE 3: PET COMPANION -->
+                        <div class="pet-section">
+                            <div class="pet-container">
+                                <div class="pet-avatar" onclick="petInteract()" title="Click to interact!">${pet.type}</div>
+                                <div class="pet-info">
+                                    <div class="pet-name">${pet.name} (Lv.${pet.level})</div>
+                                    <div class="pet-level-bar">
+                                        <div class="pet-level-fill" style="width: ${petLevelPercent}%;"></div>
                                     </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-                    ` : ''}
-                    
-                    ${events.upcoming.length > 0 ? `
-                    <div class="events-section">
-                        <div class="category-header">
-                            <div class="category-icon">📅</div>
-                            <div class="category-title">UPCOMING EVENTS</div>
-                        </div>
-                        <div class="events-grid">
-                            ${events.upcoming.slice(0, 2).map(event => {
-                                const timeToStart = Math.max(0, Math.floor((event.startTime - Date.now()) / 1000 / 60 / 60));
-                                return `
-                                    <div class="event-card">
-                                        <div class="event-icon">${event.icon}</div>
-                                        <div class="event-name">${event.name}</div>
-                                        <div class="event-desc">Starts in ${timeToStart}h</div>
-                                        <div class="event-reward">${event.reward}</div>
+                                    <div class="pet-messages">
+                                        ${petMessage || "Click on your pet!"}
                                     </div>
-                                `;
-                            }).join('')}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    ` : ''}
-                    
-                    <!-- Daily Quests -->
-                    <div class="quest-category">
-                        <div class="category-header">
-                            <div class="category-icon">📅</div>
-                            <div class="category-title">Daily Quests</div>
-                            <div class="category-badge">🔥 ${data.dailyStreak} Day Streak</div>
+                        
+                        <!-- FEATURE 4: BOSS BATTLE -->
+                        <div class="boss-section">
+                            <div class="boss-header">
+                                <div class="boss-icon">${boss.defeated ? '👑' : '👾'}</div>
+                                <div>
+                                    <div class="boss-title">${boss.defeated ? 'BOSS DEFEATED!' : `BOSS LEVEL ${boss.level}`}</div>
+                                    <div style="color: var(--text-muted);">Defeat the boss for massive rewards!</div>
+                                </div>
+                            </div>
+                            
+                            <div class="boss-health-bar">
+                                <div class="boss-health-fill" style="width: ${bossHealthPercent}%;"></div>
+                            </div>
+                            
+                            <div class="boss-stats">
+                                <div class="boss-stat">
+                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.defeated ? '0' : boss.health}</div>
+                                    <div style="font-size: 0.8rem;">Health Remaining</div>
+                                </div>
+                                <div class="boss-stat">
+                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.rewards[boss.currentReward]}</div>
+                                    <div style="font-size: 0.8rem;">Reward XP</div>
+                                </div>
+                                <div class="boss-stat">
+                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.level}</div>
+                                    <div style="font-size: 0.8rem;">Boss Level</div>
+                                </div>
+                            </div>
                         </div>
-                        ${renderQuests(data.dailyQuests, 'daily')}
-                    </div>
-                    
-                    <!-- Weekly Quests -->
-                    <div class="quest-category">
-                        <div class="category-header">
-                            <div class="category-icon">📆</div>
-                            <div class="category-title">Weekly Quests</div>
-                            <div class="category-badge">⚔️ Epic Rewards</div>
+                        
+                        <!-- FEATURE 5: SPECIAL EVENTS -->
+                        ${events.active.length > 0 ? `
+                        <div class="events-section">
+                            <div class="category-header">
+                                <div class="category-icon">🎉</div>
+                                <div class="category-title">ACTIVE EVENTS</div>
+                                <div class="category-badge">LIVE NOW</div>
+                            </div>
+                            <div class="events-grid">
+                                ${events.active.map(event => {
+                                    const timeLeft = Math.max(0, Math.floor((event.endTime - Date.now()) / 1000 / 60));
+                                    const hours = Math.floor(timeLeft / 60);
+                                    const minutes = timeLeft % 60;
+                                    return `
+                                        <div class="event-card active">
+                                            <div class="event-timer">${hours}h ${minutes}m left</div>
+                                            <div class="event-icon">${event.icon}</div>
+                                            <div class="event-name">${event.name}</div>
+                                            <div class="event-desc">${event.description}</div>
+                                            <div class="event-reward">${event.reward}</div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
                         </div>
-                        ${renderQuests(data.weeklyQuests, 'weekly')}
-                    </div>
-                    
-                    <!-- Legendary Quests -->
-                    <div class="quest-category">
-                        <div class="category-header">
-                            <div class="category-icon">🌟</div>
-                            <div class="category-title">Legendary Quests</div>
-                            <div class="category-badge">${data.legendaryQuests.filter(q => q.completed).length}/${data.legendaryQuests.length}</div>
+                        ` : ''}
+                        
+                        ${events.upcoming.length > 0 ? `
+                        <div class="events-section">
+                            <div class="category-header">
+                                <div class="category-icon">📅</div>
+                                <div class="category-title">UPCOMING EVENTS</div>
+                            </div>
+                            <div class="events-grid">
+                                ${events.upcoming.slice(0, 2).map(event => {
+                                    const timeToStart = Math.max(0, Math.floor((event.startTime - Date.now()) / 1000 / 60 / 60));
+                                    return `
+                                        <div class="event-card">
+                                            <div class="event-icon">${event.icon}</div>
+                                            <div class="event-name">${event.name}</div>
+                                            <div class="event-desc">Starts in ${timeToStart}h</div>
+                                            <div class="event-reward">${event.reward}</div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
                         </div>
-                        ${renderQuests(data.legendaryQuests, 'legendary')}
-                    </div>
-                `;
+                        ` : ''}
+                        
+                        <!-- Daily Quests -->
+                        <div class="quest-category">
+                            <div class="category-header">
+                                <div class="category-icon">📅</div>
+                                <div class="category-title">Daily Quests</div>
+                                <div class="category-badge">🔥 ${data.dailyStreak} Day Streak</div>
+                            </div>
+                            ${renderQuests(data.dailyQuests, 'daily')}
+                        </div>
+                        
+                        <!-- Weekly Quests -->
+                        <div class="quest-category">
+                            <div class="category-header">
+                                <div class="category-icon">📆</div>
+                                <div class="category-title">Weekly Quests</div>
+                                <div class="category-badge">⚔️ Epic Rewards</div>
+                            </div>
+                            ${renderQuests(data.weeklyQuests, 'weekly')}
+                        </div>
+                        
+                        <!-- Legendary Quests -->
+                        <div class="quest-category">
+                            <div class="category-header">
+                                <div class="category-icon">🌟</div>
+                                <div class="category-title">Legendary Quests</div>
+                                <div class="category-badge">${data.legendaryQuests.filter(q => q.completed).length}/${data.legendaryQuests.length}</div>
+                            </div>
+                            ${renderQuests(data.legendaryQuests, 'legendary')}
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error("Render error:", error);
+                    const content = document.getElementById('questContent');
+                    if (content) {
+                        content.innerHTML = `<div class="empty-state">Error loading quest data. Please refresh.</div>`;
+                    }
+                }
             }
 
             function renderQuests(quests, category) {
@@ -2211,22 +2266,49 @@
                 window.location.href = 'studentmode.html';
             };
 
-            // Initialize
-            render();
-            
+            // Force initial render immediately
+            setTimeout(() => {
+                try {
+                    render();
+                } catch (e) {
+                    console.error("Initial render failed:", e);
+                }
+            }, 100);
+
             // Auto-refresh every 30 seconds
-            setInterval(render, 30000);
+            setInterval(() => {
+                try {
+                    render();
+                } catch (e) {
+                    console.error("Auto-refresh failed:", e);
+                }
+            }, 30000);
             
             // Show initial GM message after 2 seconds
             setTimeout(() => {
-                gmClick();
+                try {
+                    gmClick();
+                } catch (e) {
+                    console.error("GM message failed:", e);
+                }
             }, 2000);
             
             // Check events every minute
             setInterval(() => {
-                checkEvents();
-                render();
+                try {
+                    checkEvents();
+                    render();
+                } catch (e) {
+                    console.error("Event check failed:", e);
+                }
             }, 60000);
+
+            // Add a manual retry for mobile
+            document.addEventListener('touchstart', function() {
+                if (document.getElementById('questContent')?.innerHTML.includes('Loading')) {
+                    setTimeout(render, 500);
+                }
+            }, { once: true });
         })();
     </script>
 </body>
