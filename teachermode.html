@@ -24609,8 +24609,814 @@ console.log("✅ All fixes applied - teachermode.js is now crash-resistant");
 })();
 
 </script>
+  <!-- ===== PRIORITY LIST FEATURE ===== -->
+<style>
+/* Priority List - Same size as other toolkit cards */
+.priority-list-container {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 !important;
+  height: fit-content;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.priority-list-container:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: var(--accent);
+}
+
+.priority-list-container h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.priority-list-container h3::before {
+  content: '📌';
+  font-size: 1.2rem;
+}
+
+/* Input area */
+.priority-input-area {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.priority-input-area input {
+  flex: 1;
+  min-width: 0; /* Prevents input from overflowing */
+  padding: 10px 14px !important;
+  border: 2px solid var(--border) !important;
+  border-radius: 12px !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  font-size: 0.9rem;
+  min-height: 42px;
+  box-sizing: border-box;
+}
+
+.priority-input-area input:focus {
+  border-color: var(--accent) !important;
+  outline: none;
+}
+
+.priority-input-area button {
+  padding: 10px 20px !important;
+  background: var(--accent) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 42px;
+  flex-shrink: 0; /* Prevents button from shrinking */
+  transition: all 0.2s ease;
+}
+
+.priority-input-area button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+}
+
+/* Priority items list */
+.priority-items {
+  max-height: 250px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  padding-right: 4px;
+}
+
+.priority-items::-webkit-scrollbar {
+  width: 4px;
+}
+
+.priority-items::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-radius: 4px;
+}
+
+.priority-items::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+.priority-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg);
+  border-radius: 10px;
+  margin-bottom: 6px;
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.priority-item:hover {
+  border-color: var(--accent);
+  transform: translateX(2px);
+}
+
+.priority-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0; /* Allows text to truncate */
+}
+
+.priority-item-left input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+.priority-item-left span {
+  font-size: 0.9rem;
+  color: var(--text);
+  word-break: break-word;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.priority-item-left span.completed {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.priority-item-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.priority-item:hover .priority-item-actions {
+  opacity: 1;
+}
+
+.priority-item-actions button {
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+.priority-item-actions button:hover {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.priority-item-actions .delete-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+/* Footer with stats - FIXED TO PREVENT OVERFLOW */
+.priority-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+}
+
+.priority-stats {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.priority-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: var(--bg);
+  padding: 4px 10px;
+  border-radius: 30px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  flex-shrink: 1;
+  min-width: fit-content;
+}
+
+.priority-stat span {
+  font-weight: 600;
+  color: var(--accent);
+  margin-left: 2px;
+}
+
+.priority-clear-btn {
+  background: none;
+  border: 1px solid var(--danger);
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--danger);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  max-width: 130px;
+}
+
+.priority-clear-btn:hover:not(:disabled) {
+  background: var(--danger);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.priority-clear-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+/* Empty state */
+.priority-empty {
+  text-align: center;
+  padding: 30px 20px;
+  background: var(--bg);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border: 2px dashed var(--border);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.priority-empty-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  opacity: 0.4;
+}
+
+.priority-empty-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.priority-item {
+  animation: slideIn 0.3s ease;
+}
+
+/* Responsive - for very small screens */
+@media (max-width: 500px) {
+  .priority-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .priority-stats {
+    justify-content: center;
+  }
+  
+  .priority-clear-btn {
+    width: 100%;
+    max-width: none;
+    text-align: center;
+  }
+  
+  .priority-input-area {
+    flex-direction: column;
+  }
+  
+  .priority-input-area button {
+    width: 100%;
+  }
+}
+</style>
+
+<script>
+(function() {
+  // Function to add priority list
+  function addPriorityList() {
+    console.log('📋 Adding Priority List to Toolkit...');
+    
+    // Find all content cards
+    const contentCards = document.querySelectorAll('.content-card');
+    let toolkitCard = null;
+    
+    // Loop through cards to find Teacher Toolkit
+    for (let i = 0; i < contentCards.length; i++) {
+      const card = contentCards[i];
+      const header = card.querySelector('.content-header h2');
+      if (header && header.textContent && header.textContent.includes('Teacher Toolkit')) {
+        toolkitCard = card;
+        break;
+      }
+    }
+    
+    if (!toolkitCard) {
+      console.log('❌ Teacher Toolkit not found - will retry');
+      return false;
+    }
+    
+    // Check if priority list already exists
+    if (document.getElementById('priority-list-feature')) {
+      console.log('✅ Priority List already exists');
+      return true;
+    }
+    
+    // Get the content body
+    const contentBody = toolkitCard.querySelector('.content-body');
+    if (!contentBody) return false;
+    
+    // Find the grid inside content body
+    const grid = contentBody.querySelector('div[style*="display: grid"]');
+    if (!grid) return false;
+    
+    // Create priority list container
+    const priorityDiv = document.createElement('div');
+    priorityDiv.id = 'priority-list-feature';
+    priorityDiv.className = 'priority-list-container';
+    
+    // Add to the end of grid - this will make it same size as other cards
+    grid.appendChild(priorityDiv);
+    
+    // Get class code for storage
+    const classCode = window.currentClassCode || 'default';
+    const storageKey = `teacher_priorities_${classCode}`;
+    
+    // Load saved priorities
+    let priorities = [];
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        priorities = JSON.parse(saved);
+      } else {
+        // Sample data for demo
+        priorities = [
+          { id: '1', text: 'Grade math quizzes', completed: false },
+          { id: '2', text: 'Prepare lesson plan', completed: true },
+          { id: '3', text: 'Email parents', completed: false }
+        ];
+        localStorage.setItem(storageKey, JSON.stringify(priorities));
+      }
+    } catch (e) {
+      priorities = [];
+    }
+    
+    // Save function
+    function savePriorities() {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(priorities));
+      } catch (e) {}
+    }
+    
+    // Render function
+    function render() {
+      const total = priorities.length;
+      const completed = priorities.filter(p => p.completed).length;
+      const pending = total - completed;
+      
+      // Generate items HTML
+      let itemsHtml = '';
+      
+      if (total === 0) {
+        itemsHtml = `
+          <div class="priority-empty">
+            <div class="priority-empty-icon">📋</div>
+            <div class="priority-empty-text">No priorities yet. Add your first task!</div>
+          </div>
+        `;
+      } else {
+        priorities.forEach(p => {
+          itemsHtml += `
+            <div class="priority-item" id="priority-${p.id}">
+              <div class="priority-item-left">
+                <input type="checkbox" ${p.completed ? 'checked' : ''} onchange="window.togglePriority('${p.id}')">
+                <span class="${p.completed ? 'completed' : ''}" title="${escapeHtml(p.text)}">${escapeHtml(p.text)}</span>
+              </div>
+              <div class="priority-item-actions">
+                <button onclick="window.editPriority('${p.id}')" title="Edit">✏️</button>
+                <button class="delete-btn" onclick="window.deletePriority('${p.id}')" title="Delete">🗑️</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+      
+      // Set HTML - FIXED STATS DISPLAY
+      priorityDiv.innerHTML = `
+        <h3>Priority List</h3>
+        
+        <div class="priority-input-area">
+          <input type="text" id="priority-input-field" placeholder="Add a focus item...">
+          <button id="priority-add-btn">Add</button>
+        </div>
+        
+        <div class="priority-items">
+          ${itemsHtml}
+        </div>
+        
+        <div class="priority-footer">
+          <div class="priority-stats">
+            <div class="priority-stat">📋 <span>${total}</span></div>
+            <div class="priority-stat">✅ <span>${completed}</span></div>
+            <div class="priority-stat">⏳ <span>${pending}</span></div>
+          </div>
+          <button class="priority-clear-btn" ${completed === 0 ? 'disabled' : ''} id="priority-clear-btn">
+            Clear Completed
+          </button>
+        </div>
+      `;
+      
+      // Add event listeners
+      const input = document.getElementById('priority-input-field');
+      const addBtn = document.getElementById('priority-add-btn');
+      const clearBtn = document.getElementById('priority-clear-btn');
+      
+      if (input) {
+        input.removeEventListener('keypress', handleInputKeypress);
+        input.addEventListener('keypress', handleInputKeypress);
+      }
+      
+      if (addBtn) {
+        addBtn.removeEventListener('click', handleAddClick);
+        addBtn.addEventListener('click', handleAddClick);
+      }
+      
+      if (clearBtn) {
+        clearBtn.removeEventListener('click', handleClearClick);
+        clearBtn.addEventListener('click', handleClearClick);
+      }
+    }
+    
+    // Event handlers
+    function handleInputKeypress(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const input = document.getElementById('priority-input-field');
+        if (input) addPriority(input.value);
+      }
+    }
+    
+    function handleAddClick() {
+      const input = document.getElementById('priority-input-field');
+      if (input) addPriority(input.value);
+    }
+    
+    function handleClearClick() {
+      const completedCount = priorities.filter(p => p.completed).length;
+      if (completedCount === 0) return;
+      
+      if (confirm(`Clear ${completedCount} completed task${completedCount > 1 ? 's' : ''}?`)) {
+        priorities = priorities.filter(p => !p.completed);
+        savePriorities();
+        render();
+        
+        if (window.showNotification) {
+          window.showNotification(`✅ Cleared ${completedCount} tasks`, 'success');
+        }
+      }
+    }
+    
+    // Helper functions
+    function addPriority(text) {
+      text = text.trim();
+      if (!text) return;
+      
+      priorities.push({
+        id: Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        text: text,
+        completed: false
+      });
+      
+      savePriorities();
+      render();
+      
+      // Clear input
+      const input = document.getElementById('priority-input-field');
+      if (input) input.value = '';
+      
+      if (window.showNotification) {
+        window.showNotification('✅ Priority added', 'success');
+      }
+    }
+    
+    window.togglePriority = function(id) {
+      const item = priorities.find(p => p.id === id);
+      if (item) {
+        item.completed = !item.completed;
+        savePriorities();
+        render();
+      }
+    };
+    
+    window.editPriority = function(id) {
+      const item = priorities.find(p => p.id === id);
+      if (!item) return;
+      
+      const newText = prompt('Edit priority:', item.text);
+      if (newText && newText.trim()) {
+        item.text = newText.trim();
+        savePriorities();
+        render();
+        
+        if (window.showNotification) {
+          window.showNotification('✏️ Priority updated', 'success');
+        }
+      }
+    };
+    
+    window.deletePriority = function(id) {
+      if (!confirm('Delete this priority?')) return;
+      
+      priorities = priorities.filter(p => p.id !== id);
+      savePriorities();
+      render();
+      
+      if (window.showNotification) {
+        window.showNotification('🗑️ Priority deleted', 'info');
+      }
+    };
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // Initial render
+    render();
+    console.log('✅ Priority List added successfully');
+    return true;
+  }
+  
+  // Try multiple times to add the priority list
+  function tryAddPriorityList(attempts = 0) {
+    if (attempts > 20) {
+      console.log('❌ Failed to add Priority List after 20 attempts');
+      return;
+    }
+    
+    const success = addPriorityList();
+    
+    if (!success) {
+      console.log(`⏳ Toolkit not ready, retry ${attempts + 1}/20...`);
+      setTimeout(() => tryAddPriorityList(attempts + 1), 1000);
+    }
+  }
+  
+  // Start trying to add when page loads
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => tryAddPriorityList(), 2000);
+    });
+  } else {
+    setTimeout(() => tryAddPriorityList(), 2000);
+  }
+  
+  // Also try when URL changes or after any dynamic content loads
+  window.addEventListener('load', () => {
+    setTimeout(() => tryAddPriorityList(), 3000);
+  });
+})();
+</script>
+
+
+
+
+<!-- ===== SIMPLE DASHBOARD SECTION BUTTONS ===== -->
+<style>
+/* Simple button bar - sits on top, doesn't change anything else */
+.dashboard-button-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 10px 0;
+  flex-wrap: wrap;
+}
+
+.dashboard-section-btn {
+  padding: 8px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  font-size: 0.9rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dashboard-section-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.dashboard-section-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+/* Hide/show sections - doesn't affect layout */
+.dashboard-content-wrapper {
+  width: 100%;
+}
+
+.dashboard-section-group {
+  width: 100%;
+}
+
+.dashboard-section-group.hidden {
+  display: none;
+}
+</style>
+
+<script>
+(function() {
+  // Wait for dashboard to be ready
+  function initDashboardButtons() {
+    const dashboard = document.getElementById('dashboard');
+    if (!dashboard) return;
+    
+    // Don't add if already added
+    if (document.getElementById('dashboard-button-bar')) return;
+    
+    console.log('Adding dashboard section buttons...');
+    
+    // Create button bar
+    const buttonBar = document.createElement('div');
+    buttonBar.id = 'dashboard-button-bar';
+    buttonBar.className = 'dashboard-button-bar';
+    buttonBar.innerHTML = `
+      <button class="dashboard-section-btn active" data-section="all" onclick="showDashboardSection('all')">
+        <span>📊</span> All
+      </button>
+      <button class="dashboard-section-btn" data-section="stats" onclick="showDashboardSection('stats')">
+        <span>📋</span> Stats
+      </button>
+      <button class="dashboard-section-btn" data-section="tools" onclick="showDashboardSection('tools')">
+        <span>🛠️</span> Tools
+      </button>
+      <button class="dashboard-section-btn" data-section="content" onclick="showDashboardSection('content')">
+        <span>📚</span> Content
+      </button>
+    `;
+    
+    // Insert at the very top of dashboard
+    dashboard.insertBefore(buttonBar, dashboard.firstChild);
+    
+    // Group existing content - WITHOUT MOVING ANYTHING
+    setTimeout(() => {
+      groupDashboardContent();
+    }, 500);
+  }
+  
+  function groupDashboardContent() {
+    const dashboard = document.getElementById('dashboard');
+    
+    // Create wrapper if not exists
+    let wrapper = document.getElementById('dashboard-content-wrapper');
+    if (!wrapper) {
+      wrapper = document.createElement('div');
+      wrapper.id = 'dashboard-content-wrapper';
+      wrapper.className = 'dashboard-content-wrapper';
+      
+      // Move all children except button bar into wrapper
+      const children = Array.from(dashboard.children);
+      children.forEach(child => {
+        if (child.id !== 'dashboard-button-bar') {
+          wrapper.appendChild(child);
+        }
+      });
+      
+      dashboard.appendChild(wrapper);
+    }
+    
+    // Group sections - but don't move anything, just add classes
+    const quickStats = wrapper.querySelector('.quick-stats');
+    if (quickStats) quickStats.classList.add('dashboard-section-group', 'stats-group');
+    
+    const formsSection = wrapper.querySelector('.forms-section');
+    if (formsSection) formsSection.classList.add('dashboard-section-group', 'tools-group');
+    
+    const contentSection = wrapper.querySelector('.content-section');
+    if (contentSection) contentSection.classList.add('dashboard-section-group', 'content-group');
+    
+    const toolkitCards = wrapper.querySelectorAll('.content-card');
+    toolkitCards.forEach(card => {
+      const header = card.querySelector('.content-header h2');
+      if (header && header.textContent.includes('Teacher Toolkit')) {
+        card.classList.add('dashboard-section-group', 'tools-group');
+      }
+    });
+    
+    const streakChain = wrapper.querySelector('.streak-chain-container');
+    if (streakChain) streakChain.classList.add('dashboard-section-group', 'stats-group');
+    
+    const proTips = wrapper.querySelectorAll('.pro-tip');
+    proTips.forEach(tip => tip.classList.add('dashboard-section-group', 'stats-group'));
+    
+    const footer = wrapper.querySelector('.footer');
+    if (footer) footer.classList.add('dashboard-section-group', 'allways-show');
+  }
+  
+  // Show/hide sections
+  window.showDashboardSection = function(section) {
+    // Update button states
+    document.querySelectorAll('.dashboard-section-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.querySelector(`.dashboard-section-btn[data-section="${section}"]`).classList.add('active');
+    
+    if (section === 'all') {
+      // Show everything
+      document.querySelectorAll('.dashboard-section-group').forEach(el => {
+        el.classList.remove('hidden');
+      });
+    } else {
+      // Hide everything first
+      document.querySelectorAll('.dashboard-section-group').forEach(el => {
+        if (!el.classList.contains('allways-show')) {
+          el.classList.add('hidden');
+        }
+      });
+      
+      // Show selected section
+      document.querySelectorAll(`.${section}-group`).forEach(el => {
+        el.classList.remove('hidden');
+      });
+    }
+  };
+  
+  // Initialize when dashboard is visible
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(initDashboardButtons, 2000);
+    });
+  } else {
+    setTimeout(initDashboardButtons, 2000);
+  }
+  
+  // Check periodically
+  const checkInterval = setInterval(() => {
+    if (document.getElementById('dashboard') && 
+        window.getComputedStyle(document.getElementById('dashboard')).display !== 'none' &&
+        !document.getElementById('dashboard-button-bar')) {
+      initDashboardButtons();
+    }
+  }, 1000);
+})();
+</script>
 </body>
 </html>
+
 
 
 
