@@ -29,7 +29,8 @@
             align-items: center;
         }
         
-        /* ===== FORCE LANDSCAPE ON MOBILE ===== */
+        /* ===== FIXED LANDSCAPE DETECTION ===== */
+        /* Only show rotate message in portrait on mobile */
         @media (max-width: 768px) and (orientation: portrait) {
             body::before {
                 content: "⚠️ PLEASE ROTATE YOUR DEVICE TO LANDSCAPE MODE ⚠️";
@@ -58,14 +59,38 @@
                 50% { opacity: 0.8; transform: scale(1.05); }
             }
             
+            /* Hide game content in portrait */
             .game-container, .character-modal, .battle-info-bar, .player-indicator, 
-            .rage-indicator, .combo-chain-indicator, .back-btn, .sound-toggle {
+            .rage-indicator, .combo-chain-indicator, .back-btn, .sound-toggle,
+            .restart-hint, .hud, .button-controls-panel, .special-moves-container,
+            .game-overlay {
                 display: none !important;
             }
         }
         
-        /* When in landscape on mobile, ensure proper sizing */
+        /* When in landscape on mobile, ensure proper sizing and visibility */
         @media (max-width: 768px) and (orientation: landscape) {
+            body::before {
+                display: none;
+            }
+            
+            /* Ensure all game elements are visible */
+            .game-container, .character-modal, .battle-info-bar, .player-indicator, 
+            .rage-indicator, .combo-chain-indicator, .back-btn, .sound-toggle,
+            .restart-hint, .hud, .button-controls-panel, .special-moves-container,
+            .game-overlay {
+                display: flex; /* Override any previous display:none */
+            }
+            
+            /* Special handling for modals and overlays */
+            .character-modal:not(.hidden) {
+                display: flex !important;
+            }
+            
+            .game-overlay.show {
+                display: flex !important;
+            }
+            
             canvas {
                 max-width: 100vw;
                 max-height: 70vh;
@@ -74,6 +99,7 @@
             .button-controls-panel {
                 padding: 8px;
                 gap: 5px;
+                display: flex !important;
             }
             
             .action-btn {
@@ -86,6 +112,10 @@
                 padding: 8px 15px;
                 font-size: 14px;
                 min-width: 100px;
+            }
+            
+            .special-moves-container {
+                display: flex !important;
             }
             
             .special-move-btn {
@@ -105,17 +135,25 @@
             .combo-counter {
                 top: 80px;
                 font-size: 40px;
+                display: none; /* Will be shown by JS when needed */
             }
             
             .rage-indicator {
                 top: 100px;
+                display: none; /* Will be shown by JS when needed */
             }
             
             .combo-chain-indicator {
                 top: 140px;
+                display: none; /* Will be shown by JS when needed */
+            }
+            
+            .hud {
+                display: flex !important;
             }
         }
         
+        /* Desktop styles remain unchanged */
         canvas {
             display: block;
             width: 100%;
@@ -266,7 +304,7 @@
         }
         
         .character-modal.hidden {
-            display: none;
+            display: none !important;
         }
         
         .character-select-card {
@@ -555,7 +593,7 @@
             color: #fbbf24;
             font-size: clamp(12px, 2.5vw, 16px);
             z-index: 1000;
-            display: flex;
+            display: none;
             gap: 30px;
             box-shadow: 0 0 50px rgba(251,191,36,0.5);
             animation: slideDown 0.5s ease;
@@ -580,6 +618,7 @@
             color: black;
             font-size: clamp(12px, 2.5vw, 16px);
             z-index: 1000;
+            display: none;
             animation: indicatorPulse 2s infinite;
             white-space: nowrap;
             font-weight: 900;
@@ -598,7 +637,7 @@
             transform: translateX(-50%);
             width: 95%;
             max-width: 1100px;
-            display: flex;
+            display: none;
             justify-content: space-between;
             align-items: center;
             z-index: 10;
@@ -803,7 +842,7 @@
         
         /* Button Controls Panel */
         .button-controls-panel {
-            display: flex;
+            display: none;
             justify-content: center;
             gap: 10px;
             margin-top: 20px;
@@ -913,7 +952,7 @@
         
         /* Special Moves Container */
         .special-moves-container {
-            display: flex;
+            display: none;
             justify-content: center;
             gap: 12px;
             margin-top: 15px;
@@ -1064,7 +1103,7 @@
         }
         
         .game-overlay.show {
-            display: flex;
+            display: flex !important;
         }
         
         .victory-text {
@@ -1140,6 +1179,7 @@
             font-size: clamp(12px, 2.5vw, 16px);
             transition: all 0.3s ease;
             box-shadow: 0 5px 0 #b91c1c;
+            display: none;
         }
         
         .back-btn:active {
@@ -1169,6 +1209,7 @@
             touch-action: manipulation;
             font-weight: 900;
             box-shadow: 0 5px 0 #000;
+            display: none;
         }
         
         .sound-toggle:active {
@@ -1189,6 +1230,7 @@
             font-size: clamp(10px, 2vw, 14px);
             opacity: 0.7;
             font-weight: 700;
+            display: none;
         }
         
         /* Loading Animation */
@@ -1205,6 +1247,7 @@
             font-family: 'Bangers', cursive;
             letter-spacing: 4px;
             text-shadow: 0 0 30px #fbbf24;
+            display: none;
         }
         
         .loading::after {
@@ -1348,9 +1391,9 @@
     <!-- COMBO CHAIN Indicator -->
     <div class="combo-chain-indicator" id="comboChainIndicator">🔥 0x CHAIN 🔥</div>
 
-    <a href="studentmode.html" class="back-btn" style="display: none;">← BACK</a>
+    <a href="studentmode.html" class="back-btn" id="backBtn" style="display: none;">← BACK</a>
     <div class="sound-toggle" id="soundToggle" onclick="toggleSound()" style="display: none;">🔊 SOUND ON</div>
-    <div class="restart-hint" style="display: none;">PRESS R TO RESTART | U = ULTIMATE</div>
+    <div class="restart-hint" id="restartHint" style="display: none;">PRESS R TO RESTART | U = ULTIMATE</div>
     
     <div class="game-container">
         <div class="loading" id="loading" style="display: none;">LOADING FIGHTERS</div>
@@ -1917,9 +1960,9 @@
             document.getElementById('characterModal').classList.add('hidden');
             document.getElementById('battleInfo').style.display = 'flex';
             document.getElementById('playerIndicator').style.display = 'block';
-            document.querySelector('.back-btn').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'block';
             document.getElementById('soundToggle').style.display = 'block';
-            document.querySelector('.restart-hint').style.display = 'block';
+            document.getElementById('restartHint').style.display = 'block';
             
             document.getElementById('battleCode').textContent = battleCode || 'ARENA';
             
@@ -3118,7 +3161,6 @@
                 }
             }
             
-            // FIXED: Draw player with waiting message instead of grey block
             drawPlayer(p) {
                 if (!p.id || !p.images) {
                     // Show waiting message instead of grey block
