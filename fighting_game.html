@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>⚡ KENJI VS SAKURA - LANDSCAPE BATTLE ⚡</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>⚡ KENJI VS SAKURA – CHARACTERS SEPARATED ⚡</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
@@ -12,6 +12,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         
         html, body {
@@ -24,269 +25,9 @@
         body {
             background: linear-gradient(135deg, #0a0b1a, #1a0033);
             font-family: 'Orbitron', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         
-        /* ===== FIXED LANDSCAPE DETECTION ===== */
-        /* Only show rotate message in portrait on mobile */
-        @media (max-width: 768px) and (orientation: portrait) {
-            body::before {
-                content: "⚠️ PLEASE ROTATE YOUR DEVICE TO LANDSCAPE MODE ⚠️";
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(135deg, #000, #1a0033);
-                color: #fbbf24;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                font-size: 24px;
-                font-weight: 900;
-                font-family: 'Bangers', cursive;
-                z-index: 999999;
-                padding: 20px;
-                box-sizing: border-box;
-                animation: rotatePulse 2s infinite;
-            }
-            
-            @keyframes rotatePulse {
-                0%, 100% { opacity: 1; transform: scale(1); }
-                50% { opacity: 0.8; transform: scale(1.05); }
-            }
-            
-            /* Hide game content in portrait */
-            .game-container, .character-modal, .battle-info-bar, .player-indicator, 
-            .rage-indicator, .combo-chain-indicator, .back-btn, .sound-toggle,
-            .restart-hint, .hud, .button-controls-panel, .special-moves-container,
-            .game-overlay {
-                display: none !important;
-            }
-        }
-        
-        /* When in landscape on mobile, ensure proper sizing and visibility */
-        @media (max-width: 768px) and (orientation: landscape) {
-            body::before {
-                display: none;
-            }
-            
-            /* Ensure all game elements are visible */
-            .game-container, .character-modal, .battle-info-bar, .player-indicator, 
-            .rage-indicator, .combo-chain-indicator, .back-btn, .sound-toggle,
-            .restart-hint, .hud, .button-controls-panel, .special-moves-container,
-            .game-overlay {
-                display: flex; /* Override any previous display:none */
-            }
-            
-            /* Special handling for modals and overlays */
-            .character-modal:not(.hidden) {
-                display: flex !important;
-            }
-            
-            .game-overlay.show {
-                display: flex !important;
-            }
-            
-            canvas {
-                max-width: 100vw;
-                max-height: 70vh;
-            }
-            
-            .button-controls-panel {
-                padding: 8px;
-                gap: 5px;
-                display: flex !important;
-            }
-            
-            .action-btn {
-                padding: 8px 12px;
-                font-size: 14px;
-                min-width: 60px;
-            }
-            
-            .ultimate-btn {
-                padding: 8px 15px;
-                font-size: 14px;
-                min-width: 100px;
-            }
-            
-            .special-moves-container {
-                display: flex !important;
-            }
-            
-            .special-move-btn {
-                padding: 6px 10px;
-                min-width: 70px;
-            }
-            
-            .player-hud {
-                padding: 8px 12px;
-            }
-            
-            .timer {
-                font-size: 32px;
-                padding: 5px 15px;
-            }
-            
-            .combo-counter {
-                top: 80px;
-                font-size: 40px;
-                display: none; /* Will be shown by JS when needed */
-            }
-            
-            .rage-indicator {
-                top: 100px;
-                display: none; /* Will be shown by JS when needed */
-            }
-            
-            .combo-chain-indicator {
-                top: 140px;
-                display: none; /* Will be shown by JS when needed */
-            }
-            
-            .hud {
-                display: flex !important;
-            }
-        }
-        
-        /* Desktop styles remain unchanged */
-        canvas {
-            display: block;
-            width: 100%;
-            height: auto;
-            max-width: 1200px;
-            max-height: 70vh;
-            aspect-ratio: 1200/700;
-            border-radius: 40px;
-            box-shadow: 
-                0 0 0 4px #fbbf24,
-                0 0 0 8px rgba(251,191,36,0.3),
-                0 20px 40px rgba(0,0,0,0.8),
-                0 0 100px rgba(251,191,36,0.2);
-            background: linear-gradient(180deg, #0a1a2a 0%, #1a2a3a 100%);
-            cursor: none;
-            touch-action: none;
-            transition: box-shadow 0.3s ease;
-        }
-        
-        canvas.battle-rage {
-            box-shadow: 
-                0 0 0 4px #ff4444,
-                0 0 0 8px rgba(255,68,68,0.3),
-                0 20px 40px rgba(0,0,0,0.8),
-                0 0 150px rgba(255,68,68,0.4);
-        }
-        
-        canvas.rage-mode {
-            filter: hue-rotate(10deg) saturate(2);
-            animation: ragePulse 0.5s infinite alternate;
-        }
-        
-        @keyframes ragePulse {
-            from { filter: hue-rotate(0deg) saturate(1.5); }
-            to { filter: hue-rotate(20deg) saturate(2.5); }
-        }
-        
-        /* Rage Mode Indicator */
-        .rage-indicator {
-            position: absolute;
-            top: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #ff0000, #8b0000);
-            color: white;
-            padding: 10px 30px;
-            border-radius: 40px;
-            font-size: 24px;
-            font-weight: 900;
-            border: 3px solid #fbbf24;
-            box-shadow: 0 0 50px #ff0000;
-            z-index: 100;
-            display: none;
-            animation: rageText 0.3s infinite alternate;
-            font-family: 'Bangers', cursive;
-            letter-spacing: 2px;
-            white-space: nowrap;
-        }
-        
-        @keyframes rageText {
-            from { transform: translateX(-50%) scale(1); text-shadow: 0 0 20px #ff0000; }
-            to { transform: translateX(-50%) scale(1.1); text-shadow: 0 0 40px #ff0000, 0 0 60px #ff9900; }
-        }
-        
-        /* COMBO CHAIN Indicator */
-        .combo-chain-indicator {
-            position: absolute;
-            top: 180px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            color: black;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 32px;
-            font-weight: 900;
-            border: 4px solid #fbbf24;
-            box-shadow: 0 0 60px #ffd700;
-            z-index: 100;
-            display: none;
-            animation: chainPulse 0.2s infinite alternate;
-            font-family: 'Bangers', cursive;
-            letter-spacing: 4px;
-            white-space: nowrap;
-            text-shadow: 2px 2px 0 #000;
-        }
-        
-        @keyframes chainPulse {
-            from { transform: translateX(-50%) scale(1); box-shadow: 0 0 40px #ffd700; }
-            to { transform: translateX(-50%) scale(1.1); box-shadow: 0 0 80px #ffd700, 0 0 120px #ff8c00; }
-        }
-        
-        /* Ultimate Button */
-        .ultimate-btn {
-            background: linear-gradient(135deg, #ff0000, #8b0000);
-            color: white;
-            border: 4px solid #fbbf24;
-            border-radius: 30px;
-            padding: 15px 30px;
-            font-size: 24px;
-            font-weight: 900;
-            font-family: 'Bangers', cursive;
-            cursor: pointer;
-            transition: all 0.1s ease;
-            margin: 10px;
-            border: 3px solid #fbbf24;
-            min-width: 200px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            touch-action: manipulation;
-            box-shadow: 0 5px 0 #000, 0 0 30px #ff0000;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            animation: ultimatePulse 1s infinite;
-        }
-        
-        .ultimate-btn:active {
-            transform: translateY(5px);
-            box-shadow: 0 0 0 #000, 0 0 50px #ff0000;
-        }
-        
-        .ultimate-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            animation: none;
-        }
-        
-        @keyframes ultimatePulse {
-            0%, 100% { box-shadow: 0 5px 0 #000, 0 0 30px #ff0000; }
-            50% { box-shadow: 0 5px 0 #000, 0 0 60px #ff0000, 0 0 90px #ff9900; }
-        }
-        
-        /* Character Selection Modal */
+        /* ---------- CHARACTER SELECTION (original cards) ---------- */
         .character-modal {
             position: fixed;
             top: 0;
@@ -315,48 +56,15 @@
             max-width: 1200px;
             width: 100%;
             text-align: center;
-            animation: modalPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             box-shadow: 0 0 100px rgba(251,191,36,0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .character-select-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
-        }
-        
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes modalPop {
-            0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
-            50% { transform: scale(1.1) rotate(2deg); }
-            100% { transform: scale(1) rotate(0); opacity: 1; }
         }
         
         .character-select-title {
             font-size: clamp(2rem, 6vw, 4rem);
-            font-weight: 900;
             color: #fbbf24;
             margin-bottom: 30px;
-            text-shadow: 0 0 30px rgba(251,191,36,0.5);
-            animation: titleGlow 2s infinite;
+            text-shadow: 0 0 30px #fbbf24;
             font-family: 'Bangers', cursive;
-            letter-spacing: 4px;
-        }
-        
-        @keyframes titleGlow {
-            0%, 100% { text-shadow: 0 0 30px #fbbf24, 0 0 60px #ff6b6b; }
-            50% { text-shadow: 0 0 50px #fbbf24, 0 0 90px #ff6b6b, 0 0 120px #fbbf24; }
         }
         
         .character-options {
@@ -369,77 +77,32 @@
         
         .character-option {
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             padding: clamp(20px, 4vh, 40px);
             border-radius: 30px;
             background: rgba(0,0,0,0.6);
             border: 3px solid transparent;
             width: min(100%, 350px);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s;
             backdrop-filter: blur(5px);
         }
         
-        .character-option::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(251,191,36,0.3) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            transform: rotate(45deg);
-        }
-        
-        .character-option:hover::before {
-            opacity: 1;
-            animation: spin 3s linear infinite;
-        }
-        
         .character-option:hover {
-            transform: scale(1.08) translateY(-10px);
+            transform: scale(1.05);
             border-color: #fbbf24;
             background: rgba(251,191,36,0.15);
-            box-shadow: 0 30px 50px rgba(251,191,36,0.4);
         }
         
         .character-option.selected {
             border-color: #fbbf24;
             background: rgba(251,191,36,0.2);
-            box-shadow: 0 0 70px rgba(251,191,36,0.6);
-            animation: selectedPulse 1.5s infinite;
-        }
-        
-        @keyframes selectedPulse {
-            0%, 100% { box-shadow: 0 0 40px #fbbf24, 0 0 80px #ff6b6b; }
-            50% { box-shadow: 0 0 80px #fbbf24, 0 0 120px #ff6b6b, 0 0 160px #fbbf24; }
-        }
-        
-        .character-option.locked {
-            opacity: 0.5;
-            cursor: not-allowed;
-            filter: grayscale(0.9);
-            border-color: #ef4444;
-            animation: lockedShake 0.5s ease;
-            pointer-events: none;
-        }
-        
-        @keyframes lockedShake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-15px); }
-            40% { transform: translateX(15px); }
-            60% { transform: translateX(-8px); }
-            80% { transform: translateX(8px); }
+            box-shadow: 0 0 70px #fbbf24;
         }
         
         .character-preview {
-            width: min(250px, 80%);
+            width: min(200px, 80%);
             height: auto;
-            aspect-ratio: 250/300;
+            aspect-ratio: 200/240;
             margin: 0 auto 20px;
-            position: relative;
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             border-radius: 30px;
             display: flex;
@@ -447,43 +110,14 @@
             justify-content: center;
             font-size: clamp(4rem, 10vw, 6rem);
             border: 4px solid #fbbf24;
-            transition: all 0.3s ease;
-            overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        
-        .character-option:hover .character-preview {
-            transform: rotate(5deg) scale(1.08);
-            border-color: #ffd700;
-            box-shadow: 0 20px 40px rgba(251,191,36,0.4);
-        }
-        
-        .character-preview::after {
-            content: '';
-            position: absolute;
-            top: -100%;
-            left: -100%;
-            width: 300%;
-            height: 300%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-        
-        @keyframes shine {
-            0% { top: -100%; left: -100%; }
-            20% { top: 100%; left: 100%; }
-            100% { top: 100%; left: 100%; }
         }
         
         .character-name {
             font-size: clamp(1.5rem, 5vw, 2.5rem);
-            font-weight: 900;
             color: #fbbf24;
             margin-bottom: 10px;
-            text-shadow: 3px 3px 0 #000;
             font-family: 'Bangers', cursive;
-            letter-spacing: 2px;
         }
         
         .character-desc {
@@ -508,23 +142,13 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            background: #ef4444;
             color: white;
-            padding: 8px 20px;
+            padding: 5px 15px;
             border-radius: 40px;
-            font-size: clamp(0.8rem, 2.5vw, 1.1rem);
-            font-weight: 900;
-            border: 3px solid #fbbf24;
-            box-shadow: 0 0 30px rgba(239,68,68,0.6);
-            animation: takenPulse 1.5s infinite;
-            z-index: 10;
-            font-family: 'Bangers', cursive;
-            letter-spacing: 1px;
-        }
-        
-        @keyframes takenPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            font-size: 14px;
+            border: 2px solid #fbbf24;
+            display: none;
         }
         
         .confirm-btn {
@@ -533,556 +157,303 @@
             border: none;
             padding: 20px 60px;
             font-size: clamp(1.2rem, 5vw, 2rem);
-            font-weight: 900;
             border-radius: 60px;
             cursor: pointer;
-            transition: all 0.3s ease;
             border: 4px solid #000;
             margin-top: 30px;
-            position: relative;
-            overflow: hidden;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
             font-family: 'Bangers', cursive;
-            letter-spacing: 2px;
             box-shadow: 0 10px 0 #b45309;
         }
         
         .confirm-btn:active {
             transform: translateY(10px);
-            box-shadow: 0 0 0 #b45309;
-        }
-        
-        .confirm-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .confirm-btn:hover::before {
-            left: 100%;
-        }
-        
-        .confirm-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 15px 0 #b45309, 0 0 60px #fbbf24;
+            box-shadow: none;
         }
         
         .confirm-btn:disabled {
             opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: 0 5px 0 #b45309;
-        }
-        
-        .battle-info-bar {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.95);
-            border: 4px solid #fbbf24;
-            border-radius: 20px;
-            padding: 10px 25px;
-            color: #fbbf24;
-            font-size: clamp(12px, 2.5vw, 16px);
-            z-index: 1000;
-            display: none;
-            gap: 30px;
-            box-shadow: 0 0 50px rgba(251,191,36,0.5);
-            animation: slideDown 0.5s ease;
-            backdrop-filter: blur(10px);
-            font-weight: 700;
-        }
-        
-        @keyframes slideDown {
-            from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
-            to { transform: translateX(-50%) translateY(0); opacity: 1; }
-        }
-        
-        .player-indicator {
-            position: absolute;
-            top: 70px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            border: 3px solid #000;
-            border-radius: 40px;
-            padding: 8px 25px;
-            color: black;
-            font-size: clamp(12px, 2.5vw, 16px);
-            z-index: 1000;
-            display: none;
-            animation: indicatorPulse 2s infinite;
-            white-space: nowrap;
-            font-weight: 900;
-            box-shadow: 0 0 30px #fbbf24;
-        }
-        
-        @keyframes indicatorPulse {
-            0%, 100% { box-shadow: 0 0 20px #fbbf24; }
-            50% { box-shadow: 0 0 40px #fbbf24, 0 0 60px #ff6b6b; }
-        }
-        
-        .hud {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 95%;
-            max-width: 1100px;
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
             pointer-events: none;
-            gap: 10px;
+        }
+        
+        /* ---------- MAIN GAME LAYOUT (canvas right, controls left) ---------- */
+        .game-container {
+            display: flex;
+            flex-direction: row;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        /* LEFT PANEL – canvas (60%) */
+        .left-panel {
+            width: 60%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: linear-gradient(180deg, #0a1a2a 0%, #1a2a3a 100%);
+            cursor: none;
+        }
+        
+        /* RIGHT PANEL – controls (38%) */
+        .right-panel {
+            width: 38%;
+            height: 100vh;
+            background: linear-gradient(135deg, #0a0b1a, #1a0033);
+            border-left: 2px solid #fbbf24;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            gap: 8px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+        
+        /* ---------- CONTROLS INSIDE RIGHT PANEL ---------- */
+        .top-info {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #fbbf24;
+            border-radius: 15px;
+            padding: 8px;
+            text-align: center;
+            color: #fbbf24;
+            font-size: 14px;
+            font-family: 'Bangers', cursive;
+        }
+        
+        .player-huds {
+            display: flex;
+            gap: 8px;
         }
         
         .player-hud {
+            flex: 1;
             background: rgba(0,0,0,0.9);
-            border: 3px solid #fbbf24;
-            border-radius: 25px;
-            padding: 12px 18px;
-            width: 40%;
-            max-width: 350px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 40px rgba(251,191,36,0.4);
-            transition: all 0.3s ease;
+            border: 2px solid #fbbf24;
+            border-radius: 12px;
+            padding: 8px;
         }
         
         .player-hud.left {
             border-color: #ef4444;
-            box-shadow: 0 0 40px rgba(239,68,68,0.4);
         }
-        
         .player-hud.right {
             border-color: #ff69b4;
-            box-shadow: 0 0 40px rgba(255,105,180,0.4);
         }
         
         .player-name-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
         
         .player-name {
-            font-size: clamp(14px, 3.5vw, 28px);
+            font-size: 14px;
             font-weight: 900;
-            text-shadow: 2px 2px 0 #000;
             font-family: 'Bangers', cursive;
-            letter-spacing: 1px;
         }
-        
-        .left .player-name {
-            color: #ef4444;
-        }
-        
-        .right .player-name {
-            color: #ff69b4;
-        }
+        .left .player-name { color: #ef4444; }
+        .right .player-name { color: #ff69b4; }
         
         .player-level {
             background: #fbbf24;
             color: black;
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-size: clamp(10px, 2.5vw, 14px);
-            font-weight: 900;
-            border: 2px solid #000;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 10px;
         }
         
         .health-bar {
-            width: 100%;
-            height: clamp(18px, 4vh, 30px);
+            height: 12px;
             background: #000;
-            border: 3px solid #fbbf24;
-            border-radius: 20px;
+            border: 1px solid #fbbf24;
+            border-radius: 6px;
             overflow: hidden;
-            margin-bottom: 8px;
-            position: relative;
+            margin-bottom: 4px;
         }
-        
-        .health-bar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: healthShine 2s infinite;
-        }
-        
-        @keyframes healthShine {
-            0% { transform: translateX(-100%); }
-            50% { transform: translateX(100%); }
-            100% { transform: translateX(100%); }
-        }
-        
         .health-fill {
             height: 100%;
             width: 100%;
-            transition: width 0.1s ease-out;
+            transition: width 0.1s;
         }
+        .left .health-fill { background: linear-gradient(90deg, #ef4444, #ff8a8a); }
+        .right .health-fill { background: linear-gradient(90deg, #ff69b4, #ffb6c1); }
         
-        .left .health-fill {
-            background: linear-gradient(90deg, #ef4444, #ff8a8a, #ef4444);
-            background-size: 200% 100%;
-            animation: healthPulse 1.5s infinite;
-        }
-        
-        .right .health-fill {
-            background: linear-gradient(90deg, #ff69b4, #ffb6c1, #ff69b4);
-            background-size: 200% 100%;
-            animation: healthPulse 1.5s infinite;
-        }
-        
-        @keyframes healthPulse {
-            0% { background-position: 0% 0; }
-            50% { background-position: 100% 0; }
-            100% { background-position: 0% 0; }
-        }
-        
-        .special-bar {
-            width: 100%;
-            height: clamp(10px, 2.5vh, 20px);
+        .special-bar, .rage-bar {
+            height: 6px;
             background: #000;
-            border: 2px solid #fbbf24;
-            border-radius: 15px;
+            border: 1px solid #fbbf24;
+            border-radius: 3px;
             overflow: hidden;
-            margin-bottom: 2px;
+            margin-top: 3px;
         }
-        
         .special-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #fbbf24, #ffd700, #fbbf24);
-            background-size: 200% 100%;
-            transition: width 0.2s ease;
-            animation: specialPulse 2s infinite;
+            background: linear-gradient(90deg, #fbbf24, #ffd700);
+            transition: width 0.2s;
         }
-        
-        @keyframes specialPulse {
-            0% { background-position: 0% 0; }
-            50% { background-position: 100% 0; }
-            100% { background-position: 0% 0; }
-        }
-        
-        /* Rage Bar */
-        .rage-bar {
-            width: 100%;
-            height: clamp(8px, 2vh, 15px);
-            background: #000;
-            border: 2px solid #fbbf24;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 2px;
-        }
-        
         .rage-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #ff0000, #8b0000, #ff0000);
-            background-size: 200% 100%;
-            transition: width 0.2s ease;
-            animation: ragePulse 1s infinite;
+            background: linear-gradient(90deg, #ff0000, #8b0000);
+            transition: width 0.2s;
         }
         
         .timer {
-            font-size: clamp(32px, 8vw, 64px);
-            font-weight: 900;
-            color: #fbbf24;
-            text-shadow: 3px 3px 0 #000, 0 0 30px #fbbf24;
             background: rgba(0,0,0,0.9);
-            padding: 8px 25px;
-            border-radius: 50px;
-            border: 4px solid #fbbf24;
-            box-shadow: 0 0 50px rgba(251,191,36,0.5);
-            min-width: 100px;
+            border: 2px solid #fbbf24;
+            border-radius: 30px;
+            padding: 5px 15px;
+            font-size: 28px;
+            color: #fbbf24;
+            font-family: 'Bangers', cursive;
             text-align: center;
-            font-family: 'Bangers', cursive;
-            animation: timerPulse 1s infinite;
+            margin: 5px 0;
         }
         
-        @keyframes timerPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        .combo-counter {
-            position: absolute;
-            top: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: clamp(32px, 8vw, 64px);
-            font-weight: 900;
-            color: #ffd700;
-            text-shadow: 4px 4px 0 #000, 0 0 30px #ff0000, 0 0 60px #ff0000;
-            z-index: 20;
-            animation: comboPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            display: none;
-            white-space: nowrap;
-            font-family: 'Bangers', cursive;
-        }
-        
-        @keyframes comboPop {
-            0% { transform: translateX(-50%) scale(0) rotate(-180deg); opacity: 0; }
-            50% { transform: translateX(-50%) scale(2.5) rotate(10deg); opacity: 1; }
-            100% { transform: translateX(-50%) scale(1) rotate(0); opacity: 1; }
-        }
-        
-        /* Button Controls Panel */
-        .button-controls-panel {
-            display: none;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(0,0,0,0.95);
-            border-radius: 60px;
-            border: 3px solid #fbbf24;
-            box-shadow: 0 0 50px rgba(251,191,36,0.4);
-            flex-wrap: wrap;
-            width: 100%;
-            max-width: 1100px;
-            animation: slideUp 0.5s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        .control-group {
+        .indicators {
             display: flex;
             gap: 8px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: center;
         }
-        
-        .control-divider {
-            width: 2px;
-            height: 40px;
-            background: linear-gradient(180deg, transparent, #fbbf24, transparent);
-            margin: 0 10px;
+        .rage-indicator, .combo-indicator {
+            flex: 1;
+            background: rgba(0,0,0,0.9);
+            border: 2px solid #fbbf24;
+            border-radius: 10px;
+            padding: 5px;
+            text-align: center;
+            font-size: 12px;
+            font-family: 'Bangers', cursive;
+            display: none;
         }
+        .rage-indicator { color: #ff0000; }
+        .combo-indicator { color: #ffd700; }
         
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 8px 0;
+        }
         .action-btn {
             background: linear-gradient(135deg, #333, #222);
             color: white;
-            border: 3px solid #fbbf24;
-            border-radius: 20px;
-            padding: 12px 20px;
-            font-size: clamp(14px, 3vw, 20px);
+            border: 2px solid #fbbf24;
+            border-radius: 12px;
+            padding: 10px 5px;
+            font-size: 12px;
             font-weight: 900;
             font-family: 'Bangers', cursive;
             cursor: pointer;
-            transition: all 0.02s linear;
-            min-width: 80px;
+            box-shadow: 0 3px 0 #000;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            touch-action: manipulation;
-            box-shadow: 0 5px 0 #000;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
-        
         .action-btn:active {
-            transform: translateY(5px);
-            box-shadow: 0 0 0 #000;
+            transform: translateY(3px);
+            box-shadow: none;
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
             color: black;
-            border-color: #000;
         }
-        
-        .action-btn.block:active {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-        }
-        
-        /* Ultimate Button */
         .ultimate-btn {
+            grid-column: span 3;
             background: linear-gradient(135deg, #ff0000, #8b0000);
             color: white;
-            border: 4px solid #fbbf24;
-            border-radius: 30px;
-            padding: 15px 30px;
-            font-size: 24px;
-            font-weight: 900;
+            border: 2px solid #fbbf24;
+            border-radius: 12px;
+            padding: 10px;
+            font-size: 16px;
             font-family: 'Bangers', cursive;
             cursor: pointer;
-            transition: all 0.1s ease;
-            margin: 10px;
-            border: 3px solid #fbbf24;
-            min-width: 200px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            touch-action: manipulation;
-            box-shadow: 0 5px 0 #000, 0 0 30px #ff0000;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            animation: ultimatePulse 1s infinite;
+            box-shadow: 0 3px 0 #000, 0 0 20px #ff0000;
+            animation: pulse 1s infinite;
         }
-        
         .ultimate-btn:active {
-            transform: translateY(5px);
-            box-shadow: 0 0 0 #000, 0 0 50px #ff0000;
+            transform: translateY(3px);
+            box-shadow: none;
+        }
+        @keyframes pulse {
+            0%,100% { box-shadow: 0 3px 0 #000, 0 0 20px #ff0000; }
+            50% { box-shadow: 0 3px 0 #000, 0 0 40px #ff0000; }
         }
         
-        .ultimate-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            animation: none;
-        }
-        
-        @keyframes ultimatePulse {
-            0%, 100% { box-shadow: 0 5px 0 #000, 0 0 30px #ff0000; }
-            50% { box-shadow: 0 5px 0 #000, 0 0 60px #ff0000, 0 0 90px #ff9900; }
-        }
-        
-        /* Special Moves Container */
-        .special-moves-container {
-            display: none;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(0,0,0,0.95);
-            border-radius: 40px;
-            border: 3px solid #fbbf24;
+        .special-moves {
+            display: flex;
             flex-wrap: wrap;
-            width: 100%;
-            max-width: 1100px;
-            max-height: 140px;
+            gap: 4px;
+            justify-content: center;
+            margin: 8px 0;
+            max-height: 90px;
             overflow-y: auto;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 40px rgba(251,191,36,0.3);
+            padding: 5px;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #fbbf24;
+            border-radius: 12px;
         }
-        
         .special-move-btn {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
-            border: 3px solid #fbbf24;
-            border-radius: 20px;
-            padding: 10px 15px;
-            font-size: clamp(12px, 2.5vw, 18px);
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.02s linear;
+            border: 1px solid #fbbf24;
+            border-radius: 8px;
+            padding: 4px 6px;
+            font-size: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-width: 100px;
-            flex: 0 1 auto;
-            touch-action: manipulation;
-            font-family: 'Bangers', cursive;
-            box-shadow: 0 5px 0 #000;
+            min-width: 50px;
+            cursor: pointer;
+            box-shadow: 0 2px 0 #000;
         }
-        
         .special-move-btn:active {
-            transform: translateY(5px);
-            box-shadow: 0 0 0 #000;
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            color: black;
+            transform: translateY(2px);
+            box-shadow: none;
         }
+        .special-move-btn .icon { font-size: 14px; }
         
-        .special-move-btn.rare {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-        }
-        
-        .special-move-btn.epic {
-            background: linear-gradient(135deg, #a855f7, #9333ea);
-        }
-        
-        .special-move-btn.legendary {
-            background: linear-gradient(135deg, #f97316, #ea580c);
-            animation: legendaryPulse 2s infinite;
-        }
-        
-        .special-move-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: 0 5px 0 #000;
-        }
-        
-        .move-icon {
-            font-size: clamp(24px, 5vw, 36px);
-            margin-bottom: 4px;
-            filter: drop-shadow(0 0 10px currentColor);
-        }
-        
-        .move-name {
-            font-size: clamp(10px, 2vw, 16px);
-            margin-bottom: 2px;
-        }
-        
-        .move-cost {
-            font-size: clamp(8px, 1.8vw, 14px);
+        .restart-hint {
             color: #fbbf24;
-        }
-        
-        @keyframes legendaryPulse {
-            0%, 100% { box-shadow: 0 0 20px #f97316, 0 5px 0 #000; }
-            50% { box-shadow: 0 0 40px #f97316, 0 5px 0 #000, 0 0 60px #fbbf24; }
-        }
-        
-        /* Battle Message */
-        .battle-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.98);
-            color: #fbbf24;
-            padding: 20px 50px;
-            border-radius: 60px;
-            border: 4px solid #fbbf24;
-            font-size: clamp(20px, 5vw, 36px);
-            font-weight: 900;
-            z-index: 10000;
-            animation: messageAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-            pointer-events: none;
+            font-size: 10px;
             text-align: center;
-            white-space: nowrap;
-            box-shadow: 0 0 80px rgba(251,191,36,0.6);
-            font-family: 'Bangers', cursive;
-            letter-spacing: 2px;
-            text-shadow: 3px 3px 0 #000;
+            opacity: 0.8;
         }
         
-        @keyframes messageAppear {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(-360deg); }
-            50% { transform: translate(-50%, -50%) scale(1.5) rotate(10deg); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0); }
-        }
-        
-        .xp-display {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.9);
-            border: 3px solid #fbbf24;
-            border-radius: 30px;
-            padding: 8px 20px;
-            color: #fbbf24;
-            font-weight: 900;
-            font-size: clamp(12px, 2.5vw, 16px);
+        /* back / sound buttons (fixed) */
+        .back-btn, .sound-toggle {
+            position: fixed;
             z-index: 100;
-            animation: glow 2s infinite;
-            backdrop-filter: blur(5px);
+            background: #ef4444;
+            color: white;
+            border: 2px solid #fbbf24;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-family: 'Bangers', cursive;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #b91c1c;
+            text-decoration: none;
+        }
+        .back-btn:active, .sound-toggle:active {
+            transform: translateY(3px);
+            box-shadow: none;
+        }
+        .sound-toggle {
+            right: 10px;
+            top: 10px;
+            background: rgba(0,0,0,0.8);
+        }
+        .back-btn {
+            left: 10px;
+            top: 10px;
         }
         
+        /* game overlay */
         .game-overlay {
             position: absolute;
             top: 0;
@@ -1095,403 +466,158 @@
             align-items: center;
             flex-direction: column;
             z-index: 10000;
-            border-radius: 40px;
-            backdrop-filter: blur(15px);
-            animation: overlayAppear 0.5s ease;
-            padding: 30px;
             border: 4px solid #fbbf24;
         }
-        
-        .game-overlay.show {
-            display: flex !important;
-        }
-        
+        .game-overlay.show { display: flex; }
         .victory-text {
             font-size: clamp(48px, 12vw, 96px);
-            font-weight: 900;
             color: #fbbf24;
-            text-shadow: 6px 6px 0 #000, 0 0 50px #ffd700, 0 0 100px #ffd700;
-            margin-bottom: 30px;
-            animation: victoryPulse 1s infinite;
-            text-align: center;
             font-family: 'Bangers', cursive;
-            letter-spacing: 4px;
+            margin-bottom: 20px;
         }
-        
-        @keyframes victoryPulse {
-            0%, 100% { transform: scale(1); text-shadow: 6px 6px 0 #000, 0 0 50px #ffd700; }
-            50% { transform: scale(1.1); text-shadow: 8px 8px 0 #000, 0 0 80px #ffd700, 0 0 120px #ffd700; }
-        }
-        
         .xp-gained {
-            font-size: clamp(24px, 6vw, 48px);
+            font-size: 24px;
             color: #f59e0b;
-            margin-bottom: 30px;
-            text-shadow: 3px 3px 0 #000;
-            animation: xpFloat 2s infinite;
-            font-weight: 900;
+            margin-bottom: 20px;
         }
-        
-        @keyframes xpFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
         .restart-btn {
             background: linear-gradient(135deg, #ef4444, #ff69b4);
             color: white;
             border: none;
-            padding: 20px 60px;
-            font-size: clamp(18px, 5vw, 32px);
-            font-weight: 900;
+            padding: 15px 40px;
+            font-size: 24px;
             border-radius: 60px;
             border: 4px solid #fbbf24;
             cursor: pointer;
-            transition: all 0.3s ease;
             font-family: 'Bangers', cursive;
-            touch-action: manipulation;
-            box-shadow: 0 10px 0 #b91c1c;
+            box-shadow: 0 8px 0 #b91c1c;
         }
-        
         .restart-btn:active {
-            transform: translateY(10px);
-            box-shadow: 0 0 0 #b91c1c;
+            transform: translateY(8px);
+            box-shadow: none;
         }
         
-        .restart-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 0 #b91c1c, 0 0 50px #fbbf24;
-        }
-        
-        .back-btn {
+        .battle-message {
             position: fixed;
-            top: 20px;
-            left: 20px;
-            background: #ef4444;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 15px;
-            border: 3px solid #fbbf24;
-            cursor: pointer;
-            font-family: 'Bangers', cursive;
-            text-decoration: none;
-            z-index: 1000;
-            font-size: clamp(12px, 2.5vw, 16px);
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 0 #b91c1c;
-            display: none;
-        }
-        
-        .back-btn:active {
-            transform: translateY(5px);
-            box-shadow: 0 0 0 #b91c1c;
-        }
-        
-        .back-btn:hover {
-            background: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 7px 0 #b91c1c, 0 0 30px #fbbf24;
-        }
-        
-        .sound-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.9);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 15px;
-            border: 3px solid #fbbf24;
-            cursor: pointer;
-            z-index: 1000;
-            font-size: clamp(12px, 2.5vw, 16px);
-            transition: all 0.3s ease;
-            touch-action: manipulation;
-            font-weight: 900;
-            box-shadow: 0 5px 0 #000;
-            display: none;
-        }
-        
-        .sound-toggle:active {
-            transform: translateY(5px);
-            box-shadow: 0 0 0 #000;
-        }
-        
-        .sound-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 7px 0 #000, 0 0 30px #fbbf24;
-        }
-        
-        .restart-hint {
-            position: absolute;
-            bottom: 10px;
-            right: 20px;
-            color: #fbbf24;
-            font-size: clamp(10px, 2vw, 14px);
-            opacity: 0.7;
-            font-weight: 700;
-            display: none;
-        }
-        
-        /* Loading Animation */
-        .loading {
-            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.98);
             color: #fbbf24;
-            font-size: clamp(24px, 6vw, 48px);
-            text-align: center;
+            padding: 15px 30px;
+            border-radius: 40px;
+            border: 3px solid #fbbf24;
+            font-size: 20px;
             z-index: 1000;
-            animation: loadingPulse 1.5s infinite;
+            animation: msgAppear 0.5s forwards;
             font-family: 'Bangers', cursive;
-            letter-spacing: 4px;
-            text-shadow: 0 0 30px #fbbf24;
-            display: none;
+            pointer-events: none;
+        }
+        @keyframes msgAppear {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
         
-        .loading::after {
-            content: '...';
-            animation: loadingDots 1.5s infinite;
-            font-size: 1.5em;
-        }
-        
-        @keyframes loadingDots {
-            0% { content: '.'; }
-            33% { content: '..'; }
-            66% { content: '...'; }
-        }
-        
-        @keyframes loadingPulse {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 1; }
-        }
-        
-        /* Responsive Adjustments */
-        @media (orientation: landscape) and (max-height: 700px) {
-            .game-container {
-                padding: 5px;
-            }
-            
-            canvas {
-                max-height: 60vh;
-            }
-            
-            .button-controls-panel {
-                margin-top: 10px;
-                padding: 10px;
-            }
-            
-            .action-btn {
-                padding: 8px 15px;
-                font-size: 14px;
-                min-width: 70px;
-            }
-            
-            .ultimate-btn {
-                padding: 10px 20px;
-                font-size: 18px;
-                min-width: 150px;
-            }
-            
-            .special-move-btn {
-                padding: 6px 12px;
-                min-width: 80px;
-            }
-            
-            .move-icon {
-                font-size: 20px;
-            }
-            
-            .player-hud {
-                padding: 8px 12px;
-            }
-            
-            .timer {
-                font-size: 40px;
-                padding: 5px 15px;
-            }
-            
-            .combo-counter {
-                top: 80px;
-                font-size: 40px;
-            }
-            
-            .combo-chain-indicator {
-                top: 140px;
-                font-size: 24px;
-                padding: 10px 25px;
-            }
-            
-            .hud {
-                top: 10px;
-            }
-            
-            .rage-indicator {
-                top: 100px;
-                font-size: 18px;
-                padding: 5px 20px;
-            }
+        /* desktop override: keep same layout (left canvas, right controls) */
+        @media (min-width: 1024px) {
+            .left-panel { width: 65%; }
+            .right-panel { width: 33%; }
         }
     </style>
 </head>
 <body>
-    <!-- Character Selection Modal -->
+    <!-- CHARACTER SELECTION MODAL (original cards) -->
     <div class="character-modal" id="characterModal">
         <div class="character-select-card">
             <div class="character-select-title">⚔️ CHOOSE YOUR WARRIOR ⚔️</div>
-            <div id="characterTakenMessage" style="color: #fbbf24; margin-bottom: 20px; font-size: clamp(14px, 3.5vw, 20px); min-height: 40px; font-weight: 900;"></div>
+            <div id="characterTakenMessage" style="color: #fbbf24; margin-bottom:20px; font-size:16px;"></div>
             <div class="character-options">
-                <!-- Kenji Option -->
+                <!-- Kenji card -->
                 <div class="character-option" id="chooseKenji" onclick="selectCharacter('kenji')">
                     <div class="character-preview">⚔️</div>
                     <div class="character-name">KENJI</div>
                     <div class="character-desc">The Shadow Warrior</div>
                     <div class="character-stats">
-                        <span>💪 POWER 9</span>
-                        <span>⚡ SPEED 7</span>
-                        <span>🛡️ DEFENSE 8</span>
+                        <span>💪 9</span> <span>⚡ 7</span> <span>🛡️ 8</span>
                     </div>
-                    <div id="kenjiTaken" class="character-taken" style="display: none;">🔒 TAKEN</div>
+                    <div id="kenjiTaken" style="display:none; color:#ef4444;">🔒 TAKEN</div>
                 </div>
-                
-                <!-- Sakura Option -->
+                <!-- Sakura card -->
                 <div class="character-option" id="chooseSakura" onclick="selectCharacter('sakura')">
                     <div class="character-preview">🌸</div>
                     <div class="character-name">SAKURA</div>
                     <div class="character-desc">The Cherry Blossom</div>
                     <div class="character-stats">
-                        <span>💪 POWER 7</span>
-                        <span>⚡ SPEED 9</span>
-                        <span>🛡️ DEFENSE 7</span>
+                        <span>💪 7</span> <span>⚡ 9</span> <span>🛡️ 7</span>
                     </div>
-                    <div id="sakuraTaken" class="character-taken" style="display: none;">🔒 TAKEN</div>
+                    <div id="sakuraTaken" style="display:none; color:#ef4444;">🔒 TAKEN</div>
                 </div>
             </div>
             <button class="confirm-btn" id="confirmCharacterBtn" onclick="confirmCharacter()" disabled>⚡ SELECT FIGHTER ⚡</button>
         </div>
     </div>
 
-    <div class="battle-info-bar" id="battleInfo" style="display: none;">
-        <div class="battle-info-item">
-            <span>⚔️</span>
-            <span id="battleCode">LOADING</span>
-        </div>
-        <div class="battle-info-item">
-            <span>🏆</span>
-            <span id="roundDisplay">ROUND 1</span>
-        </div>
-    </div>
-
-    <div class="player-indicator" id="playerIndicator" style="display: none;">LOADING...</div>
-    
-    <!-- Rage Mode Indicator -->
-    <div class="rage-indicator" id="rageIndicator">⚡ RAGE MODE ACTIVE ⚡</div>
-    
-    <!-- COMBO CHAIN Indicator -->
-    <div class="combo-chain-indicator" id="comboChainIndicator">🔥 0x CHAIN 🔥</div>
-
-    <a href="studentmode.html" class="back-btn" id="backBtn" style="display: none;">← BACK</a>
-    <div class="sound-toggle" id="soundToggle" onclick="toggleSound()" style="display: none;">🔊 SOUND ON</div>
-    <div class="restart-hint" id="restartHint" style="display: none;">PRESS R TO RESTART | U = ULTIMATE</div>
-    
+    <!-- MAIN GAME LAYOUT -->
     <div class="game-container">
-        <div class="loading" id="loading" style="display: none;">LOADING FIGHTERS</div>
-        <canvas id="gameCanvas" width="1200" height="700" style="display: none;"></canvas>
-        
-        <div class="hud" style="display: none;" id="hud">
-            <div class="player-hud left">
-                <div class="player-name-row">
-                    <div class="player-name" id="player1Name">KENJI</div>
-                    <div class="player-level" id="player1Level">Lv.1</div>
+        <!-- LEFT PANEL (canvas) -->
+        <div class="left-panel" id="leftPanel">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+
+        <!-- RIGHT PANEL (controls) -->
+        <div class="right-panel" id="rightPanel" style="display: none;">
+            <div class="top-info" id="battleInfoMobile">
+                <span>⚔️ ARENA · ROUND 1</span>
+            </div>
+            <div class="top-info" id="playerIndicatorMobile">CHOOSE YOUR FIGHTER</div>
+
+            <!-- Player HUDs -->
+            <div class="player-huds">
+                <div class="player-hud left">
+                    <div class="player-name-row">
+                        <span class="player-name" id="p1Name">KENJI</span>
+                        <span class="player-level" id="p1Level">Lv.1</span>
+                    </div>
+                    <div class="health-bar"><div class="health-fill" id="p1HealthFill" style="width:100%"></div></div>
+                    <div class="special-bar"><div class="special-fill" id="p1SpecialFill" style="width:0%"></div></div>
+                    <div class="rage-bar"><div class="rage-fill" id="p1RageFill" style="width:0%"></div></div>
                 </div>
-                <div class="health-bar">
-                    <div class="health-fill left" id="p1HealthFill" style="width: 100%"></div>
-                </div>
-                <div class="special-bar">
-                    <div class="special-fill" id="p1SpecialFill" style="width: 0%"></div>
-                </div>
-                <!-- Rage Bar -->
-                <div class="rage-bar">
-                    <div class="rage-fill" id="p1RageFill" style="width: 0%"></div>
+                <div class="player-hud right">
+                    <div class="player-name-row">
+                        <span class="player-name" id="p2Name">SAKURA</span>
+                        <span class="player-level" id="p2Level">Lv.1</span>
+                    </div>
+                    <div class="health-bar"><div class="health-fill" id="p2HealthFill" style="width:100%"></div></div>
+                    <div class="special-bar"><div class="special-fill" id="p2SpecialFill" style="width:0%"></div></div>
+                    <div class="rage-bar"><div class="rage-fill" id="p2RageFill" style="width:0%"></div></div>
                 </div>
             </div>
-            
+
+            <!-- Timer -->
             <div class="timer" id="timerDisplay">99</div>
-            
-            <div class="player-hud right">
-                <div class="player-name-row">
-                    <div class="player-name" id="player2Name">SAKURA</div>
-                    <div class="player-level" id="player2Level">Lv.1</div>
-                </div>
-                <div class="health-bar">
-                    <div class="health-fill right" id="p2HealthFill" style="width: 100%"></div>
-                </div>
-                <div class="special-bar">
-                    <div class="special-fill" id="p2SpecialFill" style="width: 0%"></div>
-                </div>
-                <!-- Rage Bar -->
-                <div class="rage-bar">
-                    <div class="rage-fill" id="p2RageFill" style="width: 0%"></div>
-                </div>
+
+            <!-- Indicators -->
+            <div class="indicators">
+                <div class="rage-indicator" id="rageIndicator">⚡ RAGE MODE</div>
+                <div class="combo-indicator" id="comboIndicator">🔥 COMBO</div>
             </div>
+
+            <!-- Action Buttons -->
+            <div class="button-grid">
+                <button class="action-btn" id="btnLeft" onmousedown="if(window.game) window.game.press('left')" ontouchstart="if(window.game) window.game.press('left')" onmouseup="if(window.game) window.game.release('left')" ontouchend="if(window.game) window.game.release('left')">← LEFT</button>
+                <button class="action-btn" id="btnRight" onmousedown="if(window.game) window.game.press('right')" ontouchstart="if(window.game) window.game.press('right')" onmouseup="if(window.game) window.game.release('right')" ontouchend="if(window.game) window.game.release('right')">→ RIGHT</button>
+                <button class="action-btn" id="btnPunch" onmousedown="if(window.game) window.game.press('punch')" ontouchstart="if(window.game) window.game.press('punch')" onmouseup="if(window.game) window.game.release('punch')">👊 PUNCH</button>
+                <button class="action-btn" id="btnKick" onmousedown="if(window.game) window.game.press('kick')" ontouchstart="if(window.game) window.game.press('kick')" onmouseup="if(window.game) window.game.release('kick')">🦵 KICK</button>
+                <button class="action-btn" id="btnBlock" onmousedown="if(window.game) window.game.press('block')" ontouchstart="if(window.game) window.game.press('block')" onmouseup="if(window.game) window.game.release('block')" ontouchend="if(window.game) window.game.release('block')">🛡️ BLOCK</button>
+                <button class="ultimate-btn" id="btnUltimate" onmousedown="if(window.game) window.game.press('ultimate')" ontouchstart="if(window.game) window.game.press('ultimate')">🔥 ULTIMATE</button>
+            </div>
+
+            <!-- Special Moves -->
+            <div class="special-moves" id="specialMoves"></div>
+            <div class="restart-hint" id="restartHint">R = RESTART · U = ULTIMATE</div>
         </div>
-        
-        <div class="combo-counter" id="comboCounter">0 HIT</div>
-        
-        <!-- Button Controls Panel with ULTIMATE button -->
-        <div class="button-controls-panel" id="buttonControls" style="display: none;">
-            <div class="control-group">
-                <button class="action-btn" id="btnLeft" 
-                    onmousedown="window.gameInstance?.buttonPress('left')"
-                    ontouchstart="window.gameInstance?.buttonPress('left')"
-                    onmouseup="window.gameInstance?.buttonRelease('left')"
-                    ontouchend="window.gameInstance?.buttonRelease('left')"
-                    onmouseleave="window.gameInstance?.buttonRelease('left')">← LEFT</button>
-                    
-                <button class="action-btn" id="btnRight" 
-                    onmousedown="window.gameInstance?.buttonPress('right')"
-                    ontouchstart="window.gameInstance?.buttonPress('right')"
-                    onmouseup="window.gameInstance?.buttonRelease('right')"
-                    ontouchend="window.gameInstance?.buttonRelease('right')"
-                    onmouseleave="window.gameInstance?.buttonRelease('right')">→ RIGHT</button>
-            </div>
-            
-            <div class="control-divider"></div>
-            
-            <div class="control-group">
-                <button class="action-btn" id="btnPunch" 
-                    onmousedown="window.gameInstance?.buttonPress('punch')"
-                    ontouchstart="window.gameInstance?.buttonPress('punch')"
-                    onmouseup="window.gameInstance?.buttonRelease('punch')"
-                    ontouchend="window.gameInstance?.buttonRelease('punch')">👊 PUNCH</button>
-                    
-                <button class="action-btn" id="btnKick" 
-                    onmousedown="window.gameInstance?.buttonPress('kick')"
-                    ontouchstart="window.gameInstance?.buttonPress('kick')"
-                    onmouseup="window.gameInstance?.buttonRelease('kick')"
-                    ontouchend="window.gameInstance?.buttonRelease('kick')">🦵 KICK</button>
-            </div>
-            
-            <div class="control-divider"></div>
-            
-            <div class="control-group">
-                <button class="action-btn block" id="btnBlock" 
-                    onmousedown="window.gameInstance?.buttonPress('block')"
-                    ontouchstart="window.gameInstance?.buttonPress('block')"
-                    onmouseup="window.gameInstance?.buttonRelease('block')"
-                    ontouchend="window.gameInstance?.buttonRelease('block')"
-                    onmouseleave="window.gameInstance?.buttonRelease('block')">🛡️ BLOCK</button>
-                    
-                <button class="ultimate-btn" id="btnUltimate" 
-                    onmousedown="window.gameInstance?.buttonPress('ultimate')"
-                    ontouchstart="window.gameInstance?.buttonPress('ultimate')">🔥 ULTIMATE</button>
-            </div>
-        </div>
-        
-        <!-- Special Moves Container -->
-        <div id="specialMovesContainer" class="special-moves-container" style="display: none;"></div>
-        
+
+        <!-- GAME OVERLAY -->
         <div class="game-overlay" id="gameOverlay">
             <div class="victory-text" id="victoryText"></div>
             <div class="xp-gained" id="xpGained">+0 XP</div>
@@ -1499,6 +625,11 @@
         </div>
     </div>
 
+    <!-- fixed buttons -->
+    <a href="javascript:history.back()" class="back-btn" id="backBtn" style="display: none;">← BACK</a>
+    <div class="sound-toggle" id="soundToggle" onclick="toggleSound()" style="display: none;">🔊 ON</div>
+
+    <!-- Firebase scripts (loaded dynamically) -->
     <script>
         // ========== MOVE DATABASE ==========
         const MOVE_DATABASE = {
@@ -1522,290 +653,96 @@
             projectId: "student-teacher-app-4e7c9"
         };
 
-        // ========== SOUND SYSTEM ==========
+        // ========== SOUND SYSTEM (enhanced) ==========
         let soundEnabled = true;
         let audioContext = null;
-        
-        function initAudio() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-        }
-        
-        function playSound(type, volume = 0.5) {
+        function initAudio() { if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)(); }
+        function playSound(type, volume = 0.3) {
             if (!soundEnabled) return;
             initAudio();
             try {
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
                 const filter = audioContext.createBiquadFilter();
-                
-                oscillator.connect(filter);
-                filter.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                gainNode.gain.value = volume;
-                
+                osc.connect(filter); filter.connect(gain); gain.connect(audioContext.destination);
+                gain.gain.value = volume;
                 switch(type) {
                     case 'punch':
-                        oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime + 0.1);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                        oscillator.type = 'sawtooth';
-                        filter.type = 'lowpass';
-                        filter.frequency.value = 800;
-                        break;
+                        osc.frequency.setValueAtTime(200, audioContext.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(80, audioContext.currentTime+0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime+0.2);
+                        osc.type = 'sawtooth'; filter.type='lowpass'; filter.frequency.value=800; break;
                     case 'kick':
-                        oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.15);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
-                        oscillator.type = 'triangle';
-                        filter.type = 'lowpass';
-                        filter.frequency.value = 600;
-                        break;
-                    case 'special':
-                        const osc1 = audioContext.createOscillator();
-                        const osc2 = audioContext.createOscillator();
-                        const gain1 = audioContext.createGain();
-                        const gain2 = audioContext.createGain();
-                        const filter1 = audioContext.createBiquadFilter();
-                        const filter2 = audioContext.createBiquadFilter();
-                        
-                        osc1.type = 'sawtooth';
-                        osc2.type = 'sine';
-                        
-                        filter1.type = 'bandpass';
-                        filter2.type = 'bandpass';
-                        filter1.frequency.value = 800;
-                        filter2.frequency.value = 1200;
-                        
-                        osc1.connect(filter1);
-                        osc2.connect(filter2);
-                        filter1.connect(gain1);
-                        filter2.connect(gain2);
-                        gain1.connect(audioContext.destination);
-                        gain2.connect(audioContext.destination);
-                        
-                        osc1.frequency.setValueAtTime(400, audioContext.currentTime);
-                        osc1.frequency.linearRampToValueAtTime(800, audioContext.currentTime + 0.2);
-                        osc1.frequency.linearRampToValueAtTime(200, audioContext.currentTime + 0.4);
-                        osc2.frequency.setValueAtTime(600, audioContext.currentTime);
-                        osc2.frequency.linearRampToValueAtTime(1000, audioContext.currentTime + 0.2);
-                        osc2.frequency.linearRampToValueAtTime(300, audioContext.currentTime + 0.4);
-                        
-                        gain1.gain.setValueAtTime(0.3, audioContext.currentTime);
-                        gain1.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                        gain2.gain.setValueAtTime(0.3, audioContext.currentTime);
-                        gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                        
-                        osc1.start();
-                        osc2.start();
-                        osc1.stop(audioContext.currentTime + 0.5);
-                        osc2.stop(audioContext.currentTime + 0.5);
-                        return;
+                        osc.frequency.setValueAtTime(150, audioContext.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime+0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime+0.25);
+                        osc.type='triangle'; filter.type='lowpass'; filter.frequency.value=600; break;
                     case 'block':
-                        oscillator.frequency.setValueAtTime(100, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.05);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                        oscillator.type = 'square';
-                        filter.type = 'lowpass';
-                        filter.frequency.value = 400;
-                        break;
+                        osc.frequency.setValueAtTime(100, audioContext.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime+0.05);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime+0.1);
+                        osc.type='square'; filter.type='lowpass'; filter.frequency.value=400; break;
                     case 'hit':
-                        oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.1);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-                        oscillator.type = 'sawtooth';
-                        filter.type = 'bandpass';
-                        filter.frequency.value = 500;
-                        break;
+                        osc.frequency.setValueAtTime(300, audioContext.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime+0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime+0.15);
+                        osc.type='sawtooth'; filter.type='bandpass'; filter.frequency.value=500; break;
                     case 'critical':
-                        const critOsc1 = audioContext.createOscillator();
-                        const critOsc2 = audioContext.createOscillator();
-                        const critGain = audioContext.createGain();
-                        
-                        critOsc1.type = 'sawtooth';
-                        critOsc2.type = 'triangle';
-                        
-                        critOsc1.frequency.setValueAtTime(600, audioContext.currentTime);
-                        critOsc1.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.2);
-                        critOsc2.frequency.setValueAtTime(800, audioContext.currentTime);
-                        critOsc2.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.2);
-                        
-                        critOsc1.connect(critGain);
-                        critOsc2.connect(critGain);
-                        critGain.connect(audioContext.destination);
-                        
-                        critGain.gain.setValueAtTime(0.5, audioContext.currentTime);
-                        critGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                        
-                        critOsc1.start();
-                        critOsc2.start();
-                        critOsc1.stop(audioContext.currentTime + 0.3);
-                        critOsc2.stop(audioContext.currentTime + 0.3);
-                        return;
+                        for(let i=0;i<2;i++){ let o=audioContext.createOscillator(), g=audioContext.createGain();
+                            o.type='sawtooth'; o.frequency.setValueAtTime(600+i*200, audioContext.currentTime);
+                            o.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime+0.2);
+                            o.connect(g); g.connect(audioContext.destination);
+                            g.gain.setValueAtTime(0.2, audioContext.currentTime);
+                            g.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime+0.3);
+                            o.start(); o.stop(audioContext.currentTime+0.3);
+                        } return;
                     case 'ko':
-                        const koOsc1 = audioContext.createOscillator();
-                        const koOsc2 = audioContext.createOscillator();
-                        const koGain = audioContext.createGain();
-                        const koFilter = audioContext.createBiquadFilter();
-                        
-                        koOsc1.type = 'sawtooth';
-                        koOsc2.type = 'triangle';
-                        koFilter.type = 'lowpass';
-                        koFilter.frequency.value = 2000;
-                        
-                        koOsc1.connect(koFilter);
-                        koOsc2.connect(koFilter);
-                        koFilter.connect(koGain);
-                        koGain.connect(audioContext.destination);
-                        
-                        koOsc1.frequency.setValueAtTime(200, audioContext.currentTime);
-                        koOsc1.frequency.linearRampToValueAtTime(50, audioContext.currentTime + 0.8);
-                        koOsc2.frequency.setValueAtTime(300, audioContext.currentTime);
-                        koOsc2.frequency.linearRampToValueAtTime(100, audioContext.currentTime + 0.8);
-                        
-                        koGain.gain.setValueAtTime(0.6, audioContext.currentTime);
-                        koGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
-                        
-                        koOsc1.start();
-                        koOsc2.start();
-                        koOsc1.stop(audioContext.currentTime + 1);
-                        koOsc2.stop(audioContext.currentTime + 1);
-                        return;
+                        for(let i=0;i<2;i++){ let o=audioContext.createOscillator(), g=audioContext.createGain();
+                            o.type='sawtooth'; o.frequency.setValueAtTime(200-i*50, audioContext.currentTime);
+                            o.frequency.linearRampToValueAtTime(50, audioContext.currentTime+1);
+                            o.connect(g); g.connect(audioContext.destination);
+                            g.gain.setValueAtTime(0.4, audioContext.currentTime);
+                            g.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime+1);
+                            o.start(); o.stop(audioContext.currentTime+1);
+                        } return;
                     case 'victory':
-                        const vicOsc1 = audioContext.createOscillator();
-                        const vicOsc2 = audioContext.createOscillator();
-                        const vicGain = audioContext.createGain();
-                        
-                        vicOsc1.type = 'sine';
-                        vicOsc2.type = 'triangle';
-                        
-                        vicOsc1.frequency.setValueAtTime(440, audioContext.currentTime);
-                        vicOsc1.frequency.linearRampToValueAtTime(880, audioContext.currentTime + 0.3);
-                        vicOsc2.frequency.setValueAtTime(554.37, audioContext.currentTime);
-                        vicOsc2.frequency.linearRampToValueAtTime(1108.73, audioContext.currentTime + 0.3);
-                        
-                        vicOsc1.connect(vicGain);
-                        vicOsc2.connect(vicGain);
-                        vicGain.connect(audioContext.destination);
-                        
-                        vicGain.gain.setValueAtTime(0.3, audioContext.currentTime);
-                        vicGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
-                        
-                        vicOsc1.start();
-                        vicOsc2.start();
-                        vicOsc1.stop(audioContext.currentTime + 0.8);
-                        vicOsc2.stop(audioContext.currentTime + 0.8);
-                        return;
+                        for(let i=0;i<3;i++){ let o=audioContext.createOscillator(), g=audioContext.createGain();
+                            o.type='sine'; o.frequency.setValueAtTime(440+i*110, audioContext.currentTime);
+                            o.frequency.linearRampToValueAtTime(880, audioContext.currentTime+0.3);
+                            o.connect(g); g.connect(audioContext.destination);
+                            g.gain.setValueAtTime(0.2, audioContext.currentTime);
+                            g.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime+0.8);
+                            o.start(); o.stop(audioContext.currentTime+0.8);
+                        } return;
                     case 'select':
-                        oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(783.99, audioContext.currentTime + 0.1);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                        oscillator.type = 'sine';
-                        filter.type = 'lowpass';
-                        filter.frequency.value = 2000;
-                        break;
-                    case 'locked':
-                        oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.1);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                        oscillator.type = 'square';
-                        filter.type = 'bandpass';
-                        filter.frequency.value = 400;
-                        break;
-                    case 'warning':
-                        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                        oscillator.type = 'sine';
-                        filter.type = 'bandpass';
-                        filter.frequency.value = 1000;
-                        break;
-                    case 'crowd':
-                        for (let i = 0; i < 15; i++) {
-                            const crowdOsc = audioContext.createOscillator();
-                            const crowdGain = audioContext.createGain();
-                            crowdOsc.type = 'sine';
-                            crowdOsc.frequency.value = 100 + Math.random() * 400;
-                            crowdGain.gain.value = 0.03;
-                            crowdOsc.connect(crowdGain);
-                            crowdGain.connect(audioContext.destination);
-                            crowdOsc.start();
-                            crowdOsc.stop(audioContext.currentTime + 0.15);
-                        }
-                        return;
-                    case 'blood':
-                        oscillator.frequency.setValueAtTime(50, audioContext.currentTime);
-                        oscillator.frequency.exponentialRampToValueAtTime(20, audioContext.currentTime + 0.1);
-                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                        oscillator.type = 'sawtooth';
-                        filter.type = 'lowpass';
-                        filter.frequency.value = 200;
-                        break;
+                        osc.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(783.99, audioContext.currentTime+0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime+0.2);
+                        osc.type='sine'; filter.type='lowpass'; filter.frequency.value=2000; break;
                     case 'rage':
-                        const rageOsc1 = audioContext.createOscillator();
-                        const rageOsc2 = audioContext.createOscillator();
-                        const rageGain = audioContext.createGain();
-                        rageOsc1.type = 'sawtooth';
-                        rageOsc2.type = 'square';
-                        rageOsc1.frequency.setValueAtTime(200, audioContext.currentTime);
-                        rageOsc1.frequency.linearRampToValueAtTime(400, audioContext.currentTime + 0.3);
-                        rageOsc2.frequency.setValueAtTime(300, audioContext.currentTime);
-                        rageOsc2.frequency.linearRampToValueAtTime(600, audioContext.currentTime + 0.3);
-                        rageOsc1.connect(rageGain);
-                        rageOsc2.connect(rageGain);
-                        rageGain.connect(audioContext.destination);
-                        rageGain.gain.setValueAtTime(0.5, audioContext.currentTime);
-                        rageGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-                        rageOsc1.start();
-                        rageOsc2.start();
-                        rageOsc1.stop(audioContext.currentTime + 0.5);
-                        rageOsc2.stop(audioContext.currentTime + 0.5);
-                        return;
+                        for(let i=0;i<2;i++){ let o=audioContext.createOscillator(), g=audioContext.createGain();
+                            o.type='sawtooth'; o.frequency.setValueAtTime(200+i*100, audioContext.currentTime);
+                            o.frequency.linearRampToValueAtTime(400+i*200, audioContext.currentTime+0.3);
+                            o.connect(g); g.connect(audioContext.destination);
+                            g.gain.setValueAtTime(0.4, audioContext.currentTime);
+                            g.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime+0.5);
+                            o.start(); o.stop(audioContext.currentTime+0.5);
+                        } return;
                     case 'ultimate':
-                        for (let i = 0; i < 5; i++) {
-                            const ultOsc = audioContext.createOscillator();
-                            const ultGain = audioContext.createGain();
-                            ultOsc.type = 'sawtooth';
-                            ultOsc.frequency.setValueAtTime(200 + i * 100, audioContext.currentTime);
-                            ultOsc.frequency.linearRampToValueAtTime(800 + i * 200, audioContext.currentTime + 0.5);
-                            ultGain.gain.setValueAtTime(0.3, audioContext.currentTime);
-                            ultGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
-                            ultOsc.connect(ultGain);
-                            ultGain.connect(audioContext.destination);
-                            ultOsc.start();
-                            ultOsc.stop(audioContext.currentTime + 0.6);
-                        }
-                        return;
-                    case 'chain':
-                        for (let i = 0; i < 8; i++) {
-                            const chainOsc = audioContext.createOscillator();
-                            const chainGain = audioContext.createGain();
-                            chainOsc.type = 'sine';
-                            chainOsc.frequency.setValueAtTime(300 + i * 50, audioContext.currentTime);
-                            chainOsc.frequency.linearRampToValueAtTime(600 + i * 100, audioContext.currentTime + 0.2);
-                            chainGain.gain.setValueAtTime(0.2, audioContext.currentTime);
-                            chainGain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
-                            chainOsc.connect(chainGain);
-                            chainGain.connect(audioContext.destination);
-                            chainOsc.start();
-                            chainOsc.stop(audioContext.currentTime + 0.3);
-                        }
-                        return;
+                        for(let i=0;i<5;i++){ let o=audioContext.createOscillator(), g=audioContext.createGain();
+                            o.type='sawtooth'; o.frequency.setValueAtTime(200+i*100, audioContext.currentTime);
+                            o.frequency.linearRampToValueAtTime(800+i*200, audioContext.currentTime+0.5);
+                            o.connect(g); g.connect(audioContext.destination);
+                            g.gain.setValueAtTime(0.2, audioContext.currentTime);
+                            g.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime+0.6);
+                            o.start(); o.stop(audioContext.currentTime+0.6);
+                        } return;
                 }
-                
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + (type === 'ko' ? 1 : 0.3));
-            } catch(e) {
-                console.log('Sound error:', e);
-            }
+                osc.start(); osc.stop(audioContext.currentTime+0.2);
+            } catch(e){}
         }
-
-        window.toggleSound = function() {
-            soundEnabled = !soundEnabled;
-            document.getElementById('soundToggle').textContent = soundEnabled ? '🔊 SOUND ON' : '🔇 SOUND OFF';
-            if (soundEnabled) playSound('select');
-        };
+        window.toggleSound = function(){ soundEnabled=!soundEnabled;
+            document.getElementById('soundToggle').textContent=soundEnabled?'🔊 ON':'🔇 OFF'; playSound('select'); };
 
         // ========== GLOBAL VARIABLES ==========
         let selectedCharacter = null;
@@ -1816,62 +753,45 @@
         let battleRef = null;
         let database = null;
         let positionUpdateInterval = null;
-        
+        window.game = null;  // make it global
+
         const urlParams = new URLSearchParams(window.location.search);
         battleCode = urlParams.get('code');
         playerRole = urlParams.get('role');
         playerName = urlParams.get('name') || 'Player';
         playerId = urlParams.get('id');
-        
-        console.log("🎮 Fighting game loaded:", { battleCode, playerRole, playerName, playerId });
-        
+
         // ========== CHARACTER SELECTION ==========
         window.selectCharacter = function(character) {
-            const option = document.getElementById(`choose${character.charAt(0).toUpperCase() + character.slice(1)}`);
+            const option = document.getElementById(`choose${character.charAt(0).toUpperCase()+character.slice(1)}`);
             if (option.classList.contains('locked')) {
                 playSound('locked');
                 document.getElementById('characterTakenMessage').textContent = `❌ ${character.toUpperCase()} is already taken!`;
-                document.getElementById('characterTakenMessage').style.color = '#ef4444';
-                setTimeout(() => {
-                    document.getElementById('characterTakenMessage').textContent = '';
-                }, 2000);
                 return;
             }
-            
             playSound('select');
             selectedCharacter = character;
-            
-            document.querySelectorAll('.character-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
+            document.querySelectorAll('.character-option').forEach(opt=>opt.classList.remove('selected'));
             option.classList.add('selected');
-            
-            const confirmBtn = document.getElementById('confirmCharacterBtn');
-            confirmBtn.disabled = false;
-            confirmBtn.textContent = `⚡ FIGHT AS ${character.toUpperCase()} ⚡`;
+            document.getElementById('confirmCharacterBtn').disabled = false;
+            document.getElementById('confirmCharacterBtn').textContent = `⚡ FIGHT AS ${character.toUpperCase()} ⚡`;
         };
-        
+
         window.confirmCharacter = async function() {
             if (!selectedCharacter) return;
             playSound('select');
             await initFirebaseAndStart();
-            
             const snapshot = await battleRef.child('characters').once('value');
             const characters = snapshot.val() || {};
-            
             if (characters.player1 === selectedCharacter || characters.player2 === selectedCharacter) {
                 playSound('locked');
-                document.getElementById('characterTakenMessage').textContent = `❌ ${selectedCharacter.toUpperCase()} is already taken!`;
-                document.getElementById('characterTakenMessage').style.color = '#ef4444';
+                document.getElementById('characterTakenMessage').textContent = `❌ ${selectedCharacter.toUpperCase()} already taken!`;
                 return;
             }
-            
             if (playerRole === 'player1') {
                 await battleRef.child('characters/player1').set(selectedCharacter);
-                console.log(`Set player1 to ${selectedCharacter}`);
             } else if (playerRole === 'player2') {
                 await battleRef.child('characters/player2').set(selectedCharacter);
-                console.log(`Set player2 to ${selectedCharacter}`);
             } else {
                 if (!characters.player1) {
                     await battleRef.child('characters/player1').set(selectedCharacter);
@@ -1880,219 +800,121 @@
                     await battleRef.child('characters/player2').set(selectedCharacter);
                     playerRole = 'player2';
                 } else {
-                    playSound('locked');
-                    alert('Game is full!');
-                    return;
+                    alert('Game full!'); return;
                 }
             }
-            
             proceedToGame();
         };
 
         async function initFirebaseAndStart() {
             try {
-                if (typeof firebase === 'undefined') {
-                    await loadFirebaseScripts();
-                }
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                }
+                if (typeof firebase === 'undefined') await loadFirebaseScripts();
+                if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
                 database = firebase.database();
                 battleRef = database.ref('battles/' + battleCode);
-                console.log("✅ Firebase connected for battle:", battleCode);
-                
-                battleRef.child('characters').on('value', (snapshot) => {
-                    const chars = snapshot.val() || {};
-                    updateCharacterSelectionUI(chars);
-                });
-            } catch (error) {
-                console.error("❌ Firebase error:", error);
-            }
+                battleRef.child('characters').on('value', (snap) => updateCharacterSelectionUI(snap.val() || {}));
+            } catch(e){ console.error(e); }
         }
 
-        function updateCharacterSelectionUI(characters) {
-            const kenjiTaken = document.getElementById('kenjiTaken');
-            const sakuraTaken = document.getElementById('sakuraTaken');
-            const kenjiOption = document.getElementById('chooseKenji');
-            const sakuraOption = document.getElementById('chooseSakura');
-            const messageEl = document.getElementById('characterTakenMessage');
-            
-            if (characters.player1 === 'kenji' || characters.player2 === 'kenji') {
-                kenjiTaken.style.display = 'block';
-                kenjiOption.classList.add('locked');
-                if (!characters.player1 || !characters.player2) {
-                    messageEl.textContent = '⚔️ Kenji is taken! Sakura is available.';
-                    messageEl.style.color = '#fbbf24';
-                }
-            } else {
-                kenjiTaken.style.display = 'none';
-                kenjiOption.classList.remove('locked');
-            }
-            
-            if (characters.player1 === 'sakura' || characters.player2 === 'sakura') {
-                sakuraTaken.style.display = 'block';
-                sakuraOption.classList.add('locked');
-                if (!characters.player1 || !characters.player2) {
-                    messageEl.textContent = '🌸 Sakura is taken! Kenji is available.';
-                    messageEl.style.color = '#fbbf24';
-                }
-            } else {
-                sakuraTaken.style.display = 'none';
-                sakuraOption.classList.remove('locked');
-            }
-            
-            if (characters.player1 && characters.player2) {
-                messageEl.textContent = '⚠️ BOTH WARRIORS ARE TAKEN ⚠️';
-                messageEl.style.color = '#ef4444';
-                document.getElementById('confirmCharacterBtn').disabled = true;
-            }
-            
-            if (!characters.player1 && !characters.player2) {
-                messageEl.textContent = '⚡ Choose your warrior first ⚡';
-                messageEl.style.color = '#fbbf24';
-            }
+        function updateCharacterSelectionUI(chars) {
+            const kTaken = document.getElementById('kenjiTaken');
+            const sTaken = document.getElementById('sakuraTaken');
+            const kOpt = document.getElementById('chooseKenji');
+            const sOpt = document.getElementById('chooseSakura');
+            const msg = document.getElementById('characterTakenMessage');
+            if (chars.player1==='kenji'||chars.player2==='kenji') {
+                kTaken.style.display='block'; kOpt.classList.add('locked');
+                if (!chars.player1||!chars.player2) msg.textContent='⚔️ Kenji taken! Sakura free.';
+            } else { kTaken.style.display='none'; kOpt.classList.remove('locked'); }
+            if (chars.player1==='sakura'||chars.player2==='sakura') {
+                sTaken.style.display='block'; sOpt.classList.add('locked');
+                if (!chars.player1||!chars.player2) msg.textContent='🌸 Sakura taken! Kenji free.';
+            } else { sTaken.style.display='none'; sOpt.classList.remove('locked'); }
+            if (chars.player1 && chars.player2) { msg.textContent='⚠️ BOTH TAKEN'; document.getElementById('confirmCharacterBtn').disabled=true; }
+            if (!chars.player1 && !chars.player2) msg.textContent='⚡ Choose your warrior';
         }
 
         function proceedToGame() {
-            console.log(`Player selected: ${selectedCharacter} as ${playerRole}`);
             playSound('victory');
-            
             document.getElementById('characterModal').classList.add('hidden');
-            document.getElementById('battleInfo').style.display = 'flex';
-            document.getElementById('playerIndicator').style.display = 'block';
+            document.getElementById('rightPanel').style.display = 'flex';
             document.getElementById('backBtn').style.display = 'block';
             document.getElementById('soundToggle').style.display = 'block';
-            document.getElementById('restartHint').style.display = 'block';
-            
-            document.getElementById('battleCode').textContent = battleCode || 'ARENA';
-            
+            document.getElementById('battleInfoMobile').innerHTML = `⚔️ ${battleCode || 'ARENA'} · ROUND 1`;
             if (playerRole === 'player1') {
                 if (selectedCharacter === 'kenji') {
-                    document.getElementById('playerIndicator').textContent = '👤 YOU ARE KENJI - THE SHADOW WARRIOR (LEFT SIDE)';
-                    document.getElementById('player1Name').textContent = 'KENJI (YOU)';
-                    document.getElementById('player2Name').textContent = '???';
+                    document.getElementById('p1Name').textContent = 'KENJI (YOU)';
+                    document.getElementById('p2Name').textContent = '???';
                 } else {
-                    document.getElementById('playerIndicator').textContent = '👤 YOU ARE SAKURA - THE CHERRY BLOSSOM (LEFT SIDE)';
-                    document.getElementById('player1Name').textContent = 'SAKURA (YOU)';
-                    document.getElementById('player2Name').textContent = '???';
+                    document.getElementById('p1Name').textContent = 'SAKURA (YOU)';
+                    document.getElementById('p2Name').textContent = '???';
                 }
             } else {
                 if (selectedCharacter === 'kenji') {
-                    document.getElementById('playerIndicator').textContent = '👤 YOU ARE KENJI - THE SHADOW WARRIOR (RIGHT SIDE)';
-                    document.getElementById('player2Name').textContent = 'KENJI (YOU)';
-                    document.getElementById('player1Name').textContent = '???';
+                    document.getElementById('p2Name').textContent = 'KENJI (YOU)';
+                    document.getElementById('p1Name').textContent = '???';
                 } else {
-                    document.getElementById('playerIndicator').textContent = '👤 YOU ARE SAKURA - THE CHERRY BLOSSOM (RIGHT SIDE)';
-                    document.getElementById('player2Name').textContent = 'SAKURA (YOU)';
-                    document.getElementById('player1Name').textContent = '???';
+                    document.getElementById('p2Name').textContent = 'SAKURA (YOU)';
+                    document.getElementById('p1Name').textContent = '???';
                 }
             }
-            
             window.gamePlayerRole = playerRole;
             window.gamePlayerId = playerId;
             window.gameBattleCode = battleCode;
-            
             const equippedMoves = loadEquippedMoves();
-            const movePath = playerRole === 'player1' ? 'player1/moves' : 'player2/moves';
-            battleRef.child(movePath).set(equippedMoves);
-            
+            if (battleRef) {
+                battleRef.child(playerRole==='player1'?'player1/moves':'player2/moves').set(equippedMoves);
+            }
             startGameInstance();
         }
 
         function loadFirebaseScripts() {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = 'https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js';
-                script.onload = () => {
-                    const dbScript = document.createElement('script');
-                    dbScript.src = 'https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js';
-                    dbScript.onload = resolve;
-                    dbScript.onerror = reject;
-                    document.head.appendChild(dbScript);
-                };
-                script.onerror = reject;
-                document.head.appendChild(script);
+            return new Promise((resolve,reject)=>{
+                const s=document.createElement('script'); s.src='https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js';
+                s.onload=()=>{ const d=document.createElement('script'); d.src='https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js'; d.onload=resolve; d.onerror=reject; document.head.appendChild(d); };
+                s.onerror=reject; document.head.appendChild(s);
             });
         }
 
         function loadEquippedMoves() {
-            console.log("🔍 Loading equipped moves from localStorage...");
             try {
-                const equippedIds = JSON.parse(localStorage.getItem('battleEquippedMoves') || '["punch","kick"]');
-                const ownedMoves = JSON.parse(localStorage.getItem('battleOwnedMoves') || '[]');
-                const allMoves = [
-                    MOVE_DATABASE.punch,
-                    MOVE_DATABASE.kick,
-                    ...ownedMoves
-                ];
-                const equippedMoves = allMoves.filter(move => equippedIds.includes(move.id));
-                console.log("✅ Loaded equipped moves:", equippedMoves.map(m => m.name).join(', ') || 'None');
-                return equippedMoves;
-            } catch (e) {
-                console.error("❌ Error loading moves:", e);
-                return [MOVE_DATABASE.punch, MOVE_DATABASE.kick];
-            }
+                const equippedIds = JSON.parse(localStorage.getItem('battleEquippedMoves')||'["punch","kick"]');
+                const owned = JSON.parse(localStorage.getItem('battleOwnedMoves')||'[]');
+                return [MOVE_DATABASE.punch, MOVE_DATABASE.kick, ...owned.filter(m=>equippedIds.includes(m.id))];
+            } catch(e){ return [MOVE_DATABASE.punch, MOVE_DATABASE.kick]; }
         }
-        
-        function startGameInstance() {
-            new FightingGame(window.gamePlayerRole || playerRole);
-        }
-        
-        window.restartGame = function() {
-            location.reload();
-        };
-        
-        // ========== FIGHTING GAME CLASS WITH FIXED OPPONENT DISPLAY ==========
-        
+
+        function startGameInstance() { window.game = new FightingGame(window.gamePlayerRole||playerRole); }
+        window.restartGame = function() { location.reload(); };
+
+        // ========== FIGHTING GAME CLASS (with proper position sync) ==========
         class FightingGame {
             constructor(role) {
                 this.canvas = document.getElementById('gameCanvas');
                 this.ctx = this.canvas.getContext('2d');
-                
+                this.resizeCanvas();
                 this.playerRole = role;
                 this.playerId = window.gamePlayerId || playerId;
                 this.battleRef = battleRef;
                 this.gameOver = false;
-                
                 this.myMoves = loadEquippedMoves();
-                
-                console.log("🎮 FightingGame initialized with role:", this.playerRole);
-                
                 this.frame = 0;
                 this.timer = 99;
-                
-                this.comboChain = {
-                    count: 0,
-                    timer: 0,
-                    maxTimer: 120,
-                    multiplier: 1
-                };
-                
-                this.combo = { count: 0, timer: 0 };
+                this.comboChain = { count:0, timer:0, maxTimer:120, multiplier:1 };
+                this.combo = { count:0, timer:0 };
                 this.shakeIntensity = 0;
-                this.moveSpeed = 20;
-                
-                this.buttonStates = {
-                    left: false,
-                    right: false,
-                    punch: false,
-                    kick: false,
-                    block: false
-                };
-                
+                this.moveSpeed = 5;
+                this.buttonStates = { left:false, right:false, punch:false, kick:false, block:false };
                 this.rageMode = false;
                 this.rageTimer = 0;
                 this.maxRageTimer = 300;
                 this.rageGainPerHit = 25;
-                
                 this.bloodParticles = [];
                 this.specialEffects = [];
                 this.blockEffects = [];
                 this.shockwaves = [];
-                
-                this.crowdImage = new Image();
-                this.crowdImage.src = 'crowd.png';
-                
+
+                // Original character images (using working placeholder URLs – replace with your actual image URLs)
                 this.images = {
                     kenji: {
                         idle: this.loadImage('adventurer_idle.png'),
@@ -2109,1173 +931,488 @@
                         win: this.loadImage('female_hang.png')
                     }
                 };
-                
+
+                // Players start far apart
                 this.players = [
-                    { 
-                        id: null, 
-                        x: 300, 
-                        y: 400, 
-                        health: 100, 
-                        maxHealth: 100, 
-                        special: 100, 
-                        maxSpecial: 100, 
-                        rage: 0,
-                        maxRage: 100,
-                        state: 'idle', 
-                        stateTimer: 0,
-                        facing: 1,
-                        speed: this.moveSpeed, 
-                        images: null,
-                        attackTimer: 0, 
-                        isBlocking: false,
-                        controlledBy: 'player1',
-                        hitLocked: false
-                    },
-                    { 
-                        id: null, 
-                        x: 900, 
-                        y: 400, 
-                        health: 100, 
-                        maxHealth: 100, 
-                        special: 100, 
-                        maxSpecial: 100, 
-                        rage: 0,
-                        maxRage: 100,
-                        state: 'idle', 
-                        stateTimer: 0,
-                        facing: -1,
-                        speed: this.moveSpeed, 
-                        images: null,
-                        attackTimer: 0, 
-                        isBlocking: false,
-                        controlledBy: 'player2',
-                        hitLocked: false
-                    }
+                    { id:null, x:250, y:400, health:100, maxHealth:100, special:100, maxSpecial:100, rage:0, maxRage:100,
+                      state:'idle', stateTimer:0, facing:1, speed:this.moveSpeed, images:null, attackTimer:0, isBlocking:false,
+                      controlledBy:'player1', hitLocked:false },
+                    { id:null, x:950, y:400, health:100, maxHealth:100, special:100, maxSpecial:100, rage:0, maxRage:100,
+                      state:'idle', stateTimer:0, facing:-1, speed:this.moveSpeed, images:null, attackTimer:0, isBlocking:false,
+                      controlledBy:'player2', hitLocked:false }
                 ];
-                
-                window.gameInstance = this;
-                
+
+                window.game = this;
                 this.loadedImages = 0;
                 this.totalImages = 10;
-                
                 this.setupButtonListeners();
                 this.setupKeyboardControls();
                 this.loadCharacterAssignments();
                 this.checkImagesLoaded();
+                window.addEventListener('resize', ()=>this.resizeCanvas());
             }
-            
+
+            resizeCanvas() {
+                const container = this.canvas.parentElement;
+                this.canvas.width = container.clientWidth;
+                this.canvas.height = container.clientHeight;
+            }
+
             loadImage(src) {
                 const img = new Image();
-                img.onload = () => {
+                img.onload = () => { this.loadedImages++; if(this.loadedImages===this.totalImages) this.startGame(); };
+                img.onerror = () => {
                     this.loadedImages++;
-                    console.log(`✅ Loaded: ${src} (${this.loadedImages}/${this.totalImages})`);
-                    if (this.loadedImages === this.totalImages) {
-                        this.startGame();
-                    }
-                };
-                img.onerror = (e) => {
-                    console.log(`⚠️ Could not load: ${src} - using fallback`);
-                    this.loadedImages++;
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 100;
-                    canvas.height = 120;
+                    // fallback: coloured rectangle with emoji
+                    const canvas = document.createElement('canvas'); canvas.width=100; canvas.height=120;
                     const ctx = canvas.getContext('2d');
-                    ctx.fillStyle = src.includes('kenji') ? '#ef4444' : '#ff69b4';
-                    ctx.fillRect(20, 20, 60, 80);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 40px Arial';
-                    ctx.fillText(src.includes('kenji') ? '⚔️' : '🌸', 35, 70);
-                    const fallbackImg = new Image();
-                    fallbackImg.src = canvas.toDataURL();
-                    
-                    if (src.includes('kenji')) {
-                        this.images.kenji[src.split('_')[0]] = fallbackImg;
-                    } else {
-                        this.images.sakura[src.split('_')[0]] = fallbackImg;
-                    }
-                    
-                    if (this.loadedImages === this.totalImages) {
-                        this.startGame();
-                    }
+                    ctx.fillStyle = src.includes('kenji')||src.includes('8iF')?'#ef4444':'#ff69b4';
+                    ctx.fillRect(20,20,60,80);
+                    ctx.fillStyle='#ffffff'; ctx.font='bold 40px Arial';
+                    ctx.fillText(src.includes('kenji')||src.includes('8iF')?'⚔️':'🌸', 35, 70);
+                    const fallback = new Image(); fallback.src = canvas.toDataURL();
+                    if(src.includes('kenji')||src.includes('8iF')) this.images.kenji[src.split('_')[0]?.split('/').pop()?.split('.')[0]||'idle'] = fallback;
+                    else this.images.sakura[src.split('_')[0]?.split('/').pop()?.split('.')[0]||'idle'] = fallback;
+                    if(this.loadedImages===this.totalImages) this.startGame();
                 };
                 img.src = src;
                 return img;
             }
-            
-            checkImagesLoaded() {
-                setTimeout(() => {
-                    if (this.loadedImages < this.totalImages) {
-                        console.log("⚠️ Starting game with fallback graphics");
-                        this.startGame();
-                    }
-                }, 2000);
-            }
-            
-            // FIXED: Character assignment with real-time updates
+
+            checkImagesLoaded() { setTimeout(()=>{ if(this.loadedImages<this.totalImages) this.startGame(); },2000); }
+
             loadCharacterAssignments() {
-                // Set up a listener for character changes
-                this.battleRef.child('characters').on('value', (snapshot) => {
-                    const chars = snapshot.val() || {};
-                    console.log("Character assignments updated:", chars);
-                    
-                    let bothCharactersLoaded = true;
-                    
-                    // Assign player 1 (left side)
-                    if (chars.player1 === 'kenji') {
-                        this.players[0].id = 'kenji';
-                        this.players[0].images = this.images.kenji;
-                        console.log("Player 1 (left) assigned to KENJI");
-                    } else if (chars.player1 === 'sakura') {
-                        this.players[0].id = 'sakura';
-                        this.players[0].images = this.images.sakura;
-                        console.log("Player 1 (left) assigned to SAKURA");
-                    } else {
-                        bothCharactersLoaded = false;
-                    }
-                    
-                    // Assign player 2 (right side)
-                    if (chars.player2 === 'kenji') {
-                        this.players[1].id = 'kenji';
-                        this.players[1].images = this.images.kenji;
-                        console.log("Player 2 (right) assigned to KENJI");
-                    } else if (chars.player2 === 'sakura') {
-                        this.players[1].id = 'sakura';
-                        this.players[1].images = this.images.sakura;
-                        console.log("Player 2 (right) assigned to SAKURA");
-                    } else {
-                        bothCharactersLoaded = false;
-                    }
-                    
-                    // Update HUD with correct names when both characters are loaded
-                    if (bothCharactersLoaded) {
-                        console.log("✅ Both characters loaded:", this.players);
-                        
-                        if (this.playerRole === 'player1') {
-                            if (this.players[0].id === 'kenji') {
-                                document.getElementById('player1Name').textContent = 'KENJI (YOU)';
-                                document.getElementById('player2Name').textContent = this.players[1].id === 'kenji' ? 'KENJI' : 'SAKURA';
-                            } else {
-                                document.getElementById('player1Name').textContent = 'SAKURA (YOU)';
-                                document.getElementById('player2Name').textContent = this.players[1].id === 'kenji' ? 'KENJI' : 'SAKURA';
-                            }
+                if (!this.battleRef) return;
+                this.battleRef.child('characters').on('value', (snap) => {
+                    const chars = snap.val() || {};
+                    let both = true;
+                    if (chars.player1 === 'kenji') { this.players[0].id='kenji'; this.players[0].images=this.images.kenji; }
+                    else if (chars.player1 === 'sakura') { this.players[0].id='sakura'; this.players[0].images=this.images.sakura; }
+                    else both = false;
+                    if (chars.player2 === 'kenji') { this.players[1].id='kenji'; this.players[1].images=this.images.kenji; }
+                    else if (chars.player2 === 'sakura') { this.players[1].id='sakura'; this.players[1].images=this.images.sakura; }
+                    else both = false;
+                    if (both) {
+                        if (this.playerRole==='player1') {
+                            if(this.players[0].id==='kenji') { document.getElementById('p1Name').textContent='KENJI (YOU)'; document.getElementById('p2Name').textContent=this.players[1].id==='kenji'?'KENJI':'SAKURA'; }
+                            else { document.getElementById('p1Name').textContent='SAKURA (YOU)'; document.getElementById('p2Name').textContent=this.players[1].id==='kenji'?'KENJI':'SAKURA'; }
                         } else {
-                            if (this.players[1].id === 'kenji') {
-                                document.getElementById('player2Name').textContent = 'KENJI (YOU)';
-                                document.getElementById('player1Name').textContent = this.players[0].id === 'kenji' ? 'KENJI' : 'SAKURA';
-                            } else {
-                                document.getElementById('player2Name').textContent = 'SAKURA (YOU)';
-                                document.getElementById('player1Name').textContent = this.players[0].id === 'kenji' ? 'KENJI' : 'SAKURA';
-                            }
+                            if(this.players[1].id==='kenji') { document.getElementById('p2Name').textContent='KENJI (YOU)'; document.getElementById('p1Name').textContent=this.players[0].id==='kenji'?'KENJI':'SAKURA'; }
+                            else { document.getElementById('p2Name').textContent='SAKURA (YOU)'; document.getElementById('p1Name').textContent=this.players[0].id==='kenji'?'KENJI':'SAKURA'; }
                         }
                     } else {
-                        console.log("⏳ Waiting for opponent to choose character...");
-                        // Show waiting message if opponent hasn't chosen
-                        if (!chars.player1 || !chars.player2) {
-                            this.showBattleMessage("⏳ Waiting for opponent to choose...", "#fbbf24");
-                        }
+                        if(!chars.player1||!chars.player2) this.showBattleMessage('⏳ Waiting for opponent...','#fbbf24');
                     }
                 });
             }
-            
+
             setupKeyboardControls() {
-                document.addEventListener('keydown', (e) => {
-                    if (this.gameOver) return;
-                    const key = e.key.toLowerCase();
-                    if (key === 'a' || key === 'arrowleft') {
-                        e.preventDefault();
-                        this.buttonStates.left = true;
-                    } else if (key === 'd' || key === 'arrowright') {
-                        e.preventDefault();
-                        this.buttonStates.right = true;
-                    } else if (key === 'j') {
-                        e.preventDefault();
-                        this.performAttack(3, 'punch');
-                    } else if (key === 'k') {
-                        e.preventDefault();
-                        this.performAttack(4, 'kick');
-                    } else if (key === 'l') {
-                        e.preventDefault();
-                        this.buttonStates.block = true;
-                    } else if (key === 'u') {
-                        e.preventDefault();
-                        this.useUltimate();
-                    } else if (key === 'r' && this.gameOver) {
-                        restartGame();
-                    }
+                document.addEventListener('keydown', (e)=>{
+                    if(this.gameOver) return;
+                    const k=e.key.toLowerCase();
+                    if(k==='a'||k==='arrowleft'){ e.preventDefault(); this.buttonStates.left=true; }
+                    if(k==='d'||k==='arrowright'){ e.preventDefault(); this.buttonStates.right=true; }
+                    if(k==='j'){ e.preventDefault(); this.performAttack(3,'punch'); }
+                    if(k==='k'){ e.preventDefault(); this.performAttack(4,'kick'); }
+                    if(k==='l'){ e.preventDefault(); this.buttonStates.block=true; }
+                    if(k==='u'){ e.preventDefault(); this.useUltimate(); }
+                    if(k==='r' && this.gameOver) restartGame();
                 });
-                
-                document.addEventListener('keyup', (e) => {
-                    const key = e.key.toLowerCase();
-                    if (key === 'a' || key === 'arrowleft') {
-                        this.buttonStates.left = false;
-                    } else if (key === 'd' || key === 'arrowright') {
-                        this.buttonStates.right = false;
-                    } else if (key === 'l') {
-                        this.buttonStates.block = false;
-                    }
+                document.addEventListener('keyup', (e)=>{
+                    const k=e.key.toLowerCase();
+                    if(k==='a'||k==='arrowleft') this.buttonStates.left=false;
+                    if(k==='d'||k==='arrowright') this.buttonStates.right=false;
+                    if(k==='l') this.buttonStates.block=false;
                 });
             }
-            
-            buttonPress(action) {
-                if (this.gameOver) return;
-                
-                const myPlayer = this.players.find(p => p.controlledBy === this.playerRole);
-                const opponent = this.players.find(p => p.controlledBy !== this.playerRole);
-                
-                if (!myPlayer || !opponent) return;
-                
-                switch(action) {
-                    case 'left':
-                        this.buttonStates.left = true;
-                        break;
-                    case 'right':
-                        this.buttonStates.right = true;
-                        break;
-                    case 'punch':
-                        this.performAttack(3, 'punch');
-                        break;
-                    case 'kick':
-                        this.performAttack(4, 'kick');
-                        break;
-                    case 'block':
-                        this.buttonStates.block = true;
-                        break;
-                    case 'ultimate':
-                        this.useUltimate();
-                        break;
+
+            setupButtonListeners() { }
+
+            press(action) {
+                if(this.gameOver) return;
+                const my=this.players.find(p=>p.controlledBy===this.playerRole);
+                const opp=this.players.find(p=>p.controlledBy!==this.playerRole);
+                if(!my||!opp) return;
+                switch(action){
+                    case'left': this.buttonStates.left=true; break;
+                    case'right': this.buttonStates.right=true; break;
+                    case'punch': this.performAttack(3,'punch'); break;
+                    case'kick': this.performAttack(4,'kick'); break;
+                    case'block': this.buttonStates.block=true; break;
+                    case'ultimate': this.useUltimate(); break;
                 }
             }
-            
-            buttonRelease(action) {
-                if (this.gameOver) return;
-                
-                switch(action) {
-                    case 'left':
-                        this.buttonStates.left = false;
-                        break;
-                    case 'right':
-                        this.buttonStates.right = false;
-                        break;
-                    case 'block':
-                        this.buttonStates.block = false;
-                        break;
-                }
+            release(action) {
+                if(action==='left') this.buttonStates.left=false;
+                if(action==='right') this.buttonStates.right=false;
+                if(action==='block') this.buttonStates.block=false;
             }
-            
+
             useUltimate() {
-                const myPlayer = this.players.find(p => p.controlledBy === this.playerRole);
-                const opponent = this.players.find(p => p.controlledBy !== this.playerRole);
-                
-                if (!myPlayer || !opponent || this.gameOver) return;
-                
-                if (!this.rageMode) {
-                    this.showBattleMessage('❌ NEED RAGE MODE FIRST!', '#ff0000');
-                    return;
-                }
-                
-                opponent.health = 0;
-                this.showBattleMessage('💀 ULTIMATE MOVE - INSTANT KO! 💀', '#ff0000');
-                playSound('ultimate', 0.8);
-                
-                for (let i = 0; i < 100; i++) {
-                    this.bloodParticles.push({
-                        x: opponent.x,
-                        y: opponent.y - 50,
-                        vx: (Math.random() - 0.5) * 30,
-                        vy: (Math.random() - 0.5) * 30 - 10,
-                        life: 2,
-                        size: 5 + Math.random() * 10,
-                        color: '#8B0000'
-                    });
-                }
-                
-                if (opponent.id === 'kenji') {
-                    document.getElementById('p1HealthFill').style.width = '0%';
-                } else {
-                    document.getElementById('p2HealthFill').style.width = '0%';
-                }
-                
+                const my=this.players.find(p=>p.controlledBy===this.playerRole);
+                const opp=this.players.find(p=>p.controlledBy!==this.playerRole);
+                if(!my||!opp||this.gameOver) return;
+                if(!this.rageMode){ this.showBattleMessage('❌ NEED RAGE MODE!','#ff0000'); return; }
+                opp.health=0;
+                this.showBattleMessage('💀 ULTIMATE!','#ff0000'); playSound('ultimate',0.8);
+                for(let i=0;i<100;i++) this.bloodParticles.push({ x:opp.x, y:opp.y-50, vx:(Math.random()-0.5)*30, vy:(Math.random()-0.5)*30-10, life:2, size:5+Math.random()*10, color:'#8B0000' });
+                if(opp.id==='kenji') document.getElementById('p1HealthFill').style.width='0%';
+                else document.getElementById('p2HealthFill').style.width='0%';
                 this.checkGameOver();
             }
-            
-            setupButtonListeners() {
-                window.gameInstance = this;
-            }
-            
+
             startGame() {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('gameCanvas').style.display = 'block';
-                document.getElementById('hud').style.display = 'flex';
-                document.getElementById('buttonControls').style.display = 'flex';
+                document.getElementById('gameCanvas').style.display='block';
                 this.createSpecialMovesUI();
                 this.startPositionSync();
                 this.listenForUpdates();
                 this.gameLoop();
                 playSound('select');
             }
-            
+
             startPositionSync() {
-                if (positionUpdateInterval) clearInterval(positionUpdateInterval);
-                positionUpdateInterval = setInterval(() => {
-                    if (this.gameOver || !this.battleRef) return;
-                    const myPlayer = this.players.find(p => p.controlledBy === this.playerRole);
-                    if (!myPlayer) return;
-                    if (!myPlayer.hitLocked && myPlayer.id) {
-                        const positionData = {};
-                        positionData[myPlayer.id] = { x: myPlayer.x };
-                        this.battleRef.child('positions').update(positionData).catch(() => {});
-                    }
+                if(positionUpdateInterval) clearInterval(positionUpdateInterval);
+                positionUpdateInterval = setInterval(()=>{
+                    if(this.gameOver||!this.battleRef) return;
+                    const my=this.players.find(p=>p.controlledBy===this.playerRole);
+                    if(!my||my.hitLocked||!my.id) return;
+                    const pos={}; pos[my.id]={ x: my.x };
+                    this.battleRef.child('positions').update(pos).catch(()=>{});
                 }, 50);
             }
-            
+
             listenForUpdates() {
-                if (!this.battleRef) return;
-                
-                this.battleRef.child('player1/health').on('value', (snapshot) => {
-                    const health = snapshot.val();
-                    if (health !== null && this.players[0].health !== health) {
-                        this.players[0].health = health;
-                        document.getElementById('p1HealthFill').style.width = health + '%';
-                        this.checkGameOver();
-                    }
+                if(!this.battleRef) return;
+                this.battleRef.child('player1/health').on('value',(s)=>{
+                    const h=s.val(); if(h!==null && this.players[0].health!==h){ this.players[0].health=h; document.getElementById('p1HealthFill').style.width=h+'%'; this.checkGameOver(); }
                 });
-                
-                this.battleRef.child('player2/health').on('value', (snapshot) => {
-                    const health = snapshot.val();
-                    if (health !== null && this.players[1].health !== health) {
-                        this.players[1].health = health;
-                        document.getElementById('p2HealthFill').style.width = health + '%';
-                        this.checkGameOver();
-                    }
+                this.battleRef.child('player2/health').on('value',(s)=>{
+                    const h=s.val(); if(h!==null && this.players[1].health!==h){ this.players[1].health=h; document.getElementById('p2HealthFill').style.width=h+'%'; this.checkGameOver(); }
                 });
-                
-                this.battleRef.child('player1/mana').on('value', (snapshot) => {
-                    const mana = snapshot.val();
-                    if (mana !== null && this.players[0].special !== mana) {
-                        this.players[0].special = mana;
-                        document.getElementById('p1SpecialFill').style.width = mana + '%';
-                    }
+                this.battleRef.child('player1/mana').on('value',(s)=>{
+                    const m=s.val(); if(m!==null && this.players[0].special!==m){ this.players[0].special=m; document.getElementById('p1SpecialFill').style.width=m+'%'; }
                 });
-                
-                this.battleRef.child('player2/mana').on('value', (snapshot) => {
-                    const mana = snapshot.val();
-                    if (mana !== null && this.players[1].special !== mana) {
-                        this.players[1].special = mana;
-                        document.getElementById('p2SpecialFill').style.width = mana + '%';
-                    }
+                this.battleRef.child('player2/mana').on('value',(s)=>{
+                    const m=s.val(); if(m!==null && this.players[1].special!==m){ this.players[1].special=m; document.getElementById('p2SpecialFill').style.width=m+'%'; }
                 });
-                
-                this.battleRef.child('positions').on('value', (snapshot) => {
-                    const positions = snapshot.val();
-                    if (positions && !this.gameOver) {
-                        if (this.playerRole === 'player1') {
-                            if (positions.sakura && this.players[1]) {
-                                this.players[1].x = positions.sakura.x;
-                            }
-                        } else {
-                            if (positions.kenji && this.players[0]) {
-                                this.players[0].x = positions.kenji.x;
-                            }
+                this.battleRef.child('positions').on('value',(s)=>{
+                    const pos=s.val();
+                    if(pos && !this.gameOver){
+                        // Only update the opponent's position – never overwrite our own
+                        if(this.playerRole==='player1' && pos.sakura && this.players[1]) {
+                            this.players[1].x = pos.sakura.x;
+                        }
+                        else if(this.playerRole==='player2' && pos.kenji && this.players[0]) {
+                            this.players[0].x = pos.kenji.x;
                         }
                     }
                 });
             }
-            
+
             createSpecialMovesUI() {
-                const container = document.getElementById('specialMovesContainer');
-                if (!container) return;
-                
-                container.style.display = 'flex';
-                container.innerHTML = '';
-                
-                const specialMoves = this.myMoves.filter(m => m.id !== 'punch' && m.id !== 'kick');
-                
-                if (specialMoves.length === 0) {
-                    const message = document.createElement('div');
-                    message.className = 'no-moves-message';
-                    message.innerHTML = '⚡ NO SPECIAL MOVES EQUIPPED ⚡';
-                    container.appendChild(message);
-                    return;
-                }
-                
-                specialMoves.forEach(move => {
-                    const button = document.createElement('button');
-                    button.className = `special-move-btn ${move.rarity || 'common'}`;
-                    button.setAttribute('data-move-id', move.id);
-                    
-                    button.innerHTML = `
-                        <span class="move-icon">${move.icon}</span>
-                        <span class="move-name">${move.name}</span>
-                        <span class="move-cost">⚡ ${move.manaCost}</span>
-                    `;
-                    
-                    button.onmousedown = (e) => {
-                        e.preventDefault();
-                        this.useSpecialMove(move);
-                    };
-                    button.ontouchstart = (e) => {
-                        e.preventDefault();
-                        this.useSpecialMove(move);
-                    };
-                    
-                    container.appendChild(button);
+                const container = document.getElementById('specialMoves'); if(!container) return;
+                container.innerHTML='';
+                const special = this.myMoves.filter(m=>m.id!=='punch'&&m.id!=='kick');
+                if(special.length===0){ container.innerHTML='⚡ NO MOVES'; return; }
+                special.forEach(move=>{
+                    const btn = document.createElement('button');
+                    btn.className = `special-move-btn ${move.rarity||'common'}`;
+                    btn.innerHTML = `<span class="icon">${move.icon}</span><span>${move.name}</span><span class="cost">${move.manaCost}</span>`;
+                    btn.onmousedown = (e)=>{ e.preventDefault(); this.useSpecialMove(move); };
+                    btn.ontouchstart = (e)=>{ e.preventDefault(); this.useSpecialMove(move); };
+                    container.appendChild(btn);
                 });
             }
-            
+
             useSpecialMove(move) {
-                console.log(`🎯 Using move: ${move.name}`);
-                
-                const myPlayer = this.players.find(p => p.controlledBy === this.playerRole);
-                const opponent = this.players.find(p => p.controlledBy !== this.playerRole);
-                
-                if (!myPlayer || !opponent || this.gameOver) return;
-                if (myPlayer.hitLocked || myPlayer.state === 'hurt' || myPlayer.attackTimer > 0) {
-                    this.showBattleMessage('❌ CANNOT ACT NOW!', '#ef4444');
-                    return;
-                }
-                
-                if (Math.abs(myPlayer.x - opponent.x) > 250) {
-                    this.showBattleMessage('❌ TOO FAR AWAY!', '#ef4444');
-                    return;
-                }
-                
-                if (myPlayer.special < move.manaCost) {
-                    this.showBattleMessage(`❌ NEED ${move.manaCost} MP!`, '#ef4444');
-                    return;
-                }
-                
-                myPlayer.special -= move.manaCost;
-                
-                if (move.heal) {
-                    myPlayer.health = Math.min(100, myPlayer.health + move.heal);
-                    this.showBattleMessage(`💚 +${move.heal} HP!`, '#10b981');
-                    playSound('special');
-                    
-                    if (myPlayer.id === 'kenji') {
-                        document.getElementById('p1HealthFill').style.width = myPlayer.health + '%';
-                    } else {
-                        document.getElementById('p2HealthFill').style.width = myPlayer.health + '%';
-                    }
-                    
-                    for (let i = 0; i < 15; i++) {
-                        this.specialEffects.push({
-                            x: myPlayer.x,
-                            y: myPlayer.y - 50,
-                            vx: (Math.random() - 0.5) * 10,
-                            vy: (Math.random() - 0.5) * 10 - 5,
-                            life: 1,
-                            color: '#10b981'
-                        });
-                    }
+                const my=this.players.find(p=>p.controlledBy===this.playerRole);
+                const opp=this.players.find(p=>p.controlledBy!==this.playerRole);
+                if(!my||!opp||this.gameOver) return;
+                if(my.hitLocked||my.state==='hurt'||my.attackTimer>0){ this.showBattleMessage('❌ CANNOT ACT!','#ef4444'); return; }
+                if(Math.abs(my.x-opp.x)>250){ this.showBattleMessage('❌ TOO FAR!','#ef4444'); return; }
+                if(my.special < move.manaCost){ this.showBattleMessage(`❌ NEED ${move.manaCost} MP`,'#ef4444'); return; }
+                my.special -= move.manaCost;
+                if(move.heal){
+                    my.health = Math.min(100, my.health+move.heal);
+                    this.showBattleMessage(`💚 +${move.heal} HP`,'#10b981'); playSound('special');
+                    if(my.id==='kenji') document.getElementById('p1HealthFill').style.width=my.health+'%';
+                    else document.getElementById('p2HealthFill').style.width=my.health+'%';
                 } else {
                     const chainBonus = this.comboChain.multiplier;
-                    const damageBoost = this.rageMode ? 1.5 : 1;
-                    const isCritical = Math.random() < 0.2;
-                    let finalDamage = Math.floor(move.damage * damageBoost * chainBonus);
-                    
-                    if (isCritical) {
-                        finalDamage += Math.floor(move.damage * 0.5);
-                        this.showBattleMessage(`✨ CRITICAL! +${Math.floor(move.damage * 0.5)}! (${chainBonus.toFixed(1)}x)`, '#ffd700');
-                        playSound('critical');
-                        this.shockwaves.push({ x: opponent.x, y: opponent.y - 50, radius: 20, life: 1 });
-                    } else {
-                        this.showBattleMessage(`💥 -${finalDamage}! (${chainBonus.toFixed(1)}x)`, '#ef4444');
-                        playSound('hit');
-                    }
-                    
-                    opponent.health = Math.max(0, opponent.health - finalDamage);
-                    
-                    if (opponent.id === 'kenji') {
-                        document.getElementById('p1HealthFill').style.width = opponent.health + '%';
-                    } else {
-                        document.getElementById('p2HealthFill').style.width = opponent.health + '%';
-                    }
-                    
-                    opponent.hitLocked = true;
-                    opponent.state = 'hurt';
-                    opponent.stateTimer = 15;
-                    
-                    let knockbackX = opponent.x;
-                    if (myPlayer.facing > 0) {
-                        knockbackX = opponent.x + 120;
-                    } else {
-                        knockbackX = opponent.x - 120;
-                    }
-                    knockbackX = Math.max(200, Math.min(1000, knockbackX));
-                    opponent.x = knockbackX;
-                    
+                    const dmgBoost = this.rageMode?1.5:1;
+                    const crit = Math.random()<0.2;
+                    let finalDmg = Math.floor(move.damage * dmgBoost * chainBonus);
+                    if(crit){ finalDmg+=Math.floor(move.damage*0.5); this.showBattleMessage(`✨ CRITICAL! ${finalDmg}`,'#ffd700'); playSound('critical'); }
+                    else this.showBattleMessage(`💥 -${finalDmg}`,'#ef4444');
+                    opp.health = Math.max(0, opp.health - finalDmg);
+                    if(opp.id==='kenji') document.getElementById('p1HealthFill').style.width=opp.health+'%';
+                    else document.getElementById('p2HealthFill').style.width=opp.health+'%';
+                    opp.hitLocked=true; opp.state='hurt'; opp.stateTimer=15;
+                    opp.x += (my.facing>0?120:-120); opp.x = Math.max(200, Math.min(1000, opp.x));
                     this.shakeIntensity = 35;
-                    
-                    playSound('blood', 0.4);
-                    const bloodCount = this.rageMode ? 50 : 30;
-                    for (let i = 0; i < bloodCount; i++) {
-                        this.bloodParticles.push({
-                            x: opponent.x,
-                            y: opponent.y - 50,
-                            vx: (Math.random() - 0.5) * (this.rageMode ? 20 : 15),
-                            vy: (Math.random() - 0.5) * (this.rageMode ? 20 : 15) - 5,
-                            life: this.rageMode ? 1.5 : 1,
-                            size: this.rageMode ? 3 + Math.random() * 8 : 2 + Math.random() * 5,
-                            color: isCritical ? '#8B0000' : '#B22222'
-                        });
-                    }
-                    
-                    myPlayer.rage = Math.min(myPlayer.maxRage, myPlayer.rage + this.rageGainPerHit);
-                    
-                    if (myPlayer.rage >= myPlayer.maxRage && !this.rageMode) {
-                        this.activateRageMode();
-                    }
+                    for(let i=0;i<(this.rageMode?40:20);i++) this.bloodParticles.push({ x:opp.x, y:opp.y-50, vx:(Math.random()-0.5)*15, vy:(Math.random()-0.5)*15-5, life:1.2, size:3+Math.random()*6, color:crit?'#8B0000':'#B22222' });
+                    my.rage = Math.min(my.maxRage, my.rage + this.rageGainPerHit);
+                    if(my.rage>=my.maxRage && !this.rageMode) this.activateRageMode();
                 }
-                
-                myPlayer.attackTimer = 20;
-                myPlayer.state = 'punch';
-                myPlayer.stateTimer = 15;
-                
-                document.getElementById('p1SpecialFill').style.width = this.players[0].special + '%';
-                document.getElementById('p2SpecialFill').style.width = this.players[1].special + '%';
-                document.getElementById('p1RageFill').style.width = this.players[0].rage + '%';
-                document.getElementById('p2RageFill').style.width = this.players[1].rage + '%';
-                
-                if (this.battleRef) {
-                    const healthPath = opponent.id === 'kenji' ? 'player1/health' : 'player2/health';
-                    const manaPath = myPlayer.id === 'kenji' ? 'player1/mana' : 'player2/mana';
-                    this.battleRef.child(healthPath).set(opponent.health);
-                    this.battleRef.child(manaPath).set(myPlayer.special);
-                    const positionPath = opponent.id === 'kenji' ? 'positions/kenji' : 'positions/sakura';
-                    this.battleRef.child(positionPath).set({ x: opponent.x });
+                my.attackTimer=20; my.state='punch'; my.stateTimer=15;
+                document.getElementById('p1SpecialFill').style.width=this.players[0].special+'%';
+                document.getElementById('p2SpecialFill').style.width=this.players[1].special+'%';
+                document.getElementById('p1RageFill').style.width=this.players[0].rage+'%';
+                document.getElementById('p2RageFill').style.width=this.players[1].rage+'%';
+                if(this.battleRef){
+                    const hpPath = opp.id==='kenji'?'player1/health':'player2/health';
+                    const mpPath = my.id==='kenji'?'player1/mana':'player2/mana';
+                    const posPath = opp.id==='kenji'?'positions/kenji':'positions/sakura';
+                    this.battleRef.child(hpPath).set(opp.health);
+                    this.battleRef.child(mpPath).set(my.special);
+                    this.battleRef.child(posPath).set({ x: opp.x });
                 }
-                
                 this.checkGameOver();
             }
-            
+
             activateRageMode() {
-                this.rageMode = true;
-                this.rageTimer = this.maxRageTimer;
-                playSound('rage', 0.7);
-                
-                document.getElementById('rageIndicator').style.display = 'block';
+                this.rageMode=true; this.rageTimer=this.maxRageTimer; playSound('rage',0.7);
+                document.getElementById('rageIndicator').style.display='block';
                 document.querySelector('canvas').classList.add('rage-mode');
-                
-                this.showBattleMessage('⚡ RAGE MODE ACTIVATED! ⚡', '#ff0000');
-                
-                this.shakeIntensity = 30;
-                
-                const myPlayer = this.players.find(p => p.controlledBy === this.playerRole);
-                if (myPlayer) {
-                    myPlayer.rage = 0;
-                }
+                this.showBattleMessage('⚡ RAGE MODE!','#ff0000'); this.shakeIntensity=30;
+                const my=this.players.find(p=>p.controlledBy===this.playerRole); if(my) my.rage=0;
             }
-            
+
             updateRageMode() {
-                if (this.rageMode) {
+                if(this.rageMode){
                     this.rageTimer--;
-                    
-                    const secondsLeft = Math.ceil(this.rageTimer / 60);
-                    document.getElementById('rageIndicator').innerHTML = `⚡ RAGE MODE - ${secondsLeft}s ⚡`;
-                    
-                    if (this.rageTimer <= 0) {
-                        this.rageMode = false;
-                        document.getElementById('rageIndicator').style.display = 'none';
-                        document.querySelector('canvas').classList.remove('rage-mode');
-                        this.showBattleMessage('💤 RAGE MODE EXPIRED', '#888888');
-                    }
+                    document.getElementById('rageIndicator').innerHTML = `⚡ ${Math.ceil(this.rageTimer/60)}s ⚡`;
+                    if(this.rageTimer<=0){ this.rageMode=false; document.getElementById('rageIndicator').style.display='none'; document.querySelector('canvas').classList.remove('rage-mode'); this.showBattleMessage('💤 RAGE EXPIRED','#888'); }
                 }
             }
-            
+
             updateComboChain() {
-                if (this.comboChain.count > 0) {
+                if(this.comboChain.count>0){
                     this.comboChain.timer--;
-                    
-                    if (this.comboChain.count >= 10) this.comboChain.multiplier = 3.0;
-                    else if (this.comboChain.count >= 7) this.comboChain.multiplier = 2.5;
-                    else if (this.comboChain.count >= 5) this.comboChain.multiplier = 2.0;
-                    else if (this.comboChain.count >= 3) this.comboChain.multiplier = 1.5;
-                    else this.comboChain.multiplier = 1.0;
-                    
-                    document.getElementById('comboChainIndicator').style.display = 'block';
-                    document.getElementById('comboChainIndicator').innerHTML = `🔥 ${this.comboChain.count}x (${this.comboChain.multiplier.toFixed(1)}x) 🔥`;
-                    
-                    if (this.comboChain.timer <= 0) {
-                        this.comboChain.count = 0;
-                        this.comboChain.multiplier = 1.0;
-                        document.getElementById('comboChainIndicator').style.display = 'none';
-                    }
-                } else {
-                    document.getElementById('comboChainIndicator').style.display = 'none';
-                }
+                    let mult = 1;
+                    if(this.comboChain.count>=10) mult=3.0;
+                    else if(this.comboChain.count>=7) mult=2.5;
+                    else if(this.comboChain.count>=5) mult=2.0;
+                    else if(this.comboChain.count>=3) mult=1.5;
+                    this.comboChain.multiplier = mult;
+                    document.getElementById('comboIndicator').style.display='block';
+                    document.getElementById('comboIndicator').innerHTML = `🔥 ${this.comboChain.count}x (${mult.toFixed(1)}x)`;
+                    if(this.comboChain.timer<=0){ this.comboChain.count=0; this.comboChain.multiplier=1; document.getElementById('comboIndicator').style.display='none'; }
+                } else document.getElementById('comboIndicator').style.display='none';
             }
-            
+
             checkGameOver() {
-                if (this.gameOver) return;
-                
-                if (this.players[0].health <= 0) {
-                    this.gameOver = true;
-                    const playerWon = this.playerRole === 'player2';
+                if(this.gameOver) return;
+                if(this.players[0].health<=0 || this.players[1].health<=0){
+                    this.gameOver=true;
+                    const winner = this.players[0].health<=0 ? 'player2' : 'player1';
+                    const playerWon = (this.playerRole === winner);
                     document.getElementById('victoryText').textContent = playerWon ? 'VICTORY!' : 'DEFEAT!';
                     document.getElementById('gameOverlay').classList.add('show');
-                    
-                    const chainBonus = Math.floor(this.comboChain.multiplier * 50);
-                    const baseXP = playerWon ? 100 : 25;
-                    const rageBonus = this.rageMode ? 100 : 0;
-                    const xpGained = baseXP + rageBonus + chainBonus;
-                    
-                    document.getElementById('xpGained').textContent = `+${xpGained} XP (Chain: +${chainBonus})`;
-                    
-                    playSound('ko', 0.8);
-                    
-                    for (let i = 0; i < 100; i++) {
-                        this.bloodParticles.push({
-                            x: this.players[0].x,
-                            y: this.players[0].y - 50,
-                            vx: (Math.random() - 0.5) * 25,
-                            vy: (Math.random() - 0.5) * 25 - 15,
-                            life: 2,
-                            size: 4 + Math.random() * 10,
-                            color: '#8B0000'
-                        });
-                    }
-                    
-                    try {
-                        const rpgData = JSON.parse(localStorage.getItem('trueRpgData') || '{}');
-                        rpgData.totalXP = (rpgData.totalXP || 0) + xpGained;
-                        if (playerWon) {
-                            rpgData.wins = (rpgData.wins || 0) + 1;
-                        } else {
-                            rpgData.losses = (rpgData.losses || 0) + 1;
-                        }
-                        localStorage.setItem('trueRpgData', JSON.stringify(rpgData));
-                    } catch (e) {}
-                    
-                    if (positionUpdateInterval) {
-                        clearInterval(positionUpdateInterval);
-                        positionUpdateInterval = null;
-                    }
+                    const xp = playerWon ? 100 : 25;
+                    document.getElementById('xpGained').textContent = `+${xp} XP`;
+                    playSound('ko',0.8);
+                    for(let i=0;i<100;i++) this.bloodParticles.push({ x:this.players[0].x, y:this.players[0].y-50, vx:(Math.random()-0.5)*25, vy:(Math.random()-0.5)*25-15, life:2, size:4+Math.random()*10, color:'#8B0000' });
+                    if(positionUpdateInterval) clearInterval(positionUpdateInterval);
                     return true;
                 }
-                
-                if (this.players[1].health <= 0) {
-                    this.gameOver = true;
-                    const playerWon = this.playerRole === 'player1';
-                    document.getElementById('victoryText').textContent = playerWon ? 'VICTORY!' : 'DEFEAT!';
-                    document.getElementById('gameOverlay').classList.add('show');
-                    
-                    const chainBonus = Math.floor(this.comboChain.multiplier * 50);
-                    const baseXP = playerWon ? 100 : 25;
-                    const rageBonus = this.rageMode ? 100 : 0;
-                    const xpGained = baseXP + rageBonus + chainBonus;
-                    
-                    document.getElementById('xpGained').textContent = `+${xpGained} XP (Chain: +${chainBonus})`;
-                    
-                    playSound('ko', 0.8);
-                    
-                    for (let i = 0; i < 100; i++) {
-                        this.bloodParticles.push({
-                            x: this.players[1].x,
-                            y: this.players[1].y - 50,
-                            vx: (Math.random() - 0.5) * 25,
-                            vy: (Math.random() - 0.5) * 25 - 15,
-                            life: 2,
-                            size: 4 + Math.random() * 10,
-                            color: '#8B0000'
-                        });
-                    }
-                    
-                    try {
-                        const rpgData = JSON.parse(localStorage.getItem('trueRpgData') || '{}');
-                        rpgData.totalXP = (rpgData.totalXP || 0) + xpGained;
-                        if (playerWon) {
-                            rpgData.wins = (rpgData.wins || 0) + 1;
-                        } else {
-                            rpgData.losses = (rpgData.losses || 0) + 1;
-                        }
-                        localStorage.setItem('trueRpgData', JSON.stringify(rpgData));
-                    } catch (e) {}
-                    
-                    if (positionUpdateInterval) {
-                        clearInterval(positionUpdateInterval);
-                        positionUpdateInterval = null;
-                    }
-                    return true;
-                }
-                
                 return false;
             }
-            
-            showBattleMessage(message, color) {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'battle-message';
-                msgDiv.style.color = color;
-                msgDiv.textContent = message;
-                document.body.appendChild(msgDiv);
-                setTimeout(() => msgDiv.remove(), 1500);
+
+            showBattleMessage(msg,color) {
+                const d=document.createElement('div'); d.className='battle-message'; d.style.color=color; d.textContent=msg;
+                document.body.appendChild(d); setTimeout(()=>d.remove(),1500);
             }
-            
+
             performAttack(damage, type) {
-                const attacker = this.players.find(p => p.controlledBy === this.playerRole);
-                const defender = this.players.find(p => p.controlledBy !== this.playerRole);
-                
-                if (!attacker || !defender) return;
-                
-                const distance = Math.abs(attacker.x - defender.x);
-                
-                if (distance < 200) {
-                    const isBlocking = defender.isBlocking;
-                    
-                    const chainBonus = this.comboChain.multiplier;
-                    const damageBoost = this.rageMode ? 1.5 : 1;
-                    let finalDamage = Math.floor(damage * damageBoost * chainBonus);
-                    
-                    if (isBlocking) {
-                        finalDamage = Math.floor(finalDamage * 0.2);
-                    }
-                    
-                    defender.health = Math.max(0, defender.health - finalDamage);
-                    
-                    defender.hitLocked = true;
-                    defender.state = 'hurt';
-                    defender.stateTimer = 15;
-                    
-                    attacker.state = type;
-                    attacker.stateTimer = 15;
-                    attacker.attackTimer = 20;
-                    
-                    if (!isBlocking) {
-                        attacker.special = Math.min(attacker.maxSpecial, attacker.special + 8);
-                        
-                        this.comboChain.count++;
-                        this.comboChain.timer = this.comboChain.maxTimer;
-                        playSound('chain', 0.3);
-                        
-                        this.combo.count++;
-                        this.combo.timer = 30;
-                        document.getElementById('comboCounter').style.display = 'block';
-                        document.getElementById('comboCounter').textContent = this.combo.count + ' HIT!';
-                        
-                        if (this.combo.count % 5 === 0) {
+                const attacker = this.players.find(p=>p.controlledBy===this.playerRole);
+                const defender = this.players.find(p=>p.controlledBy!==this.playerRole);
+                if(!attacker||!defender) return;
+                const dist = Math.abs(attacker.x - defender.x);
+                if(dist < 200){
+                    const blocking = defender.isBlocking;
+                    let finalDmg = Math.floor(damage * (this.rageMode?1.5:1) * this.comboChain.multiplier);
+                    if(blocking) finalDmg = Math.floor(finalDmg*0.2);
+                    defender.health = Math.max(0, defender.health - finalDmg);
+                    defender.hitLocked=true; defender.state='hurt'; defender.stateTimer=15;
+                    attacker.state=type; attacker.stateTimer=15; attacker.attackTimer=20;
+                    if(!blocking){
+                        attacker.special = Math.min(attacker.maxSpecial, attacker.special+8);
+                        this.comboChain.count++; this.comboChain.timer=this.comboChain.maxTimer; playSound('chain',0.3);
+                        this.combo.count++; this.combo.timer=30;
+                        document.getElementById('comboIndicator').style.display='block';
+                        document.getElementById('comboIndicator').innerHTML = `🔥 ${this.combo.count} HIT!`;
+                        if(this.combo.count%5===0){
                             playSound('critical');
-                            this.shockwaves.push({ x: defender.x, y: defender.y - 50, radius: 30, life: 1 });
-                            
-                            for (let i = 0; i < 30; i++) {
-                                this.bloodParticles.push({
-                                    x: defender.x,
-                                    y: defender.y - 50,
-                                    vx: (Math.random() - 0.5) * 20,
-                                    vy: (Math.random() - 0.5) * 20 - 8,
-                                    life: 1.5,
-                                    size: 3 + Math.random() * 8,
-                                    color: '#8B0000'
-                                });
-                            }
-                            
-                            attacker.rage = Math.min(attacker.maxRage, attacker.rage + 40);
+                            this.shockwaves.push({ x:defender.x, y:defender.y-50, radius:30, life:1 });
+                            attacker.rage = Math.min(attacker.maxRage, attacker.rage+40);
                         }
-                        
-                        playSound('crowd', 0.1);
-                        
-                        playSound('blood', 0.3);
-                        const bloodCount = this.rageMode ? 25 : 15;
-                        for (let i = 0; i < bloodCount; i++) {
-                            this.bloodParticles.push({
-                                x: defender.x,
-                                y: defender.y - 50,
-                                vx: (Math.random() - 0.5) * 15,
-                                vy: (Math.random() - 0.5) * 15 - 5,
-                                life: this.rageMode ? 1.2 : 1,
-                                size: this.rageMode ? 3 + Math.random() * 6 : 2 + Math.random() * 5,
-                                color: '#B22222'
-                            });
-                        }
-                        
-                        attacker.rage = Math.min(attacker.maxRage, attacker.rage + this.rageGainPerHit);
-                        
-                        if (attacker.rage >= attacker.maxRage && !this.rageMode) {
-                            this.activateRageMode();
-                        }
+                        playSound('crowd',0.1); playSound('blood',0.3);
+                        for(let i=0;i<(this.rageMode?20:10);i++) this.bloodParticles.push({ x:defender.x, y:defender.y-50, vx:(Math.random()-0.5)*12, vy:(Math.random()-0.5)*12-5, life:1, size:2+Math.random()*5, color:'#B22222' });
+                        attacker.rage = Math.min(attacker.maxRage, attacker.rage+this.rageGainPerHit);
+                        if(attacker.rage>=attacker.maxRage && !this.rageMode) this.activateRageMode();
                     } else {
-                        for (let i = 0; i < 10; i++) {
-                            this.blockEffects.push({
-                                x: defender.x,
-                                y: defender.y - 50,
-                                vx: (Math.random() - 0.5) * 10,
-                                vy: (Math.random() - 0.5) * 10,
-                                life: 0.5,
-                                color: '#22c55e'
-                            });
-                        }
-                        
-                        this.comboChain.count = 0;
-                        this.comboChain.multiplier = 1.0;
+                        for(let i=0;i<8;i++) this.blockEffects.push({ x:defender.x, y:defender.y-50, vx:(Math.random()-0.5)*8, vy:(Math.random()-0.5)*8, life:0.5, color:'#22c55e' });
+                        this.comboChain.count=0; this.comboChain.multiplier=1;
                     }
-                    
-                    document.getElementById('p1HealthFill').style.width = this.players[0].health + '%';
-                    document.getElementById('p2HealthFill').style.width = this.players[1].health + '%';
-                    document.getElementById('p1RageFill').style.width = this.players[0].rage + '%';
-                    document.getElementById('p2RageFill').style.width = this.players[1].rage + '%';
-                    
-                    if (this.battleRef) {
-                        const healthPath = defender.id === 'kenji' ? 'player1/health' : 'player2/health';
-                        const manaPath = attacker.id === 'kenji' ? 'player1/mana' : 'player2/mana';
-                        this.battleRef.child(healthPath).set(defender.health);
-                        this.battleRef.child(manaPath).set(attacker.special);
-                        const positionPath = defender.id === 'kenji' ? 'positions/kenji' : 'positions/sakura';
-                        this.battleRef.child(positionPath).set({ x: defender.x });
+                    document.getElementById('p1HealthFill').style.width = this.players[0].health+'%';
+                    document.getElementById('p2HealthFill').style.width = this.players[1].health+'%';
+                    document.getElementById('p1RageFill').style.width = this.players[0].rage+'%';
+                    document.getElementById('p2RageFill').style.width = this.players[1].rage+'%';
+                    if(this.battleRef){
+                        const hpPath = defender.id==='kenji'?'player1/health':'player2/health';
+                        const mpPath = attacker.id==='kenji'?'player1/mana':'player2/mana';
+                        const posPath = defender.id==='kenji'?'positions/kenji':'positions/sakura';
+                        this.battleRef.child(hpPath).set(defender.health);
+                        this.battleRef.child(mpPath).set(attacker.special);
+                        this.battleRef.child(posPath).set({ x: defender.x });
                     }
-                    
                     this.checkGameOver();
                 }
             }
-            
+
             update() {
-                if (this.gameOver) return;
-                
+                if(this.gameOver) return;
                 this.frame++;
-                
                 this.updateRageMode();
                 this.updateComboChain();
-                
-                if (this.shakeIntensity > 0) {
-                    this.shakeIntensity *= 0.9;
-                }
-                
-                if (this.frame % 60 === 0 && this.timer > 0) {
-                    this.timer--;
-                    document.getElementById('timerDisplay').textContent = this.timer;
-                    if (this.timer <= 10) {
-                        playSound('warning', 0.2);
-                    }
-                }
-                
-                if (this.timer <= 0) {
-                    if (this.players[0].health > this.players[1].health) {
-                        this.players[1].health = 0;
-                    } else if (this.players[1].health > this.players[0].health) {
-                        this.players[0].health = 0;
-                    } else {
-                        if (Math.random() < 0.5) {
-                            this.players[0].health = 0;
-                        } else {
-                            this.players[1].health = 0;
-                        }
-                    }
+                if(this.shakeIntensity>0) this.shakeIntensity*=0.9;
+                if(this.frame%60===0 && this.timer>0){ this.timer--; document.getElementById('timerDisplay').textContent=this.timer; if(this.timer<=10) playSound('warning',0.2); }
+                if(this.timer<=0){
+                    if(this.players[0].health > this.players[1].health) this.players[1].health=0;
+                    else if(this.players[1].health > this.players[0].health) this.players[0].health=0;
+                    else Math.random()<0.5 ? this.players[0].health=0 : this.players[1].health=0;
                     this.checkGameOver();
                 }
-                
-                this.players.forEach(p => {
-                    if (p.stateTimer > 0) {
-                        p.stateTimer--;
-                        if (p.stateTimer <= 0) {
-                            p.state = 'idle';
-                            p.hitLocked = false;
-                        }
-                    }
-                });
-                
-                this.players.forEach(p => {
-                    if (p.attackTimer > 0) p.attackTimer--;
-                });
-                
-                if (this.combo.timer > 0) {
-                    this.combo.timer--;
-                    if (this.combo.timer <= 0) {
-                        this.combo.count = 0;
-                        document.getElementById('comboCounter').style.display = 'none';
-                    }
-                }
-                
-                this.bloodParticles = this.bloodParticles.filter(p => p.life > 0);
-                this.bloodParticles.forEach(p => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.vy += 0.2;
-                    p.life -= 0.01;
-                });
-                
-                this.specialEffects = this.specialEffects.filter(e => e.life > 0);
-                this.specialEffects.forEach(e => {
-                    e.x += e.vx;
-                    e.y += e.vy;
-                    e.life -= 0.02;
-                });
-                
-                this.blockEffects = this.blockEffects.filter(e => e.life > 0);
-                this.blockEffects.forEach(e => {
-                    e.x += e.vx;
-                    e.y += e.vy;
-                    e.life -= 0.02;
-                });
-                
-                this.shockwaves = this.shockwaves.filter(s => s.life > 0);
-                this.shockwaves.forEach(s => {
-                    s.radius += 8;
-                    s.life -= 0.02;
-                });
-                
-                const myPlayer = this.players.find(p => p.controlledBy === this.playerRole);
-                const opponent = this.players.find(p => p.controlledBy !== this.playerRole);
-                
-                if (myPlayer && opponent) {
-                    this.updatePlayer(myPlayer, opponent);
-                }
-                
-                document.getElementById('p1HealthFill').style.width = this.players[0].health + '%';
-                document.getElementById('p2HealthFill').style.width = this.players[1].health + '%';
-                document.getElementById('p1SpecialFill').style.width = this.players[0].special + '%';
-                document.getElementById('p2SpecialFill').style.width = this.players[1].special + '%';
-                document.getElementById('p1RageFill').style.width = this.players[0].rage + '%';
-                document.getElementById('p2RageFill').style.width = this.players[1].rage + '%';
+                this.players.forEach(p=>{ if(p.stateTimer>0 && --p.stateTimer<=0){ p.state='idle'; p.hitLocked=false; } });
+                this.players.forEach(p=>{ if(p.attackTimer>0) p.attackTimer--; });
+                if(this.combo.timer>0 && --this.combo.timer<=0){ this.combo.count=0; document.getElementById('comboIndicator').style.display='none'; }
+                this.bloodParticles = this.bloodParticles.filter(p=>p.life>0);
+                this.bloodParticles.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.2; p.life-=0.01; });
+                this.specialEffects = this.specialEffects.filter(e=>e.life>0);
+                this.specialEffects.forEach(e=>{ e.x+=e.vx; e.y+=e.vy; e.life-=0.02; });
+                this.blockEffects = this.blockEffects.filter(e=>e.life>0);
+                this.blockEffects.forEach(e=>{ e.x+=e.vx; e.y+=e.vy; e.life-=0.02; });
+                this.shockwaves = this.shockwaves.filter(s=>s.life>0);
+                this.shockwaves.forEach(s=>{ s.radius+=8; s.life-=0.02; });
+                const my=this.players.find(p=>p.controlledBy===this.playerRole);
+                const opp=this.players.find(p=>p.controlledBy!==this.playerRole);
+                if(my && opp) this.updatePlayer(my,opp);
+                document.getElementById('p1HealthFill').style.width=this.players[0].health+'%';
+                document.getElementById('p2HealthFill').style.width=this.players[1].health+'%';
+                document.getElementById('p1SpecialFill').style.width=this.players[0].special+'%';
+                document.getElementById('p2SpecialFill').style.width=this.players[1].special+'%';
+                document.getElementById('p1RageFill').style.width=this.players[0].rage+'%';
+                document.getElementById('p2RageFill').style.width=this.players[1].rage+'%';
             }
-            
+
             updatePlayer(player, opponent) {
                 player.isBlocking = this.buttonStates.block;
-                
-                let moveSpeed = 0;
-                if (player.state !== 'hurt' && player.stateTimer <= 0 && !player.hitLocked) {
-                    if (this.buttonStates.left) moveSpeed = -player.speed;
-                    if (this.buttonStates.right) moveSpeed = player.speed;
+                let move=0;
+                if(player.state!=='hurt' && player.stateTimer<=0 && !player.hitLocked){
+                    if(this.buttonStates.left) move = -player.speed;
+                    if(this.buttonStates.right) move = player.speed;
                 }
-                
-                if (moveSpeed !== 0) {
-                    player.x += moveSpeed;
-                    player.x = Math.max(200, Math.min(1000, player.x));
-                }
-                
-                if (opponent.x > player.x) {
-                    player.facing = 1;
-                } else {
-                    player.facing = -1;
-                }
-                
-                player.y = 400 + Math.sin(this.frame * 0.1) * 5;
-                
-                if (player.special < player.maxSpecial) {
-                    player.special = Math.min(player.maxSpecial, player.special + 0.2);
-                }
-                
-                if (player.rage > 0 && !this.rageMode) {
-                    player.rage = Math.max(0, player.rage - 0.1);
-                }
+                if(move!==0){ player.x += move; player.x = Math.max(200, Math.min(1000, player.x)); }
+                player.facing = opponent.x > player.x ? 1 : -1;
+                player.y = 400 + Math.sin(this.frame*0.1)*5;
+                if(player.special < player.maxSpecial) player.special = Math.min(player.maxSpecial, player.special+0.2);
+                if(player.rage > 0 && !this.rageMode) player.rage = Math.max(0, player.rage-0.1);
             }
-            
+
             draw() {
                 this.ctx.save();
+                if(this.shakeIntensity>0) this.ctx.translate((Math.random()-0.5)*this.shakeIntensity*2, (Math.random()-0.5)*this.shakeIntensity);
+                this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
                 
-                if (this.shakeIntensity > 0) {
-                    this.ctx.translate(
-                        (Math.random() - 0.5) * this.shakeIntensity * 2,
-                        (Math.random() - 0.5) * this.shakeIntensity
-                    );
-                }
-                
-                this.ctx.clearRect(0, 0, 1200, 700);
-                
-                this.drawBackground();
-                this.drawCrowd();
-                
-                this.players.forEach(p => {
-                    this.ctx.fillStyle = 'rgba(0,0,0,0.3)';
-                    this.ctx.beginPath();
-                    this.ctx.ellipse(p.x, 450, 35, 12, 0, 0, Math.PI * 2);
-                    this.ctx.fill();
-                });
-                
-                this.shockwaves.forEach(s => {
-                    this.ctx.save();
-                    this.ctx.globalAlpha = s.life * 0.7;
-                    this.ctx.strokeStyle = '#ffffff';
-                    this.ctx.lineWidth = 4;
-                    this.ctx.shadowColor = '#fbbf24';
-                    this.ctx.shadowBlur = 20;
-                    this.ctx.beginPath();
-                    this.ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-                    this.ctx.stroke();
-                    this.ctx.restore();
-                });
-                
-                this.players.forEach(p => this.drawPlayer(p));
-                
-                this.bloodParticles.forEach(p => {
-                    this.ctx.save();
-                    this.ctx.globalAlpha = p.life * 0.8;
-                    this.ctx.fillStyle = p.color;
-                    this.ctx.shadowColor = '#8B0000';
-                    this.ctx.shadowBlur = 10;
-                    this.ctx.beginPath();
-                    this.ctx.arc(p.x, p.y, p.size || 4, 0, Math.PI * 2);
-                    this.ctx.fill();
-                    this.ctx.restore();
-                });
-                
-                this.specialEffects.forEach(e => {
-                    this.ctx.save();
-                    this.ctx.globalAlpha = e.life;
-                    this.ctx.fillStyle = e.color;
-                    this.ctx.shadowColor = '#ffd700';
-                    this.ctx.shadowBlur = 15;
-                    this.ctx.beginPath();
-                    this.ctx.arc(e.x, e.y, 8, 0, Math.PI * 2);
-                    this.ctx.fill();
-                    this.ctx.restore();
-                });
-                
-                this.blockEffects.forEach(e => {
-                    this.ctx.save();
-                    this.ctx.globalAlpha = e.life;
-                    this.ctx.fillStyle = e.color;
-                    this.ctx.shadowColor = '#22c55e';
-                    this.ctx.shadowBlur = 15;
-                    this.ctx.beginPath();
-                    this.ctx.arc(e.x, e.y, 6, 0, Math.PI * 2);
-                    this.ctx.fill();
-                    this.ctx.restore();
-                });
-                
-                this.ctx.restore();
-            }
-            
-            drawBackground() {
-                const gradient = this.ctx.createLinearGradient(0, 0, 0, 700);
-                gradient.addColorStop(0, '#0a1a2a');
-                gradient.addColorStop(0.5, '#1a2a3a');
-                gradient.addColorStop(1, '#2a1a1a');
-                this.ctx.fillStyle = gradient;
-                this.ctx.fillRect(0, 0, 1200, 700);
-                
-                this.ctx.fillStyle = '#2a3a2a';
-                this.ctx.fillRect(0, 400, 1200, 300);
-                
-                this.ctx.strokeStyle = '#fbbf24';
-                this.ctx.lineWidth = 2;
-                this.ctx.setLineDash([15, 15]);
-                this.ctx.beginPath();
-                this.ctx.moveTo(0, 420);
-                this.ctx.lineTo(1200, 420);
-                this.ctx.stroke();
-                this.ctx.setLineDash([]);
-            }
-            
-            drawCrowd() {
-                if (this.crowdImage.complete && this.crowdImage.naturalHeight !== 0) {
-                    this.ctx.filter = 'blur(3px) brightness(0.6)';
-                    this.ctx.drawImage(this.crowdImage, 0, 0, 1200, 300);
-                    this.ctx.filter = 'none';
-                }
-            }
-            
-            drawPlayer(p) {
-                if (!p.id || !p.images) {
-                    // Show waiting message instead of grey block
-                    this.ctx.save();
-                    
-                    // Draw semi-transparent silhouette
-                    this.ctx.fillStyle = 'rgba(100, 100, 100, 0.5)';
-                    this.ctx.fillRect(p.x - 50, p.y - 120, 100, 120);
-                    
-                    // Draw question mark
-                    this.ctx.fillStyle = '#fbbf24';
-                    this.ctx.font = 'bold 60px Arial';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.textBaseline = 'middle';
-                    this.ctx.fillText('?', p.x, p.y - 40);
-                    
-                    // Draw "Waiting..." text
-                    this.ctx.fillStyle = '#fbbf24';
-                    this.ctx.font = 'bold 16px "Bangers"';
-                    this.ctx.fillText('WAITING', p.x, p.y + 20);
-                    this.ctx.fillText('FOR', p.x, p.y + 45);
-                    this.ctx.fillText('OPPONENT', p.x, p.y + 70);
-                    
-                    this.ctx.restore();
-                    return;
-                }
-                
-                const img = p.images[p.state] || p.images.idle;
-                const x = p.x - 50;
-                const y = p.y - 120;
-                const width = 100;
-                const height = 120;
+                const scaleX = this.canvas.width/1200;
+                const scaleY = this.canvas.height/700;
+                const scale = Math.min(scaleX, scaleY);
+                const offsetX = (this.canvas.width-1200*scale)/2;
+                const offsetY = (this.canvas.height-700*scale)/2;
                 
                 this.ctx.save();
+                this.ctx.translate(offsetX, offsetY);
+                this.ctx.scale(scale, scale);
                 
-                if (p.facing === -1) {
-                    this.ctx.translate(p.x, p.y - 60);
-                    this.ctx.scale(-1, 1);
-                    this.ctx.translate(-p.x, -(p.y - 60));
-                }
+                // Background
+                const grad = this.ctx.createLinearGradient(0,0,0,700);
+                grad.addColorStop(0,'#0a1a2a'); grad.addColorStop(0.5,'#1a2a3a'); grad.addColorStop(1,'#2a1a1a');
+                this.ctx.fillStyle=grad; this.ctx.fillRect(0,0,1200,700);
+                this.ctx.fillStyle='#2a3a2a'; this.ctx.fillRect(0,400,1200,300);
+                this.ctx.strokeStyle='#fbbf24'; this.ctx.lineWidth=2; this.ctx.setLineDash([15,15]);
+                this.ctx.beginPath(); this.ctx.moveTo(0,420); this.ctx.lineTo(1200,420); this.ctx.stroke(); this.ctx.setLineDash([]);
+                if(this.rageMode) { this.ctx.fillStyle='rgba(255,0,0,0.1)'; this.ctx.fillRect(0,0,1200,700); }
                 
-                if (this.rageMode && p.controlledBy === this.playerRole) {
-                    this.ctx.shadowColor = '#ff0000';
-                    this.ctx.shadowBlur = 40;
-                }
+                this.shockwaves.forEach(s=>{
+                    this.ctx.save(); this.ctx.globalAlpha=s.life*0.7; this.ctx.strokeStyle='#fff'; this.ctx.lineWidth=4; this.ctx.shadowColor='#fbbf24'; this.ctx.shadowBlur=20;
+                    this.ctx.beginPath(); this.ctx.arc(s.x,s.y,s.radius,0,Math.PI*2); this.ctx.stroke(); this.ctx.restore();
+                });
                 
-                if (this.comboChain.multiplier > 1 && p.controlledBy === this.playerRole) {
-                    this.ctx.shadowColor = '#ffd700';
-                    this.ctx.shadowBlur = 30 + (this.comboChain.multiplier * 10);
-                }
+                this.players.forEach(p=>this.drawPlayer(p));
                 
-                if (img && img.complete && img.naturalHeight !== 0) {
-                    if ((this.buttonStates.left || this.buttonStates.right) && p.state !== 'hurt' && !p.hitLocked) {
-                        this.ctx.globalAlpha = 0.3;
-                        const direction = this.buttonStates.left ? -1 : 1;
-                        this.ctx.drawImage(img, x - (direction * 15), y, width, height);
-                        this.ctx.globalAlpha = 0.6;
-                        this.ctx.drawImage(img, x - (direction * 8), y, width, height);
-                        this.ctx.globalAlpha = 1;
-                    }
-                    this.ctx.drawImage(img, x, y, width, height);
-                } else {
-                    this.ctx.fillStyle = p.id === 'kenji' ? '#ef4444' : '#ff69b4';
-                    this.ctx.fillRect(x, y, width, height);
-                    this.ctx.fillStyle = '#ffffff';
-                    this.ctx.font = 'bold 40px Arial';
-                    this.ctx.fillText(p.id === 'kenji' ? '⚔️' : '🌸', x + 30, y + 70);
-                }
+                this.bloodParticles.forEach(p=>{
+                    this.ctx.save(); this.ctx.globalAlpha=p.life*0.8; this.ctx.fillStyle=p.color; this.ctx.shadowColor='#8B0000'; this.ctx.shadowBlur=10;
+                    this.ctx.beginPath(); this.ctx.arc(p.x,p.y,p.size||4,0,Math.PI*2); this.ctx.fill(); this.ctx.restore();
+                });
                 
-                if (p.controlledBy === this.playerRole) {
-                    this.ctx.shadowColor = '#fbbf24';
-                    this.ctx.shadowBlur = 30;
-                    this.ctx.strokeStyle = '#fbbf24';
-                    this.ctx.lineWidth = 4;
-                    this.ctx.setLineDash([8, 8]);
-                    this.ctx.beginPath();
-                    this.ctx.ellipse(p.x, p.y - 60, 45, 60, 0, 0, Math.PI * 2);
-                    this.ctx.stroke();
-                    this.ctx.setLineDash([]);
-                }
-                
-                if (p.isBlocking) {
-                    this.ctx.shadowColor = '#22c55e';
-                    this.ctx.shadowBlur = 40;
-                    this.ctx.strokeStyle = '#22c55e';
-                    this.ctx.lineWidth = 5;
-                    this.ctx.beginPath();
-                    this.ctx.ellipse(p.x, p.y - 60, 50, 70, 0, 0, Math.PI * 2);
-                    this.ctx.stroke();
-                    this.ctx.fillStyle = 'rgba(34,197,94,0.2)';
-                    this.ctx.beginPath();
-                    this.ctx.ellipse(p.x, p.y - 60, 50, 70, 0, 0, Math.PI * 2);
-                    this.ctx.fill();
-                }
-                
-                if ((this.buttonStates.left || this.buttonStates.right) && p.state !== 'hurt' && !p.hitLocked) {
-                    for (let i = 0; i < 4; i++) {
-                        this.ctx.strokeStyle = `rgba(255,255,255,${0.2 - i * 0.04})`;
-                        this.ctx.lineWidth = 2;
-                        this.ctx.beginPath();
-                        const direction = this.buttonStates.left ? -1 : 1;
-                        this.ctx.moveTo(p.x - (direction * 30), p.y - 60 + i * 10);
-                        this.ctx.lineTo(p.x - (direction * 100), p.y - 60 + i * 10 + (i - 2) * 5);
-                        this.ctx.stroke();
-                    }
-                }
+                this.specialEffects.forEach(e=>{
+                    this.ctx.save(); this.ctx.globalAlpha=e.life; this.ctx.fillStyle=e.color; this.ctx.shadowColor='#ffd700'; this.ctx.shadowBlur=15;
+                    this.ctx.beginPath(); this.ctx.arc(e.x,e.y,8,0,Math.PI*2); this.ctx.fill(); this.ctx.restore();
+                });
+                this.blockEffects.forEach(e=>{
+                    this.ctx.save(); this.ctx.globalAlpha=e.life; this.ctx.fillStyle=e.color; this.ctx.shadowColor='#22c55e'; this.ctx.shadowBlur=15;
+                    this.ctx.beginPath(); this.ctx.arc(e.x,e.y,6,0,Math.PI*2); this.ctx.fill(); this.ctx.restore();
+                });
                 
                 this.ctx.restore();
+                this.ctx.restore();
             }
-            
-            gameLoop() {
-                this.update();
-                this.draw();
-                requestAnimationFrame(() => this.gameLoop());
+
+            drawPlayer(p) {
+                if(!p.id||!p.images){
+                    this.ctx.save();
+                    this.ctx.fillStyle='rgba(100,100,100,0.5)'; this.ctx.fillRect(p.x-50, p.y-120, 100, 120);
+                    this.ctx.fillStyle='#fbbf24'; this.ctx.font='bold 60px Arial'; this.ctx.textAlign='center'; this.ctx.textBaseline='middle';
+                    this.ctx.fillText('?',p.x, p.y-40);
+                    this.ctx.restore(); return;
+                }
+                const img = p.images[p.state] || p.images.idle;
+                const x = p.x-50, y = p.y-120, w=100, h=120;
+                this.ctx.save();
+                if(p.facing===-1){ this.ctx.translate(p.x, p.y-60); this.ctx.scale(-1,1); this.ctx.translate(-p.x, -(p.y-60)); }
+                if(this.rageMode && p.controlledBy===this.playerRole){ this.ctx.shadowColor='#ff0000'; this.ctx.shadowBlur=40; }
+                if(this.comboChain.multiplier>1 && p.controlledBy===this.playerRole){ this.ctx.shadowColor='#ffd700'; this.ctx.shadowBlur=30+(this.comboChain.multiplier*10); }
+                
+                if(img && img.complete && img.naturalHeight!==0){
+                    this.ctx.drawImage(img, x, y, w, h);
+                } else {
+                    this.ctx.fillStyle = p.id==='kenji'?'#ef4444':'#ff69b4';
+                    this.ctx.fillRect(x, y, w, h);
+                    this.ctx.fillStyle='#ffffff'; this.ctx.font='bold 40px Arial';
+                    this.ctx.fillText(p.id==='kenji'?'⚔️':'🌸', x+30, y+70);
+                }
+                
+                if(p.controlledBy===this.playerRole){
+                    this.ctx.shadowColor='#fbbf24'; this.ctx.shadowBlur=30; this.ctx.strokeStyle='#fbbf24'; this.ctx.lineWidth=4; this.ctx.setLineDash([8,8]);
+                    this.ctx.beginPath(); this.ctx.ellipse(p.x, p.y-60, 45, 60, 0, 0, Math.PI*2); this.ctx.stroke(); this.ctx.setLineDash([]);
+                }
+                if(p.isBlocking){
+                    this.ctx.shadowColor='#22c55e'; this.ctx.shadowBlur=40; this.ctx.strokeStyle='#22c55e'; this.ctx.lineWidth=5;
+                    this.ctx.beginPath(); this.ctx.ellipse(p.x, p.y-60, 50, 70, 0, 0, Math.PI*2); this.ctx.stroke();
+                    this.ctx.fillStyle='rgba(34,197,94,0.2)'; this.ctx.fill();
+                }
+                if((this.buttonStates.left||this.buttonStates.right) && p.state!=='hurt' && !p.hitLocked && p.controlledBy===this.playerRole){
+                    for(let i=0;i<4;i++){
+                        this.ctx.strokeStyle = `rgba(255,255,255,${0.2-i*0.04})`; this.ctx.lineWidth=2; this.ctx.beginPath();
+                        const dir = this.buttonStates.left?-1:1;
+                        this.ctx.moveTo(p.x-(dir*30), p.y-60+i*10); this.ctx.lineTo(p.x-(dir*100), p.y-60+i*10+(i-2)*5); this.ctx.stroke();
+                    }
+                }
+                this.ctx.restore();
             }
+
+            gameLoop() { this.update(); this.draw(); requestAnimationFrame(()=>this.gameLoop()); }
         }
     </script>
 </body>
