@@ -1217,6 +1217,264 @@ if (window.innerWidth <= 900) {
 
 // Start the app
 renderGroupsList();
+
+
+    /* ============================================
+   WHATSAPP-STYLE NOTIFICATION SYSTEM
+   ============================================ */
+
+// Notification settings
+let notificationSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3');
+notificationSound.volume = 0.3;
+
+// Track last message times to avoid duplicates
+let lastNotificationTimes = {};
+
+// Initialize notification listener
+function initNotifications() {
+  // Check if we're in studentmode.html
+  if (window.location.pathname.includes('studentmode.html')) {
+    // Listen for new messages in all my groups
+    myGroups.forEach(groupCode => {
+      const messagesRef = database.ref('messages/' + groupCode);
+      
+      // Listen only for new messages (last 5 seconds)
+      messagesRef.orderByChild('timestamp').startAt(Date.now() - 5000).on('child_added', (snapshot) => {
+        const message = snapshot.val();
+        
+        // Don't notify if it's my own message
+        if (message.sender === myName) return;
+        
+        // Check if we've already notified about this message
+        if (lastNotificationTimes[snapshot.key]) return;
+        lastNotificationTimes[snapshot.key] = Date.now();
+        
+        // Get group info
+        database.ref('groups/' + groupCode).once('value')
+          .then(groupSnapshot => {
+            const group = groupSnapshot.val();
+            if (group) {
+              showWhatsAppNotification(group.name, message.sender, message.text);
+            }
+          });
+      });
+    });
+  }
+}
+
+// Show WhatsApp-style notification
+function showWhatsAppNotification(groupName, sender, messageText) {
+  // Create notification container if it doesn't exist
+  let notificationContainer = document.getElementById('whatsapp-notifications');
+  if (!notificationContainer) {
+    notificationContainer = document.createElement('div');
+    notificationContainer.id = 'whatsapp-notifications';
+    notificationContainer.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      max-width: 350px;
+      width: 100%;
+      pointer-events: none;
+    `;
+    document.body.appendChild(notificationContainer);
+  }
+  
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    background: var(--card, #ffffff);
+    color: var(--text, #222);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    animation: slideInRight 0.3s ease-out;
+    border-left: 4px solid var(--accent, #6c63ff);
+    pointer-events: auto;
+    cursor: pointer;
+    transition: transform 0.2s;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+  `;
+  
+  // Dark mode support
+  if (document.body.classList.contains('purple')) {
+    notification.style.background = '#24144a';
+    notification.style.color = '#f3eefe';
+  } else if (document.body.classList.contains('ocean')) {
+    notification.style.background = '#1e3a5f';
+    notification.style.color = '#caf0f8';
+  }
+  
+  // Icon based on group theme
+  const icon = groupName.toLowerCase().includes('math') ? '📐' :
+               groupName.toLowerCase().includes('science') ? '🔬' :
+               groupName.toLowerCase().includes('history') ? '📜' :
+               groupName.toLowerCase().includes('english') ? '📚' : '💬';
+  
+  // Truncate long messages
+  const displayText = messageText.length > 50 ? messageText.substring(0, 50) + '...' : messageText;
+  
+  notification.innerHTML = `
+    <div style="font-size: 24px;">${icon}</div>
+    <div style="flex: 1;">
+      <div style="font-weight: bold; font-size: 16px; margin-bottom: 5px;">${groupName}</div>
+      <div style="font-weight: 500; font-size: 14px; margin-bottom: 3px;">${sender}</div>
+      <div style="font-size: 13px; opacity: 0.8; word-break: break-word;">${displayText}</div>
+      <div style="font-size: 11px; opacity: 0.6; margin-top: 5px;">just now</div>
+    </div>
+    <div style="font-size: 20px; color: var(--accent);">●</div>
+  `;
+  
+  // Add click handler to go to the group
+  notification.onclick = () => {
+    // Store the group to open in session storage
+    sessionStorage.setItem('openGroup', groupName);
+    // Navigate to study groups page
+    window.location.href = 'studygroups.html';
+  };
+  
+  // Add hover effect
+  notification.onmouseenter = () => {
+    notification.style.transform = 'translateX(-5px)';
+  };
+  notification.onmouseleave = () => {
+    notification.style.transform = 'translateX(0)';
+  };
+  
+  // Add to container
+  notificationContainer.appendChild(notification);
+  
+  // Play notification sound
+  notificationSound.play().catch(() => {});
+  
+  // Show browser notification if permitted
+  if (Notification.permission === 'granted') {
+    new Notification(`📱 ${groupName}`, {
+      body: `${sender}: ${displayText}`,
+      icon: 'https://img.icons8.com/color/48/000000/whatsapp--v1.png'
+    });
+  }
+  
+  // Auto remove after 5 seconds
+  setTimeout(() => {
+    notification.style.animation = 'slideOutRight 0.3s ease-out forwards';
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove();
+      }
+    }, 300);
+  }, 5000);
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideOutRight {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+  
+  #whatsapp-notifications {
+    transition: all 0.3s;
+  }
+  
+  #whatsapp-notifications div {
+    transition: all 0.3s;
+  }
+`;
+document.head.appendChild(style);
+
+// Request notification permission
+if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+  Notification.requestPermission();
+}
+
+// Initialize notifications
+initNotifications();
+
+/* ============================================
+   UPDATE NOTIFICATIONS WHEN NEW GROUP ADDED
+   ============================================ */
+
+// Override the original joinGroup and createGroup functions to reinitialize notifications
+const originalJoinGroup = showJoinGroup;
+const originalCreateGroup = showCreateGroup;
+
+window.showJoinGroup = function() {
+  originalJoinGroup();
+  setTimeout(() => {
+    initNotifications();
+  }, 1000);
+};
+
+window.showCreateGroup = function() {
+  originalCreateGroup();
+  setTimeout(() => {
+    initNotifications();
+  }, 1000);
+};
+
+/* ============================================
+   POLL FOR NEW MESSAGES (FALLBACK)
+   ============================================ */
+
+// In case the realtime listener fails, poll every 10 seconds
+setInterval(() => {
+  if (window.location.pathname.includes('studentmode.html') && myGroups.length > 0) {
+    myGroups.forEach(groupCode => {
+      const fiveSecondsAgo = Date.now() - 5000;
+      database.ref('messages/' + groupCode)
+        .orderByChild('timestamp')
+        .startAt(fiveSecondsAgo)
+        .once('value', snapshot => {
+          snapshot.forEach(childSnapshot => {
+            const message = childSnapshot.val();
+            if (message.sender !== myName && !lastNotificationTimes[childSnapshot.key]) {
+              lastNotificationTimes[childSnapshot.key] = Date.now();
+              database.ref('groups/' + groupCode).once('value')
+                .then(groupSnapshot => {
+                  const group = groupSnapshot.val();
+                  if (group) {
+                    showWhatsAppNotification(group.name, message.sender, message.text);
+                  }
+                });
+            }
+          });
+        });
+    });
+  }
+}, 10000);
+
+// Export for use in other functions
+window.notifyNewMessage = function(groupName, sender, message) {
+  showWhatsAppNotification(groupName, sender, message);
+};
   </script>
+
+
 </body>
 </html>
+
