@@ -1,1936 +1,928 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Study Groups</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <style>
-    :root {
-      --bg: #eef1ff;
-      --card: #ffffff;
-      --accent: #6c63ff;
-      --text: #222;
-      --sidebar-width: 350px;
-    }
+    <meta charset="UTF-8">
+    <title>Study Groups</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    body.purple {
-      --bg: #140a26;
-      --card: #24144a;
-      --accent: #b388ff;
-      --text: #f3eefe;
-    }
-    
-    body.ocean {
-      --bg: #0a1929;
-      --card: #1e3a5f;
-      --accent: #00b4d8;
-      --text: #caf0f8;
-    }
-    
-    * {
-      box-sizing: border-box;
-    }
-    
-    html, body {
-      overflow-x: hidden;
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      transition: 0.4s;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .header {
-      background: var(--card);
-      padding: 15px 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      width: 100%;
-    }
-    
-    .header h2 {
-      margin: 0;
-      font-size: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .main-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    
-    .content-wrapper {
-      flex: 1;
-      display: flex;
-      gap: 20px;
-      width: 100%;
-      min-height: calc(100vh - 100px);
-    }
-    
-    .sidebar {
-      background: var(--card);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      overflow-y: auto;
-      width: var(--sidebar-width);
-      min-width: var(--sidebar-width);
-      transition: transform 0.3s ease;
-      z-index: 10;
-      max-height: calc(100vh - 140px);
-    }
-    
-    .chat-area {
-      background: var(--card);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-width: 0;
-      max-height: calc(100vh - 140px);
-    }
-    
-    button {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 12px;
-      background: var(--accent);
-      color: white;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      transition: all 0.3s;
-      white-space: nowrap;
-    }
-    
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-    
-    input, textarea {
-      width: 100%;
-      padding: 12px 15px;
-      border: 2px solid rgba(0,0,0,0.1);
-      border-radius: 10px;
-      font-size: 16px;
-      font-family: inherit;
-      background: var(--bg);
-      color: var(--text);
-      margin: 10px 0;
-    }
-    
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    
-    .group-item {
-      background: var(--bg);
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      transition: all 0.3s;
-      border-left: 4px solid transparent;
-      width: 100%;
-    }
-    
-    .group-item:hover {
-      transform: translateX(5px);
-      border-left-color: var(--accent);
-    }
-    
-    .group-item.active {
-      background: var(--accent);
-      color: white;
-      border-left-color: white;
-    }
-    
-    .message {
-      background: var(--bg);
-      padding: 15px;
-      border-radius: 15px;
-      margin-bottom: 15px;
-      max-width: 80%;
-      animation: slideIn 0.3s;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-    
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .my-message {
-      background: var(--accent);
-      color: white;
-      margin-left: auto;
-      margin-right: 0;
-    }
-    
-    .message-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 12px;
-      opacity: 0.8;
-    }
-    
-    .message-content {
-      font-size: 16px;
-      line-height: 1.5;
-      word-break: break-word;
-    }
-    
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      margin-bottom: 20px;
-      padding-right: 10px;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .chat-input-area {
-      display: flex;
-      gap: 10px;
-      align-items: flex-end;
-      width: 100%;
-    }
-    
-    .chat-input-area textarea {
-      flex: 1;
-      resize: none;
-      margin: 0;
-      min-height: 60px;
-      max-height: 120px;
-    }
-    
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: #999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-    }
-    
-    .empty-state-icon {
-      font-size: 64px;
-      margin-bottom: 20px;
-    }
-    
-    .resource-item {
-      background: var(--bg);
-      padding: 12px 15px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-    }
-    
-    .resource-item a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: bold;
-      word-break: break-all;
-    }
-    
-    .member-list {
-      background: var(--bg);
-      padding: 15px;
-      border-radius: 12px;
-      margin-top: 20px;
-      width: 100%;
-    }
-    
-    .member-item {
-      padding: 8px 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .online-dot {
-      width: 8px;
-      height: 8px;
-      background: #4caf50;
-      border-radius: 50%;
-    }
-    
-    .mobile-menu-toggle {
-      display: none;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 15px;
-      font-size: 1.2rem;
-      cursor: pointer;
-      width: 100%;
-      max-width: 200px;
-      margin: 10px auto;
-    }
-    
-    .mobile-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 5;
-    }
-    
-    .mobile-overlay.active {
-      display: block;
-    }
-    
-    .group-header {
-      border-bottom: 2px solid var(--bg);
-      padding-bottom: 15px;
-      margin-bottom: 20px;
-      width: 100%;
-    }
-    
-    .group-header-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      width: 100%;
-    }
-    
-    .group-header-info h2 {
-      margin: 0;
-      margin-bottom: 5px;
-      font-size: 1.5rem;
-      word-break: break-word;
-    }
-    
-    .group-header-info p {
-      margin: 0;
-      font-size: 14px;
-      color: #666;
-      word-break: break-word;
-    }
-    
-    .group-header-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    
-    .resources-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      width: 100%;
-    }
-    
-    /* Responsive Styles */
-    @media (max-width: 1100px) {
-      .main-container {
-        padding: 15px;
-      }
-      
-      .sidebar {
-        width: 300px;
-        min-width: 300px;
-      }
-    }
-    
-    @media (max-width: 900px) {
-      .main-container {
-        padding: 10px;
-      }
-      
-      .content-wrapper {
-        flex-direction: column;
-        gap: 15px;
-      }
-      
-      .sidebar {
-        width: 100%;
-        min-width: auto;
-        max-height: 400px;
-        position: static;
-        transform: none;
-        order: 2;
-      }
-      
-      .chat-area {
-        min-height: 500px;
-        max-height: none;
-        order: 1;
-      }
-      
-      .mobile-menu-toggle {
-        display: block;
-      }
-      
-      .group-header-content {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      
-      .group-header-buttons {
-        width: 100%;
-        justify-content: space-between;
-      }
-      
-      .group-header-buttons button {
-        flex: 1;
-      }
-    }
-    
-    @media (max-width: 768px) {
-      .main-container {
-        padding: 10px;
-      }
-      
-      .header {
-        padding: 12px 15px;
-      }
-      
-      .header h2 {
-        font-size: 1.3rem;
-      }
-      
-      button {
-        padding: 10px 15px;
-        font-size: 14px;
-      }
-      
-      .chat-input-area {
-        flex-direction: column;
-      }
-      
-      .chat-input-area textarea {
-        min-height: 80px;
-      }
-      
-      .chat-input-area button {
-        width: 100%;
-        padding: 15px;
-      }
-      
-      .message {
-        max-width: 90%;
-      }
-      
-      .group-header-buttons {
-        flex-direction: column;
-        gap: 8px;
-      }
-      
-      .group-header-buttons button {
-        width: 100%;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .main-container {
-        padding: 8px;
-      }
-      
-      .sidebar, .chat-area {
-        padding: 15px;
-        border-radius: 15px;
-      }
-      
-      .header-controls {
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 8px;
-      }
-      
-      .header h2 {
-        font-size: 1.2rem;
-      }
-      
-      .empty-state-icon {
-        font-size: 48px;
-      }
-      
-      .message {
-        padding: 12px;
-        max-width: 95%;
-      }
-      
-      .group-item {
-        padding: 12px;
-      }
-    }
-    
-    @media (max-width: 360px) {
-      .header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      
-      .header-controls {
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-between;
-      }
-      
-      select, button {
-        font-size: 13px;
-        padding: 8px 12px;
-      }
-      
-      .mobile-menu-toggle {
-        max-width: 100%;
-      }
-    }
-    
-    /* Scrollbar styling */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    
-    ::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.05);
-      border-radius: 10px;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-      background: var(--accent);
-      border-radius: 10px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(108, 99, 255, 0.8);
-    }
-    
-    .sidebar-btn-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin: 20px 0;
-      width: 100%;
-    }
-    
-    .sidebar-btn-group button {
-      width: 100%;
-      text-align: center;
-    }
-    
-    #themeSelector {
-      padding: 10px 15px;
-      border-radius: 10px;
-      border: none;
-      background: var(--accent);
-      color: white;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    
-    /* Fix for preventing horizontal scroll */
-    .chat-messages,
-    .sidebar,
-    .chat-input-area,
-    .group-header,
-    .resources-header {
-      overflow-x: hidden;
-    }
-    
-    /* Ensure all containers don't exceed viewport width */
-    .main-container,
-    .content-wrapper,
-    .sidebar,
-    .chat-area {
-      max-width: 100vw;
-    }
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* ===== TYPING INDICATOR STYLES - LIKE WHATSAPP ===== */
-.typing-indicator {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 15px;
-    margin: 10px 20px;
-    background: var(--bg);
-    border-radius: 20px;
-    max-width: 200px;
-    animation: fadeIn 0.3s ease;
-    border: 1px solid var(--border);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
+        :root {
+            --bg: #eef1ff;
+            --card: #ffffff;
+            --accent: #6c63ff;
+            --accent-light: #e0e7ff;
+            --text: #222;
+            --text-muted: #666;
+            --border: #ddd;
+            --success: #4caf50;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --sidebar-width: 320px;
+        }
 
-.typing-dots {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-}
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
 
-.typing-dots span {
-    width: 6px;
-    height: 6px;
-    background: var(--accent);
-    border-radius: 50%;
-    opacity: 0.7;
-    animation: typingBounce 1.4s infinite ease-in-out;
-}
+        /* Header */
+        .header {
+            background: var(--card);
+            padding: 12px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-.typing-dots span:nth-child(1) {
-    animation-delay: 0s;
-}
+        .header h2 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-.typing-dots span:nth-child(2) {
-    animation-delay: 0.2s;
-}
+        .header button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-.typing-dots span:nth-child(3) {
-    animation-delay: 0.4s;
-}
+        /* Main Container */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 64px);
+            padding: 16px;
+            gap: 16px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
 
-@keyframes typingBounce {
-    0%, 60%, 100% {
-        transform: translateY(0);
-    }
-    30% {
-        transform: translateY(-6px);
-        opacity: 1;
-    }
-}
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow-y: auto;
+        }
 
-.typing-text {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    font-style: italic;
-    line-height: 1;
-}
+        .sidebar h3 {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
 
-/* Dark theme adjustments */
-body.purple .typing-indicator {
-    background: #2a1a4a;
-    border-color: #8b5cf6;
-}
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin: 8px 0;
+        }
 
-body.ocean .typing-indicator {
-    background: #0b4a6a;
-    border-color: #7dd3fc;
-}
+        .button-group button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
 
-/* Mobile adjustments */
-@media (max-width: 768px) {
-    .typing-indicator {
-        padding: 6px 12px;
-        margin: 8px 15px;
-        max-width: 180px;
-    }
+        .btn-create {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-join {
+            background: #2196f3;
+            color: white;
+        }
+
+        .button-group button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        /* Groups List */
+        .groups-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .group-item {
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+
+        .group-item:hover {
+            transform: translateX(4px);
+            border-left-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .group-item.active {
+            background: var(--accent);
+            color: white;
+            border-left-color: white;
+        }
+
+        .group-item.active .group-meta {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .group-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .group-meta {
+            font-size: 11px;
+            opacity: 0.7;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            height: 100%;
+            justify-content: center;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            color: var(--text);
+        }
+
+        /* Group Chat */
+        .group-chat {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            gap: 16px;
+        }
+
+        .group-header {
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 16px;
+        }
+
+        .group-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .group-info h2 {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .group-code {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        .group-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .group-actions button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-info {
+            background: #666;
+            color: white;
+        }
+
+        .btn-leave {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Messages */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            background: var(--bg);
+            padding: 12px 16px;
+            border-radius: 16px;
+            max-width: 80%;
+            animation: fadeIn 0.3s;
+            word-break: break-word;
+        }
+
+        .my-message {
+            background: var(--accent);
+            color: white;
+            margin-left: auto;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 6px;
+            opacity: 0.8;
+        }
+
+        .message-content {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Resources Section */
+        .resources-section {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 16px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .resources-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .resources-header button {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .resource-item {
+            background: var(--card);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .resource-item a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .resource-meta {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Input Area */
+        .input-area {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            margin-top: 16px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        #messageInput {
+            width: 100%;
+            padding: 12px 45px 12px 12px;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            font-size: 14px;
+            resize: none;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        #messageInput:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .emoji-btn {
+            position: absolute;
+            right: 8px;
+            bottom: 10px;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .emoji-btn:hover {
+            background: var(--accent-light);
+            transform: scale(1.1);
+        }
+
+        .send-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 12px 24px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(108, 99, 255, 0.3);
+        }
+
+        /* Emoji Grid */
+        .emoji-grid {
+            display: none;
+            position: absolute;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 12px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .emoji-grid.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        .emoji-grid-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .emoji-grid-header h4 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .close-emoji {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 4px;
+        }
+
+        .emoji-items {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 6px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .emoji-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 2px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            aspect-ratio: 1;
+        }
+
+        .emoji-item:hover {
+            background: var(--accent-light);
+            border-color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            margin: 8px 16px;
+            background: var(--bg);
+            border-radius: 20px;
+            max-width: 200px;
+            border: 1px solid var(--border);
+            animation: fadeIn 0.3s;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: 0s; }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+
+        .typing-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Notification Container */
+        #notificationContainer {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 320px;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .notification {
+            background: var(--card);
+            color: var(--text);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            animation: slideInRight 0.3s ease-out;
+            border-left: 4px solid var(--accent);
+            pointer-events: auto;
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .notification-icon {
+            font-size: 28px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .notification-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            font-size: 15px;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .notification-sender {
+            font-size: 13px;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .notification-text {
+            font-size: 12px;
+            opacity: 0.8;
+            word-break: break-word;
+        }
+
+        .notification-dot {
+            font-size: 10px;
+            color: var(--accent);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+                min-height: calc(100vh - 64px);
+                padding: 12px;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-height: 300px;
+            }
+
+            .chat-area {
+                min-height: 500px;
+            }
+
+            .group-header-content {
+                flex-direction: column;
+            }
+
+            .group-actions {
+                width: 100%;
+            }
+
+            .group-actions button {
+                flex: 1;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .emoji-items {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            #notificationContainer {
+                top: 70px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header h2 {
+                font-size: 1.1rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .input-area {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .input-wrapper {
+                width: 100%;
+            }
+
+            .send-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .emoji-items {
+                grid-template-columns: repeat(5, 1fr);
+            }
+
+            .message {
+                max-width: 95%;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .emoji-items {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 3px;
+        }
+    </style>
     
-    .typing-text {
-        font-size: 0.8rem;
-    }
-}
-
-/* Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-  </style>
-  
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
-
 <body>
-  <div class="header">
-    <h2><i class="fas fa-users"></i> Study Groups</h2>
-    <div class="header-controls">
-      <select onchange="changeTheme(this.value)" id="themeSelector">
-        <option value="">🎨 Light</option>
-        <option value="purple">💜 Purple</option>
-        <option value="ocean">🌊 Ocean</option>
-      </select>
-      <button onclick="location.href='studentmode.html'">
-        <i class="fas fa-arrow-left"></i> Back
-      </button>
-    </div>
-  </div>
 
-  <div class="main-container">
-    <button class="mobile-menu-toggle" id="mobileMenuToggle">
-      <i class="fas fa-bars"></i> Toggle Groups List
+<div class="header">
+    <h2><i class="fas fa-users"></i> Study Groups</h2>
+    <button onclick="window.location.href='studentmode.html'">
+        <i class="fas fa-arrow-left"></i> Back
     </button>
-    
-    <div class="mobile-overlay" id="mobileOverlay"></div>
-    
-    <div class="content-wrapper">
-      <!-- SIDEBAR: Groups List -->
-      <div class="sidebar" id="sidebar">
+</div>
+
+<div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
         <h3><i class="fas fa-layer-group"></i> My Study Groups</h3>
         
-        <div class="sidebar-btn-group">
-          <button onclick="showCreateGroup()" style="background: #4caf50;">
-            <i class="fas fa-plus"></i> Create New Group
-          </button>
-          <button onclick="showJoinGroup()" style="background: #2196f3;">
-            <i class="fas fa-link"></i> Join Existing Group
-          </button>
-        </div>
-        
-        <div id="groupsList"></div>
-      </div>
-      
-      <!-- MAIN: Chat Area -->
-      <div class="chat-area">
-        <!-- No Group Selected -->
-        <div id="noGroupSelected" class="empty-state">
-          <div class="empty-state-icon">💬</div>
-          <h3>Select a group to start chatting!</h3>
-          <p>Create a new group or join an existing one</p>
-        </div>
-        
-        <!-- Group Chat -->
-        <div id="groupChat" style="display: none; flex-direction: column; height: 100%; width: 100%;">
-          <!-- Group Header -->
-          <div class="group-header">
-            <div class="group-header-content">
-              <div class="group-header-info">
-                <h2 id="currentGroupName"></h2>
-                <p id="currentGroupCode"></p>
-              </div>
-              <div class="group-header-buttons">
-                <button onclick="showGroupInfo()" style="background: #666;">
-                  <i class="fas fa-info-circle"></i> Info
-                </button>
-                <button onclick="leaveGroup()" style="background: #e74c3c;">
-                  <i class="fas fa-sign-out-alt"></i> Leave
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Messages -->
-          <div class="chat-messages" id="chatMessages">
-            <div class="empty-state">
-              <p>No messages yet. Start the conversation! 💬</p>
-            </div>
-          </div>
-          
-          <!-- Resources Section -->
-          <div style="background: var(--bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; max-height: 150px; overflow-y: auto; width: 100%;">
-            <div class="resources-header">
-              <strong><i class="fas fa-book"></i> Shared Resources</strong>
-              <button onclick="showAddResource()" style="padding: 6px 12px; font-size: 14px;">
-                <i class="fas fa-plus"></i> Add
-              </button>
-            </div>
-            <div id="resourcesList"></div>
-          </div>
-          
-          <!-- Message Input -->
-          <div class="chat-input-area">
-            <textarea id="messageInput" placeholder="Type your message..." rows="2"></textarea>
-            <button onclick="sendMessage()">
-              <i class="fas fa-paper-plane"></i> Send
+        <div class="button-group">
+            <button class="btn-create" onclick="createGroup()">
+                <i class="fas fa-plus"></i> Create
             </button>
-          </div>
+            <button class="btn-join" onclick="joinGroup()">
+                <i class="fas fa-link"></i> Join
+            </button>
         </div>
-      </div>
+        
+        <div class="groups-list" id="groupsList"></div>
     </div>
-  </div>
-  
-  <script>
-// 🔥 FIREBASE INITIALIZATION
-const firebaseConfig = {
-  apiKey: "AIzaSyC_aJwr5EJELuz0_H_Qzs4nqmihBcMIf3U",
-  authDomain: "study-groups-app-19c8a.firebaseapp.com",
-  databaseURL: "https://study-groups-app-19c8a-default-rtdb.firebaseio.com",
-  projectId: "study-groups-app-19c8a",
-  storageBucket: "study-groups-app-19c8a.appspot.com",
-  messagingSenderId: "919201377577",
-  appId: "1:919201377577:web:5fcf62440f1cc2a4b71b38"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-
-/* ============================================
-   STUDY GROUP SYSTEM
-   ============================================ */
-
-// Get user's name
-let myName = localStorage.getItem('name') || prompt("What's your name?") || "Anonymous";
-if (myName && myName !== "Anonymous") {
-  localStorage.setItem('name', myName);
-}
-
-// My groups: array of group codes I'm in
-let myGroups = JSON.parse(localStorage.getItem('myStudyGroups') || "[]");
-
-// Current active group
-let currentGroup = null;
-let messageListeners = {};
-let resourceListeners = {};
-
-// Theme system
-function changeTheme(theme) {
-  document.body.className = '';
-  if (theme) document.body.classList.add(theme);
-  localStorage.setItem('selectedTheme', theme);
-}
-
-const savedTheme = localStorage.getItem('selectedTheme');
-if (savedTheme) {
-  document.body.classList.add(savedTheme);
-  document.getElementById('themeSelector').value = savedTheme;
-}
-
-/* ============================================
-   MOBILE MENU TOGGLE
-   ============================================ */
-const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-const sidebar = document.getElementById('sidebar');
-const mobileOverlay = document.getElementById('mobileOverlay');
-
-// Toggle sidebar on mobile
-mobileMenuToggle.addEventListener('click', () => {
-  if (sidebar.style.transform === 'translateX(0px)' || sidebar.style.transform === '') {
-    sidebar.style.transform = 'translateX(-100%)';
-    mobileOverlay.classList.remove('active');
-  } else {
-    sidebar.style.transform = 'translateX(0)';
-    mobileOverlay.classList.add('active');
-  }
-});
-
-// Close sidebar when clicking overlay
-mobileOverlay.addEventListener('click', () => {
-  sidebar.style.transform = 'translateX(-100%)';
-  mobileOverlay.classList.remove('active');
-});
-
-// Close sidebar when selecting a group on mobile
-function closeMobileSidebar() {
-  if (window.innerWidth <= 900) {
-    sidebar.style.transform = 'translateX(-100%)';
-    mobileOverlay.classList.remove('active');
-  }
-}
-
-/* ============================================
-   CREATE GROUP
-   ============================================ */
-function showCreateGroup() {
-  const groupName = prompt("Enter group name (e.g., Math Study Group):");
-  if (!groupName) return;
-  
-  // Generate random group code
-  const code = generateCode();
-  
-  // Create group data
-  const groupData = {
-    name: groupName,
-    creator: myName,
-    created: new Date().toISOString(),
-    members: { [myName]: true },
-    lastActivity: Date.now()
-  };
-  
-  // Save to Firebase
-  database.ref('groups/' + code).set(groupData)
-    .then(() => {
-      // Add to my groups
-      myGroups.push(code);
-      localStorage.setItem('myStudyGroups', JSON.stringify(myGroups));
-      
-      renderGroupsList();
-      selectGroup(code);
-      
-      alert(`✅ Group created!\nCode: ${code}\nShare this code with friends!`);
-    })
-    .catch(error => {
-      console.error("Error creating group:", error);
-      alert("❌ Failed to create group.");
-    });
-}
-
-function generateCode() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return code;
-}
-
-/* ============================================
-   JOIN GROUP - FIXED! WORKS ACROSS DEVICES
-   ============================================ */
-function showJoinGroup() {
-  const code = prompt("Enter the group code:").toUpperCase().trim();
-  if (!code) return;
-  
-  // Check if already in group
-  if (myGroups.includes(code)) {
-    alert("You're already in this group!");
-    return;
-  }
-  
-  // Check if group exists in Firebase
-  database.ref('groups/' + code).once('value')
-    .then(snapshot => {
-      if (!snapshot.exists()) {
-        alert("❌ Invalid group code!");
-        return;
-      }
-      
-      const groupData = snapshot.val();
-      
-      // Add yourself as member
-      const updates = {};
-      updates[`groups/${code}/members/${myName}`] = true;
-      updates[`groups/${code}/lastActivity`] = Date.now();
-      
-      return database.ref().update(updates)
-        .then(() => {
-          // Add to my groups
-          myGroups.push(code);
-          localStorage.setItem('myStudyGroups', JSON.stringify(myGroups));
-          
-          renderGroupsList();
-          selectGroup(code);
-          
-          alert(`✅ Joined "${groupData.name}"!`);
-        });
-    })
-    .catch(error => {
-      console.error("Error joining group:", error);
-      alert("❌ Failed to join group.");
-    });
-}
-
-/* ============================================
-   RENDER GROUPS LIST
-   ============================================ */
-function renderGroupsList() {
-  const list = document.getElementById('groupsList');
-  list.innerHTML = '';
-  
-  if (myGroups.length === 0) {
-    list.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No groups yet</p>';
-    return;
-  }
-  
-  myGroups.forEach(code => {
-    // Listen for group data updates
-    database.ref('groups/' + code).on('value', (snapshot) => {
-      if (!snapshot.exists()) {
-        // Group was deleted
-        myGroups = myGroups.filter(c => c !== code);
-        localStorage.setItem('myStudyGroups', JSON.stringify(myGroups));
-        if (currentGroup === code) {
-          currentGroup = null;
-          showNoGroupSelected();
-        }
-        renderGroupsList();
-        return;
-      }
-      
-      const group = snapshot.val();
-      
-      // Update or create group item
-      let groupDiv = document.querySelector(`[data-group-code="${code}"]`);
-      
-      if (!groupDiv) {
-        groupDiv = document.createElement('div');
-        groupDiv.className = 'group-item';
-        groupDiv.setAttribute('data-group-code', code);
-        groupDiv.onclick = () => {
-          selectGroup(code);
-          closeMobileSidebar();
-        };
-        list.appendChild(groupDiv);
-      }
-      
-      if (currentGroup === code) {
-        groupDiv.classList.add('active');
-      } else {
-        groupDiv.classList.remove('active');
-      }
-      
-      const memberCount = group.members ? Object.keys(group.members).length : 0;
-      
-      groupDiv.innerHTML = `
-        <div style="font-weight: bold; margin-bottom: 5px; word-break: break-word;">${group.name}</div>
-        <div style="font-size: 12px; opacity: 0.7;">
-          <i class="fas fa-users"></i> ${memberCount} members • Code: ${code}
+    
+    <!-- Chat Area -->
+    <div class="chat-area">
+        <div id="noGroupSelected" class="empty-state">
+            <div class="empty-state-icon">💬</div>
+            <h3>Select a group to start chatting</h3>
+            <p>Create a new group or join an existing one</p>
         </div>
-      `;
-    });
-  });
-}
-
-/* ============================================
-   SELECT GROUP
-   ============================================ */
-function selectGroup(code) {
-  currentGroup = code;
-  
-  document.getElementById('noGroupSelected').style.display = 'none';
-  document.getElementById('groupChat').style.display = 'flex';
-  
-  // Get group info
-  database.ref('groups/' + code).once('value')
-    .then(snapshot => {
-      const group = snapshot.val();
-      if (!group) {
-        showNoGroupSelected();
-        return;
-      }
-      
-      document.getElementById('currentGroupName').textContent = group.name;
-      document.getElementById('currentGroupCode').textContent = `Code: ${code}`;
-      
-      renderGroupsList();
-      loadMessages();
-      loadResources();
-    });
-}
-
-function showNoGroupSelected() {
-  currentGroup = null;
-  document.getElementById('noGroupSelected').style.display = 'block';
-  document.getElementById('groupChat').style.display = 'none';
-  
-  // Clear any existing listeners
-  if (messageListeners[currentGroup]) {
-    database.ref('messages/' + currentGroup).off('value', messageListeners[currentGroup]);
-  }
-  if (resourceListeners[currentGroup]) {
-    database.ref('resources/' + currentGroup).off('value', resourceListeners[currentGroup]);
-  }
-}
-
-/* ============================================
-   MESSAGES
-   ============================================ */
-function loadMessages() {
-  if (!currentGroup) return;
-  
-  // Clear previous listener
-  if (messageListeners[currentGroup]) {
-    database.ref('messages/' + currentGroup).off('value', messageListeners[currentGroup]);
-  }
-  
-  // Set up new listener
-  messageListeners[currentGroup] = (snapshot) => {
-    renderMessages(snapshot.val());
-  };
-  
-  database.ref('messages/' + currentGroup).on('value', messageListeners[currentGroup]);
-}
-
-function renderMessages(messagesData) {
-  const messagesDiv = document.getElementById('chatMessages');
-  messagesDiv.innerHTML = '';
-  
-  if (!messagesData) {
-    messagesDiv.innerHTML = '<div class="empty-state"><p>No messages yet. Start the conversation! 💬</p></div>';
-    return;
-  }
-  
-  // Convert object to array and sort by timestamp
-  const messagesArray = Object.entries(messagesData || {})
-    .map(([id, msg]) => ({ id, ...msg }))
-    .sort((a, b) => a.timestamp - b.timestamp);
-  
-  if (messagesArray.length === 0) {
-    messagesDiv.innerHTML = '<div class="empty-state"><p>No messages yet. Start the conversation! 💬</p></div>';
-    return;
-  }
-  
-  messagesArray.forEach(msg => {
-    const div = document.createElement('div');
-    div.className = 'message';
-    if (msg.sender === myName) div.classList.add('my-message');
-    
-    const time = new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-    
-    div.innerHTML = `
-      <div class="message-header">
-        <strong>${msg.sender}</strong>
-        <span>${time}</span>
-      </div>
-      <div class="message-content">${msg.text}</div>
-    `;
-    
-    messagesDiv.appendChild(div);
-  });
-  
-  // Scroll to bottom
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-function sendMessage() {
-  const text = document.getElementById('messageInput').value.trim();
-  if (!text || !currentGroup) return;
-  
-  const messageData = {
-    sender: myName,
-    text: text,
-    timestamp: Date.now()
-  };
-  
-  // Save message to Firebase
-  database.ref('messages/' + currentGroup).push(messageData)
-    .then(() => {
-      // Update last activity
-      database.ref('groups/' + currentGroup + '/lastActivity').set(Date.now());
-      
-      // Clear input
-      document.getElementById('messageInput').value = '';
-    })
-    .catch(error => {
-      console.error("Error sending message:", error);
-      alert("❌ Failed to send message.");
-    });
-}
-
-/* ============================================
-   RESOURCES
-   ============================================ */
-function showAddResource() {
-  if (!currentGroup) return;
-  
-  const title = prompt("Resource title:");
-  if (!title) return;
-  
-  const link = prompt("Resource link (URL):");
-  if (!link) return;
-  
-  const resourceData = {
-    title: title,
-    link: link,
-    addedBy: myName,
-    date: new Date().toLocaleDateString(),
-    timestamp: Date.now()
-  };
-  
-  database.ref('resources/' + currentGroup).push(resourceData)
-    .then(() => {
-      alert("✅ Resource added!");
-    })
-    .catch(error => {
-      console.error("Error adding resource:", error);
-      alert("❌ Failed to add resource.");
-    });
-}
-
-function loadResources() {
-  if (!currentGroup) return;
-  
-  // Clear previous listener
-  if (resourceListeners[currentGroup]) {
-    database.ref('resources/' + currentGroup).off('value', resourceListeners[currentGroup]);
-  }
-  
-  // Set up new listener
-  resourceListeners[currentGroup] = (snapshot) => {
-    renderResources(snapshot.val());
-  };
-  
-  database.ref('resources/' + currentGroup).on('value', resourceListeners[currentGroup]);
-}
-
-function renderResources(resourcesData) {
-  const resourcesDiv = document.getElementById('resourcesList');
-  resourcesDiv.innerHTML = '';
-  
-  if (!resourcesData) {
-    resourcesDiv.innerHTML = '<p style="color: #999; font-size: 14px;">No resources yet</p>';
-    return;
-  }
-  
-  // Convert object to array and sort by timestamp
-  const resourcesArray = Object.entries(resourcesData || {})
-    .map(([id, resource]) => ({ id, ...resource }))
-    .sort((a, b) => b.timestamp - a.timestamp);
-  
-  resourcesArray.forEach(r => {
-    const div = document.createElement('div');
-    div.className = 'resource-item';
-    div.innerHTML = `
-      <a href="${r.link}" target="_blank">📎 ${r.title}</a>
-      <div style="font-size: 11px; color: #666; margin-top: 3px;">Added by ${r.addedBy}</div>
-    `;
-    resourcesDiv.appendChild(div);
-  });
-}
-
-/* ============================================
-   GROUP INFO
-   ============================================ */
-function showGroupInfo() {
-  if (!currentGroup) return;
-  
-  database.ref('groups/' + currentGroup).once('value')
-    .then(snapshot => {
-      if (!snapshot.exists()) {
-        alert("Group not found!");
-        return;
-      }
-      
-      const group = snapshot.val();
-      
-      let info = `📊 Group Info\n\n`;
-      info += `Name: ${group.name}\n`;
-      info += `Code: ${currentGroup}\n`;
-      info += `Created by: ${group.creator}\n`;
-      info += `Created: ${new Date(group.created).toLocaleString()}\n`;
-      info += `Members: ${Object.keys(group.members || {}).length}\n\n`;
-      info += `Members:\n${Object.keys(group.members || {}).join('\n')}`;
-      
-      alert(info);
-    })
-    .catch(error => {
-      console.error("Error getting group info:", error);
-      alert("❌ Failed to get group info.");
-    });
-}
-
-/* ============================================
-   LEAVE GROUP
-   ============================================ */
-function leaveGroup() {
-  if (!currentGroup) return;
-  
-  if (!confirm("Are you sure you want to leave this group?")) return;
-  
-  // Remove yourself from members
-  database.ref(`groups/${currentGroup}/members/${myName}`).remove()
-    .then(() => {
-      // Remove from my groups
-      myGroups = myGroups.filter(c => c !== currentGroup);
-      localStorage.setItem('myStudyGroups', JSON.stringify(myGroups));
-      
-      // Reset view
-      currentGroup = null;
-      showNoGroupSelected();
-      renderGroupsList();
-      
-      alert("✅ Left the group successfully!");
-    })
-    .catch(error => {
-      console.error("Error leaving group:", error);
-      alert("❌ Failed to leave group.");
-    });
-}
-
-/* ============================================
-   ENTER KEY TO SEND
-   ============================================ */
-document.addEventListener('keypress', function(e) {
-  if (e.key === 'Enter' && !e.shiftKey && document.activeElement.id === 'messageInput') {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-/* ============================================
-   INITIALIZE
-   ============================================ */
-// Handle window resize
-window.addEventListener('resize', function() {
-  if (window.innerWidth > 900) {
-    sidebar.style.transform = 'translateX(0)';
-    sidebar.style.position = 'relative';
-    sidebar.style.height = 'auto';
-    mobileOverlay.classList.remove('active');
-  } else {
-    sidebar.style.position = 'fixed';
-    sidebar.style.height = '100vh';
-    sidebar.style.transform = 'translateX(-100%)';
-  }
-});
-
-// Initial check for mobile view
-if (window.innerWidth <= 900) {
-  sidebar.style.transform = 'translateX(-100%)';
-  sidebar.style.position = 'fixed';
-  sidebar.style.left = '0';
-  sidebar.style.top = '0';
-  sidebar.style.height = '100vh';
-  sidebar.style.zIndex = '100';
-  sidebar.style.borderRadius = '0';
-} else {
-  sidebar.style.transform = 'translateX(0)';
-  sidebar.style.position = 'relative';
-}
-
-// Start the app
-renderGroupsList();
-
-
-    /* ============================================
-   WHATSAPP-STYLE NOTIFICATION SYSTEM
-   ============================================ */
-
-// Notification settings
-let notificationSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3');
-notificationSound.volume = 0.3;
-
-// Track last message times to avoid duplicates
-let lastNotificationTimes = {};
-
-// Initialize notification listener
-function initNotifications() {
-  // Check if we're in studentmode.html
-  if (window.location.pathname.includes('studentmode.html')) {
-    // Listen for new messages in all my groups
-    myGroups.forEach(groupCode => {
-      const messagesRef = database.ref('messages/' + groupCode);
-      
-      // Listen only for new messages (last 5 seconds)
-      messagesRef.orderByChild('timestamp').startAt(Date.now() - 5000).on('child_added', (snapshot) => {
-        const message = snapshot.val();
         
-        // Don't notify if it's my own message
-        if (message.sender === myName) return;
-        
-        // Check if we've already notified about this message
-        if (lastNotificationTimes[snapshot.key]) return;
-        lastNotificationTimes[snapshot.key] = Date.now();
-        
-        // Get group info
-        database.ref('groups/' + groupCode).once('value')
-          .then(groupSnapshot => {
-            const group = groupSnapshot.val();
-            if (group) {
-              showWhatsAppNotification(group.name, message.sender, message.text);
-            }
-          });
-      });
-    });
-  }
-}
-
-// Show WhatsApp-style notification
-function showWhatsAppNotification(groupName, sender, messageText) {
-  // Create notification container if it doesn't exist
-  let notificationContainer = document.getElementById('whatsapp-notifications');
-  if (!notificationContainer) {
-    notificationContainer = document.createElement('div');
-    notificationContainer.id = 'whatsapp-notifications';
-    notificationContainer.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 9999;
-      max-width: 350px;
-      width: 100%;
-      pointer-events: none;
-    `;
-    document.body.appendChild(notificationContainer);
-  }
-  
-  // Create notification element
-  const notification = document.createElement('div');
-  notification.style.cssText = `
-    background: var(--card, #ffffff);
-    color: var(--text, #222);
-    border-radius: 15px;
-    padding: 15px;
-    margin-bottom: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    animation: slideInRight 0.3s ease-out;
-    border-left: 4px solid var(--accent, #6c63ff);
-    pointer-events: auto;
-    cursor: pointer;
-    transition: transform 0.2s;
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.95);
-  `;
-  
-  // Dark mode support
-  if (document.body.classList.contains('purple')) {
-    notification.style.background = '#24144a';
-    notification.style.color = '#f3eefe';
-  } else if (document.body.classList.contains('ocean')) {
-    notification.style.background = '#1e3a5f';
-    notification.style.color = '#caf0f8';
-  }
-  
-  // Icon based on group theme
-  const icon = groupName.toLowerCase().includes('math') ? '📐' :
-               groupName.toLowerCase().includes('science') ? '🔬' :
-               groupName.toLowerCase().includes('history') ? '📜' :
-               groupName.toLowerCase().includes('english') ? '📚' : '💬';
-  
-  // Truncate long messages
-  const displayText = messageText.length > 50 ? messageText.substring(0, 50) + '...' : messageText;
-  
-  notification.innerHTML = `
-    <div style="font-size: 24px;">${icon}</div>
-    <div style="flex: 1;">
-      <div style="font-weight: bold; font-size: 16px; margin-bottom: 5px;">${groupName}</div>
-      <div style="font-weight: 500; font-size: 14px; margin-bottom: 3px;">${sender}</div>
-      <div style="font-size: 13px; opacity: 0.8; word-break: break-word;">${displayText}</div>
-      <div style="font-size: 11px; opacity: 0.6; margin-top: 5px;">just now</div>
+        <div id="groupChat" class="group-chat" style="display: none;">
+            <!-- Group Header -->
+            <div class="group-header">
+                <div class="group-header-content">
+                    <div class="group-info">
+                        <h2 id="currentGroupName"></h2>
+                        <div class="group-code" id="currentGroupCode"></div>
+                    </div>
+                    <div class="group-actions">
+                        <button class="btn-info" onclick="showGroupInfo()">
+                            <i class="fas fa-info-circle"></i> Info
+                        </button>
+                        <button class="btn-leave" onclick="leaveGroup()">
+                            <i class="fas fa-sign-out-alt"></i> Leave
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Messages -->
+            <div class="messages-container" id="messagesContainer"></div>
+            
+            <!-- Typing Indicator -->
+            <div id="typingIndicator" class="typing-indicator" style="display: none;">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span class="typing-text" id="typingText"></span>
+            </div>
+            
+            <!-- Resources Section -->
+            <div class="resources-section">
+                <div class="resources-header">
+                    <strong><i class="fas fa-book"></i> Resources</strong>
+                    <button onclick="addResource()">+ Add</button>
+                </div>
+                <div id="resourcesList"></div>
+            </div>
+            
+            <!-- Message Input -->
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea id="messageInput" placeholder="Type your message..." rows="1"></textarea>
+                    <button class="emoji-btn" onclick="toggleEmojiGrid()">😊</button>
+                    
+                    <!-- Emoji Grid -->
+                    <div id="emojiGrid" class="emoji-grid">
+                        <div class="emoji-grid-header">
+                            <h4>Pick an emoji</h4>
+                            <button class="close-emoji" onclick="toggleEmojiGrid()">✕</button>
+                        </div>
+                        <div class="emoji-items" id="emojiItems"></div>
+                    </div>
+                </div>
+                <button class="send-btn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
+            </div>
+        </div>
     </div>
-    <div style="font-size: 20px; color: var(--accent);">●</div>
-  `;
-  
-  // Add click handler to go to the group
-  notification.onclick = () => {
-    // Store the group to open in session storage
-    sessionStorage.setItem('openGroup', groupName);
-    // Navigate to study groups page
-    window.location.href = 'studygroups.html';
-  };
-  
-  // Add hover effect
-  notification.onmouseenter = () => {
-    notification.style.transform = 'translateX(-5px)';
-  };
-  notification.onmouseleave = () => {
-    notification.style.transform = 'translateX(0)';
-  };
-  
-  // Add to container
-  notificationContainer.appendChild(notification);
-  
-  // Play notification sound
-  notificationSound.play().catch(() => {});
-  
-  // Show browser notification if permitted
-  if (Notification.permission === 'granted') {
-    new Notification(`📱 ${groupName}`, {
-      body: `${sender}: ${displayText}`,
-      icon: 'https://img.icons8.com/color/48/000000/whatsapp--v1.png'
-    });
-  }
-  
-  // Auto remove after 5 seconds
-  setTimeout(() => {
-    notification.style.animation = 'slideOutRight 0.3s ease-out forwards';
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.remove();
-      }
-    }, 300);
-  }, 5000);
-}
+</div>
 
-// Add CSS animations
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes slideInRight {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  
-  @keyframes slideOutRight {
-    from {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-  }
-  
-  #whatsapp-notifications {
-    transition: all 0.3s;
-  }
-  
-  #whatsapp-notifications div {
-    transition: all 0.3s;
-  }
-`;
-document.head.appendChild(style);
-
-// Request notification permission
-if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
-  Notification.requestPermission();
-}
-
-// Initialize notifications
-initNotifications();
-
-/* ============================================
-   UPDATE NOTIFICATIONS WHEN NEW GROUP ADDED
-   ============================================ */
-
-// Override the original joinGroup and createGroup functions to reinitialize notifications
-const originalJoinGroup = showJoinGroup;
-const originalCreateGroup = showCreateGroup;
-
-window.showJoinGroup = function() {
-  originalJoinGroup();
-  setTimeout(() => {
-    initNotifications();
-  }, 1000);
-};
-
-window.showCreateGroup = function() {
-  originalCreateGroup();
-  setTimeout(() => {
-    initNotifications();
-  }, 1000);
-};
-
-/* ============================================
-   POLL FOR NEW MESSAGES (FALLBACK)
-   ============================================ */
-
-// In case the realtime listener fails, poll every 10 seconds
-setInterval(() => {
-  if (window.location.pathname.includes('studentmode.html') && myGroups.length > 0) {
-    myGroups.forEach(groupCode => {
-      const fiveSecondsAgo = Date.now() - 5000;
-      database.ref('messages/' + groupCode)
-        .orderByChild('timestamp')
-        .startAt(fiveSecondsAgo)
-        .once('value', snapshot => {
-          snapshot.forEach(childSnapshot => {
-            const message = childSnapshot.val();
-            if (message.sender !== myName && !lastNotificationTimes[childSnapshot.key]) {
-              lastNotificationTimes[childSnapshot.key] = Date.now();
-              database.ref('groups/' + groupCode).once('value')
-                .then(groupSnapshot => {
-                  const group = groupSnapshot.val();
-                  if (group) {
-                    showWhatsAppNotification(group.name, message.sender, message.text);
-                  }
-                });
-            }
-          });
-        });
-    });
-  }
-}, 10000);
-
-// Export for use in other functions
-window.notifyNewMessage = function(groupName, sender, message) {
-  showWhatsAppNotification(groupName, sender, message);
-};
-
-
-
-    /* ============================================
-   TYPING INDICATOR SYSTEM - LIKE WHATSAPP
-   ============================================ */
-
-// Track typing status
-let typingTimeout = null;
-let typingListeners = {};
-
-// Initialize typing indicator for current group
-function initTypingIndicator(groupCode) {
-    if (!groupCode) return;
-    
-    // Clear previous listener
-    if (typingListeners[groupCode]) {
-        database.ref('typing/' + groupCode).off('value', typingListeners[groupCode]);
-    }
-    
-    // Set up listener for typing status
-    typingListeners[groupCode] = (snapshot) => {
-        const typingData = snapshot.val() || {};
-        updateTypingIndicator(groupCode, typingData);
-    };
-    
-    database.ref('typing/' + groupCode).on('value', typingListeners[groupCode]);
-}
-
-// Update typing indicator in UI
-function updateTypingIndicator(groupCode, typingData) {
-    const chatArea = document.querySelector('.chat-area');
-    if (!chatArea) return;
-    
-    // Remove existing typing indicator
-    let existingIndicator = document.getElementById('typingIndicator');
-    if (existingIndicator) {
-        existingIndicator.remove();
-    }
-    
-    // Filter out current user and old typing status (>3 seconds)
-    const now = Date.now();
-    const typingUsers = Object.entries(typingData || {})
-        .filter(([name, timestamp]) => {
-            return name !== myName && (now - timestamp) < 3000;
-        })
-        .map(([name]) => name);
-    
-    if (typingUsers.length === 0) return;
-    
-    // Create typing indicator
-    const indicator = document.createElement('div');
-    indicator.id = 'typingIndicator';
-    indicator.className = 'typing-indicator';
-    
-    let text = '';
-    if (typingUsers.length === 1) {
-        text = `${typingUsers[0]} is typing`;
-    } else if (typingUsers.length === 2) {
-        text = `${typingUsers[0]} and ${typingUsers[1]} are typing`;
-    } else {
-        text = `${typingUsers.length} people are typing`;
-    }
-    
-    indicator.innerHTML = `
-        <div class="typing-dots">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        <span class="typing-text">${text}</span>
-    `;
-    
-    // Insert before message input
-    const chatMessages = document.getElementById('chatMessages');
-    const chatInputArea = document.querySelector('.chat-input-area');
-    if (chatMessages && chatInputArea) {
-        chatMessages.insertAdjacentElement('afterend', indicator);
-    }
-}
-
-// Send typing status
-function sendTypingStatus() {
-    if (!currentGroup) return;
-    
-    // Clear existing timeout
-    if (typingTimeout) {
-        clearTimeout(typingTimeout);
-    }
-    
-    // Update typing status in Firebase
-    const typingRef = database.ref('typing/' + currentGroup + '/' + myName);
-    typingRef.set(Date.now());
-    
-    // Set timeout to clear typing status after 3 seconds of no typing
-    typingTimeout = setTimeout(() => {
-        typingRef.remove();
-    }, 3000);
-}
-
-// Override the message input to detect typing
-const originalMessageInput = document.getElementById('messageInput');
-if (originalMessageInput) {
-    originalMessageInput.addEventListener('input', () => {
-        sendTypingStatus();
-    });
-    
-    originalMessageInput.addEventListener('keydown', () => {
-        sendTypingStatus();
-    });
-    
-    // Clear typing status when message is sent
-    originalMessageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            setTimeout(() => {
-                if (originalMessageInput.value.trim() === '') {
-                    database.ref('typing/' + currentGroup + '/' + myName).remove();
-                }
-            }, 100);
-        }
-    });
-}
-
-// Clear typing status when leaving group
-const originalLeaveGroup = window.leaveGroup;
-window.leaveGroup = function() {
-    if (currentGroup) {
-        database.ref('typing/' + currentGroup + '/' + myName).remove();
-    }
-    originalLeaveGroup();
-};
-
-// Update the selectGroup function to initialize typing indicator
-const originalSelectGroup = window.selectGroup;
-window.selectGroup = function(code) {
-    originalSelectGroup(code);
-    initTypingIndicator(code);
-};
-
-// Clear typing status on page unload
-window.addEventListener('beforeunload', () => {
-    if (currentGroup) {
-        database.ref('typing/' + currentGroup + '/' + myName).remove();
-    }
-});
-
-// Clear typing status when closing tab/window
-window.addEventListener('pagehide', () => {
-    if (currentGroup) {
-        database.ref('typing/' + currentGroup + '/' + myName).remove();
-    }
-});
-  </script>
-
-<!-- Add this CSS to your style section -->
-<style>
-/* Emoji button inside input */
-.emoji-input-container {
-    position: relative;
-    flex: 1;
-    display: flex;
-    align-items: center;
-}
-
-#messageInput {
-    flex: 1;
-    padding-right: 50px !important; /* Make room for emoji button */
-}
-
-.emoji-input-btn {
-    position: absolute;
-    right: 10px;
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    color: var(--text-muted);
-    z-index: 5;
-}
-
-.emoji-input-btn:hover {
-    background: var(--accent-light);
-    color: var(--accent);
-    transform: scale(1.1);
-}
-
-/* Emoji grid popup */
-.emoji-grid-popup {
-    display: none;
-    position: absolute;
-    bottom: 80px;
-    left: 0;
-    right: 0;
-    background: var(--card);
-    border: 2px solid var(--border);
-    border-radius: 16px;
-    padding: 15px;
-    z-index: 1000;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.emoji-grid-popup.show {
-    display: block;
-    animation: slideUp 0.3s ease;
-}
-
-.emoji-grid {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 8px;
-    max-height: 250px;
-    overflow-y: auto;
-    padding: 5px;
-}
-
-.emoji-grid-item {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 4px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    aspect-ratio: 1;
-}
-
-.emoji-grid-item:hover {
-    background: var(--accent-light);
-    border-color: var(--accent);
-    transform: scale(1.1);
-    z-index: 2;
-}
-
-.emoji-grid-item:active {
-    transform: scale(0.95);
-}
-
-.emoji-grid-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-}
-
-.emoji-grid-header h4 {
-    margin: 0;
-    font-size: 1rem;
-    color: var(--text);
-}
-
-.close-emoji-grid {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    color: var(--text-muted);
-    padding: 5px;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.close-emoji-grid:hover {
-    background: var(--accent-light);
-    color: var(--accent);
-}
-
-/* Animation */
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .emoji-grid-popup {
-        bottom: 70px;
-        left: 10px;
-        right: 10px;
-        max-width: none;
-    }
-    
-    .emoji-grid {
-        grid-template-columns: repeat(6, 1fr);
-        max-height: 200px;
-    }
-    
-    .emoji-grid-item {
-        font-size: 1.3rem;
-        padding: 6px 2px;
-    }
-}
-
-@media (max-width: 480px) {
-    .emoji-grid {
-        grid-template-columns: repeat(5, 1fr);
-        gap: 5px;
-    }
-    
-    .emoji-grid-item {
-        font-size: 1.2rem;
-        padding: 5px 2px;
-    }
-}
-
-@media (max-width: 360px) {
-    .emoji-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
-
-/* Theme support */
-body.purple .emoji-grid-popup {
-    background: #2a1a4a;
-    border-color: #8b5cf6;
-}
-
-body.ocean .emoji-grid-popup {
-    background: #0b4a6a;
-    border-color: #7dd3fc;
-}
-
-body.forest .emoji-grid-popup {
-    background: #065f46;
-    border-color: #6ee7b7;
-}
-
-body.sunset .emoji-grid-popup {
-    background: #7c2d12;
-    border-color: #fdba74;
-}
-</style>
+<!-- Notification Container -->
+<div id="notificationContainer"></div>
 
 <script>
 /* ============================================
-   CLEAN EMOJI GRID INSIDE INPUT FIELD
+   COMPLETE STUDY GROUP SYSTEM
    ============================================ */
 
-// Comprehensive emoji list - all the good ones
-const emojiList = [
+// ===== FIREBASE SETUP =====
+const firebaseConfig = {
+    apiKey: "AIzaSyC_aJwr5EJELuz0_H_Qzs4nqmihBcMIf3U",
+    authDomain: "study-groups-app-19c8a.firebaseapp.com",
+    databaseURL: "https://study-groups-app-19c8a-default-rtdb.firebaseio.com",
+    projectId: "study-groups-app-19c8a",
+    storageBucket: "study-groups-app-19c8a.appspot.com",
+    messagingSenderId: "919201377577",
+    appId: "1:919201377577:web:5fcf62440f1cc2a4b71b38"
+};
+
+// Initialize Firebase
+let app;
+try {
+    app = firebase.app();
+} catch {
+    app = firebase.initializeApp(firebaseConfig);
+}
+const database = firebase.database();
+
+// ===== USER IDENTITY =====
+function getMyName() {
+    let name = localStorage.getItem('myName') || 
+               localStorage.getItem('studentName') || 
+               localStorage.getItem('simple_username');
+    
+    if (!name) {
+        name = prompt("👋 What's your name?", "Student_" + Math.floor(Math.random() * 1000));
+        if (!name) name = "Student_" + Math.floor(Math.random() * 1000);
+        localStorage.setItem('myName', name);
+        localStorage.setItem('studentName', name);
+        localStorage.setItem('simple_username', name);
+    }
+    return name;
+}
+
+function getDeviceId() {
+    let id = localStorage.getItem('myDeviceId');
+    if (!id) {
+        id = 'device_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+        localStorage.setItem('myDeviceId', id);
+    }
+    return id;
+}
+
+const MY_NAME = getMyName();
+const DEVICE_ID = getDeviceId();
+const MY_KEY = MY_NAME + '_' + DEVICE_ID;
+
+console.log("✅ You are:", MY_NAME);
+console.log("✅ Device ID:", DEVICE_ID);
+
+// ===== GLOBAL VARIABLES =====
+let myGroups = JSON.parse(localStorage.getItem('myGroups') || "[]");
+let currentGroup = null;
+let messageListener = null;
+let resourceListener = null;
+let typingTimeout = null;
+let notifiedMessages = new Set();
+
+// ===== EMOJI LIST =====
+const emojis = [
     '😊', '👍', '🔥', '🎉', '❤️', '😂', '🤔', '✅',
     '😃', '😍', '🥳', '😎', '😢', '😭', '😴', '🤯',
     '👋', '🙏', '💪', '✨', '⭐', '🌟', '💡', '📚',
@@ -1942,193 +934,542 @@ const emojiList = [
     '🍎', '📘', '📗', '📕', '📔', '📓', '📒', '📏',
     '🔬', '🔭', '🧪', '🧫', '🔮', '🎨', '🎮', '🎲',
     '🧩', '🎭', '🎪', '🎤', '🎧', '🎵', '🎶', '🎹',
-    '🥇', '🥈', '🥉', '🏅', '🎖️', '🏆', '🏀', '⚽',
-    '🏈', '⚾', '🎾', '🏐', '🏉', '🎱', '🏓', '🏸',
-    '⏰', '⌛', '⏳', '⌚', '📱', '💻', '🖥️', '🖨️',
-    '📷', '📹', '🎥', '📼', '🔋', '💡', '🔦', '📡',
-    '💎', '🔑', '🗝️', '🔒', '🔓', '🔏', '🔐', '🔑',
-    '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍',
-    '💔', '❤️‍🔥', '❤️‍🩹', '💕', '💞', '💓', '💗', '💖',
-    '💘', '💝', '💟', '☮️', '✝️', '☪️', '🕉️', '☸️',
-    '✡️', '🔯', '🕎', '☯️', '☦️', '🛐', '⛎', '♈',
-    '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐',
-    '♑', '♒', '♓', '⛎', '🔀', '🔁', '🔂', '▶️',
-    '⏩', '⏪', '🔼', '⏫', '🔽', '⏬', '⏸️', '⏯️',
-    '⏹️', '⏺️', '⏏️', '🎦', '🔅', '🔆', '📶', '📳',
-    '📴', '♿', '🚹', '🚺', '🚻', '🚼', '🚾', '🛄',
-    '🛅', '🚭', '🚯', '🚱', '🚷', '📵', '🔞', '☢️',
-    '☣️', '⬆️', '↗️', '➡️', '↘️', '⬇️', '↙️', '⬅️',
-    '↖️', '↕️', '↔️', '↩️', '↪️', '⤴️', '⤵️', '🔃',
-    '🔄', '🔙', '🔚', '🔛', '🔜', '🔝', '🛐', '⚛️',
-    '🕉️', '✡️', '☸️', '☯️', '✝️', '☦️', '☪️', '☮️',
-    '🕎', '🔯', '♈', '♉', '♊', '♋', '♌', '♍',
-    '♎', '♏', '♐', '♑', '♒', '♓', '⛎', '🔀',
-    '🔁', '🔂', '▶️', '⏩', '⏪', '🔼', '⏫', '🔽',
-    '⏬', '⏸️', '⏯️', '⏹️', '⏺️', '⏏️', '🎦', '🔅',
-    '🔆', '📶', '📳', '📴', '♿', '🚹', '🚺', '🚻',
-    '🚼', '🚾', '🛄', '🛅', '🚭', '🚯', '🚱', '🚷',
-    '📵', '🔞', '☢️', '☣️', '⬆️', '↗️', '➡️', '↘️',
-    '⬇️', '↙️', '⬅️', '↖️', '↕️', '↔️', '↩️', '↪️',
-    '⤴️', '⤵️', '🔃', '🔄', '🔙', '🔚', '🔛', '🔜',
-    '🔝'
+    '🥇', '🥈', '🥉', '🏅', '🎖️', '🏆', '🏀', '⚽'
 ];
 
-// Create and show emoji grid
-function showEmojiGrid() {
-    // Remove existing popup if any
-    const existingPopup = document.getElementById('emojiGridPopup');
-    if (existingPopup) {
-        existingPopup.remove();
-    }
+// ===== INIT EMOJI GRID =====
+function initEmojiGrid() {
+    const container = document.getElementById('emojiItems');
+    if (!container) return;
     
-    // Create popup
-    const popup = document.createElement('div');
-    popup.id = 'emojiGridPopup';
-    popup.className = 'emoji-grid-popup';
-    
-    // Create header
-    const header = document.createElement('div');
-    header.className = 'emoji-grid-header';
-    header.innerHTML = `
-        <h4>Pick an emoji</h4>
-        <button class="close-emoji-grid" onclick="closeEmojiGrid()">✕</button>
-    `;
-    popup.appendChild(header);
-    
-    // Create grid
-    const grid = document.createElement('div');
-    grid.className = 'emoji-grid';
-    
-    // Add emojis to grid
-    emojiList.forEach(emoji => {
-        const item = document.createElement('button');
-        item.className = 'emoji-grid-item';
-        item.textContent = emoji;
-        item.onclick = (e) => {
-            e.stopPropagation();
+    container.innerHTML = '';
+    emojis.forEach(emoji => {
+        const btn = document.createElement('button');
+        btn.className = 'emoji-item';
+        btn.textContent = emoji;
+        btn.onclick = () => {
             insertEmoji(emoji);
-            closeEmojiGrid();
+            toggleEmojiGrid();
         };
-        grid.appendChild(item);
+        container.appendChild(btn);
+    });
+}
+
+// ===== TOGGLE EMOJI GRID =====
+function toggleEmojiGrid() {
+    const grid = document.getElementById('emojiGrid');
+    grid.classList.toggle('show');
+}
+
+// ===== INSERT EMOJI =====
+function insertEmoji(emoji) {
+    const input = document.getElementById('messageInput');
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const text = input.value;
+    input.value = text.substring(0, start) + emoji + text.substring(end);
+    input.focus();
+    input.selectionStart = input.selectionEnd = start + emoji.length;
+    
+    // Trigger typing indicator
+    sendTypingStatus();
+}
+
+// ===== NOTIFICATION SYSTEM =====
+function showNotification(groupName, sender, message, groupCode) {
+    const container = document.getElementById('notificationContainer');
+    
+    const notif = document.createElement('div');
+    notif.className = 'notification';
+    
+    // Icon based on group name
+    let icon = '💬';
+    const groupLower = (groupName || '').toLowerCase();
+    if (groupLower.includes('math')) icon = '📐';
+    else if (groupLower.includes('science')) icon = '🔬';
+    else if (groupLower.includes('history')) icon = '📜';
+    else if (groupLower.includes('english')) icon = '📚';
+    else if (groupLower.includes('coding')) icon = '💻';
+    
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const shortMsg = message.length > 40 ? message.substring(0, 40) + '...' : message;
+    
+    notif.innerHTML = `
+        <div class="notification-icon">${icon}</div>
+        <div class="notification-content">
+            <div class="notification-title">
+                <span>${groupName}</span>
+                <span>${time}</span>
+            </div>
+            <div class="notification-sender">${sender}</div>
+            <div class="notification-text">${shortMsg}</div>
+        </div>
+        <div class="notification-dot">●</div>
+    `;
+    
+    notif.onclick = () => {
+        selectGroup(groupCode);
+        notif.remove();
+    };
+    
+    container.appendChild(notif);
+    
+    // Play sound
+    try {
+        const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3');
+        audio.volume = 0.3;
+        audio.play();
+    } catch (e) {}
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        notif.style.animation = 'slideOutRight 0.3s ease-out forwards';
+        setTimeout(() => notif.remove(), 300);
+    }, 5000);
+}
+
+// ===== TYPING INDICATOR =====
+function sendTypingStatus() {
+    if (!currentGroup) return;
+    
+    if (typingTimeout) clearTimeout(typingTimeout);
+    
+    database.ref('typing/' + currentGroup + '/' + MY_KEY).set({
+        name: MY_NAME,
+        timestamp: Date.now()
     });
     
-    popup.appendChild(grid);
-    
-    // Add to chat area
-    const chatArea = document.querySelector('.chat-area');
-    if (chatArea) {
-        chatArea.appendChild(popup);
-        setTimeout(() => popup.classList.add('show'), 10);
-    }
-    
-    // Close when clicking outside
-    setTimeout(() => {
-        document.addEventListener('click', handleClickOutside);
-    }, 100);
+    typingTimeout = setTimeout(() => {
+        database.ref('typing/' + currentGroup + '/' + MY_KEY).remove();
+    }, 3000);
 }
 
-// Handle click outside
-function handleClickOutside(e) {
-    const popup = document.getElementById('emojiGridPopup');
-    const emojiBtn = document.querySelector('.emoji-input-btn');
-    
-    if (popup && !popup.contains(e.target) && e.target !== emojiBtn && !emojiBtn?.contains(e.target)) {
-        closeEmojiGrid();
-    }
-}
-
-// Close emoji grid
-function closeEmojiGrid() {
-    const popup = document.getElementById('emojiGridPopup');
-    if (popup) {
-        popup.classList.remove('show');
-        setTimeout(() => popup.remove(), 300);
-        document.removeEventListener('click', handleClickOutside);
-    }
-}
-
-// Insert emoji at cursor position
-function insertEmoji(emoji) {
-    const messageInput = document.getElementById('messageInput');
-    if (!messageInput) return;
-    
-    const cursorPos = messageInput.selectionStart;
-    const textBefore = messageInput.value.substring(0, cursorPos);
-    const textAfter = messageInput.value.substring(cursorPos);
-    messageInput.value = textBefore + emoji + textAfter;
-    
-    // Move cursor after inserted emoji
-    const newPos = cursorPos + emoji.length;
-    messageInput.setSelectionRange(newPos, newPos);
-    messageInput.focus();
-    
-    // Trigger input event for typing indicator
-    messageInput.dispatchEvent(new Event('input', { bubbles: true }));
-}
-
-// Add emoji button inside input field
-function addEmojiButtonToInput() {
-    const chatInputArea = document.querySelector('.chat-input-area');
-    if (!chatInputArea) return;
-    
-    // Check if already set up
-    if (document.querySelector('.emoji-input-container')) return;
-    
-    // Get the textarea
-    const messageInput = document.getElementById('messageInput');
-    if (!messageInput) return;
-    
-    // Create container
-    const container = document.createElement('div');
-    container.className = 'emoji-input-container';
-    
-    // Move input into container
-    messageInput.parentNode.insertBefore(container, messageInput);
-    container.appendChild(messageInput);
-    
-    // Create emoji button
-    const emojiBtn = document.createElement('button');
-    emojiBtn.className = 'emoji-input-btn';
-    emojiBtn.type = 'button';
-    emojiBtn.innerHTML = '😊';
-    emojiBtn.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const existingPopup = document.getElementById('emojiGridPopup');
-        if (existingPopup) {
-            closeEmojiGrid();
+function setupTypingListener(code) {
+    database.ref('typing/' + code).on('value', (snapshot) => {
+        const typing = snapshot.val() || {};
+        const now = Date.now();
+        const typingUsers = [];
+        
+        Object.entries(typing).forEach(([key, data]) => {
+            if (key !== MY_KEY && (now - data.timestamp) < 3000) {
+                typingUsers.push(data.name);
+            }
+        });
+        
+        const indicator = document.getElementById('typingIndicator');
+        const text = document.getElementById('typingText');
+        
+        if (typingUsers.length === 0) {
+            indicator.style.display = 'none';
+        } else if (typingUsers.length === 1) {
+            indicator.style.display = 'flex';
+            text.textContent = `${typingUsers[0]} is typing...`;
+        } else if (typingUsers.length === 2) {
+            indicator.style.display = 'flex';
+            text.textContent = `${typingUsers[0]} and ${typingUsers[1]} are typing...`;
         } else {
-            showEmojiGrid();
+            indicator.style.display = 'flex';
+            text.textContent = `${typingUsers.length} people are typing...`;
+        }
+    });
+}
+
+// ===== CREATE GROUP =====
+window.createGroup = function() {
+    const name = prompt("Enter group name:");
+    if (!name) return;
+    
+    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+    
+    const groupData = {
+        name: name,
+        creator: MY_NAME,
+        creatorKey: MY_KEY,
+        created: new Date().toISOString(),
+        members: {}
+    };
+    
+    groupData.members[MY_KEY] = {
+        name: MY_NAME,
+        deviceId: DEVICE_ID,
+        joinedAt: Date.now(),
+        isCreator: true
+    };
+    
+    database.ref('groups/' + code).set(groupData)
+        .then(() => {
+            if (!myGroups.includes(code)) {
+                myGroups.push(code);
+                localStorage.setItem('myGroups', JSON.stringify(myGroups));
+            }
+            renderGroups();
+            selectGroup(code);
+            alert(`✅ Group created!\nCode: ${code}`);
+        })
+        .catch(error => {
+            console.error(error);
+            alert("❌ Failed to create group");
+        });
+};
+
+// ===== JOIN GROUP =====
+window.joinGroup = function() {
+    const code = prompt("Enter group code:").toUpperCase().trim();
+    if (!code) return;
+    
+    if (myGroups.includes(code)) {
+        alert("You're already in this group!");
+        return;
+    }
+    
+    database.ref('groups/' + code).once('value')
+        .then(snapshot => {
+            if (!snapshot.exists()) {
+                alert("❌ Invalid group code!");
+                return;
+            }
+            
+            const group = snapshot.val();
+            
+            if (group.members && group.members[MY_KEY]) {
+                alert("You're already in this group!");
+                return;
+            }
+            
+            const updates = {};
+            updates[`groups/${code}/members/${MY_KEY}`] = {
+                name: MY_NAME,
+                deviceId: DEVICE_ID,
+                joinedAt: Date.now()
+            };
+            
+            return database.ref().update(updates);
+        })
+        .then(() => {
+            if (!myGroups.includes(code)) {
+                myGroups.push(code);
+                localStorage.setItem('myGroups', JSON.stringify(myGroups));
+            }
+            renderGroups();
+            selectGroup(code);
+            alert(`✅ Joined group!`);
+        })
+        .catch(error => {
+            console.error(error);
+            alert("❌ Failed to join group");
+        });
+};
+
+// ===== RENDER GROUPS =====
+function renderGroups() {
+    const list = document.getElementById('groupsList');
+    if (!list) return;
+    
+    list.innerHTML = '';
+    
+    if (myGroups.length === 0) {
+        list.innerHTML = '<p style="color:#999; text-align:center;">No groups yet</p>';
+        return;
+    }
+    
+    myGroups.forEach(code => {
+        database.ref('groups/' + code).on('value', (snapshot) => {
+            if (!snapshot.exists()) {
+                myGroups = myGroups.filter(c => c !== code);
+                localStorage.setItem('myGroups', JSON.stringify(myGroups));
+                if (currentGroup === code) {
+                    currentGroup = null;
+                    showNoGroup();
+                }
+                renderGroups();
+                return;
+            }
+            
+            const group = snapshot.val();
+            const members = group.members || {};
+            const memberCount = Object.keys(members).length;
+            
+            let div = document.querySelector(`[data-code="${code}"]`);
+            
+            if (!div) {
+                div = document.createElement('div');
+                div.className = 'group-item';
+                div.setAttribute('data-code', code);
+                div.onclick = () => selectGroup(code);
+                list.appendChild(div);
+            }
+            
+            if (currentGroup === code) {
+                div.classList.add('active');
+            } else {
+                div.classList.remove('active');
+            }
+            
+            div.innerHTML = `
+                <div class="group-name">${group.name}</div>
+                <div class="group-meta">
+                    <i class="fas fa-users"></i> ${memberCount} member${memberCount !== 1 ? 's' : ''} • ${code}
+                </div>
+            `;
+        });
+    });
+}
+
+// ===== SELECT GROUP =====
+function selectGroup(code) {
+    currentGroup = code;
+    
+    document.getElementById('noGroupSelected').style.display = 'none';
+    document.getElementById('groupChat').style.display = 'flex';
+    
+    database.ref('groups/' + code).once('value')
+        .then(snapshot => {
+            const group = snapshot.val();
+            if (!group) {
+                showNoGroup();
+                return;
+            }
+            
+            document.getElementById('currentGroupName').textContent = group.name;
+            document.getElementById('currentGroupCode').textContent = `Code: ${code}`;
+            
+            renderGroups();
+            loadMessages(code);
+            loadResources(code);
+            setupTypingListener(code);
+        });
+}
+
+function showNoGroup() {
+    currentGroup = null;
+    document.getElementById('noGroupSelected').style.display = 'flex';
+    document.getElementById('groupChat').style.display = 'none';
+}
+
+// ===== MESSAGES =====
+function loadMessages(code) {
+    if (messageListener) {
+        database.ref('messages/' + code).off('value', messageListener);
+    }
+    
+    messageListener = (snapshot) => {
+        renderMessages(snapshot.val());
+        
+        // Check for notifications
+        const messages = snapshot.val();
+        if (messages && currentGroup !== code) {
+            const now = Date.now();
+            Object.entries(messages).forEach(([id, msg]) => {
+                if (!notifiedMessages.has(id) && 
+                    msg.sender !== MY_NAME && 
+                    (now - msg.timestamp) < 10000) {
+                    notifiedMessages.add(id);
+                    database.ref('groups/' + code).once('value')
+                        .then(groupSnap => {
+                            const group = groupSnap.val();
+                            if (group) {
+                                showNotification(group.name, msg.sender, msg.text, code);
+                            }
+                        });
+                }
+            });
         }
     };
-    emojiBtn.title = 'Add emoji';
     
-    container.appendChild(emojiBtn);
+    database.ref('messages/' + code).on('value', messageListener);
 }
 
-// Initialize
-function initEmojiSystem() {
-    addEmojiButtonToInput();
+function renderMessages(messages) {
+    const container = document.getElementById('messagesContainer');
+    container.innerHTML = '';
+    
+    if (!messages) {
+        container.innerHTML = '<div class="empty-state"><p>No messages yet</p></div>';
+        return;
+    }
+    
+    const messagesArray = Object.entries(messages)
+        .map(([id, msg]) => ({ id, ...msg }))
+        .sort((a, b) => a.timestamp - b.timestamp);
+    
+    messagesArray.forEach(msg => {
+        const div = document.createElement('div');
+        div.className = 'message';
+        if (msg.sender === MY_NAME) div.classList.add('my-message');
+        
+        const time = new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        
+        div.innerHTML = `
+            <div class="message-header">
+                <strong>${msg.sender}</strong>
+                <span>${time}</span>
+            </div>
+            <div class="message-content">${msg.text}</div>
+        `;
+        
+        container.appendChild(div);
+    });
+    
+    container.scrollTop = container.scrollHeight;
 }
 
-// Run when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initEmojiSystem);
-} else {
-    initEmojiSystem();
-}
-
-// Re-initialize when switching groups
-
-if (originalSelectGroup) {
-    window.selectGroup = function(code) {
-        originalSelectGroup(code);
-        setTimeout(initEmojiSystem, 200);
+// ===== SEND MESSAGE =====
+window.sendMessage = function() {
+    const text = document.getElementById('messageInput').value.trim();
+    if (!text || !currentGroup) return;
+    
+    const message = {
+        sender: MY_NAME,
+        senderKey: MY_KEY,
+        text: text,
+        timestamp: Date.now()
     };
+    
+    database.ref('messages/' + currentGroup).push(message)
+        .then(() => {
+            document.getElementById('messageInput').value = '';
+            // Clear typing status
+            database.ref('typing/' + currentGroup + '/' + MY_KEY).remove();
+        })
+        .catch(error => {
+            console.error(error);
+            alert("❌ Failed to send");
+        });
+};
+
+// ===== RESOURCES =====
+window.addResource = function() {
+    if (!currentGroup) return;
+    
+    const title = prompt("Resource title:");
+    if (!title) return;
+    
+    const link = prompt("Resource link:");
+    if (!link) return;
+    
+    const resource = {
+        title: title,
+        link: link,
+        addedBy: MY_NAME,
+        timestamp: Date.now()
+    };
+    
+    database.ref('resources/' + currentGroup).push(resource)
+        .then(() => {
+            alert("✅ Resource added!");
+        })
+        .catch(error => {
+            console.error(error);
+            alert("❌ Failed to add resource");
+        });
+};
+
+function loadResources(code) {
+    if (resourceListener) {
+        database.ref('resources/' + code).off('value', resourceListener);
+    }
+    
+    resourceListener = (snapshot) => {
+        const resources = snapshot.val();
+        const container = document.getElementById('resourcesList');
+        container.innerHTML = '';
+        
+        if (!resources) {
+            container.innerHTML = '<p style="color:#999;">No resources yet</p>';
+            return;
+        }
+        
+        const resourcesArray = Object.entries(resources)
+            .map(([id, r]) => ({ id, ...r }))
+            .sort((a, b) => b.timestamp - a.timestamp);
+        
+        resourcesArray.forEach(r => {
+            const div = document.createElement('div');
+            div.className = 'resource-item';
+            div.innerHTML = `
+                <a href="${r.link}" target="_blank">📎 ${r.title}</a>
+                <div class="resource-meta">Added by ${r.addedBy}</div>
+            `;
+            container.appendChild(div);
+        });
+    };
+    
+    database.ref('resources/' + code).on('value', resourceListener);
 }
+
+// ===== LEAVE GROUP =====
+window.leaveGroup = function() {
+    if (!currentGroup) return;
+    
+    if (!confirm("Leave this group?")) return;
+    
+    database.ref(`groups/${currentGroup}/members/${MY_KEY}`).remove()
+        .then(() => {
+            myGroups = myGroups.filter(c => c !== currentGroup);
+            localStorage.setItem('myGroups', JSON.stringify(myGroups));
+            
+            currentGroup = null;
+            showNoGroup();
+            renderGroups();
+            
+            alert("✅ Left group");
+        })
+        .catch(error => {
+            console.error(error);
+            alert("❌ Failed to leave");
+        });
+};
+
+// ===== GROUP INFO =====
+window.showGroupInfo = function() {
+    if (!currentGroup) return;
+    
+    database.ref('groups/' + currentGroup).once('value')
+        .then(snapshot => {
+            const group = snapshot.val();
+            if (!group) return;
+            
+            const members = group.members || {};
+            const memberKeys = Object.keys(members);
+            
+            let info = `📊 Group Info\n\n`;
+            info += `Name: ${group.name}\n`;
+            info += `Code: ${currentGroup}\n`;
+            info += `Created by: ${group.creator}\n`;
+            info += `Members: ${memberKeys.length}\n\n`;
+            info += `Member list:\n`;
+            
+            memberKeys.forEach(key => {
+                const m = members[key];
+                info += `  • ${m.name}\n`;
+            });
+            
+            alert(info);
+        });
+};
+
+// ===== AUTO-RESIZE TEXTAREA =====
+document.getElementById('messageInput')?.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight) + 'px';
+    sendTypingStatus();
+});
+
+// ===== ENTER KEY =====
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey && document.activeElement.id === 'messageInput') {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+// ===== INITIALIZE =====
+initEmojiGrid();
+renderGroups();
+
+console.log("✅ Study Groups ready!");
+console.log("You are:", MY_NAME);
 </script>
+
 </body>
 </html>
-
-
-
