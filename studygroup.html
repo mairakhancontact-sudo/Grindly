@@ -1721,8 +1721,414 @@ window.addEventListener('pagehide', () => {
 });
   </script>
 
+<!-- Add this CSS to your style section -->
+<style>
+/* Emoji button inside input */
+.emoji-input-container {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
 
+#messageInput {
+    flex: 1;
+    padding-right: 50px !important; /* Make room for emoji button */
+}
+
+.emoji-input-btn {
+    position: absolute;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    color: var(--text-muted);
+    z-index: 5;
+}
+
+.emoji-input-btn:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+    transform: scale(1.1);
+}
+
+/* Emoji grid popup */
+.emoji-grid-popup {
+    display: none;
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.emoji-grid-popup.show {
+    display: block;
+    animation: slideUp 0.3s ease;
+}
+
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.emoji-grid-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 4px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    aspect-ratio: 1;
+}
+
+.emoji-grid-item:hover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    transform: scale(1.1);
+    z-index: 2;
+}
+
+.emoji-grid-item:active {
+    transform: scale(0.95);
+}
+
+.emoji-grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.emoji-grid-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text);
+}
+
+.close-emoji-grid {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 5px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-emoji-grid:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+/* Animation */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .emoji-grid-popup {
+        bottom: 70px;
+        left: 10px;
+        right: 10px;
+        max-width: none;
+    }
+    
+    .emoji-grid {
+        grid-template-columns: repeat(6, 1fr);
+        max-height: 200px;
+    }
+    
+    .emoji-grid-item {
+        font-size: 1.3rem;
+        padding: 6px 2px;
+    }
+}
+
+@media (max-width: 480px) {
+    .emoji-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+    }
+    
+    .emoji-grid-item {
+        font-size: 1.2rem;
+        padding: 5px 2px;
+    }
+}
+
+@media (max-width: 360px) {
+    .emoji-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Theme support */
+body.purple .emoji-grid-popup {
+    background: #2a1a4a;
+    border-color: #8b5cf6;
+}
+
+body.ocean .emoji-grid-popup {
+    background: #0b4a6a;
+    border-color: #7dd3fc;
+}
+
+body.forest .emoji-grid-popup {
+    background: #065f46;
+    border-color: #6ee7b7;
+}
+
+body.sunset .emoji-grid-popup {
+    background: #7c2d12;
+    border-color: #fdba74;
+}
+</style>
+
+<script>
+/* ============================================
+   CLEAN EMOJI GRID INSIDE INPUT FIELD
+   ============================================ */
+
+// Comprehensive emoji list - all the good ones
+const emojiList = [
+    '😊', '👍', '🔥', '🎉', '❤️', '😂', '🤔', '✅',
+    '😃', '😍', '🥳', '😎', '😢', '😭', '😴', '🤯',
+    '👋', '🙏', '💪', '✨', '⭐', '🌟', '💡', '📚',
+    '📝', '✏️', '📖', '🎓', '⏰', '📅', '🎯', '🏆',
+    '🚀', '💻', '📱', '💯', '🔔', '🔍', '💬', '🗣️',
+    '👥', '🤝', '✅', '❌', '⚠️', '❗', '❓', '💭',
+    '🌞', '🌙', '⭐', '☀️', '🌈', '☁️', '⚡', '🔥',
+    '💧', '🌊', '🌱', '🌿', '🍀', '🌸', '🌺', '🌻',
+    '🍎', '📘', '📗', '📕', '📔', '📓', '📒', '📏',
+    '🔬', '🔭', '🧪', '🧫', '🔮', '🎨', '🎮', '🎲',
+    '🧩', '🎭', '🎪', '🎤', '🎧', '🎵', '🎶', '🎹',
+    '🥇', '🥈', '🥉', '🏅', '🎖️', '🏆', '🏀', '⚽',
+    '🏈', '⚾', '🎾', '🏐', '🏉', '🎱', '🏓', '🏸',
+    '⏰', '⌛', '⏳', '⌚', '📱', '💻', '🖥️', '🖨️',
+    '📷', '📹', '🎥', '📼', '🔋', '💡', '🔦', '📡',
+    '💎', '🔑', '🗝️', '🔒', '🔓', '🔏', '🔐', '🔑',
+    '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍',
+    '💔', '❤️‍🔥', '❤️‍🩹', '💕', '💞', '💓', '💗', '💖',
+    '💘', '💝', '💟', '☮️', '✝️', '☪️', '🕉️', '☸️',
+    '✡️', '🔯', '🕎', '☯️', '☦️', '🛐', '⛎', '♈',
+    '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐',
+    '♑', '♒', '♓', '⛎', '🔀', '🔁', '🔂', '▶️',
+    '⏩', '⏪', '🔼', '⏫', '🔽', '⏬', '⏸️', '⏯️',
+    '⏹️', '⏺️', '⏏️', '🎦', '🔅', '🔆', '📶', '📳',
+    '📴', '♿', '🚹', '🚺', '🚻', '🚼', '🚾', '🛄',
+    '🛅', '🚭', '🚯', '🚱', '🚷', '📵', '🔞', '☢️',
+    '☣️', '⬆️', '↗️', '➡️', '↘️', '⬇️', '↙️', '⬅️',
+    '↖️', '↕️', '↔️', '↩️', '↪️', '⤴️', '⤵️', '🔃',
+    '🔄', '🔙', '🔚', '🔛', '🔜', '🔝', '🛐', '⚛️',
+    '🕉️', '✡️', '☸️', '☯️', '✝️', '☦️', '☪️', '☮️',
+    '🕎', '🔯', '♈', '♉', '♊', '♋', '♌', '♍',
+    '♎', '♏', '♐', '♑', '♒', '♓', '⛎', '🔀',
+    '🔁', '🔂', '▶️', '⏩', '⏪', '🔼', '⏫', '🔽',
+    '⏬', '⏸️', '⏯️', '⏹️', '⏺️', '⏏️', '🎦', '🔅',
+    '🔆', '📶', '📳', '📴', '♿', '🚹', '🚺', '🚻',
+    '🚼', '🚾', '🛄', '🛅', '🚭', '🚯', '🚱', '🚷',
+    '📵', '🔞', '☢️', '☣️', '⬆️', '↗️', '➡️', '↘️',
+    '⬇️', '↙️', '⬅️', '↖️', '↕️', '↔️', '↩️', '↪️',
+    '⤴️', '⤵️', '🔃', '🔄', '🔙', '🔚', '🔛', '🔜',
+    '🔝'
+];
+
+// Create and show emoji grid
+function showEmojiGrid() {
+    // Remove existing popup if any
+    const existingPopup = document.getElementById('emojiGridPopup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+    
+    // Create popup
+    const popup = document.createElement('div');
+    popup.id = 'emojiGridPopup';
+    popup.className = 'emoji-grid-popup';
+    
+    // Create header
+    const header = document.createElement('div');
+    header.className = 'emoji-grid-header';
+    header.innerHTML = `
+        <h4>Pick an emoji</h4>
+        <button class="close-emoji-grid" onclick="closeEmojiGrid()">✕</button>
+    `;
+    popup.appendChild(header);
+    
+    // Create grid
+    const grid = document.createElement('div');
+    grid.className = 'emoji-grid';
+    
+    // Add emojis to grid
+    emojiList.forEach(emoji => {
+        const item = document.createElement('button');
+        item.className = 'emoji-grid-item';
+        item.textContent = emoji;
+        item.onclick = (e) => {
+            e.stopPropagation();
+            insertEmoji(emoji);
+            closeEmojiGrid();
+        };
+        grid.appendChild(item);
+    });
+    
+    popup.appendChild(grid);
+    
+    // Add to chat area
+    const chatArea = document.querySelector('.chat-area');
+    if (chatArea) {
+        chatArea.appendChild(popup);
+        setTimeout(() => popup.classList.add('show'), 10);
+    }
+    
+    // Close when clicking outside
+    setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+    }, 100);
+}
+
+// Handle click outside
+function handleClickOutside(e) {
+    const popup = document.getElementById('emojiGridPopup');
+    const emojiBtn = document.querySelector('.emoji-input-btn');
+    
+    if (popup && !popup.contains(e.target) && e.target !== emojiBtn && !emojiBtn?.contains(e.target)) {
+        closeEmojiGrid();
+    }
+}
+
+// Close emoji grid
+function closeEmojiGrid() {
+    const popup = document.getElementById('emojiGridPopup');
+    if (popup) {
+        popup.classList.remove('show');
+        setTimeout(() => popup.remove(), 300);
+        document.removeEventListener('click', handleClickOutside);
+    }
+}
+
+// Insert emoji at cursor position
+function insertEmoji(emoji) {
+    const messageInput = document.getElementById('messageInput');
+    if (!messageInput) return;
+    
+    const cursorPos = messageInput.selectionStart;
+    const textBefore = messageInput.value.substring(0, cursorPos);
+    const textAfter = messageInput.value.substring(cursorPos);
+    messageInput.value = textBefore + emoji + textAfter;
+    
+    // Move cursor after inserted emoji
+    const newPos = cursorPos + emoji.length;
+    messageInput.setSelectionRange(newPos, newPos);
+    messageInput.focus();
+    
+    // Trigger input event for typing indicator
+    messageInput.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+// Add emoji button inside input field
+function addEmojiButtonToInput() {
+    const chatInputArea = document.querySelector('.chat-input-area');
+    if (!chatInputArea) return;
+    
+    // Check if already set up
+    if (document.querySelector('.emoji-input-container')) return;
+    
+    // Get the textarea
+    const messageInput = document.getElementById('messageInput');
+    if (!messageInput) return;
+    
+    // Create container
+    const container = document.createElement('div');
+    container.className = 'emoji-input-container';
+    
+    // Move input into container
+    messageInput.parentNode.insertBefore(container, messageInput);
+    container.appendChild(messageInput);
+    
+    // Create emoji button
+    const emojiBtn = document.createElement('button');
+    emojiBtn.className = 'emoji-input-btn';
+    emojiBtn.type = 'button';
+    emojiBtn.innerHTML = '😊';
+    emojiBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const existingPopup = document.getElementById('emojiGridPopup');
+        if (existingPopup) {
+            closeEmojiGrid();
+        } else {
+            showEmojiGrid();
+        }
+    };
+    emojiBtn.title = 'Add emoji';
+    
+    container.appendChild(emojiBtn);
+}
+
+// Initialize
+function initEmojiSystem() {
+    addEmojiButtonToInput();
+}
+
+// Run when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEmojiSystem);
+} else {
+    initEmojiSystem();
+}
+
+// Re-initialize when switching groups
+
+if (originalSelectGroup) {
+    window.selectGroup = function(code) {
+        originalSelectGroup(code);
+        setTimeout(initEmojiSystem, 200);
+    };
+}
+</script>
 </body>
 </html>
+
 
 
