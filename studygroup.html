@@ -581,6 +581,101 @@
     .chat-area {
       max-width: 100vw;
     }
+
+    /* ===== TYPING INDICATOR STYLES - LIKE WHATSAPP ===== */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    margin: 10px 20px;
+    background: var(--bg);
+    border-radius: 20px;
+    max-width: 200px;
+    animation: fadeIn 0.3s ease;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.typing-dots span {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: typingBounce 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-6px);
+        opacity: 1;
+    }
+}
+
+.typing-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1;
+}
+
+/* Dark theme adjustments */
+body.purple .typing-indicator {
+    background: #2a1a4a;
+    border-color: #8b5cf6;
+}
+
+body.ocean .typing-indicator {
+    background: #0b4a6a;
+    border-color: #7dd3fc;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .typing-indicator {
+        padding: 6px 12px;
+        margin: 8px 15px;
+        max-width: 180px;
+    }
+    
+    .typing-text {
+        font-size: 0.8rem;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
   </style>
   
   <!-- Firebase SDK -->
@@ -1472,9 +1567,162 @@ setInterval(() => {
 window.notifyNewMessage = function(groupName, sender, message) {
   showWhatsAppNotification(groupName, sender, message);
 };
+
+
+
+    /* ============================================
+   TYPING INDICATOR SYSTEM - LIKE WHATSAPP
+   ============================================ */
+
+// Track typing status
+let typingTimeout = null;
+let typingListeners = {};
+
+// Initialize typing indicator for current group
+function initTypingIndicator(groupCode) {
+    if (!groupCode) return;
+    
+    // Clear previous listener
+    if (typingListeners[groupCode]) {
+        database.ref('typing/' + groupCode).off('value', typingListeners[groupCode]);
+    }
+    
+    // Set up listener for typing status
+    typingListeners[groupCode] = (snapshot) => {
+        const typingData = snapshot.val() || {};
+        updateTypingIndicator(groupCode, typingData);
+    };
+    
+    database.ref('typing/' + groupCode).on('value', typingListeners[groupCode]);
+}
+
+// Update typing indicator in UI
+function updateTypingIndicator(groupCode, typingData) {
+    const chatArea = document.querySelector('.chat-area');
+    if (!chatArea) return;
+    
+    // Remove existing typing indicator
+    let existingIndicator = document.getElementById('typingIndicator');
+    if (existingIndicator) {
+        existingIndicator.remove();
+    }
+    
+    // Filter out current user and old typing status (>3 seconds)
+    const now = Date.now();
+    const typingUsers = Object.entries(typingData || {})
+        .filter(([name, timestamp]) => {
+            return name !== myName && (now - timestamp) < 3000;
+        })
+        .map(([name]) => name);
+    
+    if (typingUsers.length === 0) return;
+    
+    // Create typing indicator
+    const indicator = document.createElement('div');
+    indicator.id = 'typingIndicator';
+    indicator.className = 'typing-indicator';
+    
+    let text = '';
+    if (typingUsers.length === 1) {
+        text = `${typingUsers[0]} is typing`;
+    } else if (typingUsers.length === 2) {
+        text = `${typingUsers[0]} and ${typingUsers[1]} are typing`;
+    } else {
+        text = `${typingUsers.length} people are typing`;
+    }
+    
+    indicator.innerHTML = `
+        <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <span class="typing-text">${text}</span>
+    `;
+    
+    // Insert before message input
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInputArea = document.querySelector('.chat-input-area');
+    if (chatMessages && chatInputArea) {
+        chatMessages.insertAdjacentElement('afterend', indicator);
+    }
+}
+
+// Send typing status
+function sendTypingStatus() {
+    if (!currentGroup) return;
+    
+    // Clear existing timeout
+    if (typingTimeout) {
+        clearTimeout(typingTimeout);
+    }
+    
+    // Update typing status in Firebase
+    const typingRef = database.ref('typing/' + currentGroup + '/' + myName);
+    typingRef.set(Date.now());
+    
+    // Set timeout to clear typing status after 3 seconds of no typing
+    typingTimeout = setTimeout(() => {
+        typingRef.remove();
+    }, 3000);
+}
+
+// Override the message input to detect typing
+const originalMessageInput = document.getElementById('messageInput');
+if (originalMessageInput) {
+    originalMessageInput.addEventListener('input', () => {
+        sendTypingStatus();
+    });
+    
+    originalMessageInput.addEventListener('keydown', () => {
+        sendTypingStatus();
+    });
+    
+    // Clear typing status when message is sent
+    originalMessageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            setTimeout(() => {
+                if (originalMessageInput.value.trim() === '') {
+                    database.ref('typing/' + currentGroup + '/' + myName).remove();
+                }
+            }, 100);
+        }
+    });
+}
+
+// Clear typing status when leaving group
+const originalLeaveGroup = window.leaveGroup;
+window.leaveGroup = function() {
+    if (currentGroup) {
+        database.ref('typing/' + currentGroup + '/' + myName).remove();
+    }
+    originalLeaveGroup();
+};
+
+// Update the selectGroup function to initialize typing indicator
+const originalSelectGroup = window.selectGroup;
+window.selectGroup = function(code) {
+    originalSelectGroup(code);
+    initTypingIndicator(code);
+};
+
+// Clear typing status on page unload
+window.addEventListener('beforeunload', () => {
+    if (currentGroup) {
+        database.ref('typing/' + currentGroup + '/' + myName).remove();
+    }
+});
+
+// Clear typing status when closing tab/window
+window.addEventListener('pagehide', () => {
+    if (currentGroup) {
+        database.ref('typing/' + currentGroup + '/' + myName).remove();
+    }
+});
   </script>
 
 
 </body>
 </html>
+
 
