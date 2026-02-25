@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Grindly | Quest System - EPIC EDITION</title>
+    <title>Grindly | Quest System - ULTIMATE FIXED</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <style>
-        /* ===== QUEST SYSTEM STYLES - FIXED MOBILE LOADING ===== */
+        /* ===== QUEST SYSTEM STYLES - COMPLETE FIXED ===== */
         * {
             margin: 0;
             padding: 0;
@@ -31,14 +31,12 @@
             --rpg-uncommon: #22c55e;
             --rpg-common: #64748b;
             
-            /* New Colors */
             --streak-fire: #ff6b6b;
             --achievement-gold: #ffd700;
             --premium-purple: #9b59b6;
             --special-cyan: #00d2d3;
             --boss-red: #e74c3c;
             
-            /* Responsive spacing */
             --space-xs: clamp(0.25rem, 1vw, 0.5rem);
             --space-sm: clamp(0.5rem, 2vw, 0.75rem);
             --space-md: clamp(0.75rem, 3vw, 1rem);
@@ -47,7 +45,6 @@
             --space-2xl: clamp(2rem, 6vw, 3rem);
         }
 
-        /* Responsive base */
         html {
             font-size: 16px;
             -webkit-text-size-adjust: 100%;
@@ -69,13 +66,7 @@
             margin: 0 auto;
         }
 
-        /* ===== FEATURE 1: STREAK FLAME ===== */
-        .streak-flame-container {
-            position: relative;
-            display: inline-block;
-            margin-right: var(--space-sm);
-        }
-
+        /* Streak Flame */
         .streak-flame {
             font-size: clamp(1.5rem, 5vw, 2rem);
             filter: drop-shadow(0 0 10px var(--streak-fire));
@@ -99,7 +90,7 @@
             background-clip: text;
         }
 
-        /* ===== FEATURE 2: ACHIEVEMENT POPUPS ===== */
+        /* Achievement Popups */
         .achievement-popup {
             position: fixed;
             top: 20px;
@@ -145,7 +136,7 @@
             color: white;
         }
 
-        /* ===== FEATURE 3: BOSS BATTLE PROGRESS ===== */
+        /* Boss Battle */
         .boss-section {
             background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(192, 57, 43, 0.2));
             border: 3px solid var(--boss-red);
@@ -226,7 +217,7 @@
             border: 2px solid var(--boss-red);
         }
 
-        /* ===== FEATURE 4: PET COMPANION ===== */
+        /* Pet Companion */
         .pet-section {
             background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(142, 68, 173, 0.2));
             border: 3px solid var(--premium-purple);
@@ -304,7 +295,7 @@
             50% { border-left-color: #d980fa; }
         }
 
-        /* ===== FEATURE 5: SPECIAL EVENTS ===== */
+        /* Special Events */
         .events-section {
             background: linear-gradient(135deg, rgba(0, 210, 211, 0.1), rgba(0, 184, 212, 0.2));
             border: 3px solid var(--special-cyan);
@@ -388,7 +379,7 @@
             display: inline-block;
         }
 
-        /* Header (Responsive) */
+        /* Header */
         .quest-header {
             background: linear-gradient(135deg, var(--card), #0f172a);
             border: 3px solid var(--rpg-gold);
@@ -427,7 +418,7 @@
             box-shadow: 0 10px 20px rgba(251,191,36,0.3);
         }
 
-        /* Game Master Panel (Responsive) */
+        /* Game Master Panel */
         .game-master-panel {
             position: fixed;
             bottom: clamp(10px, 5vw, 30px);
@@ -490,7 +481,7 @@
             margin-left: auto;
         }
 
-        /* Hero Section (Responsive) */
+        /* Hero Section */
         .hero-section {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
@@ -539,7 +530,7 @@
             border-radius: 30px;
         }
 
-        /* Resource Bars (Responsive) */
+        /* Resource Bars */
         .resource-bars {
             display: flex;
             flex-direction: column;
@@ -563,7 +554,17 @@
             border: 2px solid var(--border);
         }
 
-        /* Stats Grid (Responsive) */
+        .resource-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .resource-fill.xp { background: linear-gradient(90deg, var(--rpg-xp), #fbbf24); }
+        .resource-fill.health { background: linear-gradient(90deg, var(--rpg-health), #ff8a8a); }
+        .resource-fill.mana { background: linear-gradient(90deg, var(--rpg-mana), #6b9eff); }
+
+        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
@@ -603,7 +604,7 @@
             color: var(--rpg-gold); 
         }
 
-        /* Quick Actions (Responsive) */
+        /* Quick Actions */
         .quick-actions {
             display: flex;
             gap: var(--space-sm);
@@ -627,6 +628,11 @@
             flex: 1 1 auto;
             min-width: min(120px, 100%);
             justify-content: center;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         /* Quest Categories */
@@ -664,7 +670,7 @@
             white-space: nowrap;
         }
 
-        /* Quest Cards - FIXED TEXT DISPLAY */
+        /* Quest Cards */
         .quest-card {
             background: linear-gradient(135deg, rgba(30,40,60,0.9), rgba(20,30,50,0.95));
             border: 2px solid;
@@ -677,6 +683,12 @@
             width: 100%;
             overflow: visible;
         }
+
+        .quest-card.common { border-color: var(--rpg-common); }
+        .quest-card.uncommon { border-color: var(--rpg-uncommon); }
+        .quest-card.rare { border-color: var(--rpg-rare); }
+        .quest-card.epic { border-color: var(--rpg-epic); }
+        .quest-card.legendary { border-color: var(--rpg-legendary); }
 
         .quest-header {
             display: flex;
@@ -710,8 +722,6 @@
             margin-bottom: var(--space-xs);
             line-height: 1.3;
             word-wrap: break-word;
-            overflow-wrap: break-word;
-            hyphens: auto;
         }
 
         .quest-meta {
@@ -730,6 +740,12 @@
             white-space: nowrap;
         }
 
+        .quest-rarity.common { background: var(--rpg-common); color: white; }
+        .quest-rarity.uncommon { background: var(--rpg-uncommon); color: white; }
+        .quest-rarity.rare { background: var(--rpg-rare); color: white; }
+        .quest-rarity.epic { background: var(--rpg-epic); color: white; }
+        .quest-rarity.legendary { background: var(--rpg-legendary); color: white; }
+
         .quest-xp { 
             color: var(--rpg-xp); 
             font-weight: 600; 
@@ -746,7 +762,6 @@
             font-size: clamp(0.8rem, 3vw, 0.9rem);
             line-height: 1.5;
             word-wrap: break-word;
-            overflow-wrap: break-word;
         }
 
         .quest-rewards {
@@ -814,7 +829,18 @@
             word-wrap: break-word;
         }
 
-        /* New Quest Indicator */
+        .quest-btn.claim {
+            background: linear-gradient(135deg, var(--rpg-gold), #f59e0b);
+            color: black;
+        }
+
+        .quest-btn:disabled {
+            background: var(--rpg-common);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* New Quest Badge */
         .new-quest-badge {
             position: absolute;
             top: -10px;
@@ -836,7 +862,7 @@
             50% { transform: scale(1.1); }
         }
 
-        /* Toast Notification (Responsive) */
+        /* Toast Notification */
         .toast {
             position: fixed;
             top: clamp(10px, 5vw, 20px);
@@ -858,7 +884,7 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Loading Animation - FIXED for mobile */
+        /* Loading */
         .loading {
             text-align: center;
             padding: 40px 20px;
@@ -900,149 +926,60 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Mobile optimizations */
+        /* Mobile Optimizations */
         @media (max-width: 768px) {
-            .hero-section {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .game-master-panel {
-                bottom: 10px;
-                right: 10px;
-                max-width: 250px;
-            }
-            
-            .category-badge {
-                margin-left: 0;
-                width: 100%;
-                text-align: center;
-            }
-            
-            .boss-header {
-                justify-content: center;
-                text-align: center;
-            }
-            
-            .pet-container {
-                justify-content: center;
-                text-align: center;
-            }
-            
-            .quick-actions {
-                flex-direction: column;
-            }
-            
-            .action-btn {
-                width: 100%;
-            }
-            
-            .quest-header {
-                flex-wrap: wrap;
-            }
-            
-            .quest-meta {
-                width: 100%;
-            }
-            
-            .quest-info {
-                min-width: 100%;
-            }
+            .hero-section { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .game-master-panel { bottom: 10px; right: 10px; max-width: 250px; }
+            .category-badge { margin-left: 0; width: 100%; text-align: center; }
+            .boss-header { justify-content: center; text-align: center; }
+            .pet-container { justify-content: center; text-align: center; }
+            .quick-actions { flex-direction: column; }
+            .action-btn { width: 100%; }
+            .quest-header { flex-wrap: wrap; }
+            .quest-meta { width: 100%; }
+            .quest-info { min-width: 100%; }
         }
 
-        /* Small mobile optimization */
         @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .quest-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .quest-meta {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            
-            .event-timer {
-                position: static;
-                margin-bottom: var(--space-sm);
-                display: inline-block;
-            }
-            
-            .quest-name {
-                font-size: 1rem;
-            }
+            .stats-grid { grid-template-columns: 1fr; }
+            .quest-header { flex-direction: column; align-items: flex-start; }
+            .quest-meta { width: 100%; justify-content: flex-start; }
+            .event-timer { position: static; margin-bottom: var(--space-sm); display: inline-block; }
+            .quest-name { font-size: 1rem; }
         }
 
-        /* Desktop optimization */
         @media (min-width: 1024px) {
-            .quest-card {
-                padding: 1.5rem;
-            }
-            
-            .quest-name {
-                font-size: 1.3rem;
-            }
-            
-            .quest-description {
-                font-size: 0.95rem;
-            }
-            
-            .reward-chip {
-                font-size: 0.9rem;
-            }
-            
-            .quest-rarity {
-                font-size: 0.7rem;
-            }
+            .quest-card { padding: 1.5rem; }
+            .quest-name { font-size: 1.3rem; }
+            .quest-description { font-size: 0.95rem; }
+            .reward-chip { font-size: 0.9rem; }
+            .quest-rarity { font-size: 0.7rem; }
         }
 
-        /* Landscape mode optimization */
         @media (orientation: landscape) and (max-height: 600px) {
-            .game-master-panel {
-                bottom: 5px;
-                right: 5px;
-            }
-            
-            .gm-character {
-                width: 50px;
-                height: 50px;
-                font-size: 2rem;
-            }
-            
-            .hero-section {
-                padding: var(--space-sm);
-            }
+            .game-master-panel { bottom: 5px; right: 5px; }
+            .gm-character { width: 50px; height: 50px; font-size: 2rem; }
+            .hero-section { padding: var(--space-sm); }
         }
 
-        /* Touch target optimization */
         button, .quest-btn, .action-btn, .back-btn, .gm-character, .pet-avatar, .event-card {
             min-height: 44px;
             min-width: 44px;
         }
 
-        /* Prevent zoom on input */
         select, input, textarea, button {
             font-size: 16px;
         }
 
-        /* Smooth scrolling */
         html {
             scroll-behavior: smooth;
         }
 
-        /* Better touch scrolling */
         .container {
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Ensure text is always visible */
         .quest-name, .quest-description, .event-name, .event-desc, .pet-name, .boss-title {
             text-rendering: optimizeLegibility;
             -webkit-font-smoothing: antialiased;
@@ -1076,9 +1013,9 @@
     <div id="achievementContainer"></div>
 
     <script>
-        // ===== QUEST SYSTEM WITH 5 NEW COOL FEATURES - FIXED MOBILE LOADING =====
+        // ===== QUEST SYSTEM - COMPLETE FIXED VERSION =====
         (function() {
-            console.log("🎮 Quest System loaded with 5 New Features");
+            console.log("🎮 Quest System loaded with all fixes");
 
             // Game Master Messages
             const GM_MESSAGES = {
@@ -1103,8 +1040,6 @@
 
             // Constants
             const RPG_STORAGE_KEY = 'studentRpgData';
-            const ACHIEVEMENTS_KEY = 'studentEarnedBadges';
-            const NOTIFIED_KEY = 'studentNotifiedAchievements';
             const PET_KEY = 'studentPetData';
             const BOSS_KEY = 'studentBossData';
             const EVENTS_KEY = 'studentEventsData';
@@ -1124,36 +1059,36 @@
                 { level: 30, title: 'Immortal Champion', icon: '🏆' }
             ];
 
-            // Quest Templates
+            // Quest Templates - INCREASED XP VALUES
             const QUEST_TEMPLATES = {
                 daily: [
-                    { id: 'daily_focus', name: '🧘 Focus Warrior', description: 'Complete a focused study session', icon: '🎯', xp: 50, requirement: 1, rarity: 'common', stats: { wisdom: 1 } },
-                    { id: 'daily_tasks', name: '⚔️ Task Slayer', description: 'Complete 3 tasks', icon: '✓', xp: 60, requirement: 3, rarity: 'uncommon', stats: { strength: 1 } },
-                    { id: 'daily_streak', name: '🔥 Streak Keeper', description: 'Maintain your study streak', icon: '🔥', xp: 75, requirement: 1, rarity: 'rare', stats: { luck: 1 } },
-                    { id: 'daily_hours', name: '⌛ Time Mage', description: 'Study for 2 hours', icon: '⌛', xp: 100, requirement: 2, rarity: 'epic', stats: { intelligence: 1 } },
-                    { id: 'daily_early', name: '🌅 Early Bird', description: 'Study before 8 AM', icon: '🌅', xp: 80, requirement: 1, rarity: 'rare', stats: { wisdom: 1, luck: 1 } },
-                    { id: 'daily_night', name: '🦉 Night Owl', description: 'Study after 10 PM', icon: '🌙', xp: 80, requirement: 1, rarity: 'rare', stats: { intelligence: 1, luck: 1 } },
-                    { id: 'daily_perfect', name: '💯 Perfect Day', description: 'Complete all daily quests', icon: '💯', xp: 150, requirement: 1, rarity: 'epic', stats: { all: 2 } }
+                    { id: 'daily_focus', name: '🧘 Focus Warrior', description: 'Complete a focused study session', icon: '🎯', xp: 150, requirement: 1, rarity: 'common', stats: { wisdom: 1 } },
+                    { id: 'daily_tasks', name: '⚔️ Task Slayer', description: 'Complete 3 tasks', icon: '✓', xp: 180, requirement: 3, rarity: 'uncommon', stats: { strength: 1 } },
+                    { id: 'daily_streak', name: '🔥 Streak Keeper', description: 'Maintain your study streak', icon: '🔥', xp: 225, requirement: 1, rarity: 'rare', stats: { luck: 1 } },
+                    { id: 'daily_hours', name: '⌛ Time Mage', description: 'Study for 2 hours', icon: '⌛', xp: 300, requirement: 2, rarity: 'epic', stats: { intelligence: 1 } },
+                    { id: 'daily_early', name: '🌅 Early Bird', description: 'Study before 8 AM', icon: '🌅', xp: 240, requirement: 1, rarity: 'rare', stats: { wisdom: 1, luck: 1 } },
+                    { id: 'daily_night', name: '🦉 Night Owl', description: 'Study after 10 PM', icon: '🌙', xp: 240, requirement: 1, rarity: 'rare', stats: { intelligence: 1, luck: 1 } },
+                    { id: 'daily_perfect', name: '💯 Perfect Day', description: 'Complete all daily quests', icon: '💯', xp: 450, requirement: 1, rarity: 'epic', stats: { all: 2 } }
                 ],
                 weekly: [
-                    { id: 'weekly_streak', name: '🏆 Streak Legend', description: 'Maintain a 7-day streak', icon: '🔥', xp: 500, requirement: 7, rarity: 'epic', stats: { luck: 3, wisdom: 2 } },
-                    { id: 'weekly_tasks', name: '⚔️ Quest Master', description: 'Complete 20 tasks', icon: '📜', xp: 400, requirement: 20, rarity: 'epic', stats: { strength: 3, intelligence: 2 } },
-                    { id: 'weekly_hours', name: '⏰ Time Lord', description: 'Study 12 hours', icon: '⌛', xp: 600, requirement: 12, rarity: 'legendary', stats: { intelligence: 3, wisdom: 2 } },
-                    { id: 'weekly_focus', name: '🎯 Focus Champion', description: 'Complete 10 focus sessions', icon: '🎯', xp: 450, requirement: 10, rarity: 'epic', stats: { wisdom: 3, luck: 2 } },
-                    { id: 'weekly_perfect', name: '🌟 Perfect Week', description: 'Study every day for a week', icon: '🌟', xp: 800, requirement: 7, rarity: 'legendary', stats: { all: 4 } }
+                    { id: 'weekly_streak', name: '🏆 Streak Legend', description: 'Maintain a 7-day streak', icon: '🔥', xp: 1500, requirement: 7, rarity: 'epic', stats: { luck: 3, wisdom: 2 } },
+                    { id: 'weekly_tasks', name: '⚔️ Quest Master', description: 'Complete 20 tasks', icon: '📜', xp: 1200, requirement: 20, rarity: 'epic', stats: { strength: 3, intelligence: 2 } },
+                    { id: 'weekly_hours', name: '⏰ Time Lord', description: 'Study 12 hours', icon: '⌛', xp: 1800, requirement: 12, rarity: 'legendary', stats: { intelligence: 3, wisdom: 2 } },
+                    { id: 'weekly_focus', name: '🎯 Focus Champion', description: 'Complete 10 focus sessions', icon: '🎯', xp: 1350, requirement: 10, rarity: 'epic', stats: { wisdom: 3, luck: 2 } },
+                    { id: 'weekly_perfect', name: '🌟 Perfect Week', description: 'Study every day for a week', icon: '🌟', xp: 2400, requirement: 7, rarity: 'legendary', stats: { all: 4 } }
                 ],
                 legendary: [
-                    { id: 'legend_first', name: '🌟 First Steps', description: 'Complete your first quest', icon: '🌱', xp: 100, requirement: 1, rarity: 'common', stats: { luck: 2 } },
-                    { id: 'legend_10', name: '⚔️ Quest Apprentice', description: 'Complete 10 quests', icon: '⚔️', xp: 250, requirement: 10, rarity: 'uncommon', stats: { strength: 2, intelligence: 2 } },
-                    { id: 'legend_50', name: '👑 Quest Warrior', description: 'Complete 50 quests', icon: '👑', xp: 600, requirement: 50, rarity: 'rare', stats: { wisdom: 3, luck: 3 } },
-                    { id: 'legend_100', name: '✨ Quest Legend', description: 'Complete 100 quests', icon: '✨', xp: 1200, requirement: 100, rarity: 'epic', stats: { all: 4 } },
-                    { id: 'legend_streak_30', name: '🌋 Inferno Master', description: 'Achieve a 30-day streak', icon: '🔥', xp: 2000, requirement: 30, rarity: 'legendary', stats: { all: 5 } },
-                    { id: 'legend_tasks_500', name: '💪 Task Overlord', description: 'Complete 500 tasks', icon: '💪', xp: 1500, requirement: 500, rarity: 'legendary', stats: { all: 4 } },
-                    { id: 'legend_hours_100', name: '⌛ Time Wizard', description: 'Study 100 hours', icon: '⏳', xp: 1800, requirement: 100, rarity: 'legendary', stats: { all: 5 } }
+                    { id: 'legend_first', name: '🌟 First Steps', description: 'Complete your first quest', icon: '🌱', xp: 300, requirement: 1, rarity: 'common', stats: { luck: 2 } },
+                    { id: 'legend_10', name: '⚔️ Quest Apprentice', description: 'Complete 10 quests', icon: '⚔️', xp: 750, requirement: 10, rarity: 'uncommon', stats: { strength: 2, intelligence: 2 } },
+                    { id: 'legend_50', name: '👑 Quest Warrior', description: 'Complete 50 quests', icon: '👑', xp: 1800, requirement: 50, rarity: 'rare', stats: { wisdom: 3, luck: 3 } },
+                    { id: 'legend_100', name: '✨ Quest Legend', description: 'Complete 100 quests', icon: '✨', xp: 3600, requirement: 100, rarity: 'epic', stats: { all: 4 } },
+                    { id: 'legend_streak_30', name: '🌋 Inferno Master', description: 'Achieve a 30-day streak', icon: '🔥', xp: 6000, requirement: 30, rarity: 'legendary', stats: { all: 5 } },
+                    { id: 'legend_tasks_500', name: '💪 Task Overlord', description: 'Complete 500 tasks', icon: '💪', xp: 4500, requirement: 500, rarity: 'legendary', stats: { all: 4 } },
+                    { id: 'legend_hours_100', name: '⌛ Time Wizard', description: 'Study 100 hours', icon: '⏳', xp: 5400, requirement: 100, rarity: 'legendary', stats: { all: 5 } }
                 ]
             };
 
-            // ===== FEATURE 1: STREAK FLAME =====
+            // ===== STREAK FLAME =====
             function getStreakFlame(streak) {
                 if (streak >= 30) return '🔥🔥🔥 INFERNO';
                 if (streak >= 14) return '🔥🔥 BLAZE';
@@ -1162,7 +1097,7 @@
                 return '🔥 EMBER';
             }
 
-            // ===== FEATURE 2: ACHIEVEMENT POPUPS =====
+            // ===== ACHIEVEMENT POPUPS =====
             let achievementQueue = [];
             let showingAchievement = false;
 
@@ -1202,7 +1137,7 @@
                 }, 3000);
             }
 
-            // ===== FEATURE 3: PET COMPANION =====
+            // ===== PET COMPANION =====
             function loadPetData() {
                 try {
                     const saved = localStorage.getItem(PET_KEY);
@@ -1239,7 +1174,6 @@
                 const pet = loadPetData();
                 const oldLevel = pet.level;
                 
-                // Pet gains XP from quests
                 pet.xp += questsCompleted * 10;
                 
                 while (pet.xp >= pet.xpToNextLevel) {
@@ -1247,7 +1181,6 @@
                     pet.level++;
                     pet.xpToNextLevel = Math.floor(pet.xpToNextLevel * 1.5);
                     
-                    // Change pet type based on level
                     if (pet.level >= 20) pet.type = '🐉';
                     else if (pet.level >= 15) pet.type = '🦄';
                     else if (pet.level >= 10) pet.type = '🦊';
@@ -1263,7 +1196,7 @@
 
             function getPetMessage(pet) {
                 const now = Date.now();
-                if (now - pet.lastMessage > 30000) { // New message every 30 seconds
+                if (now - pet.lastMessage > 30000) {
                     pet.lastMessage = now;
                     const randomIndex = Math.floor(Math.random() * pet.messages.length);
                     return pet.messages[randomIndex];
@@ -1271,7 +1204,7 @@
                 return null;
             }
 
-            // ===== FEATURE 4: BOSS BATTLE =====
+            // ===== BOSS BATTLE =====
             function loadBossData() {
                 try {
                     const saved = localStorage.getItem(BOSS_KEY);
@@ -1298,7 +1231,6 @@
                 const boss = loadBossData();
                 if (boss.defeated) return boss;
                 
-                // Boss takes damage from quests
                 const damage = questsCompleted * 50;
                 boss.health = Math.max(0, boss.health - damage);
                 
@@ -1308,7 +1240,6 @@
                     addXP(reward);
                     showAchievement('BOSS DEFEATED!', `You earned ${reward} XP!`, '👑');
                     
-                    // Spawn next boss level
                     if (boss.currentReward < boss.rewards.length - 1) {
                         boss.currentReward++;
                         boss.level++;
@@ -1323,7 +1254,7 @@
                 return boss;
             }
 
-            // ===== FEATURE 5: SPECIAL EVENTS =====
+            // ===== SPECIAL EVENTS =====
             function loadEvents() {
                 try {
                     const saved = localStorage.getItem(EVENTS_KEY);
@@ -1342,8 +1273,8 @@
                             description: 'Earn twice the XP from all quests!',
                             icon: '✨',
                             reward: '2x XP',
-                            startTime: now + 86400000, // Tomorrow
-                            duration: 172800000, // 48 hours
+                            startTime: now + 86400000,
+                            duration: 172800000,
                             active: false
                         },
                         {
@@ -1352,8 +1283,8 @@
                             description: 'Bosses take double damage!',
                             icon: '👾',
                             reward: '2x Boss Damage',
-                            startTime: now + 43200000, // 12 hours
-                            duration: 86400000, // 24 hours
+                            startTime: now + 43200000,
+                            duration: 86400000,
                             active: false
                         },
                         {
@@ -1362,8 +1293,8 @@
                             description: 'Your pet gains triple XP!',
                             icon: '🐾',
                             reward: '3x Pet XP',
-                            startTime: now + 129600000, // 36 hours
-                            duration: 86400000, // 24 hours
+                            startTime: now + 129600000,
+                            duration: 86400000,
                             active: false
                         }
                     ],
@@ -1380,7 +1311,6 @@
                 const now = Date.now();
                 let eventChanged = false;
                 
-                // Check upcoming events that should start
                 events.upcoming = events.upcoming.filter(event => {
                     if (event.startTime <= now) {
                         event.active = true;
@@ -1394,7 +1324,6 @@
                     return true;
                 });
                 
-                // Check active events that should end
                 events.active = events.active.filter(event => {
                     if (event.endTime <= now) {
                         events.history.push({ ...event, completedAt: now });
@@ -1425,7 +1354,7 @@
                 return multiplier;
             }
 
-            // Load data from localStorage
+            // ===== DATA LOADING =====
             function loadStudyData() {
                 try {
                     const data = localStorage.getItem('studentPersistentData');
@@ -1438,17 +1367,51 @@
                 return { studyData: { streak: 0, totalStudyHours: 0, studySessions: [], dailyStats: [] }, tasks: [] };
             }
 
+            function getRandomQuests(type, count) {
+                const templates = QUEST_TEMPLATES[type];
+                if (!templates || !Array.isArray(templates)) {
+                    console.warn(`No templates found for type: ${type}`);
+                    return [];
+                }
+                
+                const actualCount = Math.min(count, templates.length);
+                const shuffled = [...templates].sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, actualCount).map(q => ({ 
+                    ...q, 
+                    progress: 0, 
+                    completed: false, 
+                    claimed: false,
+                    isNew: true 
+                }));
+            }
+
             function loadRpgData() {
                 try {
                     const saved = localStorage.getItem(RPG_STORAGE_KEY);
                     if (saved) {
-                        return JSON.parse(saved);
+                        const parsed = JSON.parse(saved);
+                        
+                        // Ensure all quest arrays exist
+                        if (!parsed.dailyQuests || !Array.isArray(parsed.dailyQuests) || parsed.dailyQuests.length === 0) {
+                            parsed.dailyQuests = getRandomQuests('daily', 4);
+                        }
+                        if (!parsed.weeklyQuests || !Array.isArray(parsed.weeklyQuests) || parsed.weeklyQuests.length === 0) {
+                            parsed.weeklyQuests = getRandomQuests('weekly', 3);
+                        }
+                        if (!parsed.legendaryQuests || !Array.isArray(parsed.legendaryQuests) || parsed.legendaryQuests.length === 0) {
+                            parsed.legendaryQuests = getRandomQuests('legendary', 5);
+                        }
+                        
+                        console.log("Loaded RPG data:", parsed);
+                        console.log("Legendary quests after fix:", parsed.legendaryQuests);
+                        return parsed;
                     }
                 } catch (e) {
                     console.warn("Failed to load RPG data:", e);
                 }
                 
-                return {
+                // Create new default data
+                const defaultData = {
                     level: 1, xp: 0, xpToNextLevel: 100, totalXP: 0,
                     strength: 5, intelligence: 5, wisdom: 5, luck: 5,
                     health: 100, maxHealth: 100, mana: 50, maxMana: 100,
@@ -1462,26 +1425,9 @@
                     lastDailyReset: new Date().toDateString(),
                     lastWeeklyReset: getWeekStart()
                 };
-            }
-
-            function getRandomQuests(type, count) {
-                const templates = QUEST_TEMPLATES[type];
-                const shuffled = [...templates].sort(() => 0.5 - Math.random());
-                return shuffled.slice(0, count).map(q => ({ 
-                    ...q, 
-                    progress: 0, 
-                    completed: false, 
-                    claimed: false,
-                    isNew: true 
-                }));
-            }
-
-            function getReplacementQuest(type, excludeIds = []) {
-                const templates = QUEST_TEMPLATES[type].filter(q => !excludeIds.includes(q.id));
-                if (templates.length === 0) {
-                    return QUEST_TEMPLATES[type][Math.floor(Math.random() * QUEST_TEMPLATES[type].length)];
-                }
-                return templates[Math.floor(Math.random() * templates.length)];
+                
+                console.log("Created default data with legendary quests:", defaultData.legendaryQuests);
+                return defaultData;
             }
 
             function saveRpgData(data) {
@@ -1508,39 +1454,39 @@
                 const tasks = mainData.tasks || [];
                 
                 const today = getTodayKey();
-                const todayStats = studyData.dailyStats?.find(s => s?.date === today);
+                const todayStats = Array.isArray(studyData.dailyStats) ? studyData.dailyStats.find(s => s?.date === today) : null;
                 
-                const focusSessions = studyData.studySessions?.filter(s => {
+                const focusSessions = Array.isArray(studyData.studySessions) ? studyData.studySessions.filter(s => {
                     if (!s?.date) return false;
                     try {
                         return new Date(s.date).toDateString() === today && (s.hours || 0) >= 0.4;
                     } catch {
                         return false;
                     }
-                }).length || 0;
+                }).length || 0 : 0;
                 
-                const todayTasks = tasks.filter(t => {
+                const todayTasks = Array.isArray(tasks) ? tasks.filter(t => {
                     if (!t?.completed || !t?.completedAt) return false;
                     try {
                         return new Date(t.completedAt).toDateString() === today;
                     } catch {
                         return false;
                     }
-                }).length || 0;
+                }).length || 0 : 0;
                 
                 const weekAgo = new Date();
                 weekAgo.setDate(weekAgo.getDate() - 7);
                 
-                const weeklyTasks = tasks.filter(t => {
+                const weeklyTasks = Array.isArray(tasks) ? tasks.filter(t => {
                     if (!t?.completed || !t?.completedAt) return false;
                     try {
                         return new Date(t.completedAt) >= weekAgo;
                     } catch {
                         return false;
                     }
-                }).length || 0;
+                }).length || 0 : 0;
                 
-                const weeklyHours = studyData.dailyStats?.reduce((sum, day) => {
+                const weeklyHours = Array.isArray(studyData.dailyStats) ? studyData.dailyStats.reduce((sum, day) => {
                     if (!day?.date) return sum;
                     try {
                         if (new Date(day.date) >= weekAgo) {
@@ -1548,9 +1494,9 @@
                         }
                     } catch {}
                     return sum;
-                }, 0) || 0;
+                }, 0) || 0 : 0;
                 
-                const completedTasks = tasks.filter(t => t?.completed).length || 0;
+                const completedTasks = Array.isArray(tasks) ? tasks.filter(t => t?.completed).length || 0 : 0;
                 const totalHours = parseFloat(studyData.totalStudyHours || 0);
                 const streak = studyData.streak || 0;
                 
@@ -1573,353 +1519,476 @@
             }
 
             function checkAllDailyCompleted() {
-                const data = loadRpgData();
-                return data.dailyQuests.every(q => q.completed);
+                try {
+                    const data = loadRpgData();
+                    if (!data || !data.dailyQuests || !Array.isArray(data.dailyQuests)) return false;
+                    return data.dailyQuests.every(q => q && q.completed);
+                } catch (e) {
+                    return false;
+                }
             }
 
             function updateQuests() {
-                const data = loadRpgData();
-                const progress = collectProgress();
-                
-                const today = getTodayKey();
-                if (data.lastDailyReset !== today) {
-                    data.dailyQuests = getRandomQuests('daily', 4);
-                    data.lastDailyReset = today;
-                }
-                
-                const weekStart = getWeekStart();
-                if (data.lastWeeklyReset !== weekStart) {
-                    data.weeklyQuests = getRandomQuests('weekly', 3);
-                    data.lastWeeklyReset = weekStart;
-                }
-                
-                let questCompleted = false;
-                let completedQuestId = null;
-                let completedCategory = null;
-                let completedCount = 0;
-                
-                data.dailyQuests.forEach(quest => {
-                    if (!quest.completed && !quest.claimed) {
-                        const oldProgress = quest.progress;
-                        
-                        if (quest.id === 'daily_focus') quest.progress = progress.focusSessions;
-                        else if (quest.id === 'daily_tasks') quest.progress = progress.todayTasks;
-                        else if (quest.id === 'daily_streak') quest.progress = progress.streakMaintained;
-                        else if (quest.id === 'daily_hours') quest.progress = Math.floor(progress.todayHours);
-                        else if (quest.id === 'daily_early') quest.progress = progress.isEarlyBird ? 1 : 0;
-                        else if (quest.id === 'daily_night') quest.progress = progress.isNightOwl ? 1 : 0;
-                        else if (quest.id === 'daily_perfect') quest.progress = progress.allDailyCompleted ? 1 : 0;
-                        
-                        if (quest.progress >= quest.requirement && !quest.completed) {
-                            quest.completed = true;
-                            questCompleted = true;
-                            completedQuestId = quest.id;
-                            completedCategory = 'daily';
-                            completedCount++;
-                        }
-                    }
-                });
-                
-                data.weeklyQuests.forEach(quest => {
-                    if (!quest.completed && !quest.claimed) {
-                        const oldProgress = quest.progress;
-                        
-                        if (quest.id === 'weekly_streak') quest.progress = progress.streak;
-                        else if (quest.id === 'weekly_tasks') quest.progress = progress.weeklyTasks;
-                        else if (quest.id === 'weekly_hours') quest.progress = Math.floor(progress.weeklyHours);
-                        else if (quest.id === 'weekly_focus') quest.progress = Math.floor(progress.weeklyHours / 2);
-                        else if (quest.id === 'weekly_perfect') quest.progress = progress.streak >= 7 ? 1 : 0;
-                        
-                        if (quest.progress >= quest.requirement && !quest.completed) {
-                            quest.completed = true;
-                            questCompleted = true;
-                            completedQuestId = quest.id;
-                            completedCategory = 'weekly';
-                            completedCount++;
-                        }
-                    }
-                });
-                
-                data.legendaryQuests.forEach(quest => {
-                    if (!quest.completed && !quest.claimed) {
-                        const oldProgress = quest.progress;
-                        
-                        if (quest.id === 'legend_first') quest.progress = progress.questsCompleted >= 1 ? 1 : 0;
-                        else if (quest.id === 'legend_10') quest.progress = progress.questsCompleted >= 10 ? 1 : 0;
-                        else if (quest.id === 'legend_50') quest.progress = progress.questsCompleted >= 50 ? 1 : 0;
-                        else if (quest.id === 'legend_100') quest.progress = progress.questsCompleted >= 100 ? 1 : 0;
-                        else if (quest.id === 'legend_streak_30') quest.progress = progress.streak >= 30 ? 1 : 0;
-                        else if (quest.id === 'legend_tasks_500') quest.progress = progress.completedTasks >= 500 ? 1 : 0;
-                        else if (quest.id === 'legend_hours_100') quest.progress = Math.floor(progress.totalHours) >= 100 ? 1 : 0;
-                        
-                        if (quest.progress >= quest.requirement && !quest.completed) {
-                            quest.completed = true;
-                            questCompleted = true;
-                            completedQuestId = quest.id;
-                            completedCategory = 'legendary';
-                            completedCount++;
-                        }
-                    }
-                });
-                
-                data.strength = 5 + Math.floor(progress.completedTasks / 10);
-                data.intelligence = 5 + Math.floor(progress.totalHours / 5);
-                data.wisdom = 5 + Math.floor(progress.streak / 3);
-                data.mana = Math.min(data.maxMana, 50 + (progress.focusSessions * 10));
-                data.health = Math.min(data.maxHealth, 70 + (progress.streak * 2));
-                
-                saveRpgData(data);
-                
-                // Update pet and boss based on completed quests
-                if (completedCount > 0) {
-                    const pet = updatePet(completedCount);
-                    const boss = updateBoss(completedCount);
+                try {
+                    const data = loadRpgData();
+                    const progress = collectProgress();
                     
-                    // Show pet message occasionally
-                    const petMessage = getPetMessage(pet);
-                    if (petMessage) {
-                        setTimeout(() => {
-                            showNotification(`🐾 ${pet.name}: ${petMessage}`, 'info');
-                        }, 1000);
+                    const today = getTodayKey();
+                    if (data.lastDailyReset !== today) {
+                        data.dailyQuests = getRandomQuests('daily', 4);
+                        data.lastDailyReset = today;
                     }
+                    
+                    const weekStart = getWeekStart();
+                    if (data.lastWeeklyReset !== weekStart) {
+                        data.weeklyQuests = getRandomQuests('weekly', 3);
+                        data.lastWeeklyReset = weekStart;
+                    }
+                    
+                    let questCompleted = false;
+                    let completedQuestId = null;
+                    let completedCategory = null;
+                    let completedCount = 0;
+                    
+                    if (Array.isArray(data.dailyQuests)) {
+                        data.dailyQuests.forEach(quest => {
+                            if (!quest || !quest.id) return;
+                            if (!quest.completed && !quest.claimed) {
+                                if (quest.id === 'daily_focus') quest.progress = progress.focusSessions;
+                                else if (quest.id === 'daily_tasks') quest.progress = progress.todayTasks;
+                                else if (quest.id === 'daily_streak') quest.progress = progress.streakMaintained;
+                                else if (quest.id === 'daily_hours') quest.progress = Math.floor(progress.todayHours);
+                                else if (quest.id === 'daily_early') quest.progress = progress.isEarlyBird ? 1 : 0;
+                                else if (quest.id === 'daily_night') quest.progress = progress.isNightOwl ? 1 : 0;
+                                else if (quest.id === 'daily_perfect') quest.progress = progress.allDailyCompleted ? 1 : 0;
+                                
+                                if (quest.progress >= quest.requirement && !quest.completed) {
+                                    quest.completed = true;
+                                    questCompleted = true;
+                                    completedQuestId = quest.id;
+                                    completedCategory = 'daily';
+                                    completedCount++;
+                                }
+                            }
+                        });
+                    }
+                    
+                    if (Array.isArray(data.weeklyQuests)) {
+                        data.weeklyQuests.forEach(quest => {
+                            if (!quest || !quest.id) return;
+                            if (!quest.completed && !quest.claimed) {
+                                if (quest.id === 'weekly_streak') quest.progress = progress.streak;
+                                else if (quest.id === 'weekly_tasks') quest.progress = progress.weeklyTasks;
+                                else if (quest.id === 'weekly_hours') quest.progress = Math.floor(progress.weeklyHours);
+                                else if (quest.id === 'weekly_focus') quest.progress = Math.floor(progress.weeklyHours / 2);
+                                else if (quest.id === 'weekly_perfect') quest.progress = progress.streak >= 7 ? 1 : 0;
+                                
+                                if (quest.progress >= quest.requirement && !quest.completed) {
+                                    quest.completed = true;
+                                    questCompleted = true;
+                                    completedQuestId = quest.id;
+                                    completedCategory = 'weekly';
+                                    completedCount++;
+                                }
+                            }
+                        });
+                    }
+                    
+                    if (Array.isArray(data.legendaryQuests)) {
+                        data.legendaryQuests.forEach(quest => {
+                            if (!quest || !quest.id) return;
+                            if (!quest.completed && !quest.claimed) {
+                                if (quest.id === 'legend_first') quest.progress = progress.questsCompleted >= 1 ? 1 : 0;
+                                else if (quest.id === 'legend_10') quest.progress = progress.questsCompleted >= 10 ? 1 : 0;
+                                else if (quest.id === 'legend_50') quest.progress = progress.questsCompleted >= 50 ? 1 : 0;
+                                else if (quest.id === 'legend_100') quest.progress = progress.questsCompleted >= 100 ? 1 : 0;
+                                else if (quest.id === 'legend_streak_30') quest.progress = progress.streak >= 30 ? 1 : 0;
+                                else if (quest.id === 'legend_tasks_500') quest.progress = progress.completedTasks >= 500 ? 1 : 0;
+                                else if (quest.id === 'legend_hours_100') quest.progress = Math.floor(progress.totalHours) >= 100 ? 1 : 0;
+                                
+                                if (quest.progress >= quest.requirement && !quest.completed) {
+                                    quest.completed = true;
+                                    questCompleted = true;
+                                    completedQuestId = quest.id;
+                                    completedCategory = 'legendary';
+                                    completedCount++;
+                                }
+                            }
+                        });
+                    }
+                    
+                    data.strength = 5 + Math.floor(progress.completedTasks / 10);
+                    data.intelligence = 5 + Math.floor(progress.totalHours / 5);
+                    data.wisdom = 5 + Math.floor(progress.streak / 3);
+                    data.mana = Math.min(data.maxMana, 50 + (progress.focusSessions * 10));
+                    data.health = Math.min(data.maxHealth, 70 + (progress.streak * 2));
+                    
+                    saveRpgData(data);
+                    
+                    if (completedCount > 0) {
+                        const pet = updatePet(completedCount);
+                        const boss = updateBoss(completedCount);
+                        
+                        const petMessage = getPetMessage(pet);
+                        if (petMessage) {
+                            setTimeout(() => {
+                                showNotification(`🐾 ${pet.name}: ${petMessage}`, 'info');
+                            }, 1000);
+                        }
+                    }
+                    
+                    if (questCompleted && completedQuestId && completedCategory) {
+                        setTimeout(() => {
+                            showNotification("✨ Quest completed! A new challenge appears!", "success");
+                        }, 500);
+                    }
+                    
+                    return { data, questCompleted, completedQuestId, completedCategory };
+                } catch (e) {
+                    console.warn("Error updating quests:", e);
+                    return { data: loadRpgData(), questCompleted: false };
                 }
-                
-                if (questCompleted && completedQuestId && completedCategory) {
-                    setTimeout(() => {
-                        showNotification("✨ Quest completed! A new challenge appears!", "success");
-                    }, 500);
-                }
-                
-                return { data, questCompleted, completedQuestId, completedCategory };
             }
 
             function replaceCompletedQuest(category, completedId) {
-                const data = loadRpgData();
-                
-                if (!data.completedQuestIds) data.completedQuestIds = [];
-                data.completedQuestIds.push(completedId);
-                
-                if (data.completedQuestIds.length > 20) {
-                    data.completedQuestIds = data.completedQuestIds.slice(-20);
+                try {
+                    const data = loadRpgData();
+                    
+                    if (!data.completedQuestIds) data.completedQuestIds = [];
+                    data.completedQuestIds.push(completedId);
+                    
+                    if (data.completedQuestIds.length > 20) {
+                        data.completedQuestIds = data.completedQuestIds.slice(-20);
+                    }
+                    
+                    const templates = QUEST_TEMPLATES[category];
+                    const availableTemplates = templates.filter(q => !data.completedQuestIds.includes(q.id));
+                    const replacement = availableTemplates.length > 0 
+                        ? availableTemplates[Math.floor(Math.random() * availableTemplates.length)]
+                        : templates[Math.floor(Math.random() * templates.length)];
+                    
+                    if (category === 'daily' && Array.isArray(data.dailyQuests)) {
+                        const index = data.dailyQuests.findIndex(q => q && q.id === completedId);
+                        if (index !== -1) {
+                            data.dailyQuests[index] = {
+                                ...replacement,
+                                progress: 0,
+                                completed: false,
+                                claimed: false,
+                                isNew: true
+                            };
+                        }
+                    } else if (category === 'weekly' && Array.isArray(data.weeklyQuests)) {
+                        const index = data.weeklyQuests.findIndex(q => q && q.id === completedId);
+                        if (index !== -1) {
+                            data.weeklyQuests[index] = {
+                                ...replacement,
+                                progress: 0,
+                                completed: false,
+                                claimed: false,
+                                isNew: true
+                            };
+                        }
+                    } else if (category === 'legendary' && Array.isArray(data.legendaryQuests)) {
+                        const index = data.legendaryQuests.findIndex(q => q && q.id === completedId);
+                        if (index !== -1) {
+                            data.legendaryQuests[index] = {
+                                ...replacement,
+                                progress: 0,
+                                completed: false,
+                                claimed: false,
+                                isNew: true
+                            };
+                        }
+                    }
+                    
+                    saveRpgData(data);
+                    showNotification(`🔄 New ${category} quest: ${replacement.name}!`, "info");
+                    
+                    return data;
+                } catch (e) {
+                    console.warn("Error replacing quest:", e);
+                    return loadRpgData();
                 }
-                
-                const replacement = getReplacementQuest(category, data.completedQuestIds);
-                
-                if (category === 'daily') {
-                    const index = data.dailyQuests.findIndex(q => q.id === completedId);
-                    if (index !== -1) {
-                        data.dailyQuests[index] = {
-                            ...replacement,
-                            progress: 0,
-                            completed: false,
-                            claimed: false,
-                            isNew: true
-                        };
-                    }
-                } else if (category === 'weekly') {
-                    const index = data.weeklyQuests.findIndex(q => q.id === completedId);
-                    if (index !== -1) {
-                        data.weeklyQuests[index] = {
-                            ...replacement,
-                            progress: 0,
-                            completed: false,
-                            claimed: false,
-                            isNew: true
-                        };
-                    }
-                } else if (category === 'legendary') {
-                    const index = data.legendaryQuests.findIndex(q => q.id === completedId);
-                    if (index !== -1) {
-                        data.legendaryQuests[index] = {
-                            ...replacement,
-                            progress: 0,
-                            completed: false,
-                            claimed: false,
-                            isNew: true
-                        };
-                    }
-                }
-                
-                saveRpgData(data);
-                showNotification(`🔄 New ${category} quest: ${replacement.name}!`, "info");
-                
-                return data;
             }
 
-            function addXP(amount) {
-                const xpMultiplier = getEventMultiplier('xp');
-                const finalAmount = Math.floor(amount * xpMultiplier);
-                
-                const data = loadRpgData();
-                data.xp += finalAmount;
-                data.totalXP += finalAmount;
-                
-                let leveledUp = false;
-                
-                while (data.xp >= data.xpToNextLevel) {
-                    data.xp -= data.xpToNextLevel;
-                    data.level++;
-                    data.xpToNextLevel = Math.floor(data.xpToNextLevel * 1.3);
+            // ===== MAIN XP FUNCTION - FIXED LEVELING =====
+            window.addXP = function(amount) {
+                try {
+                    const xpMultiplier = getEventMultiplier('xp');
+                    const finalAmount = Math.floor(amount * xpMultiplier);
                     
-                    data.strength++;
-                    data.intelligence++;
-                    data.wisdom++;
-                    data.luck++;
+                    const data = loadRpgData();
+                    const oldLevel = data.level || 1;
                     
-                    leveledUp = true;
+                    data.xp = (data.xp || 0) + finalAmount;
+                    data.totalXP = (data.totalXP || 0) + finalAmount;
                     
-                    showAchievement('LEVEL UP!', `You reached level ${data.level}!`, '⭐');
+                    let leveledUp = false;
+                    let levelsGained = 0;
+                    
+                    // Keep leveling up while XP exceeds threshold
+                    while (data.xp >= (data.xpToNextLevel || 100)) {
+                        data.xp -= (data.xpToNextLevel || 100);
+                        data.level = (data.level || 1) + 1;
+                        data.xpToNextLevel = Math.floor((data.xpToNextLevel || 100) * 1.3);
+                        
+                        data.strength = (data.strength || 5) + 1;
+                        data.intelligence = (data.intelligence || 5) + 1;
+                        data.wisdom = (data.wisdom || 5) + 1;
+                        data.luck = (data.luck || 5) + 1;
+                        
+                        levelsGained++;
+                        leveledUp = true;
+                        
+                        console.log(`Level up! New level: ${data.level}, XP to next: ${data.xpToNextLevel}`);
+                    }
+                    
+                    if (leveledUp) {
+                        if (levelsGained === 1) {
+                            showAchievement('LEVEL UP!', `You reached level ${data.level}!`, '⭐');
+                        } else {
+                            showAchievement('MASSIVE LEVEL UP!', `You gained ${levelsGained} levels! Now level ${data.level}!`, '🌟');
+                        }
+                        
+                        const newTitle = GAME_TITLES.find(t => t.level <= data.level);
+                        if (newTitle && (!data.titles || !data.titles.includes(newTitle.title))) {
+                            if (!data.titles) data.titles = [];
+                            data.titles.push(newTitle.title);
+                            data.currentTitle = newTitle.title;
+                        }
+                    }
+                    
+                    if (xpMultiplier > 1) {
+                        showNotification(`✨ Event bonus: ${xpMultiplier}x XP! (+${finalAmount} XP)`, 'success');
+                    } else {
+                        showNotification(`✨ +${finalAmount} XP`, 'success');
+                    }
+                    
+                    saveRpgData(data);
+                    render();
+                    
+                    console.log(`Added ${finalAmount} XP. Current level: ${data.level}, XP: ${data.xp}/${data.xpToNextLevel}`);
+                    
+                    return data;
+                } catch (e) {
+                    console.warn("Error adding XP:", e);
                 }
-                
-                if (xpMultiplier > 1) {
-                    showNotification(`✨ Event bonus: ${xpMultiplier}x XP! (+${finalAmount} XP)`, 'success');
-                } else {
-                    showNotification(`✨ +${finalAmount} XP`, 'success');
-                }
-                
-                saveRpgData(data);
-                render();
-                return data;
-            }
+            };
 
             function claimQuest(questId, category) {
-                const data = loadRpgData();
-                let quests = [];
-                
-                if (category === 'daily') quests = data.dailyQuests;
-                else if (category === 'weekly') quests = data.weeklyQuests;
-                else if (category === 'legendary') quests = data.legendaryQuests;
-                
-                const questIndex = quests.findIndex(q => q.id === questId);
-                const quest = quests[questIndex];
-                
-                if (!quest || !quest.completed || quest.claimed) {
-                    showNotification("Cannot claim - already completed", "error");
-                    return;
+                try {
+                    const data = loadRpgData();
+                    let quests = [];
+                    
+                    if (category === 'daily') quests = data.dailyQuests || [];
+                    else if (category === 'weekly') quests = data.weeklyQuests || [];
+                    else if (category === 'legendary') quests = data.legendaryQuests || [];
+                    
+                    const questIndex = quests.findIndex(q => q && q.id === questId);
+                    const quest = quests[questIndex];
+                    
+                    if (!quest || !quest.completed || quest.claimed) {
+                        showNotification("Cannot claim - already completed", "error");
+                        return;
+                    }
+                    
+                    quest.claimed = true;
+                    data.questsCompleted = (data.questsCompleted || 0) + 1;
+                    
+                    if (quest.stats) {
+                        Object.entries(quest.stats).forEach(([stat, value]) => {
+                            if (stat === 'all') {
+                                data.strength = (data.strength || 5) + value;
+                                data.intelligence = (data.intelligence || 5) + value;
+                                data.wisdom = (data.wisdom || 5) + value;
+                                data.luck = (data.luck || 5) + value;
+                            } else {
+                                data[stat] = (data[stat] || 5) + value;
+                            }
+                        });
+                    }
+                    
+                    saveRpgData(data);
+                    
+                    const xpMultiplier = getEventMultiplier('xp');
+                    const finalXP = Math.floor(quest.xp * xpMultiplier);
+                    
+                    window.addXP(finalXP);
+                    
+                    const questElement = document.querySelector(`[data-quest-id="${questId}"]`);
+                    if (questElement) {
+                        questElement.classList.add('completed');
+                    }
+                    
+                    showNotification(`✨ Quest Complete! +${finalXP} XP`, "success");
+                    
+                    setTimeout(() => {
+                        replaceCompletedQuest(category, questId);
+                        render();
+                    }, 500);
+                } catch (e) {
+                    console.warn("Error claiming quest:", e);
                 }
-                
-                quest.claimed = true;
-                data.questsCompleted++;
-                
-                if (quest.stats) {
-                    Object.entries(quest.stats).forEach(([stat, value]) => {
-                        if (stat === 'all') {
-                            data.strength += value;
-                            data.intelligence += value;
-                            data.wisdom += value;
-                            data.luck += value;
-                        } else {
-                            data[stat] += value;
-                        }
-                    });
-                }
-                
-                saveRpgData(data);
-                
-                // Apply event multiplier to XP
-                const xpMultiplier = getEventMultiplier('xp');
-                const finalXP = Math.floor(quest.xp * xpMultiplier);
-                
-                addXP(finalXP - quest.xp); // Add the bonus separately
-                addXP(quest.xp); // This will trigger the multiplier again, but that's okay
-                
-                const questElement = document.querySelector(`[data-quest-id="${questId}"]`);
-                if (questElement) {
-                    questElement.classList.add('completed');
-                }
-                
-                showNotification(`✨ Quest Complete! +${quest.xp} XP`, "success");
-                
-                setTimeout(() => {
-                    replaceCompletedQuest(category, questId);
-                    render();
-                }, 500);
             }
 
             function rollDice() {
-                const data = loadRpgData();
-                
-                if (data.mana < 5) {
-                    showNotification("Not enough mana! Need 5 mana.", "error");
-                    return;
+                try {
+                    const data = loadRpgData();
+                    
+                    if ((data.mana || 0) < 5) {
+                        showNotification("Not enough mana! Need 5 mana.", "error");
+                        return;
+                    }
+                    
+                    data.mana = (data.mana || 50) - 5;
+                    
+                    const roll1 = Math.floor(Math.random() * 6) + 1;
+                    const roll2 = Math.floor(Math.random() * 6) + 1;
+                    const total = roll1 + roll2;
+                    
+                    let xpGain = 10;
+                    let message = '🎲 +10 XP';
+                    
+                    if (total === 12) {
+                        xpGain = 100;
+                        message = '🌟 PERFECT ROLL! +100 XP!';
+                        showAchievement('PERFECT ROLL!', 'You rolled a 12!', '🎲');
+                    } else if (total >= 10) {
+                        xpGain = 50;
+                        message = '✨ Great roll! +50 XP!';
+                    } else if (total >= 7) {
+                        xpGain = 25;
+                        message = '👍 Good roll! +25 XP!';
+                    }
+                    
+                    saveRpgData(data);
+                    window.addXP(xpGain);
+                    showNotification(message, "success");
+                    render();
+                } catch (e) {
+                    console.warn("Error rolling dice:", e);
                 }
-                
-                data.mana -= 5;
-                
-                const roll1 = Math.floor(Math.random() * 6) + 1;
-                const roll2 = Math.floor(Math.random() * 6) + 1;
-                const total = roll1 + roll2;
-                
-                let xpGain = 10;
-                let message = '🎲 +10 XP';
-                
-                if (total === 12) {
-                    xpGain = 100;
-                    message = '🌟 PERFECT ROLL! +100 XP!';
-                    showAchievement('PERFECT ROLL!', 'You rolled a 12!', '🎲');
-                } else if (total >= 10) {
-                    xpGain = 50;
-                    message = '✨ Great roll! +50 XP!';
-                } else if (total >= 7) {
-                    xpGain = 25;
-                    message = '👍 Good roll! +25 XP!';
-                }
-                
-                saveRpgData(data);
-                addXP(xpGain);
-                showNotification(message, "success");
-                render();
             }
 
             function gmClick() {
-                const bubble = document.getElementById('gmBubble');
-                const data = loadRpgData();
-                const progress = collectProgress();
-                const events = checkEvents();
-                const pet = loadPetData();
-                const boss = loadBossData();
-                
-                const messages = Object.values(GM_MESSAGES);
-                let message = messages[Math.floor(Math.random() * messages.length)];
-                
-                // Add event messages if events are active
-                if (events.active.length > 0) {
-                    const event = events.active[0];
-                    message = `🎉 Special event: ${event.name}! ${event.description}`;
+                try {
+                    const bubble = document.getElementById('gmBubble');
+                    const data = loadRpgData();
+                    const progress = collectProgress();
+                    const events = checkEvents();
+                    const pet = loadPetData();
+                    const boss = loadBossData();
+                    
+                    const messages = Object.values(GM_MESSAGES);
+                    let message = messages[Math.floor(Math.random() * messages.length)];
+                    
+                    if (events.active.length > 0) {
+                        const event = events.active[0];
+                        message = `🎉 Special event: ${event.name}! ${event.description}`;
+                    }
+                    
+                    message = message
+                        .replace('{{xp}}', data.xp || 0)
+                        .replace('{{xpNeeded}}', (data.xpToNextLevel || 100) - (data.xp || 0))
+                        .replace('{{nextLevel}}', (data.level || 1) + 1)
+                        .replace('{{health}}', Math.round(data.health || 100))
+                        .replace('{{maxHealth}}', data.maxHealth || 100)
+                        .replace('{{mana}}', Math.round(data.mana || 50))
+                        .replace('{{maxMana}}', data.maxMana || 100)
+                        .replace('{{str}}', data.strength || 5)
+                        .replace('{{int}}', data.intelligence || 5)
+                        .replace('{{wis}}', data.wisdom || 5)
+                        .replace('{{luk}}', data.luck || 5)
+                        .replace('{{tasks}}', progress.completedTasks || 0)
+                        .replace('{{hours}}', Math.round(progress.totalHours || 0))
+                        .replace('{{streak}}', progress.streak || 0)
+                        .replace('{{dailyDone}}', (data.dailyQuests || []).filter(q => q && q.completed).length)
+                        .replace('{{dailyTotal}}', (data.dailyQuests || []).length)
+                        .replace('{{dailyLeft}}', (data.dailyQuests || []).length - (data.dailyQuests || []).filter(q => q && q.completed).length)
+                        .replace('{{weeklyDone}}', (data.weeklyQuests || []).filter(q => q && q.completed).length)
+                        .replace('{{weeklyTotal}}', (data.weeklyQuests || []).length)
+                        .replace('{{weeklyLeft}}', (data.weeklyQuests || []).length - (data.weeklyQuests || []).filter(q => q && q.completed).length)
+                        .replace('{{legendaryDone}}', (data.legendaryQuests || []).filter(q => q && q.completed).length)
+                        .replace('{{legendaryTotal}}', (data.legendaryQuests || []).length)
+                        .replace('{{legendaryLeft}}', (data.legendaryQuests || []).length - (data.legendaryQuests || []).filter(q => q && q.completed).length)
+                        .replace('{{level}}', data.level || 1)
+                        .replace('{{xpToNext}}', data.xpToNextLevel || 100);
+                    
+                    bubble.textContent = '🧙‍♂️ ' + message;
+                    
+                    bubble.style.animation = 'none';
+                    bubble.offsetHeight;
+                    bubble.style.animation = 'bubbleAppear 0.3s ease-out';
+                } catch (e) {
+                    console.warn("Error in GM click:", e);
+                }
+            }
+
+            function renderQuests(quests, category) {
+                if (!quests || !Array.isArray(quests) || quests.length === 0) {
+                    return '<div class="empty-state">No quests available</div>';
                 }
                 
-                message = message
-                    .replace('{{xp}}', data.xp)
-                    .replace('{{xpNeeded}}', data.xpToNextLevel - data.xp)
-                    .replace('{{nextLevel}}', data.level + 1)
-                    .replace('{{health}}', Math.round(data.health))
-                    .replace('{{maxHealth}}', data.maxHealth)
-                    .replace('{{mana}}', Math.round(data.mana))
-                    .replace('{{maxMana}}', data.maxMana)
-                    .replace('{{str}}', data.strength)
-                    .replace('{{int}}', data.intelligence)
-                    .replace('{{wis}}', data.wisdom)
-                    .replace('{{luk}}', data.luck)
-                    .replace('{{tasks}}', progress.completedTasks)
-                    .replace('{{hours}}', Math.round(progress.totalHours))
-                    .replace('{{streak}}', progress.streak)
-                    .replace('{{dailyDone}}', data.dailyQuests.filter(q => q.completed).length)
-                    .replace('{{dailyTotal}}', data.dailyQuests.length)
-                    .replace('{{dailyLeft}}', data.dailyQuests.length - data.dailyQuests.filter(q => q.completed).length)
-                    .replace('{{weeklyDone}}', data.weeklyQuests.filter(q => q.completed).length)
-                    .replace('{{weeklyTotal}}', data.weeklyQuests.length)
-                    .replace('{{weeklyLeft}}', data.weeklyQuests.length - data.weeklyQuests.filter(q => q.completed).length)
-                    .replace('{{legendaryDone}}', data.legendaryQuests.filter(q => q.completed).length)
-                    .replace('{{legendaryTotal}}', data.legendaryQuests.length)
-                    .replace('{{legendaryLeft}}', data.legendaryQuests.length - data.legendaryQuests.filter(q => q.completed).length)
-                    .replace('{{level}}', data.level)
-                    .replace('{{xpToNext}}', data.xpToNextLevel);
-                
-                bubble.textContent = '🧙‍♂️ ' + message;
-                
-                bubble.style.animation = 'none';
-                bubble.offsetHeight;
-                bubble.style.animation = 'bubbleAppear 0.3s ease-out';
+                return quests.map(quest => {
+                    if (!quest) return '';
+                    
+                    const progressPercent = ((quest.progress || 0) / (quest.requirement || 1)) * 100;
+                    const canClaim = quest.completed && !quest.claimed;
+                    
+                    let statRewards = '';
+                    if (quest.stats) {
+                        statRewards = Object.entries(quest.stats).map(([stat, value]) => {
+                            const icons = { strength: '💪', intelligence: '🧠', wisdom: '📚', luck: '🍀', all: '📊' };
+                            return `<span class="reward-chip">${icons[stat] || '✨'} +${value}</span>`;
+                        }).join('');
+                    }
+                    
+                    const newQuestBadge = quest.isNew ? '<div class="new-quest-badge">NEW!</div>' : '';
+                    
+                    return `
+                        <div class="quest-card ${quest.rarity || 'common'}" data-quest-id="${quest.id}">
+                            ${newQuestBadge}
+                            <div class="quest-header">
+                                <div class="quest-icon">${quest.icon || '📜'}</div>
+                                <div class="quest-info">
+                                    <div class="quest-name">${quest.name || 'Quest'}</div>
+                                    <div class="quest-meta">
+                                        <span class="quest-rarity ${quest.rarity || 'common'}">${quest.rarity || 'common'}</span>
+                                        <span class="quest-xp">✨ ${quest.xp || 0} XP</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="quest-description">${quest.description || ''}</div>
+                            
+                            <div class="quest-rewards">
+                                ${statRewards}
+                            </div>
+                            
+                            <div class="quest-progress">
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: ${progressPercent}%;"></div>
+                                </div>
+                                <div class="progress-text">
+                                    <span>Progress: ${quest.progress || 0}/${quest.requirement || 1}</span>
+                                    <span>${Math.round(progressPercent)}%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="quest-actions">
+                                ${canClaim ? 
+                                    `<button class="quest-btn claim" onclick="claimQuest('${quest.id}', '${category}')">
+                                        ✨ CLAIM REWARDS
+                                    </button>` : 
+                                    quest.claimed ?
+                                    `<button class="quest-btn" disabled>✓ COMPLETED</button>` :
+                                    `<button class="quest-btn" disabled>IN PROGRESS</button>`
+                                }
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             }
 
             function render() {
@@ -1933,34 +2002,33 @@
                     
                     if (!content) return;
                     
-                    const xpPercent = (data.xp / data.xpToNextLevel) * 100;
-                    const healthPercent = (data.health / data.maxHealth) * 100;
-                    const manaPercent = (data.mana / data.maxMana) * 100;
-                    const bossHealthPercent = boss.defeated ? 100 : (boss.health / boss.maxHealth) * 100;
-                    const petLevelPercent = (pet.xp / pet.xpToNextLevel) * 100;
+                    const xpPercent = ((data.xp || 0) / (data.xpToNextLevel || 100)) * 100;
+                    const healthPercent = ((data.health || 100) / (data.maxHealth || 100)) * 100;
+                    const manaPercent = ((data.mana || 50) / (data.maxMana || 100)) * 100;
+                    const bossHealthPercent = boss.defeated ? 100 : ((boss.health || 1000) / (boss.maxHealth || 1000)) * 100;
+                    const petLevelPercent = ((pet.xp || 0) / (pet.xpToNextLevel || 100)) * 100;
                     
-                    const currentTitle = GAME_TITLES.find(t => t.level <= data.level) || GAME_TITLES[0];
-                    const streakFlame = getStreakFlame(progress.streak);
+                    const currentTitle = GAME_TITLES.find(t => t.level <= (data.level || 1)) || GAME_TITLES[0];
+                    const streakFlame = getStreakFlame(progress.streak || 0);
                     const petMessage = getPetMessage(pet);
                     
                     content.innerHTML = `
-                        <!-- Hero Section with Streak Flame -->
                         <div class="hero-section">
                             <div class="player-card">
                                 <div class="player-avatar">${currentTitle.icon}</div>
                                 <div class="player-name">${localStorage.getItem('studentName') || 'Adventurer'}</div>
-                                <div class="player-title">${currentTitle.icon} ${data.currentTitle} (Lv.${data.level})</div>
+                                <div class="player-title">${currentTitle.icon} ${data.currentTitle || 'Novice Adventurer'} (Lv.${data.level || 1})</div>
                                 <div style="margin-top: var(--space-md); display: flex; align-items: center; justify-content: center; gap: var(--space-xs); flex-wrap: wrap;">
                                     <span class="streak-flame">${streakFlame.split(' ')[0]}</span>
-                                    <span class="streak-counter">${progress.streak} day streak</span>
+                                    <span class="streak-counter">${progress.streak || 0} day streak</span>
                                 </div>
                             </div>
                             
                             <div class="resource-bars">
                                 <div class="resource-item">
                                     <div class="resource-header">
-                                        <span>✨ XP to Level ${data.level + 1}</span>
-                                        <span>${data.xp}/${data.xpToNextLevel}</span>
+                                        <span>✨ XP to Level ${(data.level || 1) + 1}</span>
+                                        <span>${data.xp || 0}/${data.xpToNextLevel || 100}</span>
                                     </div>
                                     <div class="resource-track">
                                         <div class="resource-fill xp" style="width: ${xpPercent}%;"></div>
@@ -1970,7 +2038,7 @@
                                 <div class="resource-item">
                                     <div class="resource-header">
                                         <span>❤️ Health</span>
-                                        <span>${Math.round(data.health)}/${Math.round(data.maxHealth)}</span>
+                                        <span>${Math.round(data.health || 100)}/${Math.round(data.maxHealth || 100)}</span>
                                     </div>
                                     <div class="resource-track">
                                         <div class="resource-fill health" style="width: ${healthPercent}%;"></div>
@@ -1980,7 +2048,7 @@
                                 <div class="resource-item">
                                     <div class="resource-header">
                                         <span>💙 Mana</span>
-                                        <span>${Math.round(data.mana)}/${Math.round(data.maxMana)}</span>
+                                        <span>${Math.round(data.mana || 50)}/${Math.round(data.maxMana || 100)}</span>
                                     </div>
                                     <div class="resource-track">
                                         <div class="resource-fill mana" style="width: ${manaPercent}%;"></div>
@@ -1989,64 +2057,59 @@
                             </div>
                         </div>
                         
-                        <!-- Stats Cards -->
                         <div class="stats-grid">
                             <div class="stat-card">
                                 <div class="stat-icon">💪</div>
-                                <div class="stat-content">
+                                <div>
                                     <div class="stat-label">Strength</div>
-                                    <div class="stat-value">${data.strength}</div>
-                                    <div class="stat-bonus">${progress.completedTasks} tasks</div>
+                                    <div class="stat-value">${data.strength || 5}</div>
+                                    <div class="stat-bonus">${progress.completedTasks || 0} tasks</div>
                                 </div>
                             </div>
                             
                             <div class="stat-card">
                                 <div class="stat-icon">🧠</div>
-                                <div class="stat-content">
+                                <div>
                                     <div class="stat-label">Intelligence</div>
-                                    <div class="stat-value">${data.intelligence}</div>
-                                    <div class="stat-bonus">${Math.round(progress.totalHours)} hrs</div>
+                                    <div class="stat-value">${data.intelligence || 5}</div>
+                                    <div class="stat-bonus">${Math.round(progress.totalHours || 0)} hrs</div>
                                 </div>
                             </div>
                             
                             <div class="stat-card">
                                 <div class="stat-icon">📚</div>
-                                <div class="stat-content">
+                                <div>
                                     <div class="stat-label">Wisdom</div>
-                                    <div class="stat-value">${data.wisdom}</div>
-                                    <div class="stat-bonus">${progress.streak} day streak</div>
+                                    <div class="stat-value">${data.wisdom || 5}</div>
+                                    <div class="stat-bonus">${progress.streak || 0} day streak</div>
                                 </div>
                             </div>
                             
                             <div class="stat-card">
                                 <div class="stat-icon">🍀</div>
-                                <div class="stat-content">
+                                <div>
                                     <div class="stat-label">Luck</div>
-                                    <div class="stat-value">${data.luck}</div>
-                                    <div class="stat-bonus">${data.perfectDays} perfect days</div>
+                                    <div class="stat-value">${data.luck || 5}</div>
+                                    <div class="stat-bonus">${data.perfectDays || 0} perfect days</div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Quick Actions -->
                         <div class="quick-actions">
-                            <button class="action-btn" onclick="window.rollDice()" ${data.mana < 5 ? 'disabled' : ''}>
+                            <button class="action-btn" onclick="rollDice()" ${(data.mana || 0) < 5 ? 'disabled' : ''}>
                                 🎲 Roll Dice (5 Mana)
                             </button>
-                            <button class="action-btn" onclick="window.gmClick()">
+                            <button class="action-btn" onclick="gmClick()">
                                 🧙 Ask Game Master
                             </button>
-                            <button class="action-btn" onclick="window.location.reload()">
-                                🔄 Refresh
-                            </button>
+                            
                         </div>
                         
-                        <!-- FEATURE 3: PET COMPANION -->
                         <div class="pet-section">
                             <div class="pet-container">
-                                <div class="pet-avatar" onclick="petInteract()" title="Click to interact!">${pet.type}</div>
+                                <div class="pet-avatar" onclick="petInteract()" title="Click to interact!">${pet.type || '🐶'}</div>
                                 <div class="pet-info">
-                                    <div class="pet-name">${pet.name} (Lv.${pet.level})</div>
+                                    <div class="pet-name">${pet.name || 'Buddy'} (Lv.${pet.level || 1})</div>
                                     <div class="pet-level-bar">
                                         <div class="pet-level-fill" style="width: ${petLevelPercent}%;"></div>
                                     </div>
@@ -2057,12 +2120,11 @@
                             </div>
                         </div>
                         
-                        <!-- FEATURE 4: BOSS BATTLE -->
                         <div class="boss-section">
                             <div class="boss-header">
                                 <div class="boss-icon">${boss.defeated ? '👑' : '👾'}</div>
                                 <div>
-                                    <div class="boss-title">${boss.defeated ? 'BOSS DEFEATED!' : `BOSS LEVEL ${boss.level}`}</div>
+                                    <div class="boss-title">${boss.defeated ? 'BOSS DEFEATED!' : `BOSS LEVEL ${boss.level || 1}`}</div>
                                     <div style="color: var(--text-muted);">Defeat the boss for massive rewards!</div>
                                 </div>
                             </div>
@@ -2073,22 +2135,21 @@
                             
                             <div class="boss-stats">
                                 <div class="boss-stat">
-                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.defeated ? '0' : boss.health}</div>
+                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.defeated ? '0' : (boss.health || 1000)}</div>
                                     <div style="font-size: 0.8rem;">Health Remaining</div>
                                 </div>
                                 <div class="boss-stat">
-                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.rewards[boss.currentReward]}</div>
+                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${(boss.rewards || [500])[boss.currentReward || 0]}</div>
                                     <div style="font-size: 0.8rem;">Reward XP</div>
                                 </div>
                                 <div class="boss-stat">
-                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.level}</div>
+                                    <div style="font-size: 1.2rem; font-weight: 700; color: var(--boss-red);">${boss.level || 1}</div>
                                     <div style="font-size: 0.8rem;">Boss Level</div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- FEATURE 5: SPECIAL EVENTS -->
-                        ${events.active.length > 0 ? `
+                        ${(events.active || []).length > 0 ? `
                         <div class="events-section">
                             <div class="category-header">
                                 <div class="category-icon">🎉</div>
@@ -2096,17 +2157,17 @@
                                 <div class="category-badge">LIVE NOW</div>
                             </div>
                             <div class="events-grid">
-                                ${events.active.map(event => {
-                                    const timeLeft = Math.max(0, Math.floor((event.endTime - Date.now()) / 1000 / 60));
+                                ${(events.active || []).map(event => {
+                                    const timeLeft = Math.max(0, Math.floor(((event.endTime || 0) - Date.now()) / 1000 / 60));
                                     const hours = Math.floor(timeLeft / 60);
                                     const minutes = timeLeft % 60;
                                     return `
                                         <div class="event-card active">
                                             <div class="event-timer">${hours}h ${minutes}m left</div>
-                                            <div class="event-icon">${event.icon}</div>
-                                            <div class="event-name">${event.name}</div>
-                                            <div class="event-desc">${event.description}</div>
-                                            <div class="event-reward">${event.reward}</div>
+                                            <div class="event-icon">${event.icon || '🎉'}</div>
+                                            <div class="event-name">${event.name || 'Event'}</div>
+                                            <div class="event-desc">${event.description || ''}</div>
+                                            <div class="event-reward">${event.reward || ''}</div>
                                         </div>
                                     `;
                                 }).join('')}
@@ -2114,21 +2175,21 @@
                         </div>
                         ` : ''}
                         
-                        ${events.upcoming.length > 0 ? `
+                        ${(events.upcoming || []).length > 0 ? `
                         <div class="events-section">
                             <div class="category-header">
                                 <div class="category-icon">📅</div>
                                 <div class="category-title">UPCOMING EVENTS</div>
                             </div>
                             <div class="events-grid">
-                                ${events.upcoming.slice(0, 2).map(event => {
-                                    const timeToStart = Math.max(0, Math.floor((event.startTime - Date.now()) / 1000 / 60 / 60));
+                                ${(events.upcoming || []).slice(0, 2).map(event => {
+                                    const timeToStart = Math.max(0, Math.floor(((event.startTime || 0) - Date.now()) / 1000 / 60 / 60));
                                     return `
                                         <div class="event-card">
-                                            <div class="event-icon">${event.icon}</div>
-                                            <div class="event-name">${event.name}</div>
+                                            <div class="event-icon">${event.icon || '📅'}</div>
+                                            <div class="event-name">${event.name || 'Event'}</div>
                                             <div class="event-desc">Starts in ${timeToStart}h</div>
-                                            <div class="event-reward">${event.reward}</div>
+                                            <div class="event-reward">${event.reward || ''}</div>
                                         </div>
                                     `;
                                 }).join('')}
@@ -2136,34 +2197,38 @@
                         </div>
                         ` : ''}
                         
-                        <!-- Daily Quests -->
                         <div class="quest-category">
                             <div class="category-header">
                                 <div class="category-icon">📅</div>
                                 <div class="category-title">Daily Quests</div>
-                                <div class="category-badge">🔥 ${data.dailyStreak} Day Streak</div>
+                                <div class="category-badge">🔥 ${data.dailyStreak || 0} Day Streak</div>
                             </div>
-                            ${renderQuests(data.dailyQuests, 'daily')}
+                            ${renderQuests(data.dailyQuests || [], 'daily')}
                         </div>
                         
-                        <!-- Weekly Quests -->
                         <div class="quest-category">
                             <div class="category-header">
                                 <div class="category-icon">📆</div>
                                 <div class="category-title">Weekly Quests</div>
                                 <div class="category-badge">⚔️ Epic Rewards</div>
                             </div>
-                            ${renderQuests(data.weeklyQuests, 'weekly')}
+                            ${renderQuests(data.weeklyQuests || [], 'weekly')}
                         </div>
                         
-                        <!-- Legendary Quests -->
                         <div class="quest-category">
                             <div class="category-header">
                                 <div class="category-icon">🌟</div>
                                 <div class="category-title">Legendary Quests</div>
-                                <div class="category-badge">${data.legendaryQuests.filter(q => q.completed).length}/${data.legendaryQuests.length}</div>
+                                <div class="category-badge">
+                                    ${(data.legendaryQuests && Array.isArray(data.legendaryQuests) 
+                                        ? data.legendaryQuests.filter(q => q && q.completed).length 
+                                        : 0)}/
+                                    ${(data.legendaryQuests && Array.isArray(data.legendaryQuests) 
+                                        ? data.legendaryQuests.length 
+                                        : 0)}
+                                </div>
                             </div>
-                            ${renderQuests(data.legendaryQuests, 'legendary')}
+                            ${renderQuests(data.legendaryQuests || [], 'legendary')}
                         </div>
                     `;
                 } catch (error) {
@@ -2173,71 +2238,6 @@
                         content.innerHTML = `<div class="empty-state">Error loading quest data. Please refresh.</div>`;
                     }
                 }
-            }
-
-            function renderQuests(quests, category) {
-                if (!quests || quests.length === 0) {
-                    return '<div class="empty-state">No quests available</div>';
-                }
-                
-                return quests.map(quest => {
-                    const progressPercent = (quest.progress / quest.requirement) * 100;
-                    const canClaim = quest.completed && !quest.claimed;
-                    
-                    let statRewards = '';
-                    if (quest.stats) {
-                        statRewards = Object.entries(quest.stats).map(([stat, value]) => {
-                            const icons = { strength: '💪', intelligence: '🧠', wisdom: '📚', luck: '🍀', all: '📊' };
-                            return `<span class="reward-chip">${icons[stat] || '✨'} +${value}</span>`;
-                        }).join('');
-                    }
-                    
-                    const newQuestClass = quest.isNew ? 'new-quest' : '';
-                    const newQuestBadge = quest.isNew ? '<div class="new-quest-badge">NEW!</div>' : '';
-                    
-                    return `
-                        <div class="quest-card ${quest.rarity} ${newQuestClass}" data-quest-id="${quest.id}">
-                            ${newQuestBadge}
-                            <div class="quest-header">
-                                <div class="quest-icon">${quest.icon}</div>
-                                <div class="quest-info">
-                                    <div class="quest-name">${quest.name}</div>
-                                    <div class="quest-meta">
-                                        <span class="quest-rarity ${quest.rarity}">${quest.rarity}</span>
-                                        <span class="quest-xp">✨ ${quest.xp} XP</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="quest-description">${quest.description}</div>
-                            
-                            <div class="quest-rewards">
-                                ${statRewards}
-                            </div>
-                            
-                            <div class="quest-progress">
-                                <div class="progress-track">
-                                    <div class="progress-fill" style="width: ${progressPercent}%;"></div>
-                                </div>
-                                <div class="progress-text">
-                                    <span>Progress: ${quest.progress}/${quest.requirement}</span>
-                                    <span>${Math.round(progressPercent)}%</span>
-                                </div>
-                            </div>
-                            
-                            <div class="quest-actions">
-                                ${canClaim ? 
-                                    `<button class="quest-btn claim" onclick="window.claimQuest('${quest.id}', '${category}')">
-                                        ✨ CLAIM REWARDS
-                                    </button>` : 
-                                    quest.claimed ?
-                                    `<button class="quest-btn" disabled>✓ COMPLETED</button>` :
-                                    `<button class="quest-btn" disabled>IN PROGRESS</button>`
-                                }
-                            </div>
-                        </div>
-                    `;
-                }).join('');
             }
 
             function showNotification(message, type = 'info') {
@@ -2251,14 +2251,12 @@
                 }, 3000);
             }
 
-            // Pet interaction
             window.petInteract = function() {
                 const pet = loadPetData();
-                const randomMessage = pet.messages[Math.floor(Math.random() * pet.messages.length)];
-                showNotification(`🐾 ${pet.name}: ${randomMessage}`, 'info');
+                const randomMessage = (pet.messages || [])[Math.floor(Math.random() * (pet.messages || []).length)] || "Hello!";
+                showNotification(`🐾 ${pet.name || 'Buddy'}: ${randomMessage}`, 'info');
             };
 
-            // Make functions globally available
             window.claimQuest = claimQuest;
             window.rollDice = rollDice;
             window.gmClick = gmClick;
@@ -2266,7 +2264,6 @@
                 window.location.href = 'studentmode.html';
             };
 
-            // Force initial render immediately
             setTimeout(() => {
                 try {
                     render();
@@ -2275,7 +2272,6 @@
                 }
             }, 100);
 
-            // Auto-refresh every 30 seconds
             setInterval(() => {
                 try {
                     render();
@@ -2284,7 +2280,6 @@
                 }
             }, 30000);
             
-            // Show initial GM message after 2 seconds
             setTimeout(() => {
                 try {
                     gmClick();
@@ -2293,7 +2288,6 @@
                 }
             }, 2000);
             
-            // Check events every minute
             setInterval(() => {
                 try {
                     checkEvents();
@@ -2303,7 +2297,6 @@
                 }
             }, 60000);
 
-            // Add a manual retry for mobile
             document.addEventListener('touchstart', function() {
                 if (document.getElementById('questContent')?.innerHTML.includes('Loading')) {
                     setTimeout(render, 500);
