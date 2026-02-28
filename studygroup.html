@@ -16,1470 +16,3688 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         :root {
             --bg: #eef1ff;
             --card: #ffffff;
             --accent: #6c63ff;
-            --accent-light: #e0e7ff;
             --text: #222;
-            --text-muted: #666;
-            --border: #ddd;
-            --success: #4caf50;
-            --danger: #e74c3c;
-            --warning: #f39c12;
-            --sidebar-width: 320px;
+            --sidebar-width: 350px;
         }
-
+        
+        body.purple {
+            --bg: #140a26;
+            --card: #24144a;
+            --accent: #b388ff;
+            --text: #f3eefe;
+        }
+        
+        body.ocean {
+            --bg: #0a1929;
+            --card: #1e3a5f;
+            --accent: #00b4d8;
+            --text: #caf0f8;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             background: var(--bg);
             color: var(--text);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            transition: 0.4s;
             min-height: 100vh;
-            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
         }
-
-        /* Header */
+        
         .header {
             background: var(--card);
-            padding: 12px 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 100;
+            width: 100%;
         }
-
+        
         .header h2 {
-            font-size: 1.3rem;
+            margin: 0;
+            font-size: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
-
-        .header button {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            cursor: pointer;
+        
+        .header-controls {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
         }
-
-        /* Main Container */
+        
         .main-container {
+            flex: 1;
             display: flex;
-            height: calc(100vh - 64px);
-            padding: 16px;
-            gap: 16px;
+            flex-direction: column;
+            width: 100%;
             max-width: 1400px;
             margin: 0 auto;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--card);
-            border-radius: 16px;
             padding: 20px;
+        }
+        
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            min-height: calc(100vh - 100px);
+        }
+        
+        .sidebar {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            width: var(--sidebar-width);
+            min-width: var(--sidebar-width);
+            transition: transform 0.3s ease;
+            z-index: 10;
+            max-height: calc(100vh - 140px);
+        }
+        
+        .chat-area {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            overflow-y: auto;
-        }
-
-        .sidebar h3 {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 8px;
-            margin: 8px 0;
-        }
-
-        .button-group button {
             flex: 1;
-            padding: 10px;
+            min-width: 0;
+            max-height: calc(100vh - 140px);
+        }
+        
+        button {
+            padding: 12px 20px;
             border: none;
-            border-radius: 10px;
-            font-size: 0.9rem;
+            border-radius: 12px;
+            background: var(--accent);
+            color: white;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.2s;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
         }
-
-        .btn-create {
-            background: #4caf50;
-            color: white;
-        }
-
-        .btn-join {
-            background: #2196f3;
-            color: white;
-        }
-
-        .button-group button:hover {
+        
+        button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-
-        /* Groups List */
-        .groups-list {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            margin: 10px 0;
         }
-
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
         .group-item {
             background: var(--bg);
             padding: 15px;
             border-radius: 12px;
+            margin-bottom: 10px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             border-left: 4px solid transparent;
+            width: 100%;
         }
-
+        
         .group-item:hover {
-            transform: translateX(4px);
+            transform: translateX(5px);
             border-left-color: var(--accent);
-            background: var(--accent-light);
         }
-
+        
         .group-item.active {
             background: var(--accent);
             color: white;
             border-left-color: white;
         }
-
-        .group-item.active .group-meta {
-            color: rgba(255,255,255,0.8);
-        }
-
-        .group-name {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .group-meta {
-            font-size: 11px;
-            opacity: 0.7;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* Chat Area */
-        .chat-area {
-            flex: 1;
-            background: var(--card);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            height: 100%;
-            justify-content: center;
-        }
-
-        .empty-state-icon {
-            font-size: 64px;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            font-size: 1.3rem;
-            color: var(--text);
-        }
-
-        /* Group Chat */
-        .group-chat {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            gap: 16px;
-        }
-
-        .group-header {
-            border-bottom: 2px solid var(--bg);
-            padding-bottom: 16px;
-        }
-
-        .group-header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .group-info h2 {
-            font-size: 1.4rem;
-            margin-bottom: 4px;
-        }
-
-        .group-code {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-family: monospace;
-        }
-
-        .group-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .group-actions button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-info {
-            background: #666;
-            color: white;
-        }
-
-        .btn-leave {
-            background: var(--danger);
-            color: white;
-        }
-
-        /* Messages */
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
+        
         .message {
             background: var(--bg);
-            padding: 12px 16px;
-            border-radius: 16px;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
             max-width: 80%;
-            animation: fadeIn 0.3s;
-            word-break: break-word;
+            animation: slideIn 0.3s;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
-
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .my-message {
             background: var(--accent);
             color: white;
             margin-left: auto;
+            margin-right: 0;
         }
-
+        
         .message-header {
             display: flex;
             justify-content: space-between;
-            font-size: 11px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            font-size: 12px;
             opacity: 0.8;
         }
-
+        
         .message-content {
-            font-size: 14px;
+            font-size: 16px;
             line-height: 1.5;
+            word-break: break-word;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Resources Section */
-        .resources-section {
-            background: var(--bg);
-            border-radius: 12px;
-            padding: 16px;
-            max-height: 150px;
+        
+        .chat-messages {
+            flex: 1;
             overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
+            display: flex;
+            flex-direction: column;
         }
-
+        
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            width: 100%;
+        }
+        
+        .chat-input-area textarea {
+            flex: 1;
+            resize: none;
+            margin: 0;
+            min-height: 60px;
+            max-height: 120px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+        
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .resource-item {
+            background: var(--bg);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .resource-item a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: bold;
+            word-break: break-all;
+        }
+        
+        .member-list {
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        .member-item {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 100%;
+            max-width: 200px;
+            margin: 10px auto;
+        }
+        
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 5;
+        }
+        
+        .mobile-overlay.active {
+            display: block;
+        }
+        
+        .group-header {
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .group-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 100%;
+        }
+        
+        .group-header-info h2 {
+            margin: 0;
+            margin-bottom: 5px;
+            font-size: 1.5rem;
+            word-break: break-word;
+        }
+        
+        .group-header-info p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+            word-break: break-word;
+        }
+        
+        .group-header-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
         .resources-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
-        }
-
-        .resources-header button {
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .resource-item {
-            background: var(--card);
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin-bottom: 6px;
-            font-size: 0.9rem;
-        }
-
-        .resource-item a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 500;
-            word-break: break-all;
-        }
-
-        .resource-meta {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        /* Input Area */
-        .input-area {
-            display: flex;
-            gap: 8px;
-            align-items: flex-end;
-            margin-top: 16px;
-        }
-
-        .input-wrapper {
-            flex: 1;
-            position: relative;
-        }
-
-        #messageInput {
             width: 100%;
-            padding: 12px 45px 12px 12px;
-            border: 2px solid var(--border);
-            border-radius: 20px;
-            font-size: 14px;
-            resize: none;
-            font-family: inherit;
-            background: var(--bg);
-            color: var(--text);
         }
-
-        #messageInput:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        .emoji-btn {
-            position: absolute;
-            right: 8px;
-            bottom: 10px;
-            background: none;
-            border: none;
-            font-size: 1.3rem;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .emoji-btn:hover {
-            background: var(--accent-light);
-            transform: scale(1.1);
-        }
-
-        .send-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 12px 24px;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-
-        .send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(108, 99, 255, 0.3);
-        }
-
-        /* Emoji Grid */
-        .emoji-grid {
-            display: none;
-            position: absolute;
-            bottom: 80px;
-            left: 0;
-            right: 0;
-            background: var(--card);
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            padding: 12px;
-            z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .emoji-grid.show {
-            display: block;
-            animation: slideUp 0.3s ease;
-        }
-
-        .emoji-grid-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .emoji-grid-header h4 {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .close-emoji {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: var(--text-muted);
-            padding: 4px;
-        }
-
-        .emoji-items {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 6px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .emoji-item {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 6px 2px;
-            font-size: 1.3rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            aspect-ratio: 1;
-        }
-
-        .emoji-item:hover {
-            background: var(--accent-light);
-            border-color: var(--accent);
-            transform: scale(1.1);
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Typing Indicator */
+        
         .typing-indicator {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 16px;
-            margin: 8px 16px;
+            padding: 8px 15px;
+            margin: 10px 20px;
             background: var(--bg);
             border-radius: 20px;
             max-width: 200px;
+            animation: fadeIn 0.3s ease;
             border: 1px solid var(--border);
-            animation: fadeIn 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-
+        
         .typing-dots {
             display: flex;
             gap: 4px;
+            align-items: center;
         }
-
+        
         .typing-dots span {
             width: 6px;
             height: 6px;
             background: var(--accent);
             border-radius: 50%;
+            opacity: 0.7;
             animation: typingBounce 1.4s infinite ease-in-out;
         }
-
+        
         .typing-dots span:nth-child(1) { animation-delay: 0s; }
         .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
         .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-
+        
         @keyframes typingBounce {
             0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-6px); }
+            30% { transform: translateY(-6px); opacity: 1; }
         }
-
+        
         .typing-text {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             font-style: italic;
+            line-height: 1;
         }
-
-        /* Notification Container */
-        #notificationContainer {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            z-index: 9999;
-            max-width: 320px;
-            width: 100%;
-            pointer-events: none;
-        }
-
-        .notification {
-            background: var(--card);
-            color: var(--text);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 10px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            animation: slideInRight 0.3s ease-out;
-            border-left: 4px solid var(--accent);
-            pointer-events: auto;
+        
+        .emoji-button {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 1.2rem;
             cursor: pointer;
-            border: 1px solid var(--border);
-        }
-
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-
-        .notification-icon {
-            font-size: 28px;
-            min-width: 40px;
-            text-align: center;
-        }
-
-        .notification-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .notification-title {
-            font-weight: bold;
-            font-size: 15px;
-            margin-bottom: 4px;
+            transition: all 0.3s;
             display: flex;
-            justify-content: space-between;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
         }
-
-        .notification-sender {
-            font-size: 13px;
-            color: var(--accent);
-            margin-bottom: 4px;
+        
+        .emoji-button:hover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+            transform: translateY(-2px);
         }
-
-        .notification-text {
-            font-size: 12px;
-            opacity: 0.8;
-            word-break: break-word;
+        
+        .emoji-picker {
+            position: absolute;
+            bottom: 100px;
+            right: 20px;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 10px;
+            display: none;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+            max-width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
-
-        .notification-dot {
-            font-size: 10px;
-            color: var(--accent);
-            animation: pulse 1.5s infinite;
+        
+        .emoji-picker.show {
+            display: grid;
         }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
+        
+        .emoji-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
         }
-
-        /* Mobile Responsive */
+        
+        .emoji-item:hover {
+            background: var(--accent-light);
+            border-color: var(--accent);
+            transform: scale(1.1);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 1100px) {
+            .main-container {
+                padding: 15px;
+            }
+            
+            .sidebar {
+                width: 300px;
+                min-width: 300px;
+            }
+        }
+        
         @media (max-width: 900px) {
             .main-container {
-                flex-direction: column;
-                height: auto;
-                min-height: calc(100vh - 64px);
-                padding: 12px;
+                padding: 10px;
             }
-
+            
+            .content-wrapper {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
             .sidebar {
                 width: 100%;
-                max-height: 300px;
+                min-width: auto;
+                max-height: 400px;
+                position: static;
+                transform: none;
+                order: 2;
             }
-
+            
             .chat-area {
                 min-height: 500px;
+                max-height: none;
+                order: 1;
             }
-
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
             .group-header-content {
                 flex-direction: column;
+                align-items: flex-start;
             }
-
-            .group-actions {
+            
+            .group-header-buttons {
                 width: 100%;
+                justify-content: space-between;
             }
-
-            .group-actions button {
+            
+            .group-header-buttons button {
                 flex: 1;
             }
-
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .header h2 {
+                font-size: 1.3rem;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            .chat-input-area {
+                flex-direction: column;
+            }
+            
+            .chat-input-area textarea {
+                min-height: 80px;
+            }
+            
+            .chat-input-area button {
+                width: 100%;
+                padding: 15px;
+            }
+            
             .message {
                 max-width: 90%;
             }
-
-            .emoji-items {
-                grid-template-columns: repeat(6, 1fr);
-            }
-
-            #notificationContainer {
-                top: 70px;
-                right: 10px;
-                left: 10px;
-                max-width: none;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .header h2 {
-                font-size: 1.1rem;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .input-area {
+            
+            .group-header-buttons {
                 flex-direction: column;
                 gap: 8px;
             }
-
-            .input-wrapper {
+            
+            .group-header-buttons button {
                 width: 100%;
             }
-
-            .send-btn {
-                width: 100%;
-                justify-content: center;
+        }
+        
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 8px;
             }
-
-            .emoji-items {
-                grid-template-columns: repeat(5, 1fr);
+            
+            .sidebar, .chat-area {
+                padding: 15px;
+                border-radius: 15px;
             }
-
+            
+            .header-controls {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 8px;
+            }
+            
+            .header h2 {
+                font-size: 1.2rem;
+            }
+            
+            .empty-state-icon {
+                font-size: 48px;
+            }
+            
             .message {
+                padding: 12px;
                 max-width: 95%;
             }
-        }
-
-        @media (max-width: 400px) {
-            .emoji-items {
-                grid-template-columns: repeat(4, 1fr);
+            
+            .group-item {
+                padding: 12px;
             }
         }
-
-        /* Scrollbar */
+        
+        @media (max-width: 360px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .header-controls {
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            select, button {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+            
+            .mobile-menu-toggle {
+                max-width: 100%;
+            }
+        }
+        
+        /* Scrollbar styling */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
-
+        
         ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05);
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
         }
-
+        
         ::-webkit-scrollbar-thumb {
             background: var(--accent);
-            border-radius: 3px;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(108, 99, 255, 0.8);
+        }
+        
+        .sidebar-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        .sidebar-btn-group button {
+            width: 100%;
+            text-align: center;
+        }
+        
+        #themeSelector {
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .chat-messages,
+        .sidebar,
+        .chat-input-area,
+        .group-header,
+        .resources-header {
+            overflow-x: hidden;
+        }
+        
+        .main-container,
+        .content-wrapper,
+        .sidebar,
+        .chat-area {
+            max-width: 100vw;
         }
     </style>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
+
 <body>
-
-<div class="header">
-    <h2><i class="fas fa-users"></i> Study Groups</h2>
-    <button onclick="window.location.href='studentmode.html'">
-        <i class="fas fa-arrow-left"></i> Back
-    </button>
-</div>
-
-<div class="main-container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h3><i class="fas fa-layer-group"></i> My Study Groups</h3>
-        
-        <div class="button-group">
-            <button class="btn-create" onclick="createGroup()">
-                <i class="fas fa-plus"></i> Create
-            </button>
-            <button class="btn-join" onclick="joinGroup()">
-                <i class="fas fa-link"></i> Join
+    <div class="header">
+        <h2><i class="fas fa-users"></i> Study Groups</h2>
+        <div class="header-controls">
+            <select onchange="changeTheme(this.value)" id="themeSelector">
+                <option value="">🎨 Light</option>
+                <option value="purple">💜 Purple</option>
+                <option value="ocean">🌊 Ocean</option>
+            </select>
+            <button onclick="location.href='studentmode.html'">
+                <i class="fas fa-arrow-left"></i> Back
             </button>
         </div>
-        
-        <div class="groups-list" id="groupsList"></div>
     </div>
-    
-    <!-- Chat Area -->
-    <div class="chat-area">
-        <div id="noGroupSelected" class="empty-state">
-            <div class="empty-state-icon">💬</div>
-            <h3>Select a group to start chatting</h3>
-            <p>Create a new group or join an existing one</p>
-        </div>
+
+    <div class="main-container">
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+            <i class="fas fa-bars"></i> Toggle Groups List
+        </button>
         
-        <div id="groupChat" class="group-chat" style="display: none;">
-            <!-- Group Header -->
-            <div class="group-header">
-                <div class="group-header-content">
-                    <div class="group-info">
-                        <h2 id="currentGroupName"></h2>
-                        <div class="group-code" id="currentGroupCode"></div>
-                    </div>
-                    <div class="group-actions">
-                        <button class="btn-info" onclick="showGroupInfo()">
-                            <i class="fas fa-info-circle"></i> Info
-                        </button>
-                        <button class="btn-leave" onclick="leaveGroup()">
-                            <i class="fas fa-sign-out-alt"></i> Leave
-                        </button>
-                    </div>
+        <div class="mobile-overlay" id="mobileOverlay"></div>
+        
+        <div class="content-wrapper">
+            <!-- SIDEBAR: Groups List -->
+            <div class="sidebar" id="sidebar">
+                <h3><i class="fas fa-layer-group"></i> My Study Groups</h3>
+                
+                <div class="sidebar-btn-group">
+                    <button onclick="showCreateGroup()" style="background: #4caf50;">
+                        <i class="fas fa-plus"></i> Create New Group
+                    </button>
+                    <button onclick="showJoinGroup()" style="background: #2196f3;">
+                        <i class="fas fa-link"></i> Join Existing Group
+                    </button>
                 </div>
+                
+                <div id="groupsList"></div>
             </div>
             
-            <!-- Messages -->
-            <div class="messages-container" id="messagesContainer"></div>
-            
-            <!-- Typing Indicator -->
-            <div id="typingIndicator" class="typing-indicator" style="display: none;">
-                <div class="typing-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+            <!-- MAIN: Chat Area -->
+            <div class="chat-area">
+                <!-- No Group Selected -->
+                <div id="noGroupSelected" class="empty-state">
+                    <div class="empty-state-icon">💬</div>
+                    <h3>Select a group to start chatting!</h3>
+                    <p>Create a new group or join an existing one</p>
                 </div>
-                <span class="typing-text" id="typingText"></span>
-            </div>
-            
-            <!-- Resources Section -->
-            <div class="resources-section">
-                <div class="resources-header">
-                    <strong><i class="fas fa-book"></i> Resources</strong>
-                    <button onclick="addResource()">+ Add</button>
-                </div>
-                <div id="resourcesList"></div>
-            </div>
-            
-            <!-- Message Input -->
-            <div class="input-area">
-                <div class="input-wrapper">
-                    <textarea id="messageInput" placeholder="Type your message..." rows="1"></textarea>
-                    <button class="emoji-btn" onclick="toggleEmojiGrid()">😊</button>
-                    
-                    <!-- Emoji Grid -->
-                    <div id="emojiGrid" class="emoji-grid">
-                        <div class="emoji-grid-header">
-                            <h4>Pick an emoji</h4>
-                            <button class="close-emoji" onclick="toggleEmojiGrid()">✕</button>
+                
+                <!-- Group Chat -->
+                <div id="groupChat" style="display: none; flex-direction: column; height: 100%; width: 100%;">
+                    <!-- Group Header -->
+                    <div class="group-header">
+                        <div class="group-header-content">
+                            <div class="group-header-info">
+                                <h2 id="currentGroupName"></h2>
+                                <p id="currentGroupCode"></p>
+                            </div>
+                            <div class="group-header-buttons">
+                                <button onclick="showGroupInfo()" style="background: #666;">
+                                    <i class="fas fa-info-circle"></i> Info
+                                </button>
+                                <button onclick="leaveGroup()" style="background: #e74c3c;">
+                                    <i class="fas fa-sign-out-alt"></i> Leave
+                                </button>
+                            </div>
                         </div>
-                        <div class="emoji-items" id="emojiItems"></div>
                     </div>
+                    
+                    <!-- Messages -->
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="empty-state">
+                            <p>No messages yet. Start the conversation! 💬</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Typing Indicator -->
+                    <div id="typingIndicator" class="typing-indicator" style="display: none;">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <span class="typing-text" id="typingText"></span>
+                    </div>
+                    
+                    <!-- Resources Section -->
+                    <div style="background: var(--bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; max-height: 150px; overflow-y: auto; width: 100%;">
+                        <div class="resources-header">
+                            <strong><i class="fas fa-book"></i> Shared Resources</strong>
+                            <button onclick="showAddResource()" style="padding: 6px 12px; font-size: 14px;">
+                                <i class="fas fa-plus"></i> Add
+                            </button>
+                        </div>
+                        <div id="resourcesList"></div>
+                    </div>
+                    
+                    <!-- Message Input -->
+                    <div class="chat-input-area">
+                        <div style="position: relative; flex: 1;">
+                            <textarea id="messageInput" placeholder="Type your message..." rows="2" style="padding-right: 50px;"></textarea>
+                            <button onclick="toggleEmojiPicker()" class="emoji-button" style="position: absolute; right: 5px; bottom: 12px; padding: 5px 10px; min-width: auto; background: transparent; border: none; font-size: 1.5rem;">😊</button>
+                        </div>
+                        <button onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                    
+                    <!-- Emoji Picker -->
+                    <div id="emojiPicker" class="emoji-picker"></div>
                 </div>
-                <button class="send-btn" onclick="sendMessage()">
-                    <i class="fas fa-paper-plane"></i> Send
-                </button>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Notification Container -->
-<div id="notificationContainer"></div>
-
-<script>
-/* ============================================
-   COMPLETE STUDY GROUP SYSTEM
-   ============================================ */
-
-// ===== FIREBASE SETUP =====
-const firebaseConfig = {
-    apiKey: "AIzaSyC_aJwr5EJELuz0_H_Qzs4nqmihBcMIf3U",
-    authDomain: "study-groups-app-19c8a.firebaseapp.com",
-    databaseURL: "https://study-groups-app-19c8a-default-rtdb.firebaseio.com",
-    projectId: "study-groups-app-19c8a",
-    storageBucket: "study-groups-app-19c8a.appspot.com",
-    messagingSenderId: "919201377577",
-    appId: "1:919201377577:web:5fcf62440f1cc2a4b71b38"
-};
-
-// Initialize Firebase
-let app;
-try {
-    app = firebase.app();
-} catch {
-    app = firebase.initializeApp(firebaseConfig);
-}
-const database = firebase.database();
-
-// ===== USER IDENTITY =====
-function getMyName() {
-    let name = localStorage.getItem('myName') || 
-               localStorage.getItem('studentName') || 
-               localStorage.getItem('simple_username');
-    
-    if (!name) {
-        name = prompt("👋 What's your name?", "Student_" + Math.floor(Math.random() * 1000));
-        if (!name) name = "Student_" + Math.floor(Math.random() * 1000);
-        localStorage.setItem('myName', name);
-        localStorage.setItem('studentName', name);
-        localStorage.setItem('simple_username', name);
-    }
-    return name;
-}
-
-function getDeviceId() {
-    let id = localStorage.getItem('myDeviceId');
-    if (!id) {
-        id = 'device_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
-        localStorage.setItem('myDeviceId', id);
-    }
-    return id;
-}
-
-const MY_NAME = getMyName();
-const DEVICE_ID = getDeviceId();
-const MY_KEY = MY_NAME + '_' + DEVICE_ID;
-
-console.log("✅ You are:", MY_NAME);
-console.log("✅ Device ID:", DEVICE_ID);
-
-// ===== GLOBAL VARIABLES =====
-let myGroups = JSON.parse(localStorage.getItem('myGroups') || "[]");
-let currentGroup = null;
-let messageListener = null;
-let resourceListener = null;
-let typingTimeout = null;
-let notifiedMessages = new Set();
-
-// ===== EMOJI LIST =====
-const emojis = [
-    '😊', '👍', '🔥', '🎉', '❤️', '😂', '🤔', '✅',
-    '😃', '😍', '🥳', '😎', '😢', '😭', '😴', '🤯',
-    '👋', '🙏', '💪', '✨', '⭐', '🌟', '💡', '📚',
-    '📝', '✏️', '📖', '🎓', '⏰', '📅', '🎯', '🏆',
-    '🚀', '💻', '📱', '💯', '🔔', '🔍', '💬', '🗣️',
-    '👥', '🤝', '✅', '❌', '⚠️', '❗', '❓', '💭',
-    '🌞', '🌙', '⭐', '☀️', '🌈', '☁️', '⚡', '🔥',
-    '💧', '🌊', '🌱', '🌿', '🍀', '🌸', '🌺', '🌻',
-    '🍎', '📘', '📗', '📕', '📔', '📓', '📒', '📏',
-    '🔬', '🔭', '🧪', '🧫', '🔮', '🎨', '🎮', '🎲',
-    '🧩', '🎭', '🎪', '🎤', '🎧', '🎵', '🎶', '🎹',
-    '🥇', '🥈', '🥉', '🏅', '🎖️', '🏆', '🏀', '⚽'
-];
-
-// ===== INIT EMOJI GRID =====
-function initEmojiGrid() {
-    const container = document.getElementById('emojiItems');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    emojis.forEach(emoji => {
-        const btn = document.createElement('button');
-        btn.className = 'emoji-item';
-        btn.textContent = emoji;
-        btn.onclick = () => {
-            insertEmoji(emoji);
-            toggleEmojiGrid();
+  
+    <script>
+        // 🔥 FIREBASE INITIALIZATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_aJwr5EJELuz0_H_Qzs4nqmihBcMIf3U",
+            authDomain: "study-groups-app-19c8a.firebaseapp.com",
+            databaseURL: "https://study-groups-app-19c8a-default-rtdb.firebaseio.com",
+            projectId: "study-groups-app-19c8a",
+            storageBucket: "study-groups-app-19c8a.appspot.com",
+            messagingSenderId: "919201377577",
+            appId: "1:919201377577:web:5fcf62440f1cc2a4b71b38"
         };
-        container.appendChild(btn);
-    });
-}
 
-// ===== TOGGLE EMOJI GRID =====
-function toggleEmojiGrid() {
-    const grid = document.getElementById('emojiGrid');
-    grid.classList.toggle('show');
-}
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        window.database = database; // Make globally available for notifications
 
-// ===== INSERT EMOJI =====
-function insertEmoji(emoji) {
-    const input = document.getElementById('messageInput');
-    const start = input.selectionStart;
-    const end = input.selectionEnd;
-    const text = input.value;
-    input.value = text.substring(0, start) + emoji + text.substring(end);
-    input.focus();
-    input.selectionStart = input.selectionEnd = start + emoji.length;
-    
-    // Trigger typing indicator
-    sendTypingStatus();
-}
-
-// ===== NOTIFICATION SYSTEM =====
-function showNotification(groupName, sender, message, groupCode) {
-    const container = document.getElementById('notificationContainer');
-    
-    const notif = document.createElement('div');
-    notif.className = 'notification';
-    
-    // Icon based on group name
-    let icon = '💬';
-    const groupLower = (groupName || '').toLowerCase();
-    if (groupLower.includes('math')) icon = '📐';
-    else if (groupLower.includes('science')) icon = '🔬';
-    else if (groupLower.includes('history')) icon = '📜';
-    else if (groupLower.includes('english')) icon = '📚';
-    else if (groupLower.includes('coding')) icon = '💻';
-    
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const shortMsg = message.length > 40 ? message.substring(0, 40) + '...' : message;
-    
-    notif.innerHTML = `
-        <div class="notification-icon">${icon}</div>
-        <div class="notification-content">
-            <div class="notification-title">
-                <span>${groupName}</span>
-                <span>${time}</span>
-            </div>
-            <div class="notification-sender">${sender}</div>
-            <div class="notification-text">${shortMsg}</div>
-        </div>
-        <div class="notification-dot">●</div>
-    `;
-    
-    notif.onclick = () => {
-        selectGroup(groupCode);
-        notif.remove();
-    };
-    
-    container.appendChild(notif);
-    
-    // Play sound
-    try {
-        const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3');
-        audio.volume = 0.3;
-        audio.play();
-    } catch (e) {}
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        notif.style.animation = 'slideOutRight 0.3s ease-out forwards';
-        setTimeout(() => notif.remove(), 300);
-    }, 5000);
-}
-
-// ===== TYPING INDICATOR =====
-function sendTypingStatus() {
-    if (!currentGroup) return;
-    
-    if (typingTimeout) clearTimeout(typingTimeout);
-    
-    database.ref('typing/' + currentGroup + '/' + MY_KEY).set({
-        name: MY_NAME,
-        timestamp: Date.now()
-    });
-    
-    typingTimeout = setTimeout(() => {
-        database.ref('typing/' + currentGroup + '/' + MY_KEY).remove();
-    }, 3000);
-}
-
-function setupTypingListener(code) {
-    database.ref('typing/' + code).on('value', (snapshot) => {
-        const typing = snapshot.val() || {};
-        const now = Date.now();
-        const typingUsers = [];
+        // Get user's name
+        let myName = localStorage.getItem('name') || localStorage.getItem('studentName') || "Student";
         
-        Object.entries(typing).forEach(([key, data]) => {
-            if (key !== MY_KEY && (now - data.timestamp) < 3000) {
-                typingUsers.push(data.name);
+        // Generate unique device ID
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('study_device_id');
+            if (!deviceId) {
+                deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
+                localStorage.setItem('study_device_id', deviceId);
             }
-        });
-        
-        const indicator = document.getElementById('typingIndicator');
-        const text = document.getElementById('typingText');
-        
-        if (typingUsers.length === 0) {
-            indicator.style.display = 'none';
-        } else if (typingUsers.length === 1) {
-            indicator.style.display = 'flex';
-            text.textContent = `${typingUsers[0]} is typing...`;
-        } else if (typingUsers.length === 2) {
-            indicator.style.display = 'flex';
-            text.textContent = `${typingUsers[0]} and ${typingUsers[1]} are typing...`;
-        } else {
-            indicator.style.display = 'flex';
-            text.textContent = `${typingUsers.length} people are typing...`;
+            return deviceId;
         }
-    });
-}
+        
+        const DEVICE_ID = getDeviceId();
+        const USER_KEY = myName + '_' + DEVICE_ID;
 
-// ===== CREATE GROUP =====
-window.createGroup = function() {
-    const name = prompt("Enter group name:");
-    if (!name) return;
-    
-    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-    
-    const groupData = {
-        name: name,
-        creator: MY_NAME,
-        creatorKey: MY_KEY,
-        created: new Date().toISOString(),
-        members: {}
-    };
-    
-    groupData.members[MY_KEY] = {
-        name: MY_NAME,
-        deviceId: DEVICE_ID,
-        joinedAt: Date.now(),
-        isCreator: true
-    };
-    
-    database.ref('groups/' + code).set(groupData)
-        .then(() => {
-            if (!myGroups.includes(code)) {
-                myGroups.push(code);
-                localStorage.setItem('myGroups', JSON.stringify(myGroups));
+        // My groups: array of group codes I'm in
+        let myGroups = JSON.parse(localStorage.getItem('myStudyGroups') || "[]");
+
+        // Current active group
+        let currentGroup = null;
+        let messageListeners = {};
+        let resourceListeners = {};
+        let typingTimeout = null;
+
+        // Theme system
+        function changeTheme(theme) {
+            document.body.className = '';
+            if (theme) document.body.classList.add(theme);
+            localStorage.setItem('selectedTheme', theme);
+        }
+
+        const savedTheme = localStorage.getItem('selectedTheme');
+        if (savedTheme) {
+            document.body.classList.add(savedTheme);
+            document.getElementById('themeSelector').value = savedTheme;
+        }
+
+        /* ============================================
+           MOBILE MENU TOGGLE
+        ============================================ */
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            if (sidebar.style.transform === 'translateX(0px)' || sidebar.style.transform === '') {
+                sidebar.style.transform = 'translateX(-100%)';
+                mobileOverlay.classList.remove('active');
+            } else {
+                sidebar.style.transform = 'translateX(0)';
+                mobileOverlay.classList.add('active');
             }
-            renderGroups();
-            selectGroup(code);
-            alert(`✅ Group created!\nCode: ${code}`);
-        })
-        .catch(error => {
-            console.error(error);
-            alert("❌ Failed to create group");
         });
-};
 
-// ===== JOIN GROUP =====
-window.joinGroup = function() {
-    const code = prompt("Enter group code:").toUpperCase().trim();
-    if (!code) return;
-    
-    if (myGroups.includes(code)) {
-        alert("You're already in this group!");
-        return;
-    }
-    
-    database.ref('groups/' + code).once('value')
-        .then(snapshot => {
-            if (!snapshot.exists()) {
-                alert("❌ Invalid group code!");
-                return;
+        mobileOverlay.addEventListener('click', () => {
+            sidebar.style.transform = 'translateX(-100%)';
+            mobileOverlay.classList.remove('active');
+        });
+
+        function closeMobileSidebar() {
+            if (window.innerWidth <= 900) {
+                sidebar.style.transform = 'translateX(-100%)';
+                mobileOverlay.classList.remove('active');
             }
+        }
+
+        /* ============================================
+           EMOJI PICKER
+        ============================================ */
+        const emojis = ['😊', '👍', '🔥', '🎉', '❤️', '😂', '🤔', '✅', '😃', '😍', '🥳', '😎', '👋', '🙏', '💪', '✨', '📚', '📝', '✏️', '📖', '🎓', '⏰', '📅', '🎯', '🏆', '🚀', '💻', '📱', '💬', '🗣️', '👥', '🤝', '✅', '❌', '⚠️', '❗', '❓', '💭', '🌞', '🌙', '⭐', '☀️', '🌈', '☁️', '⚡', '🔥', '💧', '🌊', '🌱', '🌿', '🍀', '🌸', '🌺', '🌻', '🍎', '📘', '📗', '📕', '📔', '📓', '📒', '📏', '🔬', '🔭', '🧪', '🧫', '🔮', '🎨', '🎮', '🎲', '🧩', '🎭', '🎪', '🎤', '🎧', '🎵', '🎶', '🎹', '🥇', '🥈', '🥉', '🏅', '🎖️', '🏆', '🏀', '⚽'];
+
+        function initEmojiPicker() {
+            const picker = document.getElementById('emojiPicker');
+            picker.innerHTML = '';
+            emojis.forEach(emoji => {
+                const btn = document.createElement('div');
+                btn.className = 'emoji-item';
+                btn.textContent = emoji;
+                btn.onclick = () => {
+                    insertEmoji(emoji);
+                    toggleEmojiPicker();
+                };
+                picker.appendChild(btn);
+            });
+        }
+
+        function toggleEmojiPicker() {
+            const picker = document.getElementById('emojiPicker');
+            picker.classList.toggle('show');
+        }
+
+        function insertEmoji(emoji) {
+            const input = document.getElementById('messageInput');
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            input.value = input.value.substring(0, start) + emoji + input.value.substring(end);
+            input.focus();
+            input.selectionStart = input.selectionEnd = start + emoji.length;
+            sendTypingStatus();
+        }
+
+        /* ============================================
+           TYPING INDICATOR
+        ============================================ */
+        function sendTypingStatus() {
+            if (!currentGroup) return;
             
-            const group = snapshot.val();
+            if (typingTimeout) clearTimeout(typingTimeout);
             
-            if (group.members && group.members[MY_KEY]) {
+            database.ref('typing/' + currentGroup + '/' + USER_KEY).set({
+                name: myName,
+                timestamp: Date.now()
+            });
+            
+            typingTimeout = setTimeout(() => {
+                database.ref('typing/' + currentGroup + '/' + USER_KEY).remove();
+            }, 3000);
+        }
+
+        function setupTypingListener(groupCode) {
+            database.ref('typing/' + groupCode).on('value', (snapshot) => {
+                const typing = snapshot.val() || {};
+                const now = Date.now();
+                const typingUsers = [];
+                
+                Object.entries(typing).forEach(([key, data]) => {
+                    if (key !== USER_KEY && (now - data.timestamp) < 3000) {
+                        typingUsers.push(data.name);
+                    }
+                });
+                
+                const indicator = document.getElementById('typingIndicator');
+                const text = document.getElementById('typingText');
+                
+                if (typingUsers.length === 0) {
+                    indicator.style.display = 'none';
+                } else if (typingUsers.length === 1) {
+                    indicator.style.display = 'flex';
+                    text.textContent = `${typingUsers[0]} is typing...`;
+                } else if (typingUsers.length === 2) {
+                    indicator.style.display = 'flex';
+                    text.textContent = `${typingUsers[0]} and ${typingUsers[1]} are typing...`;
+                } else {
+                    indicator.style.display = 'flex';
+                    text.textContent = `${typingUsers.length} people are typing...`;
+                }
+            });
+        }
+
+        /* ============================================
+           CREATE GROUP
+        ============================================ */
+        function showCreateGroup() {
+            const groupName = prompt("Enter group name (e.g., Math Study Group):");
+            if (!groupName) return;
+            
+            const code = generateCode();
+            
+            const groupData = {
+                name: groupName,
+                creator: myName,
+                creatorKey: USER_KEY,
+                created: new Date().toISOString(),
+                members: {}
+            };
+            
+            groupData.members[USER_KEY] = {
+                name: myName,
+                deviceId: DEVICE_ID,
+                joinedAt: Date.now(),
+                isCreator: true
+            };
+            
+            database.ref('groups/' + code).set(groupData)
+                .then(() => {
+                    myGroups.push(code);
+                    localStorage.setItem('myStudyGroups', JSON.stringify(myGroups));
+                    
+                    renderGroupsList();
+                    selectGroup(code);
+                    
+                    alert(`✅ Group created!\nCode: ${code}\nShare this code with friends!`);
+                })
+                .catch(error => {
+                    console.error("Error creating group:", error);
+                    alert("❌ Failed to create group.");
+                });
+        }
+
+        function generateCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        /* ============================================
+           JOIN GROUP
+        ============================================ */
+        function showJoinGroup() {
+            const code = prompt("Enter the group code:").toUpperCase().trim();
+            if (!code) return;
+            
+            if (myGroups.includes(code)) {
                 alert("You're already in this group!");
                 return;
             }
             
-            const updates = {};
-            updates[`groups/${code}/members/${MY_KEY}`] = {
-                name: MY_NAME,
-                deviceId: DEVICE_ID,
-                joinedAt: Date.now()
-            };
-            
-            return database.ref().update(updates);
-        })
-        .then(() => {
-            if (!myGroups.includes(code)) {
-                myGroups.push(code);
-                localStorage.setItem('myGroups', JSON.stringify(myGroups));
-            }
-            renderGroups();
-            selectGroup(code);
-            alert(`✅ Joined group!`);
-        })
-        .catch(error => {
-            console.error(error);
-            alert("❌ Failed to join group");
-        });
-};
-
-// ===== RENDER GROUPS =====
-function renderGroups() {
-    const list = document.getElementById('groupsList');
-    if (!list) return;
-    
-    list.innerHTML = '';
-    
-    if (myGroups.length === 0) {
-        list.innerHTML = '<p style="color:#999; text-align:center;">No groups yet</p>';
-        return;
-    }
-    
-    myGroups.forEach(code => {
-        database.ref('groups/' + code).on('value', (snapshot) => {
-            if (!snapshot.exists()) {
-                myGroups = myGroups.filter(c => c !== code);
-                localStorage.setItem('myGroups', JSON.stringify(myGroups));
-                if (currentGroup === code) {
-                    currentGroup = null;
-                    showNoGroup();
-                }
-                renderGroups();
-                return;
-            }
-            
-            const group = snapshot.val();
-            const members = group.members || {};
-            const memberCount = Object.keys(members).length;
-            
-            let div = document.querySelector(`[data-code="${code}"]`);
-            
-            if (!div) {
-                div = document.createElement('div');
-                div.className = 'group-item';
-                div.setAttribute('data-code', code);
-                div.onclick = () => selectGroup(code);
-                list.appendChild(div);
-            }
-            
-            if (currentGroup === code) {
-                div.classList.add('active');
-            } else {
-                div.classList.remove('active');
-            }
-            
-            div.innerHTML = `
-                <div class="group-name">${group.name}</div>
-                <div class="group-meta">
-                    <i class="fas fa-users"></i> ${memberCount} member${memberCount !== 1 ? 's' : ''} • ${code}
-                </div>
-            `;
-        });
-    });
-}
-
-// ===== SELECT GROUP =====
-function selectGroup(code) {
-    currentGroup = code;
-    
-    document.getElementById('noGroupSelected').style.display = 'none';
-    document.getElementById('groupChat').style.display = 'flex';
-    
-    database.ref('groups/' + code).once('value')
-        .then(snapshot => {
-            const group = snapshot.val();
-            if (!group) {
-                showNoGroup();
-                return;
-            }
-            
-            document.getElementById('currentGroupName').textContent = group.name;
-            document.getElementById('currentGroupCode').textContent = `Code: ${code}`;
-            
-            renderGroups();
-            loadMessages(code);
-            loadResources(code);
-            setupTypingListener(code);
-        });
-}
-
-function showNoGroup() {
-    currentGroup = null;
-    document.getElementById('noGroupSelected').style.display = 'flex';
-    document.getElementById('groupChat').style.display = 'none';
-}
-
-// ===== MESSAGES =====
-function loadMessages(code) {
-    if (messageListener) {
-        database.ref('messages/' + code).off('value', messageListener);
-    }
-    
-    messageListener = (snapshot) => {
-        renderMessages(snapshot.val());
-        
-        // Check for notifications
-        const messages = snapshot.val();
-        if (messages && currentGroup !== code) {
-            const now = Date.now();
-            Object.entries(messages).forEach(([id, msg]) => {
-                if (!notifiedMessages.has(id) && 
-                    msg.sender !== MY_NAME && 
-                    (now - msg.timestamp) < 10000) {
-                    notifiedMessages.add(id);
-                    database.ref('groups/' + code).once('value')
-                        .then(groupSnap => {
-                            const group = groupSnap.val();
-                            if (group) {
-                                showNotification(group.name, msg.sender, msg.text, code);
-                            }
+            database.ref('groups/' + code).once('value')
+                .then(snapshot => {
+                    if (!snapshot.exists()) {
+                        alert("❌ Invalid group code!");
+                        return;
+                    }
+                    
+                    const groupData = snapshot.val();
+                    
+                    if (groupData.members && groupData.members[USER_KEY]) {
+                        alert("You're already in this group!");
+                        return;
+                    }
+                    
+                    const updates = {};
+                    updates[`groups/${code}/members/${USER_KEY}`] = {
+                        name: myName,
+                        deviceId: DEVICE_ID,
+                        joinedAt: Date.now()
+                    };
+                    updates[`groups/${code}/lastActivity`] = Date.now();
+                    
+                    return database.ref().update(updates)
+                        .then(() => {
+                            myGroups.push(code);
+                            localStorage.setItem('myStudyGroups', JSON.stringify(myGroups));
+                            
+                            renderGroupsList();
+                            selectGroup(code);
+                            
+                            alert(`✅ Joined "${groupData.name}"!`);
                         });
-                }
+                })
+                .catch(error => {
+                    console.error("Error joining group:", error);
+                    alert("❌ Failed to join group.");
+                });
+        }
+
+        /* ============================================
+           RENDER GROUPS LIST
+        ============================================ */
+        function renderGroupsList() {
+            const list = document.getElementById('groupsList');
+            list.innerHTML = '';
+            
+            if (myGroups.length === 0) {
+                list.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No groups yet</p>';
+                return;
+            }
+            
+            myGroups.forEach(code => {
+                database.ref('groups/' + code).on('value', (snapshot) => {
+                    if (!snapshot.exists()) {
+                        myGroups = myGroups.filter(c => c !== code);
+                        localStorage.setItem('myStudyGroups', JSON.stringify(myGroups));
+                        if (currentGroup === code) {
+                            currentGroup = null;
+                            showNoGroupSelected();
+                        }
+                        renderGroupsList();
+                        return;
+                    }
+                    
+                    const group = snapshot.val();
+                    const members = group.members || {};
+                    const memberCount = Object.keys(members).length;
+                    
+                    let groupDiv = document.querySelector(`[data-group-code="${code}"]`);
+                    
+                    if (!groupDiv) {
+                        groupDiv = document.createElement('div');
+                        groupDiv.className = 'group-item';
+                        groupDiv.setAttribute('data-group-code', code);
+                        groupDiv.onclick = () => {
+                            selectGroup(code);
+                            closeMobileSidebar();
+                        };
+                        list.appendChild(groupDiv);
+                    }
+                    
+                    if (currentGroup === code) {
+                        groupDiv.classList.add('active');
+                    } else {
+                        groupDiv.classList.remove('active');
+                    }
+                    
+                    groupDiv.innerHTML = `
+                        <div style="font-weight: bold; margin-bottom: 5px; word-break: break-word;">${group.name}</div>
+                        <div style="font-size: 12px; opacity: 0.7;">
+                            <i class="fas fa-users"></i> ${memberCount} member${memberCount !== 1 ? 's' : ''} • Code: ${code}
+                        </div>
+                    `;
+                });
             });
         }
-    };
+
+        /* ============================================
+           SELECT GROUP
+        ============================================ */
+        function selectGroup(code) {
+            currentGroup = code;
+            
+            document.getElementById('noGroupSelected').style.display = 'none';
+            document.getElementById('groupChat').style.display = 'flex';
+            
+            database.ref('groups/' + code).once('value')
+                .then(snapshot => {
+                    const group = snapshot.val();
+                    if (!group) {
+                        showNoGroupSelected();
+                        return;
+                    }
+                    
+                    document.getElementById('currentGroupName').textContent = group.name;
+                    document.getElementById('currentGroupCode').textContent = `Code: ${code}`;
+                    
+                    renderGroupsList();
+                    loadMessages();
+                    loadResources();
+                    setupTypingListener(code);
+                });
+        }
+
+        function showNoGroupSelected() {
+            currentGroup = null;
+            document.getElementById('noGroupSelected').style.display = 'block';
+            document.getElementById('groupChat').style.display = 'none';
+            
+            if (messageListeners[currentGroup]) {
+                database.ref('messages/' + currentGroup).off('value', messageListeners[currentGroup]);
+            }
+            if (resourceListeners[currentGroup]) {
+                database.ref('resources/' + currentGroup).off('value', resourceListeners[currentGroup]);
+            }
+        }
+
+        /* ============================================
+           MESSAGES
+        ============================================ */
+        function loadMessages() {
+            if (!currentGroup) return;
+            
+            if (messageListeners[currentGroup]) {
+                database.ref('messages/' + currentGroup).off('value', messageListeners[currentGroup]);
+            }
+            
+            messageListeners[currentGroup] = (snapshot) => {
+                renderMessages(snapshot.val());
+            };
+            
+            database.ref('messages/' + currentGroup).on('value', messageListeners[currentGroup]);
+        }
+
+        function renderMessages(messagesData) {
+            const messagesDiv = document.getElementById('chatMessages');
+            messagesDiv.innerHTML = '';
+            
+            if (!messagesData) {
+                messagesDiv.innerHTML = '<div class="empty-state"><p>No messages yet. Start the conversation! 💬</p></div>';
+                return;
+            }
+            
+            const messagesArray = Object.entries(messagesData || {})
+                .map(([id, msg]) => ({ id, ...msg }))
+                .sort((a, b) => a.timestamp - b.timestamp);
+            
+            if (messagesArray.length === 0) {
+                messagesDiv.innerHTML = '<div class="empty-state"><p>No messages yet. Start the conversation! 💬</p></div>';
+                return;
+            }
+            
+            messagesArray.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'message';
+                if (msg.sender === myName) div.classList.add('my-message');
+                
+                const time = new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                
+                div.innerHTML = `
+                    <div class="message-header">
+                        <strong>${msg.sender}</strong>
+                        <span>${time}</span>
+                    </div>
+                    <div class="message-content">${msg.text}</div>
+                `;
+                
+                messagesDiv.appendChild(div);
+            });
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function sendMessage() {
+            const text = document.getElementById('messageInput').value.trim();
+            if (!text || !currentGroup) return;
+            
+            const messageData = {
+                sender: myName,
+                senderKey: USER_KEY,
+                text: text,
+                timestamp: Date.now()
+            };
+            
+            database.ref('messages/' + currentGroup).push(messageData)
+                .then(() => {
+                    database.ref('groups/' + currentGroup + '/lastActivity').set(Date.now());
+                    database.ref(`groups/${currentGroup}/members/${USER_KEY}/lastActive`).set(Date.now());
+                    database.ref('typing/' + currentGroup + '/' + USER_KEY).remove();
+                    
+                    document.getElementById('messageInput').value = '';
+                })
+                .catch(error => {
+                    console.error("Error sending message:", error);
+                    alert("❌ Failed to send message.");
+                });
+        }
+
+        /* ============================================
+           RESOURCES
+        ============================================ */
+        function showAddResource() {
+            if (!currentGroup) return;
+            
+            const title = prompt("Resource title:");
+            if (!title) return;
+            
+            const link = prompt("Resource link (URL):");
+            if (!link) return;
+            
+            const resourceData = {
+                title: title,
+                link: link,
+                addedBy: myName,
+                date: new Date().toLocaleDateString(),
+                timestamp: Date.now()
+            };
+            
+            database.ref('resources/' + currentGroup).push(resourceData)
+                .then(() => {
+                    alert("✅ Resource added!");
+                })
+                .catch(error => {
+                    console.error("Error adding resource:", error);
+                    alert("❌ Failed to add resource.");
+                });
+        }
+
+        function loadResources() {
+            if (!currentGroup) return;
+            
+            if (resourceListeners[currentGroup]) {
+                database.ref('resources/' + currentGroup).off('value', resourceListeners[currentGroup]);
+            }
+            
+            resourceListeners[currentGroup] = (snapshot) => {
+                renderResources(snapshot.val());
+            };
+            
+            database.ref('resources/' + currentGroup).on('value', resourceListeners[currentGroup]);
+        }
+
+        function renderResources(resourcesData) {
+            const resourcesDiv = document.getElementById('resourcesList');
+            resourcesDiv.innerHTML = '';
+            
+            if (!resourcesData) {
+                resourcesDiv.innerHTML = '<p style="color: #999; font-size: 14px;">No resources yet</p>';
+                return;
+            }
+            
+            const resourcesArray = Object.entries(resourcesData || {})
+                .map(([id, resource]) => ({ id, ...resource }))
+                .sort((a, b) => b.timestamp - a.timestamp);
+            
+            resourcesArray.forEach(r => {
+                const div = document.createElement('div');
+                div.className = 'resource-item';
+                div.innerHTML = `
+                    <a href="${r.link}" target="_blank">📎 ${r.title}</a>
+                    <div style="font-size: 11px; color: #666; margin-top: 3px;">Added by ${r.addedBy}</div>
+                `;
+                resourcesDiv.appendChild(div);
+            });
+        }
+
+        /* ============================================
+           GROUP INFO
+        ============================================ */
+        function showGroupInfo() {
+            if (!currentGroup) return;
+            
+            database.ref('groups/' + currentGroup).once('value')
+                .then(snapshot => {
+                    if (!snapshot.exists()) {
+                        alert("Group not found!");
+                        return;
+                    }
+                    
+                    const group = snapshot.val();
+                    const members = group.members || {};
+                    const memberKeys = Object.keys(members);
+                    
+                    let info = `📊 Group Info\n\n`;
+                    info += `Name: ${group.name}\n`;
+                    info += `Code: ${currentGroup}\n`;
+                    info += `Created by: ${group.creator}\n`;
+                    info += `Created: ${new Date(group.created).toLocaleString()}\n`;
+                    info += `Members: ${memberKeys.length}\n\n`;
+                    info += `Members:\n`;
+                    
+                    memberKeys.forEach(key => {
+                        const m = members[key];
+                        info += `  • ${m.name}\n`;
+                    });
+                    
+                    alert(info);
+                })
+                .catch(error => {
+                    console.error("Error getting group info:", error);
+                    alert("❌ Failed to get group info.");
+                });
+        }
+
+        /* ============================================
+           LEAVE GROUP
+        ============================================ */
+        function leaveGroup() {
+            if (!currentGroup) return;
+            
+            if (!confirm("Are you sure you want to leave this group?")) return;
+            
+            database.ref(`groups/${currentGroup}/members/${USER_KEY}`).remove()
+                .then(() => {
+                    myGroups = myGroups.filter(c => c !== currentGroup);
+                    localStorage.setItem('myStudyGroups', JSON.stringify(myGroups));
+                    
+                    currentGroup = null;
+                    showNoGroupSelected();
+                    renderGroupsList();
+                    
+                    alert("✅ Left the group successfully!");
+                })
+                .catch(error => {
+                    console.error("Error leaving group:", error);
+                    alert("❌ Failed to leave group.");
+                });
+        }
+
+        /* ============================================
+           ENTER KEY TO SEND
+        ============================================ */
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey && document.activeElement.id === 'messageInput') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        /* ============================================
+           AUTO RESIZE TEXTAREA
+        ============================================ */
+        document.getElementById('messageInput')?.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            sendTypingStatus();
+        });
+
+        /* ============================================
+           INITIALIZE
+        ============================================ */
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 900) {
+                sidebar.style.transform = 'translateX(0)';
+                sidebar.style.position = 'relative';
+                sidebar.style.height = 'auto';
+                mobileOverlay.classList.remove('active');
+            } else {
+                sidebar.style.position = 'fixed';
+                sidebar.style.height = '100vh';
+                sidebar.style.transform = 'translateX(-100%)';
+            }
+        });
+
+        if (window.innerWidth <= 900) {
+            sidebar.style.transform = 'translateX(-100%)';
+            sidebar.style.position = 'fixed';
+            sidebar.style.left = '0';
+            sidebar.style.top = '0';
+            sidebar.style.height = '100vh';
+            sidebar.style.zIndex = '100';
+            sidebar.style.borderRadius = '0';
+        } else {
+            sidebar.style.transform = 'translateX(0)';
+            sidebar.style.position = 'relative';
+        }
+
+        // Initialize
+        initEmojiPicker();
+        renderGroupsList();
+        
+        // Make functions global
+        window.showCreateGroup = showCreateGroup;
+        window.showJoinGroup = showJoinGroup;
+        window.sendMessage = sendMessage;
+        window.showAddResource = showAddResource;
+        window.showGroupInfo = showGroupInfo;
+        window.leaveGroup = leaveGroup;
+        window.toggleEmojiPicker = toggleEmojiPicker;
+        window.changeTheme = changeTheme;
+        window.closeMobileSidebar = closeMobileSidebar;
+
+        /* ============================================
+   COLLAPSIBLE RESOURCES SYSTEM WITH DELETE
+   Add this at the bottom of your script
+============================================ */
+
+// Resources visibility state
+let resourcesVisible = true;
+
+// Toggle resources function
+function toggleResources() {
+    const resourcesContent = document.getElementById('resourcesContent');
+    const toggleBtn = document.getElementById('chatResourcesToggle');
+    const toggleIcon = document.getElementById('toggleIcon');
     
-    database.ref('messages/' + code).on('value', messageListener);
+    if (!resourcesContent || !toggleBtn || !toggleIcon) return;
+    
+    if (resourcesVisible) {
+        // Hide resources
+        resourcesContent.style.display = 'none';
+        toggleBtn.classList.remove('active');
+        toggleIcon.className = 'fas fa-book';
+        toggleBtn.title = 'Show Resources';
+        resourcesVisible = false;
+        
+        // Optional bounce animation
+        toggleBtn.style.animation = 'none';
+        toggleBtn.offsetHeight; // Trigger reflow
+        toggleBtn.style.animation = 'bounce 0.5s ease';
+    } else {
+        // Show resources
+        resourcesContent.style.display = 'block';
+        toggleBtn.classList.add('active');
+        toggleIcon.className = 'fas fa-book-open';
+        toggleBtn.title = 'Hide Resources';
+        resourcesVisible = true;
+    }
 }
 
-function renderMessages(messages) {
-    const container = document.getElementById('messagesContainer');
-    container.innerHTML = '';
+// Update resource count
+function updateResourceCount(count) {
+    const resourceCountSpan = document.getElementById('resourceCount');
+    if (resourceCountSpan) {
+        resourceCountSpan.textContent = `(${count})`;
+    }
     
-    if (!messages) {
-        container.innerHTML = '<div class="empty-state"><p>No messages yet</p></div>';
+    const toggleBtn = document.getElementById('chatResourcesToggle');
+    if (toggleBtn) {
+        toggleBtn.title = `${resourcesVisible ? 'Hide' : 'Show'} Resources (${count})`;
+    }
+}
+
+// Delete resource function
+function deleteResource(resourceId, resourceData) {
+    if (!currentGroup || !resourceId) return;
+    
+    // Check if current user is the sender
+    if (resourceData.addedBy !== myName) {
+        alert("❌ You can only delete resources you added!");
         return;
     }
     
-    const messagesArray = Object.entries(messages)
-        .map(([id, msg]) => ({ id, ...msg }))
-        .sort((a, b) => a.timestamp - b.timestamp);
+    if (!confirm("Are you sure you want to delete this resource?")) return;
     
-    messagesArray.forEach(msg => {
-        const div = document.createElement('div');
-        div.className = 'message';
-        if (msg.sender === MY_NAME) div.classList.add('my-message');
-        
-        const time = new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        
-        div.innerHTML = `
-            <div class="message-header">
-                <strong>${msg.sender}</strong>
-                <span>${time}</span>
-            </div>
-            <div class="message-content">${msg.text}</div>
-        `;
-        
-        container.appendChild(div);
-    });
+    // Show loading state
+    const deleteBtn = event?.target;
+    if (deleteBtn) {
+        deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        deleteBtn.disabled = true;
+    }
     
-    container.scrollTop = container.scrollHeight;
-}
-
-// ===== SEND MESSAGE =====
-window.sendMessage = function() {
-    const text = document.getElementById('messageInput').value.trim();
-    if (!text || !currentGroup) return;
-    
-    const message = {
-        sender: MY_NAME,
-        senderKey: MY_KEY,
-        text: text,
-        timestamp: Date.now()
-    };
-    
-    database.ref('messages/' + currentGroup).push(message)
+    // Delete from Firebase
+    database.ref('resources/' + currentGroup + '/' + resourceId).remove()
         .then(() => {
-            document.getElementById('messageInput').value = '';
-            // Clear typing status
-            database.ref('typing/' + currentGroup + '/' + MY_KEY).remove();
+            alert("✅ Resource deleted successfully!");
         })
         .catch(error => {
-            console.error(error);
-            alert("❌ Failed to send");
+            console.error("Error deleting resource:", error);
+            alert("❌ Failed to delete resource.");
+        })
+        .finally(() => {
+            if (deleteBtn) {
+                deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteBtn.disabled = false;
+            }
         });
+}
+
+// Override the renderResources function to include delete buttons
+const originalRenderResources = renderResources;
+renderResources = function(resourcesData) {
+    const resourcesDiv = document.getElementById('resourcesList');
+    if (!resourcesDiv) return;
+    
+    resourcesDiv.innerHTML = '';
+    
+    if (!resourcesData) {
+        resourcesDiv.innerHTML = '<p style="color: #999; font-size: 14px; text-align: center; padding: 10px;">No resources yet</p>';
+        updateResourceCount(0);
+        return;
+    }
+    
+    const resourcesArray = Object.entries(resourcesData || {})
+        .map(([id, resource]) => ({ id, ...resource }))
+        .sort((a, b) => b.timestamp - a.timestamp);
+    
+    updateResourceCount(resourcesArray.length);
+    
+    resourcesArray.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'resource-item';
+        div.style.display = 'flex';
+        div.style.justifyContent = 'space-between';
+        div.style.alignItems = 'center';
+        div.style.gap = '10px';
+        
+        const isSender = r.addedBy === myName;
+        
+        div.innerHTML = `
+            <div style="flex: 1; min-width: 0;">
+                <a href="${r.link}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold; word-break: break-all; display: block; margin-bottom: 3px;">
+                    📎 ${r.title}
+                </a>
+                <div style="font-size: 11px; color: #666; display: flex; align-items: center; gap: 8px;">
+                    <span><i class="fas fa-user"></i> ${r.addedBy}</span>
+                    <span><i class="fas fa-clock"></i> ${new Date(r.timestamp).toLocaleDateString()}</span>
+                </div>
+            </div>
+            ${isSender ? `
+                <button onclick="deleteResource('${r.id}', ${JSON.stringify(r).replace(/"/g, '&quot;')})" 
+                    style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 6px 10px; font-size: 12px; cursor: pointer; min-width: 32px; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"
+                    onmouseover="this.style.transform='scale(1.05)'" 
+                    onmouseout="this.style.transform='scale(1)'"
+                    title="Delete resource">
+                    <i class="fas fa-trash"></i>
+                </button>
+            ` : `
+                <span style="font-size: 11px; color: #999; padding: 0 5px;">
+                    <i class="fas fa-lock" style="opacity: 0.5;"></i>
+                </span>
+            `}
+        `;
+        
+        resourcesDiv.appendChild(div);
+    });
 };
 
-// ===== RESOURCES =====
-window.addResource = function() {
+// Override selectGroup to reset resources visibility
+const originalSelectGroup = selectGroup;
+selectGroup = function(code) {
+    // Call original function first
+    originalSelectGroup(code);
+    
+    // Reset resources visibility
+    setTimeout(() => {
+        resourcesVisible = true;
+        const resourcesContent = document.getElementById('resourcesContent');
+        const toggleBtn = document.getElementById('chatResourcesToggle');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        if (resourcesContent && toggleBtn && toggleIcon) {
+            resourcesContent.style.display = 'block';
+            toggleBtn.classList.add('active');
+            toggleIcon.className = 'fas fa-book-open';
+            toggleBtn.title = 'Hide Resources';
+        }
+    }, 100);
+};
+
+// Override showAddResource to refresh after adding
+const originalShowAddResource = showAddResource;
+showAddResource = function() {
     if (!currentGroup) return;
     
     const title = prompt("Resource title:");
     if (!title) return;
     
-    const link = prompt("Resource link:");
+    const link = prompt("Resource link (URL):");
     if (!link) return;
     
-    const resource = {
+    // Validate URL
+    try {
+        new URL(link);
+    } catch {
+        alert("❌ Please enter a valid URL (include http:// or https://)");
+        return;
+    }
+    
+    const resourceData = {
         title: title,
         link: link,
-        addedBy: MY_NAME,
+        addedBy: myName,
+        addedByKey: USER_KEY,
+        date: new Date().toLocaleDateString(),
         timestamp: Date.now()
     };
     
-    database.ref('resources/' + currentGroup).push(resource)
+    database.ref('resources/' + currentGroup).push(resourceData)
         .then(() => {
-            alert("✅ Resource added!");
+            alert("✅ Resource added successfully!");
         })
         .catch(error => {
-            console.error(error);
-            alert("❌ Failed to add resource");
+            console.error("Error adding resource:", error);
+            alert("❌ Failed to add resource.");
         });
 };
 
-function loadResources(code) {
-    if (resourceListener) {
-        database.ref('resources/' + code).off('value', resourceListener);
+// Initialize resources toggle
+function initResourcesToggle() {
+    // Add the toggle button next to send button
+    const chatInputArea = document.querySelector('.chat-input-area');
+    if (chatInputArea) {
+        // Check if button already exists
+        if (!document.getElementById('chatResourcesToggle')) {
+            const toggleButton = document.createElement('button');
+            toggleButton.id = 'chatResourcesToggle';
+            toggleButton.onclick = toggleResources;
+            toggleButton.style.background = 'var(--card)';
+            toggleButton.style.color = 'var(--text)';
+            toggleButton.style.border = '2px solid var(--accent)';
+            toggleButton.style.minWidth = '50px';
+            toggleButton.style.padding = '12px 15px';
+            toggleButton.style.transition = 'all 0.3s ease';
+            toggleButton.style.borderRadius = '12px';
+            toggleButton.style.cursor = 'pointer';
+            toggleButton.style.fontSize = '16px';
+            toggleButton.style.fontWeight = '600';
+            toggleButton.title = 'Hide Resources';
+            toggleButton.innerHTML = '<i class="fas fa-book-open" id="toggleIcon"></i>';
+            
+            // Insert before send button
+            const sendButton = document.getElementById('sendButton') || chatInputArea.lastElementChild;
+            chatInputArea.insertBefore(toggleButton, sendButton);
+        }
     }
     
-    resourceListener = (snapshot) => {
-        const resources = snapshot.val();
-        const container = document.getElementById('resourcesList');
-        container.innerHTML = '';
-        
-        if (!resources) {
-            container.innerHTML = '<p style="color:#999;">No resources yet</p>';
-            return;
+    // Update resources section HTML
+    const groupChat = document.getElementById('groupChat');
+    if (groupChat) {
+        // Find the resources section (usually the div before chat input)
+        const children = groupChat.children;
+        for (let i = 0; i < children.length; i++) {
+            if (children[i].innerHTML && children[i].innerHTML.includes('Shared Resources')) {
+                children[i].innerHTML = `
+                    <div style="margin-bottom: 20px; width: 100%;" id="resourcesContainer">
+                        <div id="resourcesContent" style="background: var(--bg); padding: 15px; border-radius: 12px; max-height: 200px; overflow-y: auto; width: 100%; display: block; transition: all 0.3s ease;">
+                            <div class="resources-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--accent);">
+                                <strong style="font-size: 1.1rem;"><i class="fas fa-link"></i> Shared Resources <span id="resourceCount" style="font-size: 0.9rem; opacity: 0.8;">(0)</span></strong>
+                                <button onclick="showAddResource()" style="padding: 8px 15px; font-size: 14px; background: #4caf50; border: none; border-radius: 8px; color: white; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-plus"></i> Add Resource
+                                </button>
+                            </div>
+                            <div id="resourcesList"></div>
+                        </div>
+                    </div>
+                `;
+                break;
+            }
+        }
+    }
+    
+    // Add CSS styles
+    const style = document.createElement('style');
+    style.textContent = `
+        #chatResourcesToggle {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         
-        const resourcesArray = Object.entries(resources)
-            .map(([id, r]) => ({ id, ...r }))
-            .sort((a, b) => b.timestamp - a.timestamp);
+        #chatResourcesToggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: var(--accent) !important;
+            color: white !important;
+        }
         
-        resourcesArray.forEach(r => {
-            const div = document.createElement('div');
-            div.className = 'resource-item';
-            div.innerHTML = `
-                <a href="${r.link}" target="_blank">📎 ${r.title}</a>
-                <div class="resource-meta">Added by ${r.addedBy}</div>
-            `;
-            container.appendChild(div);
-        });
-    };
+        #chatResourcesToggle.active {
+            background: var(--accent) !important;
+            color: white !important;
+        }
+        
+        #chatResourcesToggle.active i {
+            animation: bounce 0.5s ease;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+        
+        .resource-item {
+            background: var(--bg);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .resource-item:hover {
+            transform: translateX(5px);
+            border-left-color: var(--accent);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .resource-item button {
+            transition: all 0.3s ease;
+        }
+        
+        .resource-item button:hover {
+            background: #c0392b !important;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .chat-input-area {
+                display: grid;
+                grid-template-columns: 1fr auto auto;
+                gap: 8px;
+            }
+            
+            #chatResourcesToggle {
+                min-width: 44px;
+                padding: 12px;
+            }
+            
+            #sendButton {
+                min-width: 70px;
+                padding: 12px;
+            }
+            
+            .resource-item {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+            
+            .resource-item button {
+                align-self: flex-end;
+                margin-top: 5px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .chat-input-area {
+                grid-template-columns: 1fr 44px 44px;
+                gap: 5px;
+            }
+            
+            #chatResourcesToggle, #sendButton {
+                min-width: 44px;
+                padding: 12px 0;
+            }
+            
+            #sendButton i {
+                margin-right: 0;
+            }
+            
+            #sendButton {
+                font-size: 0;
+            }
+            
+            #sendButton i {
+                font-size: 16px;
+            }
+        }
+    `;
+    document.head.appendChild(style);
     
-    database.ref('resources/' + code).on('value', resourceListener);
+    // Initialize state
+    resourcesVisible = true;
+    updateResourceCount(0);
 }
 
-// ===== LEAVE GROUP =====
-window.leaveGroup = function() {
-    if (!currentGroup) return;
-    
-    if (!confirm("Leave this group?")) return;
-    
-    database.ref(`groups/${currentGroup}/members/${MY_KEY}`).remove()
-        .then(() => {
-            myGroups = myGroups.filter(c => c !== currentGroup);
-            localStorage.setItem('myGroups', JSON.stringify(myGroups));
-            
-            currentGroup = null;
-            showNoGroup();
-            renderGroups();
-            
-            alert("✅ Left group");
-        })
-        .catch(error => {
-            console.error(error);
-            alert("❌ Failed to leave");
-        });
-};
+// Run initialization when DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initResourcesToggle);
+} else {
+    initResourcesToggle();
+}
 
-// ===== GROUP INFO =====
-window.showGroupInfo = function() {
-    if (!currentGroup) return;
-    
-    database.ref('groups/' + currentGroup).once('value')
-        .then(snapshot => {
-            const group = snapshot.val();
-            if (!group) return;
-            
-            const members = group.members || {};
-            const memberKeys = Object.keys(members);
-            
-            let info = `📊 Group Info\n\n`;
-            info += `Name: ${group.name}\n`;
-            info += `Code: ${currentGroup}\n`;
-            info += `Created by: ${group.creator}\n`;
-            info += `Members: ${memberKeys.length}\n\n`;
-            info += `Member list:\n`;
-            
-            memberKeys.forEach(key => {
-                const m = members[key];
-                info += `  • ${m.name}\n`;
-            });
-            
-            alert(info);
-        });
-};
+// Make functions globally available
+window.toggleResources = toggleResources;
+window.deleteResource = deleteResource;
 
-// ===== AUTO-RESIZE TEXTAREA =====
-document.getElementById('messageInput')?.addEventListener('input', function() {
-    this.style.height = 'auto';
-    this.style.height = (this.scrollHeight) + 'px';
-    sendTypingStatus();
-});
-
-// ===== ENTER KEY =====
-document.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey && document.activeElement.id === 'messageInput') {
-        e.preventDefault();
-        sendMessage();
+    </script>
+    <!-- ============================================
+     WHATSAPP-STYLE REPLY SYSTEM
+     ADD THIS RIGHT BEFORE THE </body> TAG
+============================================ -->
+<script>
+(function() {
+    // Wait for main app to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initReplySystem);
+    } else {
+        setTimeout(initReplySystem, 1000);
     }
-});
 
-// ===== INITIALIZE =====
-initEmojiGrid();
-renderGroups();
+    function initReplySystem() {
+        // Check if required variables exist
+        if (typeof myName === 'undefined' || typeof database === 'undefined' || typeof currentGroup === 'undefined') {
+            console.log('Waiting for main app...');
+            setTimeout(initReplySystem, 500);
+            return;
+        }
 
-console.log("✅ Study Groups ready!");
-console.log("You are:", MY_NAME);
+        // Reply state
+        let replyingTo = null;
+
+        /* ============================================
+           REPLY TO MESSAGE
+        ============================================ */
+        window.replyToMessage = function(messageId, messageData) {
+            replyingTo = {
+                id: messageId,
+                sender: messageData.sender,
+                text: messageData.text
+            };
+            showReplyPreview();
+            document.getElementById('messageInput').focus();
+        };
+
+        /* ============================================
+           CANCEL REPLY
+        ============================================ */
+        window.cancelReply = function() {
+            replyingTo = null;
+            const preview = document.getElementById('replyPreview');
+            if (preview) preview.remove();
+        };
+
+        /* ============================================
+           SCROLL TO MESSAGE
+        ============================================ */
+        window.scrollToMessage = function(messageId) {
+            const msg = document.getElementById(`message-${messageId}`);
+            if (msg) {
+                msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                msg.style.transition = 'background 1s';
+                msg.style.background = 'rgba(108,99,255,0.2)';
+                setTimeout(() => msg.style.background = '', 2000);
+            }
+        };
+
+        /* ============================================
+           SHOW REPLY PREVIEW
+        ============================================ */
+        function showReplyPreview() {
+            // Remove existing preview
+            const existing = document.getElementById('replyPreview');
+            if (existing) existing.remove();
+            
+            if (!replyingTo) return;
+            
+            const preview = document.createElement('div');
+            preview.id = 'replyPreview';
+            preview.style.cssText = `
+                background: var(--accent);
+                color: white;
+                padding: 8px 15px;
+                border-radius: 10px 10px 0 0;
+                margin-bottom: 5px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 13px;
+                animation: slideDown 0.3s ease;
+            `;
+            
+            const replyText = replyingTo.text.length > 50 
+                ? replyingTo.text.substring(0, 50) + '...' 
+                : replyingTo.text;
+            
+            preview.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                    <i class="fas fa-reply" style="opacity: 0.8; font-size: 12px;"></i>
+                    <div style="flex: 1;">
+                        <strong style="font-size: 11px;">Replying to ${replyingTo.sender}</strong>
+                        <div style="font-size: 12px; opacity: 0.9;">${replyText}</div>
+                    </div>
+                </div>
+                <button onclick="cancelReply()" style="background: none; border: none; color: white; cursor: pointer; padding: 5px; min-width: auto; font-size: 16px;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            // Insert before chat input
+            const chatInput = document.querySelector('.chat-input-area');
+            if (chatInput) {
+                chatInput.parentNode.insertBefore(preview, chatInput);
+            }
+        }
+
+        /* ============================================
+           OVERRIDE SEND MESSAGE
+        ============================================ */
+        const originalSend = window.sendMessage;
+        window.sendMessage = function() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if (!text || !currentGroup) return;
+            
+            const messageData = {
+                sender: myName,
+                senderKey: typeof USER_KEY !== 'undefined' ? USER_KEY : myName,
+                text: text,
+                timestamp: Date.now()
+            };
+            
+            // Add reply data if replying
+            if (replyingTo) {
+                messageData.replyTo = {
+                    id: replyingTo.id,
+                    sender: replyingTo.sender,
+                    text: replyingTo.text
+                };
+            }
+            
+            database.ref('messages/' + currentGroup).push(messageData)
+                .then(() => {
+                    input.value = '';
+                    window.cancelReply();
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("❌ Failed to send");
+                });
+        };
+
+        /* ============================================
+           OVERRIDE RENDER MESSAGES
+        ============================================ */
+        if (typeof renderMessages === 'function') {
+            const originalRender = renderMessages;
+            window.renderMessages = function(messagesData) {
+                const messagesDiv = document.getElementById('chatMessages');
+                if (!messagesDiv) return;
+                
+                messagesDiv.innerHTML = '';
+                
+                if (!messagesData) {
+                    messagesDiv.innerHTML = '<div class="empty-state"><p>No messages yet 💬</p></div>';
+                    return;
+                }
+                
+                const messages = Object.entries(messagesData)
+                    .map(([id, msg]) => ({ id, ...msg }))
+                    .sort((a, b) => a.timestamp - b.timestamp);
+                
+                messages.forEach(msg => {
+                    const div = document.createElement('div');
+                    div.className = 'message';
+                    div.id = `message-${msg.id}`;
+                    if (msg.sender === myName) div.classList.add('my-message');
+                    
+                    const time = new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                    
+                    let html = `
+                        <div class="message-header">
+                            <strong>${msg.sender}</strong>
+                            <span>${time}</span>
+                        </div>
+                    `;
+                    
+                    // Add replied message if exists
+                    if (msg.replyTo) {
+                        html += `
+                            <div onclick="scrollToMessage('${msg.replyTo.id}')" style="
+                                background: rgba(0,0,0,0.1);
+                                border-left: 3px solid var(--accent);
+                                padding: 6px 10px;
+                                margin-bottom: 8px;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                font-size: 12px;
+                            ">
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <i class="fas fa-reply" style="font-size: 10px;"></i>
+                                    <span style="font-weight: bold;">${msg.replyTo.sender}</span>
+                                </div>
+                                <div style="opacity: 0.8;">${msg.replyTo.text.substring(0, 60)}${msg.replyTo.text.length > 60 ? '...' : ''}</div>
+                            </div>
+                        `;
+                    }
+                    
+                    html += `<div class="message-content">${msg.text}</div>`;
+                    
+                    // Add reply button
+                    html += `
+                        <div style="display: flex; justify-content: flex-end; margin-top: 5px;">
+                            <button onclick="replyToMessage('${msg.id}', ${JSON.stringify(msg).replace(/"/g, '&quot;')})" 
+                                style="
+                                    background: none;
+                                    border: none;
+                                    color: var(--accent);
+                                    font-size: 11px;
+                                    cursor: pointer;
+                                    padding: 2px 8px;
+                                    border-radius: 12px;
+                                    opacity: 0.6;
+                                "
+                                onmouseover="this.style.opacity='1'"
+                                onmouseout="this.style.opacity='0.6'">
+                                <i class="fas fa-reply"></i> Reply
+                            </button>
+                        </div>
+                    `;
+                    
+                    div.innerHTML = html;
+                    messagesDiv.appendChild(div);
+                });
+                
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            };
+        }
+
+        /* ============================================
+           ADD CSS STYLES
+        ============================================ */
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            #replyPreview {
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+                z-index: 100;
+            }
+            
+            .message {
+                transition: all 0.3s ease;
+            }
+            
+            .message:hover {
+                transform: translateX(3px);
+            }
+            
+            .message:hover button {
+                opacity: 1 !important;
+            }
+            
+            [onclick*="scrollToMessage"]:hover {
+                background: rgba(0,0,0,0.15) !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        /* ============================================
+           OVERRIDE SELECT GROUP TO CANCEL REPLY
+        ============================================ */
+        if (typeof selectGroup === 'function') {
+            const originalSelect = selectGroup;
+            window.selectGroup = function(code) {
+                originalSelect(code);
+                window.cancelReply();
+            };
+        }
+
+        console.log('✅ Reply system loaded');
+    }
+})();
 </script>
 
+
+<!-- ============================================
+     FINAL PRODUCTION-READY VIDEO/AUDIO CALLS
+     ADD THIS RIGHT BEFORE THE </body> TAG
+============================================ -->
+<script>
+(function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initWebRTC);
+    } else {
+        setTimeout(initWebRTC, 1000);
+    }
+
+    function initWebRTC() {
+        if (typeof myName === 'undefined' || typeof database === 'undefined') {
+            console.log('Waiting for main app...');
+            setTimeout(initWebRTC, 500);
+            return;
+        }
+
+        // WebRTC variables
+        let localStream = null;
+        let peerConnection = null;
+        let currentCall = null;
+        let isCallActive = false;
+        let isVideoEnabled = true;
+        let isAudioEnabled = true;
+        let isSpeakerEnabled = true;
+        let callStartTime = null;
+        let timerInterval = null;
+        let audioContext = null;
+        
+        // STUN servers
+        const configuration = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:stun3.l.google.com:19302' },
+                { urls: 'stun:stun4.l.google.com:19302' }
+            ],
+            iceCandidatePoolSize: 10
+        };
+
+        /* ============================================
+           GET USER MEDIA WITH ADVANCED AUDIO
+        ============================================ */
+        async function getMediaStream(video = true, audio = true) {
+            try {
+                if (localStream) {
+                    localStream.getTracks().forEach(track => track.stop());
+                }
+                
+                console.log('Requesting media access...');
+                
+                // Advanced audio constraints for noise reduction
+                const constraints = {
+                    video: video ? {
+                        width: { ideal: 1280, max: 1920 },
+                        height: { ideal: 720, max: 1080 },
+                        frameRate: { ideal: 30 },
+                        facingMode: 'user'
+                    } : false,
+                    audio: audio ? {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                        sampleRate: 48000,
+                        sampleSize: 16,
+                        channelCount: 1
+                    } : false
+                };
+                
+                localStream = await navigator.mediaDevices.getUserMedia(constraints);
+                
+                // Apply additional audio processing if available
+                if (audio && localStream.getAudioTracks().length > 0) {
+                    try {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const source = audioContext.createMediaStreamSource(localStream);
+                        const destination = audioContext.createMediaStreamDestination();
+                        
+                        // Add gain node for volume control
+                        const gainNode = audioContext.createGain();
+                        gainNode.gain.value = 1.0;
+                        
+                        // Connect: source -> gain -> destination
+                        source.connect(gainNode);
+                        gainNode.connect(destination);
+                        
+                        // Replace the audio track with processed one
+                        const newAudioTrack = destination.stream.getAudioTracks()[0];
+                        localStream.removeTrack(localStream.getAudioTracks()[0]);
+                        localStream.addTrack(newAudioTrack);
+                    } catch (audioError) {
+                        console.log('Advanced audio processing not available:', audioError);
+                    }
+                }
+                
+                console.log('Media obtained:', {
+                    video: localStream.getVideoTracks().length,
+                    audio: localStream.getAudioTracks().length
+                });
+                
+                return localStream;
+            } catch (err) {
+                console.error('Media error:', err);
+                let message = '❌ Cannot access camera/microphone.';
+                if (err.name === 'NotAllowedError') {
+                    message = '❌ Please grant camera and microphone permissions.';
+                } else if (err.name === 'NotFoundError') {
+                    message = '❌ No camera or microphone found.';
+                }
+                alert(message);
+                return null;
+            }
+        }
+
+        /* ============================================
+           CREATE PEER CONNECTION
+        ============================================ */
+        function createPeerConnection(callId, peerKey) {
+            const pc = new RTCPeerConnection(configuration);
+            
+            // Add local tracks
+            if (localStream) {
+                localStream.getTracks().forEach(track => {
+                    pc.addTrack(track, localStream);
+                });
+            }
+            
+            // ICE candidates
+            pc.onicecandidate = (event) => {
+                if (event.candidate) {
+                    database.ref(`calls/${peerKey}/ice_${callId}`).push({
+                        candidate: event.candidate,
+                        from: myName
+                    });
+                }
+            };
+            
+            // Handle incoming remote tracks
+            pc.ontrack = (event) => {
+                const remoteVideo = document.getElementById('remoteVideo');
+                if (!remoteVideo) return;
+                
+                if (event.streams && event.streams[0]) {
+                    remoteVideo.srcObject = event.streams[0];
+                    
+                    // Update status
+                    const status = document.getElementById('remoteVideoStatus');
+                    if (status) {
+                        status.innerHTML = '<i class="fas fa-video" style="margin-right: 4px;"></i> Connected';
+                        status.style.background = 'rgba(76, 175, 80, 0.9)';
+                    }
+                    
+                    // Try to play
+                    setTimeout(() => {
+                        remoteVideo.play().catch(() => {
+                            showPlayButton(remoteVideo);
+                        });
+                    }, 500);
+                }
+            };
+            
+            return pc;
+        }
+
+        /* ============================================
+           SHOW PLAY BUTTON
+        ============================================ */
+        function showPlayButton(videoElement) {
+            const container = videoElement.parentElement;
+            if (!container || container.querySelector('.play-overlay')) return;
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'play-overlay';
+            overlay.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10;
+                border-radius: 12px;
+                backdrop-filter: blur(2px);
+            `;
+            
+            overlay.innerHTML = `
+                <button style="
+                    background: var(--accent);
+                    color: white;
+                    border: none;
+                    border-radius: 50%;
+                    width: 50px;
+                    height: 50px;
+                    font-size: 24px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <i class="fas fa-play"></i>
+                </button>
+            `;
+            
+            overlay.onclick = async () => {
+                try {
+                    await videoElement.play();
+                    overlay.remove();
+                } catch (e) {}
+            };
+            
+            container.appendChild(overlay);
+        }
+
+        /* ============================================
+           SHOW CALL UI - CLEAN & MODERN
+        ============================================ */
+        function showCallUI(callData, status) {
+            const existing = document.getElementById('callUIContainer');
+            if (existing) existing.remove();
+            
+            const container = document.createElement('div');
+            container.id = 'callUIContainer';
+            container.style.cssText = `
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                width: ${callData.callType === 'video' ? '720px' : '360px'};
+                background: var(--card);
+                border-radius: 20px;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                z-index: 10000;
+                overflow: hidden;
+                border: 2px solid var(--accent);
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                transition: all 0.3s ease;
+            `;
+            
+            const remoteName = callData.from === myName ? callData.to : callData.from;
+            
+            // Header
+            const headerColor = status === 'outgoing' ? 'var(--accent)' : 
+                               status === 'connected' ? '#4caf50' : 'var(--accent)';
+            
+            let videoHTML = '';
+            if (callData.callType === 'video') {
+                videoHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; background: #1a1a1a;">
+                        <div style="position: relative; background: #2a2a2a; border-radius: 16px; overflow: hidden; aspect-ratio: 4/3; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                            <video id="localVideo" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover;"></video>
+                            <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; backdrop-filter: blur(4px);">
+                                <i class="fas fa-user" style="margin-right: 4px;"></i> You
+                            </div>
+                        </div>
+                        <div style="position: relative; background: #2a2a2a; border-radius: 16px; overflow: hidden; aspect-ratio: 4/3; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                            <video id="remoteVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+                            <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; backdrop-filter: blur(4px);">
+                                <i class="fas fa-user" style="margin-right: 4px;"></i> ${remoteName}
+                            </div>
+                            <div id="remoteVideoStatus" style="position: absolute; top: 8px; right: 8px; background: rgba(255, 87, 34, 0.9); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; backdrop-filter: blur(4px);">
+                                <i class="fas fa-hourglass-half" style="margin-right: 4px;"></i> Connecting...
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                videoHTML = `
+                    <div style="padding: 40px 20px; text-align: center; background: linear-gradient(135deg, var(--accent), #4a00e0);">
+                        <div style="font-size: 64px; margin-bottom: 16px; animation: pulse 2s infinite;">🎧</div>
+                        <div style="color: white; font-size: 20px; font-weight: 600;">Audio call with ${remoteName}</div>
+                        <div style="color: rgba(255,255,255,0.8); font-size: 14px; margin-top: 8px;">Noise reduction enabled</div>
+                    </div>
+                    <div style="display: none;">
+                        <video id="localVideo" autoplay playsinline muted></video>
+                        <video id="remoteVideo" autoplay playsinline></video>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = `
+                <div style="padding: 16px 20px; background: ${headerColor}; color: white; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                            ${callData.callType === 'video' ? '📹' : '🎧'}
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 16px;">${status === 'outgoing' ? 'Calling...' : 'In call'} with ${remoteName}</div>
+                            <div style="font-size: 13px; opacity: 0.9; display: flex; align-items: center; gap: 8px;">
+                                <span id="callTimer">00:00</span>
+                                <span>•</span>
+                                <span><i class="fas fa-shield-alt"></i> End-to-end encrypted</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="endCall()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                ${videoHTML}
+                
+                <div style="padding: 16px 20px; display: flex; justify-content: center; gap: 20px; background: var(--card); border-top: 1px solid rgba(0,0,0,0.1);">
+                    <button onclick="toggleAudio()" id="audioToggleBtn" style="background: var(--bg); width: 48px; height: 48px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: var(--text);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    ${callData.callType === 'video' ? `
+                        <button onclick="toggleVideo()" id="videoToggleBtn" style="background: var(--bg); width: 48px; height: 48px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: var(--text);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fas fa-video"></i>
+                        </button>
+                    ` : ''}
+                    <button onclick="toggleSpeaker()" id="speakerToggleBtn" style="background: var(--bg); width: 48px; height: 48px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: var(--text);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <button onclick="endCall()" style="background: #e74c3c; width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; color: white;" onmouseover="this.style.transform='scale(1.1)';this.style.background='#c0392b'" onmouseout="this.style.transform='scale(1)';this.style.background='#e74c3c'">
+                        <i class="fas fa-phone-slash"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(container);
+            
+            // Set local video
+            if (localStream) {
+                const localVideo = document.getElementById('localVideo');
+                if (localVideo) {
+                    localVideo.srcObject = localStream;
+                }
+            }
+        }
+
+        /* ============================================
+           TOGGLE FUNCTIONS
+        ============================================ */
+        window.toggleAudio = function() {
+            if (localStream) {
+                const track = localStream.getAudioTracks()[0];
+                if (track) {
+                    isAudioEnabled = !isAudioEnabled;
+                    track.enabled = isAudioEnabled;
+                    
+                    const btn = document.getElementById('audioToggleBtn');
+                    if (btn) {
+                        btn.innerHTML = isAudioEnabled ? '<i class="fas fa-microphone"></i>' : '<i class="fas fa-microphone-slash"></i>';
+                        btn.style.background = isAudioEnabled ? 'var(--bg)' : '#e74c3c';
+                        btn.style.color = isAudioEnabled ? 'var(--text)' : 'white';
+                    }
+                }
+            }
+        };
+
+        window.toggleVideo = function() {
+            if (localStream) {
+                const track = localStream.getVideoTracks()[0];
+                if (track) {
+                    isVideoEnabled = !isVideoEnabled;
+                    track.enabled = isVideoEnabled;
+                    
+                    const btn = document.getElementById('videoToggleBtn');
+                    if (btn) {
+                        btn.innerHTML = isVideoEnabled ? '<i class="fas fa-video"></i>' : '<i class="fas fa-video-slash"></i>';
+                        btn.style.background = isVideoEnabled ? 'var(--bg)' : '#e74c3c';
+                        btn.style.color = isVideoEnabled ? 'var(--text)' : 'white';
+                    }
+                }
+            }
+        };
+
+        window.toggleSpeaker = function() {
+            isSpeakerEnabled = !isSpeakerEnabled;
+            const remoteVideo = document.getElementById('remoteVideo');
+            if (remoteVideo) {
+                remoteVideo.volume = isSpeakerEnabled ? 1.0 : 0.0;
+            }
+            
+            const btn = document.getElementById('speakerToggleBtn');
+            if (btn) {
+                btn.innerHTML = isSpeakerEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+                btn.style.background = isSpeakerEnabled ? 'var(--bg)' : '#e74c3c';
+                btn.style.color = isSpeakerEnabled ? 'var(--text)' : 'white';
+            }
+        };
+
+        /* ============================================
+           START VIDEO CALL
+        ============================================ */
+        window.startVideoCall = async function(memberName, memberKey) {
+            if (!currentGroup) {
+                alert("Please select a group first");
+                return;
+            }
+            
+            if (isCallActive) {
+                alert("You're already in a call");
+                return;
+            }
+            
+            try {
+                localStream = await getMediaStream(true, true);
+                if (!localStream) return;
+                
+                const callId = 'call_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+                
+                const callData = {
+                    from: myName,
+                    fromKey: typeof USER_KEY !== 'undefined' ? USER_KEY : myName,
+                    to: memberName,
+                    toKey: memberKey,
+                    groupId: currentGroup,
+                    groupName: document.getElementById('currentGroupName')?.textContent || 'Study Group',
+                    timestamp: Date.now(),
+                    status: 'ringing',
+                    callId: callId,
+                    callType: 'video'
+                };
+                
+                currentCall = callData;
+                showCallUI(callData, 'outgoing');
+                
+                peerConnection = createPeerConnection(callId, memberKey);
+                
+                const offer = await peerConnection.createOffer({
+                    offerToReceiveAudio: true,
+                    offerToReceiveVideo: true
+                });
+                await peerConnection.setLocalDescription(offer);
+                
+                await new Promise(resolve => {
+                    if (peerConnection.iceGatheringState === 'complete') {
+                        resolve();
+                    } else {
+                        peerConnection.onicegatheringstatechange = () => {
+                            if (peerConnection.iceGatheringState === 'complete') {
+                                resolve();
+                            }
+                        };
+                    }
+                });
+                
+                callData.offer = {
+                    type: peerConnection.localDescription.type,
+                    sdp: peerConnection.localDescription.sdp
+                };
+                
+                await database.ref('calls/' + memberKey + '/' + callId).set(callData);
+                listenForAnswer(callId, memberKey);
+                
+            } catch (err) {
+                console.error('Call failed:', err);
+                alert('Failed to start call');
+                endCall();
+            }
+        };
+
+        /* ============================================
+           START AUDIO CALL
+        ============================================ */
+        window.startAudioCall = async function(memberName, memberKey) {
+            if (!currentGroup) {
+                alert("Please select a group first");
+                return;
+            }
+            
+            if (isCallActive) {
+                alert("You're already in a call");
+                return;
+            }
+            
+            try {
+                localStream = await getMediaStream(false, true);
+                if (!localStream) return;
+                
+                const callId = 'call_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+                
+                const callData = {
+                    from: myName,
+                    fromKey: typeof USER_KEY !== 'undefined' ? USER_KEY : myName,
+                    to: memberName,
+                    toKey: memberKey,
+                    groupId: currentGroup,
+                    groupName: document.getElementById('currentGroupName')?.textContent || 'Study Group',
+                    timestamp: Date.now(),
+                    status: 'ringing',
+                    callId: callId,
+                    callType: 'audio'
+                };
+                
+                currentCall = callData;
+                showCallUI(callData, 'outgoing');
+                
+                peerConnection = createPeerConnection(callId, memberKey);
+                
+                const offer = await peerConnection.createOffer({
+                    offerToReceiveAudio: true,
+                    offerToReceiveVideo: false
+                });
+                await peerConnection.setLocalDescription(offer);
+                
+                await new Promise(resolve => {
+                    if (peerConnection.iceGatheringState === 'complete') {
+                        resolve();
+                    } else {
+                        peerConnection.onicegatheringstatechange = () => {
+                            if (peerConnection.iceGatheringState === 'complete') {
+                                resolve();
+                            }
+                        };
+                    }
+                });
+                
+                callData.offer = {
+                    type: peerConnection.localDescription.type,
+                    sdp: peerConnection.localDescription.sdp
+                };
+                
+                await database.ref('calls/' + memberKey + '/' + callId).set(callData);
+                listenForAnswer(callId, memberKey);
+                
+            } catch (err) {
+                console.error('Call failed:', err);
+                alert('Failed to start call');
+                endCall();
+            }
+        };
+
+        /* ============================================
+           ANSWER CALL
+        ============================================ */
+        window.answerCall = async function(callId, callDataStr) {
+            try {
+                closeCallDialog();
+                
+                let callData = typeof callDataStr === 'string' ? JSON.parse(callDataStr) : callDataStr;
+                
+                localStream = await getMediaStream(callData.callType === 'video', true);
+                if (!localStream) return;
+                
+                currentCall = callData;
+                currentCall.status = 'connecting';
+                showCallUI(callData, 'connecting');
+                
+                peerConnection = createPeerConnection(callId, callData.fromKey);
+                
+                const offer = new RTCSessionDescription(callData.offer);
+                await peerConnection.setRemoteDescription(offer);
+                
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+                
+                await new Promise(resolve => {
+                    if (peerConnection.iceGatheringState === 'complete') {
+                        resolve();
+                    } else {
+                        peerConnection.onicegatheringstatechange = () => {
+                            if (peerConnection.iceGatheringState === 'complete') {
+                                resolve();
+                            }
+                        };
+                    }
+                });
+                
+                const myKey = typeof USER_KEY !== 'undefined' ? USER_KEY : myName;
+                
+                const updates = {};
+                updates['calls/' + callData.fromKey + '/' + callId + '/answer'] = {
+                    type: peerConnection.localDescription.type,
+                    sdp: peerConnection.localDescription.sdp
+                };
+                updates['calls/' + callData.fromKey + '/' + callId + '/status'] = 'connected';
+                updates['calls/' + myKey + '/' + callId + '/status'] = 'connected';
+                
+                await database.ref().update(updates);
+                
+                currentCall.status = 'connected';
+                isCallActive = true;
+                
+                const timer = document.getElementById('callTimer');
+                if (timer) {
+                    startCallTimer();
+                }
+                
+                listenForICECandidates(callId, callData.fromKey);
+                
+            } catch (err) {
+                console.error('Answer failed:', err);
+                alert('Failed to answer call');
+                endCall();
+            }
+        };
+
+        /* ============================================
+           LISTEN FOR ANSWER
+        ============================================ */
+        function listenForAnswer(callId, peerKey) {
+            const myKey = typeof USER_KEY !== 'undefined' ? USER_KEY : myName;
+            
+            database.ref('calls/' + myKey + '/' + callId).on('value', async (snapshot) => {
+                const callData = snapshot.val();
+                if (!callData) return;
+                
+                if (callData.answer && peerConnection && !peerConnection.currentRemoteDescription) {
+                    const answer = new RTCSessionDescription(callData.answer);
+                    await peerConnection.setRemoteDescription(answer);
+                    
+                    if (currentCall) {
+                        currentCall.status = 'connected';
+                        isCallActive = true;
+                        startCallTimer();
+                    }
+                    
+                    listenForICECandidates(callId, peerKey);
+                }
+                
+                if (callData.status === 'ended' || callData.status === 'missed') {
+                    endCall();
+                }
+            });
+        }
+
+        /* ============================================
+           LISTEN FOR ICE CANDIDATES
+        ============================================ */
+        function listenForICECandidates(callId, peerKey) {
+            database.ref('calls/' + peerKey + '/ice_' + callId).on('child_added', (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.candidate && peerConnection && data.from !== myName) {
+                    peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate))
+                        .catch(err => console.log('ICE error:', err.message));
+                }
+            });
+        }
+
+        /* ============================================
+           CALL TIMER
+        ============================================ */
+        function startCallTimer() {
+            callStartTime = Date.now();
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - callStartTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                const timer = document.getElementById('callTimer');
+                if (timer) {
+                    timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        /* ============================================
+           END CALL
+        ============================================ */
+        window.endCall = function() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+            
+            if (currentCall) {
+                const updates = {};
+                updates['calls/' + currentCall.fromKey + '/' + currentCall.callId + '/status'] = 'ended';
+                updates['calls/' + currentCall.toKey + '/' + currentCall.callId + '/status'] = 'ended';
+                database.ref().update(updates).catch(() => {});
+            }
+            
+            const ui = document.getElementById('callUIContainer');
+            if (ui) ui.remove();
+            
+            closeCallDialog();
+            currentCall = null;
+            isCallActive = false;
+        };
+
+        /* ============================================
+           INCOMING CALL DIALOG
+        ============================================ */
+        function showIncomingCallDialog(callData) {
+            if (document.getElementById('callDialog') || isCallActive) return;
+            
+            const dialog = document.createElement('div');
+            dialog.id = 'callDialog';
+            dialog.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: var(--card);
+                padding: 32px;
+                border-radius: 28px;
+                box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+                z-index: 10001;
+                text-align: center;
+                min-width: 360px;
+                border: 2px solid #4caf50;
+                animation: slideUp 0.3s ease;
+            `;
+            
+            dialog.innerHTML = `
+                <div style="font-size: 72px; margin-bottom: 24px; animation: ring 1s infinite;">
+                    ${callData.callType === 'video' ? '📹' : '🎧'}
+                </div>
+                <h2 style="margin: 0 0 8px 0; font-size: 28px; font-weight: 600;">Incoming Call</h2>
+                <p style="font-size: 24px; font-weight: 500; margin: 16px 0; color: var(--accent);">${callData.from}</p>
+                <p style="opacity: 0.7; margin-bottom: 32px; font-size: 16px;">
+                    <i class="fas fa-shield-alt"></i> End-to-end encrypted
+                </p>
+                <div style="display: flex; gap: 20px; justify-content: center;">
+                    <button onclick='answerCall("${callData.callId}", ${JSON.stringify(callData).replace(/'/g, "\\'")})' 
+                        style="background: #4caf50; padding: 16px 32px; border: none; border-radius: 50px; color: white; cursor: pointer; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(76,175,80,0.3);"
+                        onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 8px 20px rgba(76,175,80,0.4)'"
+                        onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 12px rgba(76,175,80,0.3)'">
+                        <i class="fas fa-phone"></i> Answer
+                    </button>
+                    <button onclick="rejectCall('${callData.callId}', '${callData.fromKey}')" 
+                        style="background: #e74c3c; padding: 16px 32px; border: none; border-radius: 50px; color: white; cursor: pointer; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(231,76,60,0.3);"
+                        onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 8px 20px rgba(231,76,60,0.4)'"
+                        onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 12px rgba(231,76,60,0.3)'">
+                        <i class="fas fa-phone-slash"></i> Decline
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(dialog);
+        }
+
+        window.rejectCall = function(callId, callerKey) {
+            const myKey = typeof USER_KEY !== 'undefined' ? USER_KEY : myName;
+            
+            database.ref('calls/' + myKey + '/' + callId + '/status').set('missed');
+            database.ref('calls/' + callerKey + '/' + callId + '/status').set('missed')
+                .then(() => closeCallDialog());
+        };
+
+        function closeCallDialog() {
+            const dialog = document.getElementById('callDialog');
+            if (dialog) dialog.remove();
+        }
+
+        /* ============================================
+           LISTEN FOR INCOMING CALLS
+        ============================================ */
+        function listenForIncomingCalls() {
+            const myKey = typeof USER_KEY !== 'undefined' ? USER_KEY : myName;
+            
+            database.ref('calls/' + myKey).on('value', (snapshot) => {
+                const calls = snapshot.val();
+                if (!calls || isCallActive) return;
+                
+                Object.entries(calls).forEach(([callId, callData]) => {
+                    if (callData.status === 'ringing' && 
+                        callData.to === myName && 
+                        callData.from !== myName &&
+                        !document.getElementById('callDialog')) {
+                        
+                        if (Date.now() - callData.timestamp < 30000) {
+                            showIncomingCallDialog(callData);
+                        }
+                    }
+                });
+            });
+        }
+
+        /* ============================================
+           UPDATE MEMBER LIST
+        ============================================ */
+        function updateMemberList() {
+            if (!currentGroup) return;
+            
+            database.ref('groups/' + currentGroup + '/members').once('value', (snapshot) => {
+                const members = snapshot.val() || {};
+                const membersDiv = document.getElementById('membersList');
+                if (!membersDiv) return;
+                
+                membersDiv.innerHTML = '';
+                
+                Object.entries(members).forEach(([key, member]) => {
+                    const div = document.createElement('div');
+                    div.style.cssText = `
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 12px 16px;
+                        border-radius: 14px;
+                        margin-bottom: 8px;
+                        background: var(--bg);
+                        transition: all 0.3s ease;
+                    `;
+                    div.onmouseover = function() { this.style.transform = 'translateX(5px)'; };
+                    div.onmouseout = function() { this.style.transform = 'translateX(0)'; };
+                    
+                    div.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 8px; height: 8px; background: #4caf50; border-radius: 50%; box-shadow: 0 0 0 2px rgba(76,175,80,0.2);"></div>
+                            <span style="font-weight: 500;">${member.name} ${member.name === myName ? '(You)' : ''}</span>
+                        </div>
+                        ${member.name !== myName && !isCallActive ? `
+                            <div style="display: flex; gap: 8px;">
+                                <button onclick="startVideoCall('${member.name}', '${key}')" 
+                                    style="background: var(--accent); color: white; border: none; border-radius: 10px; padding: 8px 14px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease;"
+                                    onmouseover="this.style.transform='scale(1.05)'" 
+                                    onmouseout="this.style.transform='scale(1)'">
+                                    <i class="fas fa-video"></i> Video
+                                </button>
+                                <button onclick="startAudioCall('${member.name}', '${key}')" 
+                                    style="background: #4caf50; color: white; border: none; border-radius: 10px; padding: 8px 14px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease;"
+                                    onmouseover="this.style.transform='scale(1.05)'" 
+                                    onmouseout="this.style.transform='scale(1)'">
+                                    <i class="fas fa-phone"></i> Audio
+                                </button>
+                            </div>
+                        ` : ''}
+                    `;
+                    
+                    membersDiv.appendChild(div);
+                });
+            });
+        }
+
+        /* ============================================
+           ADD CSS STYLES
+        ============================================ */
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translate(-50%, 20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translate(-50%, -50%);
+                }
+            }
+            
+            @keyframes ring {
+                0% { transform: rotate(0deg); }
+                10% { transform: rotate(5deg); }
+                20% { transform: rotate(-5deg); }
+                30% { transform: rotate(3deg); }
+                40% { transform: rotate(-3deg); }
+                50% { transform: rotate(1deg); }
+                60% { transform: rotate(0deg); }
+                100% { transform: rotate(0deg); }
+            }
+            
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+            }
+            
+            #callUIContainer {
+                animation: slideUp 0.3s ease;
+            }
+            
+            #callDialog {
+                animation: slideUp 0.3s ease;
+            }
+            
+            .play-overlay {
+                animation: fadeIn 0.3s ease;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            @media (max-width: 768px) {
+                #callUIContainer {
+                    width: 100% !important;
+                    bottom: 0;
+                    right: 0;
+                    border-radius: 20px 20px 0 0;
+                }
+                
+                #callDialog {
+                    width: 90%;
+                    min-width: auto;
+                    padding: 24px;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        /* ============================================
+           INITIALIZE
+        ============================================ */
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+            let memberListDiv = document.getElementById('memberList');
+            if (!memberListDiv) {
+                memberListDiv = document.createElement('div');
+                memberListDiv.id = 'memberList';
+                memberListDiv.style.marginTop = '20px';
+                memberListDiv.innerHTML = '<h4 style="margin-bottom: 15px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-users" style="color: var(--accent);"></i> Group Members</h4><div id="membersList"></div>';
+                sidebar.appendChild(memberListDiv);
+            }
+        }
+        
+        if (typeof selectGroup === 'function') {
+            const originalSelect = selectGroup;
+            window.selectGroup = function(code) {
+                originalSelect(code);
+                setTimeout(updateMemberList, 500);
+            };
+        }
+        
+        listenForIncomingCalls();
+        console.log('✅ Call system ready');
+        
+        // Export all functions
+        window.startVideoCall = startVideoCall;
+        window.startAudioCall = startAudioCall;
+        window.answerCall = answerCall;
+        window.rejectCall = rejectCall;
+        window.endCall = endCall;
+        window.toggleAudio = toggleAudio;
+        window.toggleVideo = toggleVideo;
+        window.toggleSpeaker = toggleSpeaker;
+    }
+})();
+</script>
+<!-- ============================================ -->
+ <!-- ============================================
+     GROUP NAME EDITING FEATURE
+     ADD THIS AFTER YOUR CALL SYSTEM CODE
+============================================ -->
+<script>
+(function() {
+    // Wait for main app to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initGroupEditing);
+    } else {
+        setTimeout(initGroupEditing, 1500);
+    }
+
+    function initGroupEditing() {
+        if (typeof myName === 'undefined' || typeof database === 'undefined' || typeof currentGroup === 'undefined') {
+            console.log('Waiting for main app...');
+            setTimeout(initGroupEditing, 500);
+            return;
+        }
+
+        /* ============================================
+           EDIT GROUP NAME
+        ============================================ */
+        window.editGroupName = function() {
+            if (!currentGroup) {
+                alert("Please select a group first");
+                return;
+            }
+
+            // Get current group data
+            database.ref('groups/' + currentGroup).once('value')
+                .then((snapshot) => {
+                    const groupData = snapshot.val();
+                    if (!groupData) {
+                        alert("Group not found");
+                        return;
+                    }
+
+                    // Check if user is creator or has permission
+                    const isCreator = groupData.creatorKey === (typeof USER_KEY !== 'undefined' ? USER_KEY : myName);
+                    
+                    if (!isCreator && groupData.creator !== myName) {
+                        alert("❌ Only the group creator can change the group name");
+                        return;
+                    }
+
+                    // Prompt for new name
+                    const newName = prompt("Enter new group name:", groupData.name);
+                    if (!newName || newName.trim() === "") return;
+                    
+                    if (newName.trim() === groupData.name) {
+                        alert("Name is the same, no changes made");
+                        return;
+                    }
+
+                    // Show loading state
+                    const editBtn = document.getElementById('editGroupNameBtn');
+                    if (editBtn) {
+                        editBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                        editBtn.disabled = true;
+                    }
+
+                    // Update in Firebase
+                    database.ref('groups/' + currentGroup + '/name').set(newName.trim())
+                        .then(() => {
+                            alert("✅ Group name updated successfully!");
+                            
+                            // Update UI
+                            const groupNameEl = document.getElementById('currentGroupName');
+                            if (groupNameEl) {
+                                groupNameEl.textContent = newName.trim();
+                            }
+                            
+                            // Refresh groups list
+                            if (typeof renderGroupsList === 'function') {
+                                renderGroupsList();
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error updating group name:", error);
+                            alert("❌ Failed to update group name");
+                        })
+                        .finally(() => {
+                            if (editBtn) {
+                                editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit Name';
+                                editBtn.disabled = false;
+                            }
+                        });
+                })
+                .catch((error) => {
+                    console.error("Error fetching group:", error);
+                    alert("❌ Failed to load group data");
+                });
+        };
+
+        /* ============================================
+           ADD EDIT BUTTON TO GROUP HEADER
+        ============================================ */
+        function addEditButtonToHeader() {
+            const groupHeader = document.querySelector('.group-header-content');
+            if (!groupHeader) return;
+
+            const buttonContainer = groupHeader.querySelector('.group-header-buttons');
+            if (!buttonContainer) return;
+
+            // Check if button already exists
+            if (document.getElementById('editGroupNameBtn')) return;
+
+            // Create edit button
+            const editBtn = document.createElement('button');
+            editBtn.id = 'editGroupNameBtn';
+            editBtn.onclick = editGroupName;
+            editBtn.style.background = '#ff9800';
+            editBtn.style.marginRight = '8px';
+            editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit Name';
+            
+            // Insert at the beginning of button container
+            buttonContainer.insertBefore(editBtn, buttonContainer.firstChild);
+        }
+
+        /* ============================================
+           OVERRIDE SELECT GROUP TO ADD EDIT BUTTON
+        ============================================ */
+        if (typeof selectGroup === 'function') {
+            const originalSelect = selectGroup;
+            window.selectGroup = function(code) {
+                originalSelect(code);
+                setTimeout(() => {
+                    // Check if user is creator and show/hide edit button accordingly
+                    database.ref('groups/' + code).once('value')
+                        .then((snapshot) => {
+                            const groupData = snapshot.val();
+                            if (!groupData) return;
+
+                            const isCreator = groupData.creatorKey === (typeof USER_KEY !== 'undefined' ? USER_KEY : myName) || 
+                                            groupData.creator === myName;
+                            
+                            const editBtn = document.getElementById('editGroupNameBtn');
+                            if (editBtn) {
+                                if (isCreator) {
+                                    editBtn.style.display = 'flex';
+                                } else {
+                                    editBtn.style.display = 'none';
+                                }
+                            }
+                        });
+                }, 500);
+            };
+        }
+
+        /* ============================================
+           ADD CSS FOR EDIT BUTTON
+        ============================================ */
+        const style = document.createElement('style');
+        style.textContent = `
+            #editGroupNameBtn {
+                background: #ff9800;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            
+            #editGroupNameBtn:hover {
+                background: #f57c00 !important;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(255,152,0,0.3);
+            }
+            
+            #editGroupNameBtn i {
+                font-size: 14px;
+            }
+            
+            @media (max-width: 768px) {
+                .group-header-buttons {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 8px;
+                    width: 100%;
+                }
+                
+                #editGroupNameBtn {
+                    flex: 1;
+                    min-width: 120px;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        /* ============================================
+           INITIALIZE
+        ============================================ */
+        // Add edit button when group is selected
+        const checkForGroupHeader = setInterval(() => {
+            const groupHeader = document.querySelector('.group-header-content');
+            if (groupHeader) {
+                addEditButtonToHeader();
+                clearInterval(checkForGroupHeader);
+            }
+        }, 1000);
+
+        console.log('✅ Group editing feature loaded');
+    }
+})();
+</script>
+<!-- ============================================ -->
+
+<!-- ============================================
+     CREATOR MANAGEMENT SECTION
+     ADD THIS AFTER YOUR GROUP EDITING CODE
+============================================ -->
+<script>
+(function() {
+    // Wait for main app to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCreatorManagement);
+    } else {
+        setTimeout(initCreatorManagement, 1500);
+    }
+
+    function initCreatorManagement() {
+        if (typeof myName === 'undefined' || typeof database === 'undefined' || typeof currentGroup === 'undefined') {
+            console.log('Waiting for main app...');
+            setTimeout(initCreatorManagement, 500);
+            return;
+        }
+
+        let currentGroupData = null;
+
+        /* ============================================
+           PROMOTE MEMBER TO CREATOR
+        ============================================ */
+        window.promoteToCreator = async function(memberName, memberKey) {
+            if (!currentGroup || !currentGroupData) {
+                alert("Please select a group first");
+                return;
+            }
+
+            if (memberName === myName) {
+                alert("You are already a creator!");
+                return;
+            }
+
+            if (!confirm(`Make ${memberName} a creator?\n\nThey will be able to edit group name, promote others, and manage the group.`)) {
+                return;
+            }
+
+            try {
+                const updates = {};
+                updates[`groups/${currentGroup}/members/${memberKey}/isCreator`] = true;
+                updates[`groups/${currentGroup}/creators/${memberKey}`] = {
+                    name: memberName,
+                    promotedBy: myName,
+                    promotedAt: Date.now()
+                };
+
+                await database.ref().update(updates);
+                
+                alert(`✅ ${memberName} is now a creator!`);
+                loadCreatorManagement(); // Refresh the management panel
+                
+            } catch (error) {
+                console.error("Error promoting member:", error);
+                alert("❌ Failed to promote member");
+            }
+        };
+
+        /* ============================================
+           DEMOTE CREATOR TO REGULAR MEMBER
+        ============================================ */
+        window.demoteCreator = async function(memberName, memberKey) {
+            if (!currentGroup || !currentGroupData) {
+                alert("Please select a group first");
+                return;
+            }
+
+            if (memberKey === currentGroupData.creatorKey) {
+                alert("Cannot demote the original creator");
+                return;
+            }
+
+            if (!confirm(`Remove ${memberName}'s creator privileges?`)) {
+                return;
+            }
+
+            try {
+                const updates = {};
+                updates[`groups/${currentGroup}/members/${memberKey}/isCreator`] = false;
+                updates[`groups/${currentGroup}/creators/${memberKey}`] = null; // Remove from creators list
+
+                await database.ref().update(updates);
+                
+                alert(`✅ ${memberName} is no longer a creator`);
+                loadCreatorManagement(); // Refresh the management panel
+                
+            } catch (error) {
+                console.error("Error demoting creator:", error);
+                alert("❌ Failed to demote creator");
+            }
+        };
+
+        /* ============================================
+           LOAD CREATOR MANAGEMENT PANEL
+        ============================================ */
+        async function loadCreatorManagement() {
+            if (!currentGroup) return;
+
+            try {
+                const snapshot = await database.ref('groups/' + currentGroup).once('value');
+                currentGroupData = snapshot.val();
+                
+                if (!currentGroupData) return;
+
+                // Check if current user is creator
+                const isCreator = checkIfCreator(currentGroupData);
+                
+                // Only show management panel to creators
+                const managementPanel = document.getElementById('creatorManagementPanel');
+                if (managementPanel) {
+                    managementPanel.style.display = isCreator ? 'block' : 'none';
+                }
+
+                if (isCreator) {
+                    renderCreatorManagement(currentGroupData);
+                }
+
+            } catch (error) {
+                console.error("Error loading group data:", error);
+            }
+        }
+
+        /* ============================================
+           CHECK IF USER IS CREATOR
+        ============================================ */
+        function checkIfCreator(groupData) {
+            const myKey = typeof USER_KEY !== 'undefined' ? USER_KEY : myName;
+            return groupData.creatorKey === myKey || 
+                   groupData.creator === myName ||
+                   (groupData.creators && groupData.creators[myKey]) ||
+                   (groupData.members && groupData.members[myKey] && groupData.members[myKey].isCreator);
+        }
+
+        /* ============================================
+           RENDER CREATOR MANAGEMENT INTERFACE
+        ============================================ */
+        function renderCreatorManagement(groupData) {
+            const panel = document.getElementById('creatorManagementPanel');
+            if (!panel) return;
+
+            const members = groupData.members || {};
+            const creators = groupData.creators || {};
+            const myKey = typeof USER_KEY !== 'undefined' ? USER_KEY : myName;
+
+            // Separate members into creators and regular members
+            const creatorList = [];
+            const regularMembers = [];
+
+            Object.entries(members).forEach(([key, member]) => {
+                const isCreator = key === groupData.creatorKey || 
+                                 member.isCreator === true || 
+                                 creators[key];
+                
+                if (isCreator) {
+                    creatorList.push({ key, ...member, isOriginal: key === groupData.creatorKey });
+                } else {
+                    regularMembers.push({ key, ...member });
+                }
+            });
+
+            // Build HTML
+            let html = `
+                <div style="padding: 20px; background: var(--card); border-radius: 16px; margin-top: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                        <div style="width: 40px; height: 40px; background: #ff9800; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-crown" style="color: white; font-size: 20px;"></i>
+                        </div>
+                        <div>
+                            <h3 style="margin: 0; font-size: 18px;">Creator Management</h3>
+                            <p style="margin: 5px 0 0 0; opacity: 0.7; font-size: 13px;">Promote members to creators or demote them</p>
+                        </div>
+                    </div>
+            `;
+
+            // Current Creators Section
+            html += `
+                <div style="margin-bottom: 25px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                        <i class="fas fa-star" style="color: #ff9800;"></i>
+                        <h4 style="margin: 0; font-size: 16px;">Current Creators</h4>
+                        <span style="background: rgba(255,152,0,0.2); color: #ff9800; padding: 2px 10px; border-radius: 20px; font-size: 12px;">${creatorList.length}</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+            `;
+
+            creatorList.forEach(creator => {
+                const canDemote = !creator.isOriginal && myKey !== creator.key;
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--bg); border-radius: 12px; border-left: 3px solid #ff9800;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 36px; height: 36px; background: #ff9800; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-crown" style="color: white; font-size: 16px;"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">${creator.name} ${creator.key === myKey ? '(You)' : ''}</div>
+                                <div style="font-size: 11px; opacity: 0.6;">
+                                    ${creator.isOriginal ? '👑 Original Creator' : `Promoted by ${creators[creator.key]?.promotedBy || 'Unknown'}`}
+                                </div>
+                            </div>
+                        </div>
+                        ${canDemote ? `
+                            <button onclick="demoteCreator('${creator.name}', '${creator.key}')" 
+                                style="background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease;"
+                                onmouseover="this.style.transform='scale(1.05)';this.style.background='#c0392b'" 
+                                onmouseout="this.style.transform='scale(1)';this.style.background='#e74c3c'">
+                                <i class="fas fa-user-minus"></i> Demote
+                            </button>
+                        ` : creator.isOriginal ? '<span style="color: #999; font-size: 13px;">Original Creator</span>' : ''}
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+
+            // Regular Members Section
+            if (regularMembers.length > 0) {
+                html += `
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+                            <i class="fas fa-users" style="color: var(--accent);"></i>
+                            <h4 style="margin: 0; font-size: 16px;">Regular Members</h4>
+                            <span style="background: rgba(108,99,255,0.2); color: var(--accent); padding: 2px 10px; border-radius: 20px; font-size: 12px;">${regularMembers.length}</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                `;
+
+                regularMembers.forEach(member => {
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--bg); border-radius: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 36px; height: 36px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; opacity: 0.5;">
+                                    <i class="fas fa-user" style="color: white; font-size: 16px;"></i>
+                                </div>
+                                <span style="font-weight: 500;">${member.name}</span>
+                            </div>
+                            <button onclick="promoteToCreator('${member.name}', '${member.key}')" 
+                                style="background: #ff9800; color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease;"
+                                onmouseover="this.style.transform='scale(1.05)';this.style.background='#f57c00'" 
+                                onmouseout="this.style.transform='scale(1)';this.style.background='#ff9800'">
+                                <i class="fas fa-crown"></i> Make Creator
+                            </button>
+                        </div>
+                    `;
+                });
+
+                html += `</div></div>`;
+            } else {
+                html += `
+                    <div style="text-align: center; padding: 30px; background: var(--bg); border-radius: 12px;">
+                        <i class="fas fa-users" style="font-size: 40px; opacity: 0.3; margin-bottom: 10px;"></i>
+                        <p style="opacity: 0.6; margin: 0;">No regular members yet</p>
+                    </div>
+                `;
+            }
+
+            html += `</div>`;
+            panel.innerHTML = html;
+        }
+
+        /* ============================================
+           ADD MANAGEMENT PANEL TO SIDEBAR
+        ============================================ */
+        function addManagementPanel() {
+            const sidebar = document.querySelector('.sidebar');
+            if (!sidebar) return;
+
+            // Check if panel already exists
+            if (document.getElementById('creatorManagementPanel')) return;
+
+            const panel = document.createElement('div');
+            panel.id = 'creatorManagementPanel';
+            panel.style.display = 'none'; // Hidden by default, shown only to creators
+            sidebar.appendChild(panel);
+        }
+
+        /* ============================================
+           OVERRIDE SELECT GROUP
+        ============================================ */
+        if (typeof selectGroup === 'function') {
+            const originalSelect = selectGroup;
+            window.selectGroup = function(code) {
+                originalSelect(code);
+                setTimeout(() => {
+                    loadCreatorManagement();
+                }, 500);
+            };
+        }
+
+        /* ============================================
+           UPDATE MEMBER LIST (Original function enhancement)
+        ============================================ */
+        if (typeof updateMemberList === 'function') {
+            const originalUpdateMemberList = updateMemberList;
+            window.updateMemberList = function() {
+                if (!currentGroup) return;
+                
+                database.ref('groups/' + currentGroup).once('value', (snapshot) => {
+                    const groupData = snapshot.val();
+                    if (!groupData) return;
+
+                    const members = groupData.members || {};
+                    const creators = groupData.creators || {};
+                    const membersDiv = document.getElementById('membersList');
+                    if (!membersDiv) return;
+
+                    const isCreator = checkIfCreator(groupData);
+
+                    membersDiv.innerHTML = '';
+                    
+                    Object.entries(members).forEach(([key, member]) => {
+                        const isMemberCreator = key === groupData.creatorKey || 
+                                              member.isCreator === true || 
+                                              creators[key];
+
+                        const div = document.createElement('div');
+                        div.style.cssText = `
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            padding: 12px 16px;
+                            border-radius: 14px;
+                            margin-bottom: 8px;
+                            background: var(--bg);
+                            transition: all 0.3s ease;
+                            border-left: 3px solid ${isMemberCreator ? '#ff9800' : 'transparent'};
+                        `;
+                        div.onmouseover = function() { this.style.transform = 'translateX(5px)'; };
+                        div.onmouseout = function() { this.style.transform = 'translateX(0)'; };
+                        
+                        let memberHTML = `
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 8px; height: 8px; background: #4caf50; border-radius: 50%;"></div>
+                                <div>
+                                    <span style="font-weight: 500;">${member.name} ${member.name === myName ? '(You)' : ''}</span>
+                                    ${isMemberCreator ? '<span style="margin-left: 8px; font-size: 10px; background: #ff9800; color: white; padding: 2px 8px; border-radius: 12px;"><i class="fas fa-crown" style="font-size: 8px;"></i> Creator</span>' : ''}
+                                </div>
+                            </div>
+                        `;
+
+                        let actionButtons = '<div style="display: flex; gap: 8px;">';
+
+                        // Only show promote button in main list if there's no management panel
+                        // (Management panel is better for this)
+                        
+                        if (member.name !== myName && !isCallActive) {
+                            actionButtons += `
+                                <button onclick="startVideoCall('${member.name}', '${key}')" 
+                                    style="background: var(--accent); color: white; border: none; border-radius: 8px; padding: 6px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px;"
+                                    title="Video call ${member.name}">
+                                    <i class="fas fa-video"></i>
+                                </button>
+                                <button onclick="startAudioCall('${member.name}', '${key}')" 
+                                    style="background: #4caf50; color: white; border: none; border-radius: 8px; padding: 6px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px;"
+                                    title="Audio call ${member.name}">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                            `;
+                        }
+
+                        actionButtons += '</div>';
+                        
+                        div.innerHTML = memberHTML + actionButtons;
+                        membersDiv.appendChild(div);
+                    });
+                });
+            };
+        }
+
+        /* ============================================
+           ADD CSS FOR MANAGEMENT PANEL
+        ============================================ */
+        const style = document.createElement('style');
+        style.textContent = `
+            #creatorManagementPanel {
+                animation: slideUp 0.3s ease;
+                margin-top: 20px;
+            }
+            
+            #creatorManagementPanel button {
+                transition: all 0.3s ease;
+            }
+            
+            #creatorManagementPanel button:active {
+                transform: scale(0.95);
+            }
+            
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            @media (max-width: 768px) {
+                #creatorManagementPanel > div {
+                    padding: 15px !important;
+                }
+                
+                #creatorManagementPanel button {
+                    padding: 6px 12px !important;
+                    font-size: 12px !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        /* ============================================
+           INITIALIZE
+        ============================================ */
+        addManagementPanel();
+        
+        // Listen for group changes
+        const checkForGroup = setInterval(() => {
+            if (currentGroup) {
+                loadCreatorManagement();
+                clearInterval(checkForGroup);
+            }
+        }, 1000);
+
+        console.log('✅ Creator management panel loaded');
+    }
+})();
+</script>
+<!-- ============================================ -->
 </body>
 </html>
-
