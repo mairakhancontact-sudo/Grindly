@@ -3699,5 +3699,380 @@ window.deleteResource = deleteResource;
 })();
 </script>
 <!-- ============================================ -->
+
+  <!-- ============================================
+     BROWSER NOTIFICATIONS SYSTEM
+     ADD THIS BEFORE THE </body> TAG
+============================================ -->
+<script>
+(function() {
+    // Wait for main app to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initNotifications);
+    } else {
+        setTimeout(initNotifications, 1500);
+    }
+
+    function initNotifications() {
+        if (typeof myName === 'undefined' || typeof database === 'undefined') {
+            console.log('Waiting for main app...');
+            setTimeout(initNotifications, 500);
+            return;
+        }
+
+        // Notification settings
+        let notificationPermission = false;
+        let lastNotificationTime = {};
+        const NOTIFICATION_COOLDOWN = 5000; // 5 seconds between same type notifications
+        
+        // Store last message counts per group
+        let lastMessageCounts = {};
+
+        /* ============================================
+           REQUEST NOTIFICATION PERMISSION
+        ============================================ */
+        async function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                console.log('This browser does not support notifications');
+                return false;
+            }
+
+            if (Notification.permission === 'granted') {
+                notificationPermission = true;
+                return true;
+            }
+
+            if (Notification.permission !== 'denied') {
+                const permission = await Notification.requestPermission();
+                notificationPermission = permission === 'granted';
+                return notificationPermission;
+            }
+
+            return false;
+        }
+
+        /* ============================================
+           SHOW NOTIFICATION
+        ============================================ */
+        function showNotification(title, options = {}) {
+            if (!notificationPermission) return;
+
+            // Check cooldown
+            const notificationKey = options.tag || 'general';
+            const now = Date.now();
+            
+            if (lastNotificationTime[notificationKey] && 
+                now - lastNotificationTime[notificationKey] < NOTIFICATION_COOLDOWN) {
+                return;
+            }
+
+            try {
+                // Default options
+                const defaultOptions = {
+                    icon: 'https://study-groups-app-19c8a.firebaseapp.com/favicon.ico',
+                    badge: 'https://study-groups-app-19c8a.firebaseapp.com/favicon.ico',
+                    silent: false,
+                    vibrate: [200, 100, 200],
+                    requireInteraction: false
+                };
+
+                const notification = new Notification(title, { ...defaultOptions, ...options });
+                
+                // Auto close after 5 seconds if not requiring interaction
+                if (!options.requireInteraction) {
+                    setTimeout(() => notification.close(), 5000);
+                }
+
+                // Handle click
+                notification.onclick = function() {
+                    window.focus();
+                    this.close();
+                };
+
+                lastNotificationTime[notificationKey] = now;
+                
+            } catch (error) {
+                console.log('Notification error:', error);
+            }
+        }
+
+        /* ============================================
+           SETUP NOTIFICATION BUTTON
+        ============================================ */
+        function setupNotificationButton() {
+            const headerControls = document.querySelector('.header-controls');
+            if (!headerControls) return;
+
+            // Check if button already exists
+            if (document.getElementById('notificationToggle')) return;
+
+            const notifBtn = document.createElement('button');
+            notifBtn.id = 'notificationToggle';
+            notifBtn.style.background = notificationPermission ? '#4caf50' : '#666';
+            notifBtn.style.marginRight = '8px';
+            notifBtn.innerHTML = notificationPermission ? 
+                '<i class="fas fa-bell"></i> Notifications On' : 
+                '<i class="fas fa-bell-slash"></i> Enable Notifications';
+            
+            notifBtn.onclick = async function() {
+                if (notificationPermission) {
+                    // Toggle off (but can't actually disable permission, so we just show message)
+                    alert('To disable notifications, change site permissions in your browser settings');
+                } else {
+                    const granted = await requestNotificationPermission();
+                    if (granted) {
+                        this.innerHTML = '<i class="fas fa-bell"></i> Notifications On';
+                        this.style.background = '#4caf50';
+                        showNotification('✅ Notifications Enabled', {
+                            body: 'You will now receive notifications for messages and calls',
+                            tag: 'welcome'
+                        });
+                    }
+                }
+            };
+
+            headerControls.insertBefore(notifBtn, headerControls.firstChild);
+        }
+
+        /* ============================================
+           CHECK NEW MESSAGES
+        ============================================ */
+        function monitorMessages() {
+            if (!currentGroup) return;
+
+            const messagesRef = database.ref('messages/' + currentGroup);
+            
+            messagesRef.on('value', (snapshot) => {
+                const messages = snapshot.val() || {};
+                const messageCount = Object.keys(messages).length;
+                
+                // Get last message
+                const lastMessage = Object.values(messages)
+                    .sort((a, b) => b.timestamp - a.timestamp)[0];
+                
+                if (!lastMessage) return;
+
+                // Check if this is a new message (within last 10 seconds)
+                const isNew = Date.now() - lastMessage.timestamp < 10000;
+                
+                // Check if sender is not current user
+                const isFromOthers = lastMessage.sender !== myName;
+
+                if (isNew && isFromOthers) {
+                    // Get group name
+                    database.ref('groups/' + currentGroup + '/name').once('value')
+                        .then(groupSnapshot => {
+                            const groupName = groupSnapshot.val() || 'Study Group';
+                            
+                            showNotification(`💬 New message in ${groupName}`, {
+                                body: `${lastMessage.sender}: ${lastMessage.text.substring(0, 100)}${lastMessage.text.length > 100 ? '...' : ''}`,
+                                tag: `message_${lastMessage.timestamp}`,
+                                data: { groupId: currentGroup, message: lastMessage }
+                            });
+                        });
+                }
+            });
+        }
+
+        /* ============================================
+           MONITOR ALL GROUPS FOR NEW MESSAGES
+        ============================================ */
+        function monitorAllGroups() {
+            if (!myGroups || myGroups.length === 0) return;
+
+            myGroups.forEach(groupCode => {
+                // Don't monitor current group separately (already monitored)
+                if (groupCode === currentGroup) return;
+
+                const messagesRef = database.ref('messages/' + groupCode);
+                
+                messagesRef.limitToLast(1).on('child_added', (snapshot) => {
+                    const message = snapshot.val();
+                    
+                    // Check if message is from last 30 seconds and not from current user
+                    if (message && 
+                        Date.now() - message.timestamp < 30000 && 
+                        message.sender !== myName) {
+                        
+                        // Get group name
+                        database.ref('groups/' + groupCode + '/name').once('value')
+                            .then(groupSnapshot => {
+                                const groupName = groupSnapshot.val() || 'Study Group';
+                                
+                                showNotification(`💬 New message in ${groupName}`, {
+                                    body: `${message.sender}: ${message.text.substring(0, 100)}${message.text.length > 100 ? '...' : ''}`,
+                                    tag: `group_${groupCode}_${message.timestamp}`,
+                                    data: { groupId: groupCode, message: message }
+                                });
+                            });
+                    }
+                });
+            });
+        }
+
+        /* ============================================
+           MONITOR INCOMING CALLS
+        ============================================ */
+        function monitorCalls() {
+            const myKey = typeof USER_KEY !== 'undefined' ? USER_KEY : myName;
+            
+            database.ref('calls/' + myKey).on('child_added', (snapshot) => {
+                const callData = snapshot.val();
+                
+                // Check if it's an incoming call (not from self) and within last 10 seconds
+                if (callData && 
+                    callData.from !== myName && 
+                    callData.status === 'ringing' &&
+                    Date.now() - callData.timestamp < 10000) {
+                    
+                    const callType = callData.callType === 'video' ? '📹 Video Call' : '🎧 Audio Call';
+                    
+                    showNotification(`📞 Incoming ${callType}`, {
+                        body: `${callData.from} is calling you in ${callData.groupName || 'Study Group'}`,
+                        tag: `call_${callData.callId}`,
+                        requireInteraction: true, // Don't auto-dismiss for calls
+                        vibrate: [500, 200, 500, 200, 500] // Longer vibration pattern for calls
+                    });
+                }
+            });
+        }
+
+        /* ============================================
+           MONITOR MEMBER JOINED
+        ============================================ */
+        function monitorGroupMembers() {
+            myGroups.forEach(groupCode => {
+                const groupRef = database.ref('groups/' + groupCode + '/members');
+                
+                groupRef.on('child_added', (snapshot) => {
+                    const member = snapshot.val();
+                    
+                    // Check if it's a new member (joined in last 10 seconds) and not current user
+                    if (member && 
+                        member.name !== myName &&
+                        Date.now() - member.joinedAt < 10000) {
+                        
+                        database.ref('groups/' + groupCode + '/name').once('value')
+                            .then(groupSnapshot => {
+                                const groupName = groupSnapshot.val() || 'Study Group';
+                                
+                                showNotification(`👋 New Member in ${groupName}`, {
+                                    body: `${member.name} joined the group`,
+                                    tag: `join_${groupCode}_${member.joinedAt}`
+                                });
+                            });
+                    }
+                });
+            });
+        }
+
+        /* ============================================
+           OVERRIDE SELECT GROUP TO SETUP MONITORING
+        ============================================ */
+        if (typeof selectGroup === 'function') {
+            const originalSelect = selectGroup;
+            window.selectGroup = function(code) {
+                originalSelect(code);
+                setTimeout(() => {
+                    monitorMessages();
+                }, 500);
+            };
+        }
+
+        /* ============================================
+           ADD CSS FOR NOTIFICATION BUTTON
+        ============================================ */
+        const style = document.createElement('style');
+        style.textContent = `
+            #notificationToggle {
+                background: #666;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+            
+            #notificationToggle i {
+                font-size: 14px;
+            }
+            
+            #notificationToggle:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            }
+            
+            #notificationToggle:active {
+                transform: translateY(0);
+            }
+            
+            @media (max-width: 768px) {
+                .header-controls {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 8px;
+                }
+                
+                #notificationToggle {
+                    font-size: 13px;
+                    padding: 8px 12px;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                #notificationToggle {
+                    font-size: 0;
+                    padding: 8px 10px;
+                }
+                
+                #notificationToggle i {
+                    font-size: 16px;
+                    margin: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        /* ============================================
+           REQUEST PERMISSION ON PAGE LOAD
+        ============================================ */
+        async function initialize() {
+            // Check if we already have permission
+            if (Notification.permission === 'granted') {
+                notificationPermission = true;
+            } else if (Notification.permission !== 'denied') {
+                // Auto-request permission after 2 seconds (don't be too aggressive)
+                setTimeout(async () => {
+                    const granted = await requestNotificationPermission();
+                    if (granted) {
+                        showNotification('✨ Notifications Ready', {
+                            body: 'You will now receive notifications for messages and calls',
+                            tag: 'welcome'
+                        });
+                    }
+                }, 2000);
+            }
+
+            setupNotificationButton();
+            
+            // Set up monitors when groups are available
+            const checkGroups = setInterval(() => {
+                if (myGroups && myGroups.length > 0) {
+                    monitorAllGroups();
+                    monitorGroupMembers();
+                    clearInterval(checkGroups);
+                }
+            }, 1000);
+            
+            monitorCalls();
+            
+            console.log('✅ Notification system ready, permission:', notificationPermission);
+        }
+
+        initialize();
+    }
+})();
+</script>
+<!-- ============================================ -->
 </body>
 </html>
+
