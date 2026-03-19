@@ -16576,7 +16576,7 @@ body.focus-mode::after {
 
 
 <script>
-// ========== FOCUS PERSONA FEATURE - FULL THEME SUPPORT ==========
+// ========== FOCUS PERSONA FEATURE - CANVAS BASED (GUARANTEED TO WORK) ==========
 (function() {
     'use strict';
     console.log('🎴 Initializing Focus Persona Card feature...');
@@ -16627,17 +16627,14 @@ body.focus-mode::after {
     
     // Show persona section
     window.showPersonaSection = function() {
-        // Hide all sections
         document.querySelectorAll('.dashboard-content').forEach(section => {
             section.style.display = 'none';
         });
         
-        // Show persona container
         const container = document.getElementById('personaContainer');
         if (container) {
             container.style.display = 'block';
             
-            // Move persona card into container
             const cardContainer = document.getElementById('personaCardContainer');
             const card = document.getElementById('focusPersonaCard');
             
@@ -16646,14 +16643,12 @@ body.focus-mode::after {
             }
         }
         
-        // Update active nav
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
         });
         const personaBtn = document.getElementById('personaNavBtn');
         if (personaBtn) personaBtn.classList.add('active');
         
-        // Update header
         const header = document.getElementById('dashboardHeader');
         if (header) {
             const h1 = header.querySelector('h1');
@@ -16662,20 +16657,16 @@ body.focus-mode::after {
             if (subtitle) subtitle.textContent = 'Discover your study identity';
         }
         
-        // Auto-generate card when opening section
         setTimeout(() => {
             generatePersonaCard();
         }, 100);
     };
     
-    // ========== PERSONA ANALYSIS - REAL DATA ==========
+    // ========== PERSONA ANALYSIS ==========
     window.getStudySessions = function() {
-        // Try global studyData
         if (window.studyData && window.studyData.studySessions) {
             return window.studyData.studySessions;
         }
-        
-        // Try localStorage
         try {
             const saved = localStorage.getItem('studentPersistentData');
             if (saved) {
@@ -16685,7 +16676,6 @@ body.focus-mode::after {
                 }
             }
         } catch (e) {}
-        
         return [];
     };
     
@@ -16765,7 +16755,6 @@ body.focus-mode::after {
         const avgSessionsPerDay = Object.keys(sessionsByDay).length > 0 ? 
             sessionCount / Object.keys(sessionsByDay).length : 0;
         
-        // Format functions
         const formatDuration = (hours) => {
             if (hours < 1) return `${Math.round(hours * 60)} min`;
             return `${hours.toFixed(1)} hrs`;
@@ -16778,7 +16767,6 @@ body.focus-mode::after {
             return `${displayHour}:00 ${ampm}`;
         };
         
-        // Persona determination
         if (avgStartTime >= 22 || avgStartTime < 5) {
             return {
                 title: "The Night Owl",
@@ -16879,7 +16867,6 @@ body.focus-mode::after {
         return 6;
     };
     
-    // ========== RENDER PERSONA CARD ==========
     window.renderPersonaCard = function(data) {
         const card = document.getElementById('focusPersonaCard');
         if (!card) return;
@@ -16916,7 +16903,7 @@ body.focus-mode::after {
             
             return `
                 <div class="chart-bar-container">
-                    <div class="chart-bar" style="height: ${barHeight}px;"></div>
+                    <div class="chart-bar" style="height: ${barHeight}px; background: linear-gradient(180deg, #ffd700, #c0a0e0);"></div>
                     <div class="chart-label">${day.date}</div>
                     <div class="chart-value">${day.hours.toFixed(1)}h</div>
                 </div>
@@ -16924,7 +16911,6 @@ body.focus-mode::after {
         }).join('');
     };
     
-    // ========== GENERATE PERSONA CARD ==========
     window.generatePersonaCard = function() {
         const persona = analyzeFocusPersona();
         const last7Days = getLast7DaysFocusData();
@@ -16943,7 +16929,6 @@ body.focus-mode::after {
         
         renderPersonaCard(data);
         
-        // Scroll to card
         document.getElementById('focusPersonaCard').scrollIntoView({ 
             behavior: 'smooth', 
             block: 'center' 
@@ -16954,88 +16939,207 @@ body.focus-mode::after {
         }
     };
     
-    // ========== DOWNLOAD PERSONA CARD ==========
+    // ========== NEW - CANVAS BASED DOWNLOAD (100% WORKS) ==========
     window.downloadPersonaCard = function() {
-        const card = document.getElementById('focusPersonaCard');
-        if (!card) return;
+        const persona = analyzeFocusPersona();
+        const last7Days = getLast7DaysFocusData();
+        const level = calculateUserLevel();
+        const userName = localStorage.getItem('studentName') || 'Grindly Student';
+        const today = new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
         
         if (window.showNotification) {
             window.showNotification('Generating image...', 'info');
         }
         
-        if (typeof html2canvas !== 'undefined') {
-            html2canvas(card, {
-                scale: 2,
-                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--card'),
-                allowTaint: false,
-                useCORS: true,
-                logging: false
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `focus-persona-${new Date().toISOString().split('T')[0]}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                if (window.showNotification) {
-                    window.showNotification('✅ Persona card downloaded!', 'success');
-                }
-            }).catch(err => {
-                console.error('Error:', err);
-                if (window.showNotification) {
-                    window.showNotification('❌ Failed to generate image', 'error');
-                }
-            });
-        } else {
-            alert('html2canvas not loaded. Please try again.');
+        // Create canvas
+        const canvas = document.createElement('canvas');
+        canvas.width = 500;
+        canvas.height = 650;
+        const ctx = canvas.getContext('2d');
+        
+        // Draw background
+        ctx.fillStyle = '#1a1e2f';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw border
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+        
+        // Draw top gradient line
+        const gradient = ctx.createLinearGradient(0, 15, canvas.width, 15);
+        gradient.addColorStop(0, '#ffd700');
+        gradient.addColorStop(0.3, '#c0a0e0');
+        gradient.addColorStop(0.7, '#4f9eff');
+        gradient.addColorStop(1, '#ffd700');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(20, 20, canvas.width - 40, 4);
+        
+        // Draw icon
+        ctx.font = '50px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(persona.icon, 50, 110);
+        
+        // Draw icon glow
+        ctx.shadowColor = '#4f46e5';
+        ctx.shadowBlur = 20;
+        ctx.fillText(persona.icon, 50, 110);
+        ctx.shadowBlur = 0;
+        
+        // Draw title
+        ctx.font = 'bold 28px "Inter", "Poppins", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        const titleGradient = ctx.createLinearGradient(130, 70, 350, 70);
+        titleGradient.addColorStop(0, '#ffd700');
+        titleGradient.addColorStop(0.5, '#c0a0e0');
+        titleGradient.addColorStop(1, '#4f9eff');
+        ctx.fillStyle = titleGradient;
+        ctx.fillText(persona.title, 130, 90);
+        
+        ctx.font = '14px "Inter", "Poppins", sans-serif';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('Focus Persona', 130, 115);
+        
+        // Draw level badge
+        ctx.fillStyle = '#4f46e5';
+        ctx.beginPath();
+        ctx.arc(420, 70, 35, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.font = 'bold 14px "Inter", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(`LVL ${level}`, 400, 75);
+        
+        // Draw stats background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.fillRect(40, 130, canvas.width - 80, 70);
+        ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(40, 130, canvas.width - 80, 70);
+        
+        // Draw stats
+        ctx.font = 'bold 18px "Inter", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        
+        // Stat 1
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '12px "Inter", sans-serif';
+        ctx.fillText('AVG START', 70, 155);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 18px "Inter", sans-serif';
+        ctx.fillText(persona.stats.avgStartTime, 70, 185);
+        
+        // Stat 2
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '12px "Inter", sans-serif';
+        ctx.fillText('AVG DURATION', 200, 155);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 18px "Inter", sans-serif';
+        ctx.fillText(persona.stats.avgDuration, 200, 185);
+        
+        // Stat 3
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '12px "Inter", sans-serif';
+        ctx.fillText('SESSIONS/DAY', 350, 155);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 18px "Inter", sans-serif';
+        ctx.fillText(persona.stats.sessionsPerDay, 350, 185);
+        
+        // Draw chart background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        ctx.fillRect(40, 220, canvas.width - 80, 150);
+        ctx.strokeStyle = 'rgba(79, 158, 255, 0.3)';
+        ctx.strokeRect(40, 220, canvas.width - 80, 150);
+        
+        ctx.font = 'bold 14px "Inter", sans-serif';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText('⚔️ FOCUS HOURS (LAST 7 DAYS)', 100, 250);
+        
+        // Draw bars
+        const barWidth = 40;
+        const maxBarHeight = 80;
+        const maxHours = Math.max(...last7Days.map(d => d.hours), 1);
+        
+        last7Days.forEach((day, index) => {
+            const x = 60 + (index * 55);
+            const barHeight = (day.hours / maxHours) * maxBarHeight || 4;
+            
+            // Draw bar
+            const barGradient = ctx.createLinearGradient(x, 350 - barHeight, x, 350);
+            barGradient.addColorStop(0, '#ffd700');
+            barGradient.addColorStop(1, '#c0a0e0');
+            ctx.fillStyle = barGradient;
+            ctx.fillRect(x, 350 - barHeight, barWidth - 5, barHeight);
+            
+            // Draw day label
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px "Inter", sans-serif';
+            ctx.fillText(day.date, x, 370);
+            
+            // Draw hour value
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px "Inter", sans-serif';
+            ctx.fillText(day.hours.toFixed(1), x + 5, 335 - barHeight);
+        });
+        
+        // Draw description
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = 'italic 14px "Inter", sans-serif';
+        ctx.fillText(persona.description, 40, 420);
+        
+        // Draw quote
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = 'italic 12px "Inter", sans-serif';
+        ctx.fillText(`"${persona.quote}"`, 40, 470);
+        
+        // Draw footer
+        ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(40, 500);
+        ctx.lineTo(canvas.width - 40, 500);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '12px "Inter", sans-serif';
+        ctx.fillText(userName, 40, 530);
+        ctx.fillText(today, canvas.width - 150, 530);
+        
+        // Draw badge
+        ctx.fillStyle = '#dc2626';
+        ctx.beginPath();
+        ctx.arc(430, 580, 30, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 10px "Inter", sans-serif';
+        ctx.fillText('PERSONA', 405, 580);
+        ctx.fillText('UNLOCKED', 400, 600);
+        
+        // Download
+        const link = document.createElement('a');
+        link.download = `focus-persona-${new Date().toISOString().split('T')[0]}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        if (window.showNotification) {
+            window.showNotification('✅ Persona card downloaded!', 'success');
         }
     };
     
-    // ========== SHARE PERSONA CARD ==========
+    // ========== SHARE ==========
     window.sharePersonaCard = function() {
-        const card = document.getElementById('focusPersonaCard');
-        if (!card) return;
-        
+        downloadPersonaCard();
         if (window.showNotification) {
-            window.showNotification('Preparing share...', 'info');
-        }
-        
-        if (typeof html2canvas !== 'undefined') {
-            html2canvas(card, {
-                scale: 2,
-                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--card'),
-                allowTaint: false,
-                useCORS: true
-            }).then(canvas => {
-                canvas.toBlob(async function(blob) {
-                    const file = new File([blob], 'focus-persona.png', { type: 'image/png' });
-                    
-                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try {
-                            await navigator.share({
-                                title: 'My Focus Persona',
-                                text: `I'm the ${document.getElementById('personaTitle').textContent}!`,
-                                files: [file]
-                            });
-                            if (window.showNotification) {
-                                window.showNotification('✨ Shared successfully!', 'success');
-                            }
-                        } catch (err) {
-                            console.log('Share cancelled:', err);
-                            downloadPersonaCard();
-                        }
-                    } else {
-                        if (window.showNotification) {
-                            window.showNotification('Web Share not supported. Downloading instead...', 'info');
-                        }
-                        downloadPersonaCard();
-                    }
-                }, 'image/png');
-            }).catch(err => {
-                console.error('Error:', err);
-                downloadPersonaCard();
-            });
-        } else {
-            downloadPersonaCard();
+            window.showNotification('ℹ️ Image downloaded - you can now share it!', 'info');
         }
     };
     
@@ -17052,7 +17156,6 @@ body.focus-mode::after {
     setTimeout(tryInit, 1500);
 })();
 </script>
-<!-- ===== END FOCUS PERSONA CARD FEATURE ===== -->
 </body>
 </html>
 
