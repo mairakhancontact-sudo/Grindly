@@ -2049,6 +2049,639 @@ body {
 <footer class="footer">
   <p>© 2026 grindly · S-TIER: Study Groups · Battle Arena · Memory Wall | A-TIER: Dual-Mode · Badges · Streaks | B-TIER: Timer · Dashboard · Tasks · Themes · Toolkit</p>
   <p style="margin-top: 16px; font-size: 0.7rem;">✨ 9 students studying now · 6 class battles active · Join the community ✨</p>
+
+    <!-- Compact version for mobile -->
+  <div class="social-links-compact">
+    <a href="https://www.instagram.com/mairahomie/" target="_blank" class="social-icon instagram" title="Instagram">
+      <i class="fab fa-instagram"></i>
+    </a>
+    <a href="https://www.tiktok.com/@grindlylearn.com" target="_blank" class="social-icon tiktok" title="TikTok">
+      <i class="fab fa-tiktok"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/maira-khan-2936b93aa/" target="_blank" class="social-icon linkedin" title="LinkedIn">
+      <i class="fab fa-linkedin-in"></i>
+    </a>
+    <a href="https://x.com/Grindlyink" target="_blank" class="social-icon twitter" title="X (Twitter)">
+      <i class="fab fa-x-twitter"></i>
+    </a>
+    <a href="https://www.facebook.com/profile.php?id=61582559935828" target="_blank" class="social-icon facebook" title="Facebook">
+      <i class="fab fa-facebook-f"></i>
+    </a>
+    <a href="https://github.com/mairakhancontact-sudo" target="_blank" class="social-icon github" title="GitHub">
+      <i class="fab fa-github"></i>
+    </a>
+  </div>
+  
+  <!-- NEWSLETTER - NO CONFIRMATION EMAIL -->
+  <div class="newsletter">
+    <form id="newsletterForm" action="https://formspree.io/f/xkoqyven" method="POST" target="hidden_iframe">
+      <input type="email" name="email" placeholder="your@email.com" class="newsletter-input" required>
+      <!-- This tells Formspree NOT to send confirmation email -->
+      <input type="hidden" name="_gotcha" style="display:none !important">
+      <input type="hidden" name="_subject" value="New Grindly Newsletter Subscriber">
+      <!-- Add your email to get notifications -->
+      <input type="hidden" name="_replyto" value="YOUR_EMAIL_HERE">
+      <button type="submit" class="newsletter-btn">subscribe</button>
+    </form>
+    <div id="newsletterMessage" class="newsletter-message"></div>
+  </div>
+</div>
+
+<!-- HIDDEN IFRAME FOR FORM SUBMISSION -->
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+<style>
+/* ===== SOCIAL CONNECTION LINKS ===== */
+.social-section {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.social-title {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--text-light);
+  margin-bottom: 25px;
+  position: relative;
+  display: inline-block;
+}
+
+.social-title:before,
+.social-title:after {
+  content: '•';
+  margin: 0 15px;
+  color: var(--accent);
+  opacity: 0.5;
+}
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 40px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.social-link:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 0 30px var(--accent-glow);
+}
+
+.social-link i {
+  font-size: 1.2rem;
+}
+
+/* Platform-specific colors on hover */
+.social-link.instagram:hover {
+  background: linear-gradient(45deg, #f09433, #d62976, #962fbf, #4f5bd5);
+  color: white;
+  border-color: transparent;
+}
+
+.social-link.tiktok:hover {
+  background: #000000;
+  color: white;
+  border-color: #00f2ea;
+  box-shadow: 0 0 15px #00f2ea;
+}
+
+.social-link.linkedin:hover {
+  background: #0077b5;
+  color: white;
+  border-color: #0077b5;
+}
+
+.social-link.twitter:hover {
+  background: #000000;
+  color: white;
+  border-color: #1da1f2;
+}
+
+.social-link.facebook:hover {
+  background: #1877f2;
+  color: white;
+  border-color: #1877f2;
+}
+
+.social-link.github:hover {
+  background: #333333;
+  color: white;
+  border-color: #333333;
+}
+
+.social-handle {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Compact version for mobile */
+.social-links-compact {
+  display: none;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.social-icon:hover {
+  transform: translateY(-3px) scale(1.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 30px var(--accent-glow);
+}
+
+.social-icon.instagram:hover {
+  background: linear-gradient(45deg, #f09433, #d62976, #962fbf, #4f5bd5);
+  color: white;
+}
+
+.social-icon.tiktok:hover {
+  background: #000000;
+  color: #00f2ea;
+}
+
+.social-icon.linkedin:hover {
+  background: #0077b5;
+  color: white;
+}
+
+.social-icon.twitter:hover {
+  background: #000000;
+  color: #1da1f2;
+}
+
+.social-icon.facebook:hover {
+  background: #1877f2;
+  color: white;
+}
+
+.social-icon.github:hover {
+  background: #333333;
+  color: white;
+}
+
+/* Newsletter */
+.newsletter {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  max-width: 500px;
+  margin: 30px auto 0;
+  flex-wrap: wrap;
+}
+
+.newsletter form {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.newsletter-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 20px;
+  border-radius: 40px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+}
+
+.newsletter-btn {
+  padding: 12px 24px;
+  border-radius: 40px;
+  border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.newsletter-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px var(--accent-glow);
+}
+
+.newsletter-message {
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: var(--success);
+  min-height: 20px;
+}
+
+/* Mobile responsive */
+@media only screen and (max-width: 768px) {
+  .social-links {
+    display: none;
+  }
+  
+  .social-links-compact {
+    display: flex;
+  }
+  
+  .newsletter form {
+    flex-direction: column;
+  }
+  
+  .newsletter-input,
+  .newsletter-btn {
+    width: 100%;
+  }
+}
+
+/* ===== CENTERED WELCOME NOTIFICATION ===== */
+.welcome-notification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.welcome-notification-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.welcome-notification {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 30px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: var(--shadow-xl);
+  border: 2px solid var(--accent);
+  position: relative;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+  text-align: center;
+}
+
+.welcome-notification-overlay.show .welcome-notification {
+  transform: scale(1);
+}
+
+.welcome-notification-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.welcome-notification-close:hover {
+  background: var(--accent);
+  color: white;
+  transform: rotate(90deg);
+}
+
+.welcome-notification-icon {
+  font-size: 4rem;
+  margin-bottom: 15px;
+  animation: wave 2s infinite;
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  75% { transform: rotate(-10deg); }
+}
+
+.welcome-notification h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.welcome-notification p {
+  color: var(--text-muted);
+  margin-bottom: 25px;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.welcome-notification-socials {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.welcome-notification-social-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 15px;
+  border-radius: 40px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.welcome-notification-social-link:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: 0 5px 15px var(--accent-glow);
+}
+
+.welcome-notification-social-link i {
+  font-size: 1rem;
+}
+
+.welcome-notification-reminder {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 15px;
+}
+
+.welcome-notification-reminder label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.welcome-notification-reminder input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+/* Floating social buttons */
+.floating-social-container {
+  position: fixed;
+  left: 15px;
+  bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+
+.floating-social-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  backdrop-filter: blur(5px);
+  opacity: 0.7;
+}
+
+.floating-social-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  border-color: var(--accent);
+  box-shadow: 0 5px 15px var(--accent-glow);
+}
+
+.floating-social-btn.instagram:hover {
+  background: linear-gradient(45deg, #f09433, #d62976, #962fbf, #4f5bd5);
+  color: white;
+}
+
+.floating-social-btn.tiktok:hover {
+  background: #000000;
+  color: #00f2ea;
+}
+
+.floating-social-btn.linkedin:hover {
+  background: #0077b5;
+  color: white;
+}
+
+.floating-social-btn.twitter:hover {
+  background: #000000;
+  color: #1da1f2;
+}
+
+.floating-social-btn.facebook:hover {
+  background: #1877f2;
+  color: white;
+}
+
+.floating-social-btn.github:hover {
+  background: #333333;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .floating-social-container {
+    display: none;
+  }
+}
+</style>
+
+<!-- CENTERED WELCOME NOTIFICATION -->
+<div id="welcomeNotificationOverlay" class="welcome-notification-overlay">
+  <div class="welcome-notification">
+    <button class="welcome-notification-close" onclick="closeWelcomeNotification()">✕</button>
+    
+    <div class="welcome-notification-icon">👋</div>
+    <h2>Hey there!</h2>
+    <p>Connect with me on social media for updates, tips, and behind-the-scenes content!</p>
+    
+    <div class="welcome-notification-socials">
+      <a href="https://www.instagram.com/mairahomie/" target="_blank" class="welcome-notification-social-link instagram">
+        <i class="fab fa-instagram"></i> IG
+      </a>
+      <a href="https://www.tiktok.com/@grindlylearn.com" target="_blank" class="welcome-notification-social-link tiktok">
+        <i class="fab fa-tiktok"></i> TikTok
+      </a>
+      <a href="https://www.linkedin.com/in/maira-khan-2936b93aa/" target="_blank" class="welcome-notification-social-link linkedin">
+        <i class="fab fa-linkedin-in"></i> IN
+      </a>
+      <a href="https://x.com/Grindlyink" target="_blank" class="welcome-notification-social-link twitter">
+        <i class="fab fa-x-twitter"></i> X
+      </a>
+      <a href="https://www.facebook.com/profile.php?id=61582559935828" target="_blank" class="welcome-notification-social-link facebook">
+        <i class="fab fa-facebook-f"></i> FB
+      </a>
+      <a href="https://github.com/mairakhancontact-sudo" target="_blank" class="welcome-notification-social-link github">
+        <i class="fab fa-github"></i> GH
+      </a>
+    </div>
+    
+    <div class="welcome-notification-reminder">
+      <label>
+        <input type="checkbox" id="dontShowAgain" onchange="dontShowAgainChanged()">
+        <span>Don't show this again</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING SOCIAL BUTTONS -->
+<div class="floating-social-container">
+  <a href="https://www.instagram.com/mairahomie/" target="_blank" class="floating-social-btn instagram" title="Instagram">
+    <i class="fab fa-instagram"></i>
+  </a>
+  <a href="https://www.tiktok.com/@grindlylearn.com" target="_blank" class="floating-social-btn tiktok" title="TikTok">
+    <i class="fab fa-tiktok"></i>
+  </a>
+  <a href="https://www.linkedin.com/in/maira-khan-2936b93aa/" target="_blank" class="floating-social-btn linkedin" title="LinkedIn">
+    <i class="fab fa-linkedin-in"></i>
+  </a>
+  <a href="https://x.com/Grindlyink" target="_blank" class="floating-social-btn twitter" title="X (Twitter)">
+    <i class="fab fa-x-twitter"></i>
+  </a>
+  <a href="https://www.facebook.com/profile.php?id=61582559935828" target="_blank" class="floating-social-btn facebook" title="Facebook">
+    <i class="fab fa-facebook-f"></i>
+  </a>
+  <a href="https://github.com/mairakhancontact-sudo" target="_blank" class="floating-social-btn github" title="GitHub">
+    <i class="fab fa-github"></i>
+  </a>
+</div>
+
+<script>
+// ========== NEWSLETTER SUBMISSION - NO CONFIRMATION ==========
+document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+  // Don't prevent default - let it submit
+  const messageEl = document.getElementById('newsletterMessage');
+  messageEl.style.color = 'var(--success)';
+  messageEl.textContent = 'Thanks for subscribing!';
+  
+  // Clear input after 3 seconds
+  setTimeout(() => {
+    document.querySelector('.newsletter-input').value = '';
+  }, 3000);
+  
+  // The form will submit to Formspree
+  // You'll get the email in your Formspree dashboard
+  // NO confirmation email is sent to the user because of the _gotcha field
+});
+
+// ========== WELCOME NOTIFICATION ==========
+(function() {
+  const neverShow = localStorage.getItem('grindly_never_show_social');
+  const hasShownThisSession = sessionStorage.getItem('grindly_social_shown');
+  const overlay = document.getElementById('welcomeNotificationOverlay');
+  
+  if (!neverShow && !hasShownThisSession && overlay) {
+    setTimeout(() => {
+      overlay.classList.add('show');
+      sessionStorage.setItem('grindly_social_shown', 'true');
+    }, 2000);
+  }
+})();
+
+// Close notification
+window.closeWelcomeNotification = function() {
+  const overlay = document.getElementById('welcomeNotificationOverlay');
+  if (overlay) overlay.classList.remove('show');
+};
+
+// Handle "Don't show again"
+window.dontShowAgainChanged = function() {
+  const checkbox = document.getElementById('dontShowAgain');
+  if (checkbox && checkbox.checked) {
+    localStorage.setItem('grindly_never_show_social', 'true');
+    closeWelcomeNotification();
+  } else {
+    localStorage.removeItem('grindly_never_show_social');
+  }
+};
+
+// Close when clicking outside
+document.addEventListener('click', function(event) {
+  const overlay = document.getElementById('welcomeNotificationOverlay');
+  const notification = document.querySelector('.welcome-notification');
+  
+  if (overlay?.classList.contains('show') && 
+      notification && !notification.contains(event.target) &&
+      !event.target.classList.contains('welcome-notification-close')) {
+    closeWelcomeNotification();
+  }
+});
+
+// Close on Escape key
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') closeWelcomeNotification();
+});
+</script>
+<!-- ===== END SOCIAL CONNECTION LINKS ===== -->
 </footer>
 
 <script>
