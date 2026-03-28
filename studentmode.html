@@ -5881,88 +5881,608 @@ body, #studentMemoryWhiteboard, #studentStickyNotesContainer {
           </div>
         </div>
 
+       
+       <!-- ===== BOTTOM FEATURES WITH FULL FUNCTIONALITY ===== -->
+<style>
+.bottom-features {
+    margin-top: 40px;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+}
+
+.bottom-features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.bottom-feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 16px;
+    transition: all 0.2s ease;
+}
+
+.bottom-feature-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.bottom-feature-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.bottom-feature-header i {
+    color: var(--accent);
+    font-size: 1rem;
+}
+
+.bottom-feature-header span {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text);
+}
+
+.bottom-feature-content {
+    font-size: 0.8rem;
+}
+
+/* Quick Notes */
+.quick-notes-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.quick-notes-bottom textarea {
+    width: 100%;
+    height: 80px;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 0.75rem;
+    resize: vertical;
+}
+
+.quick-notes-bottom .notes-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.notes-actions button {
+    padding: 4px 12px;
+    font-size: 0.7rem;
+}
+
+/* Stats Compare */
+.stats-compare-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stat-compare-item {
+    background: var(--bg);
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.stat-compare-item i {
+    color: var(--success);
+    font-size: 0.7rem;
+}
+
+/* Teach Mode - With Text Inputs */
+.teach-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.teach-bottom input {
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 0.75rem;
+}
+
+.teach-bullets-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.teach-bullet-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.teach-bullet-check {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.teach-bullet-check.filled {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.teach-bullet-input {
+    flex: 1;
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 0.7rem;
+}
+
+.teach-bullet-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.teach-bottom .teach-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.teach-actions button {
+    padding: 5px 10px;
+    font-size: 0.7rem;
+    flex: 1;
+}
+
+/* Daily Challenge */
+.challenge-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.challenge-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: var(--accent-light);
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.challenge-bottom button {
+    width: 100%;
+    padding: 8px;
+    font-size: 0.75rem;
+}
+
+.challenge-tip {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+@media (max-width: 1000px) {
+    .bottom-features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .bottom-features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<!-- Add this at the BOTTOM of your dashboard section -->
+<div class="bottom-features">
+    <div class="bottom-features-grid">
+        
         <!-- Quick Notes -->
-        <div class="content-card quick-notes-card" style="margin-top: var(--spacing-xl);">
-          <div class="content-header">
-            <h2>Quick Notes</h2>
-            <div class="quick-notes-actions">
-              <button class="btn btn-secondary" onclick="copyQuickNotes()">Copy</button>
-              <button class="btn btn-warning" onclick="clearQuickNotes()">Clear</button>
+        <div class="bottom-feature-card">
+            <div class="bottom-feature-header">
+                <i class="fas fa-pencil-alt"></i>
+                <span>quick notes</span>
             </div>
-          </div>
-          <div class="content-body">
-            <textarea id="quickNotesInput" placeholder="Capture ideas, reminders, or homework steps. Autosaves locally."></textarea>
-            <div class="quick-notes-meta">
-              <span id="quickNotesStatus">Saved</span>
-              <span>Shortcut: Shift+N to focus</span>
+            <div class="bottom-feature-content">
+                <div class="quick-notes-bottom">
+                    <textarea id="bottomQuickNotes" placeholder="Capture ideas, reminders, or homework steps..."></textarea>
+                    <div class="notes-actions">
+                        <button class="btn btn-secondary" onclick="copyBottomNotes()">Copy</button>
+                        <button class="btn btn-warning" onclick="clearBottomNotes()">Clear</button>
+                    </div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); text-align: right;">
+                        <span id="bottomNotesStatus">Saved</span> • Shift+N
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
 
         <!-- Study Stats Compare -->
-        <div class="content-card" style="margin-top: var(--spacing-xl);">
-          <div class="content-header">
-            <h2>Study Stats Compare</h2>
-          </div>
-          <div class="content-body profile-content-body">
-            <div class="pro-tip" id="compareMsg1">You studied 20% more than average.</div>
-            <div class="pro-tip" id="compareMsg2">Top 10% of users this week.</div>
-          </div>
+        <div class="bottom-feature-card">
+            <div class="bottom-feature-header">
+                <i class="fas fa-chart-line"></i>
+                <span>study stats compare</span>
+            </div>
+            <div class="bottom-feature-content">
+                <div class="stats-compare-bottom">
+                    <div class="stat-compare-item">
+                        <i class="fas fa-chart-simple"></i>
+                        <span id="compareMsg1Bottom">You're ahead of your weekly goal</span>
+                    </div>
+                    <div class="stat-compare-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span id="compareMsg2Bottom">You're above average for consistency</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Learn By Teaching Mode -->
-        <div class="content-card" style="margin-top: var(--spacing-xl);">
-          <div class="content-header">
-            <h2>🧩 Learn By Teaching</h2>
-          </div>
-          <div class="content-body">
-            <p style="color: var(--text-muted); margin-bottom: var(--spacing-md);">
-              Explain the topic in 60 seconds or write 5 bullet points. If you can’t explain it, you don’t understand it.
-            </p>
-            <div class="form-group">
-              <label for="teachTopicInput">Topic</label>
-              <input type="text" id="teachTopicInput" placeholder="e.g., Photosynthesis">
+        <!-- Learn By Teaching - WITH TEXT INPUTS -->
+        <div class="bottom-feature-card">
+            <div class="bottom-feature-header">
+                <i class="fas fa-chalkboard-user"></i>
+                <span>learn by teaching</span>
             </div>
-            <div class="form-group">
-              <label>5 Bullet Points</label>
-              <div class="teach-bullets">
-                <input type="text" id="teachBullet1" placeholder="Bullet 1">
-                <input type="text" id="teachBullet2" placeholder="Bullet 2">
-                <input type="text" id="teachBullet3" placeholder="Bullet 3">
-                <input type="text" id="teachBullet4" placeholder="Bullet 4">
-                <input type="text" id="teachBullet5" placeholder="Bullet 5">
-              </div>
+            <div class="bottom-feature-content">
+                <div class="teach-bottom">
+                    <input type="text" id="bottomTeachTopic" placeholder="Topic (e.g., Photosynthesis)">
+                    <div class="teach-bullets-bottom" id="bottomTeachBullets">
+                        <div class="teach-bullet-row">
+                            <div class="teach-bullet-check" data-num="1" onclick="toggleBottomBullet(1)">✓</div>
+                            <input type="text" class="teach-bullet-input" id="bottomBullet1" placeholder="Bullet point 1...">
+                        </div>
+                        <div class="teach-bullet-row">
+                            <div class="teach-bullet-check" data-num="2" onclick="toggleBottomBullet(2)">✓</div>
+                            <input type="text" class="teach-bullet-input" id="bottomBullet2" placeholder="Bullet point 2...">
+                        </div>
+                        <div class="teach-bullet-row">
+                            <div class="teach-bullet-check" data-num="3" onclick="toggleBottomBullet(3)">✓</div>
+                            <input type="text" class="teach-bullet-input" id="bottomBullet3" placeholder="Bullet point 3...">
+                        </div>
+                        <div class="teach-bullet-row">
+                            <div class="teach-bullet-check" data-num="4" onclick="toggleBottomBullet(4)">✓</div>
+                            <input type="text" class="teach-bullet-input" id="bottomBullet4" placeholder="Bullet point 4...">
+                        </div>
+                        <div class="teach-bullet-row">
+                            <div class="teach-bullet-check" data-num="5" onclick="toggleBottomBullet(5)">✓</div>
+                            <input type="text" class="teach-bullet-input" id="bottomBullet5" placeholder="Bullet point 5...">
+                        </div>
+                    </div>
+                    <div class="teach-actions">
+                        <button class="btn btn-secondary" id="bottomTeachRecordBtn" onclick="toggleBottomRecording()">🎙️ Record</button>
+                        <button class="btn btn-success" onclick="completeBottomTeach()">✅ I Explained It</button>
+                    </div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); text-align: center;">
+                        <span id="bottomTeachStatus">Not recording</span> • 🌱 tree grows when complete
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-              <label>60-second Voice Summary (optional)</label>
-              <div class="focus-actions">
-                <button class="btn btn-secondary" id="teachRecordBtn" onclick="toggleTeachRecording()">Start Recording</button>
-                <span id="teachRecordStatus">Not recording</span>
-              </div>
-              <audio id="teachPlayback" controls style="width: 100%; margin-top: var(--spacing-sm); display: none;"></audio>
-            </div>
-            <div class="focus-actions">
-              <button class="btn btn-success" onclick="completeTeachMode()">I Explained It</button>
-            </div>
-            <div class="quick-notes-meta">
-              <span id="teachModeStatus">Tree grows when you complete this.</span>
-            </div>
-          </div>
         </div>
 
-        <!-- Daily Challenge -->
-        <div class="content-card" id="dailyChallengeCard" style="margin-top: var(--spacing-xl); display: none;">
-          <div class="content-header">
-            <h2>🏅 Daily Challenge</h2>
-          </div>
-          <div class="content-body">
-            <div class="pro-tip" style="margin: 0 0 var(--spacing-lg) 0;">
-              <strong>Tip:</strong> Complete one small challenge each day to build momentum.
+        <!-- Daily Challenge - WITH FULL CELEBRATION -->
+        <div class="bottom-feature-card">
+            <div class="bottom-feature-header">
+                <i class="fas fa-trophy"></i>
+                <span>daily challenge</span>
             </div>
-            <div id="dailyChallengeText" style="font-weight: 700; margin-bottom: var(--spacing-md);"></div>
-            <button class="btn btn-success" id="dailyChallengeDoneBtn" onclick="completeDailyChallenge()">✅ I am done</button>
-          </div>
+            <div class="bottom-feature-content">
+                <div class="challenge-bottom">
+                    <div class="challenge-text" id="bottomDailyChallengeText">
+                        Summarize one lesson in 3 bullet points
+                    </div>
+                    <button class="btn btn-success" id="bottomDailyChallengeBtn" onclick="completeBottomChallenge()">
+                        ✅ I am done
+                    </button>
+                    <div class="challenge-tip">
+                        💡 Complete one small challenge each day to build momentum
+                    </div>
+                </div>
+            </div>
         </div>
+
+    </div>
+</div>
+
+<script>
+// ===== BOTTOM FEATURES FUNCTIONS =====
+
+// Quick Notes
+let bottomNotesTimer;
+const bottomNotesInput = document.getElementById('bottomQuickNotes');
+const bottomNotesStatus = document.getElementById('bottomNotesStatus');
+
+if (bottomNotesInput) {
+    const savedNotes = localStorage.getItem('bottomQuickNotes');
+    if (savedNotes) bottomNotesInput.value = savedNotes;
+    
+    bottomNotesInput.addEventListener('input', function() {
+        localStorage.setItem('bottomQuickNotes', this.value);
+        bottomNotesStatus.textContent = 'Saving...';
+        clearTimeout(bottomNotesTimer);
+        bottomNotesTimer = setTimeout(() => {
+            bottomNotesStatus.textContent = 'Saved';
+        }, 500);
+    });
+}
+
+function copyBottomNotes() {
+    if (bottomNotesInput && bottomNotesInput.value) {
+        navigator.clipboard.writeText(bottomNotesInput.value);
+        showNotification("Notes copied!", "success");
+    }
+}
+
+function clearBottomNotes() {
+    if (bottomNotesInput) {
+        bottomNotesInput.value = '';
+        localStorage.setItem('bottomQuickNotes', '');
+        showNotification("Notes cleared!", "success");
+    }
+}
+
+// Study Stats Compare
+function updateBottomStats() {
+    const statsCompareMessages = [
+        "You studied 20% more than average",
+        "Top 10% of users this week",
+        "Your streak is ahead of 70% of students",
+        "You're in the top 25% for weekly focus",
+        "You're above average for consistency",
+        "You're ahead of your weekly goal"
+    ];
+    const idx1 = Math.floor(Math.random() * statsCompareMessages.length);
+    let idx2 = Math.floor(Math.random() * statsCompareMessages.length);
+    if (idx2 === idx1) idx2 = (idx2 + 1) % statsCompareMessages.length;
+    
+    const msg1 = document.getElementById('compareMsg1Bottom');
+    const msg2 = document.getElementById('compareMsg2Bottom');
+    if (msg1) msg1.textContent = statsCompareMessages[idx1];
+    if (msg2) msg2.textContent = statsCompareMessages[idx2];
+}
+
+// Teach Mode - With Text Inputs
+let bottomBullets = [false, false, false, false, false];
+let bottomRecording = false;
+let bottomMediaRecorder = null;
+let bottomAudioChunks = [];
+
+function toggleBottomBullet(num) {
+    const bullet = document.querySelector(`.teach-bullet-check[data-num="${num}"]`);
+    bottomBullets[num - 1] = !bottomBullets[num - 1];
+    if (bottomBullets[num - 1]) {
+        bullet.classList.add('filled');
+    } else {
+        bullet.classList.remove('filled');
+    }
+}
+
+function toggleBottomRecording() {
+    if (bottomRecording) {
+        stopBottomRecording();
+    } else {
+        startBottomRecording();
+    }
+}
+
+function startBottomRecording() {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            bottomMediaRecorder = new MediaRecorder(stream);
+            bottomAudioChunks = [];
+            
+            bottomMediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) bottomAudioChunks.push(e.data);
+            };
+            
+            bottomMediaRecorder.onstop = () => {
+                const blob = new Blob(bottomAudioChunks, { type: 'audio/webm' });
+                const url = URL.createObjectURL(blob);
+                localStorage.setItem('bottomTeachRecording', url);
+                document.getElementById('bottomTeachStatus').textContent = 'Recording saved';
+                stream.getTracks().forEach(track => track.stop());
+            };
+            
+            bottomMediaRecorder.start();
+            bottomRecording = true;
+            document.getElementById('bottomTeachStatus').textContent = 'Recording...';
+        })
+        .catch(() => {
+            showNotification("Microphone access needed", "warning");
+        });
+}
+
+function stopBottomRecording() {
+    if (bottomMediaRecorder && bottomRecording) {
+        bottomMediaRecorder.stop();
+        bottomRecording = false;
+        document.getElementById('bottomTeachStatus').textContent = 'Recording stopped';
+    }
+}
+
+function completeBottomTeach() {
+    const topic = document.getElementById('bottomTeachTopic').value;
+    
+    // Get bullet text inputs
+    const bulletInputs = [
+        document.getElementById('bottomBullet1').value.trim(),
+        document.getElementById('bottomBullet2').value.trim(),
+        document.getElementById('bottomBullet3').value.trim(),
+        document.getElementById('bottomBullet4').value.trim(),
+        document.getElementById('bottomBullet5').value.trim()
+    ];
+    
+    const bulletsFilledCount = bulletInputs.filter(b => b.length > 0).length;
+    const hasRecording = localStorage.getItem('bottomTeachRecording');
+    
+    if (!topic && bulletsFilledCount < 3 && !hasRecording) {
+        showNotification("Add topic, fill at least 3 bullet points, or record!", "warning");
+        return;
+    }
+    
+    showNotification("✅ Great job teaching! Tree will grow!", "success");
+    
+    // Grow the tree if function exists
+    if (typeof growTree === 'function') {
+        growTree();
+    } else if (typeof window.growTree === 'function') {
+        window.growTree();
+    }
+    
+    // Save completion
+    const today = new Date().toDateString();
+    localStorage.setItem('teachCompleted_' + today, 'true');
+    
+    // Trigger confetti if available
+    if (typeof triggerConfetti === 'function') {
+        triggerConfetti();
+    } else if (typeof window.triggerConfetti === 'function') {
+        window.triggerConfetti();
+    }
+    
+    // Reset form
+    bottomBullets = [false, false, false, false, false];
+    document.querySelectorAll('.teach-bullet-check').forEach(b => b.classList.remove('filled'));
+    document.getElementById('bottomTeachTopic').value = '';
+    document.getElementById('bottomBullet1').value = '';
+    document.getElementById('bottomBullet2').value = '';
+    document.getElementById('bottomBullet3').value = '';
+    document.getElementById('bottomBullet4').value = '';
+    document.getElementById('bottomBullet5').value = '';
+    localStorage.removeItem('bottomTeachRecording');
+}
+
+// Daily Challenge - FULL CELEBRATION
+function completeBottomChallenge() {
+    const btn = document.getElementById('bottomDailyChallengeBtn');
+    const today = new Date().toDateString();
+    const alreadyCompleted = localStorage.getItem('dailyChallengeCompleted') === today;
+    
+    if (alreadyCompleted) {
+        showNotification("You already completed today's challenge!", "info");
+        return;
+    }
+    
+    // Mark as completed
+    btn.disabled = true;
+    btn.textContent = '✅ Completed!';
+    localStorage.setItem('dailyChallengeCompleted', today);
+    
+    // Play applause sound
+    if (typeof playApplauseSound === 'function') {
+        playApplauseSound();
+    } else if (typeof window.playApplauseSound === 'function') {
+        window.playApplauseSound();
+    } else {
+        // Create simple applause sound
+        try {
+            const audio = new Audio('https://www.soundjay.com/misc/sounds/applause-01.mp3');
+            audio.volume = 0.5;
+            audio.play().catch(() => {});
+        } catch(e) {}
+    }
+    
+    // Play clapping video/effect
+    if (typeof playClappingVideo === 'function') {
+        playClappingVideo();
+    } else if (typeof window.playClappingVideo === 'function') {
+        window.playClappingVideo();
+    }
+    
+    // Trigger confetti
+    if (typeof triggerConfetti === 'function') {
+        triggerConfetti();
+    } else if (typeof window.triggerConfetti === 'function') {
+        window.triggerConfetti();
+    } else if (typeof launchConfetti === 'function') {
+        launchConfetti();
+    }
+    
+    // Show success message
+    showNotification("🎉 Challenge completed! Great job!", "success");
+    
+    // Update the challenge text for tomorrow
+    const challenges = [
+        "Finish one focused 25‑minute study session",
+        "Review notes for 10 minutes without distractions",
+        "Complete one pending task from your list",
+        "Summarize one lesson in 3 bullet points",
+        "Do 10 practice questions in a row"
+    ];
+    const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+    const textEl = document.getElementById('bottomDailyChallengeText');
+    if (textEl) textEl.textContent = randomChallenge;
+}
+
+// Load daily challenge on page load
+function loadBottomChallenge() {
+    const challenges = [
+        "Finish one focused 25‑minute study session",
+        "Review notes for 10 minutes without distractions",
+        "Complete one pending task from your list",
+        "Summarize one lesson in 3 bullet points",
+        "Do 10 practice questions in a row"
+    ];
+    
+    const lastCompleted = localStorage.getItem('dailyChallengeCompleted');
+    const today = new Date().toDateString();
+    
+    if (lastCompleted === today) {
+        const btn = document.getElementById('bottomDailyChallengeBtn');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = '✅ Completed!';
+        }
+    } else {
+        const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+        const textEl = document.getElementById('bottomDailyChallengeText');
+        if (textEl) textEl.textContent = randomChallenge;
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    updateBottomStats();
+    loadBottomChallenge();
+    setInterval(updateBottomStats, 60000);
+    
+    // Check if teach was already completed today
+    const today = new Date().toDateString();
+    if (localStorage.getItem('teachCompleted_' + today) === 'true') {
+        const teachBtn = document.querySelector('.teach-actions .btn-success');
+        if (teachBtn) {
+            teachBtn.disabled = true;
+            teachBtn.textContent = '✅ Completed Today';
+        }
+    }
+});
+</script>
         
         <!-- Achievement Badges -->
         <div class="content-card badges-card" style="margin-top: var(--spacing-xl);">
