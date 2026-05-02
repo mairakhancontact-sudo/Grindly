@@ -3956,5 +3956,843 @@ body.sunset .hole-punch {
 })();
 </script>
 <!-- ===== END NOTEBOOK CODE ===== -->
+ <!-- ========== ADD SOCIAL FEED TO HOMEPAGE SLIDESHOW ========== -->
+<script>
+// Add Social Feed slide to the features slider/carousel
+function addSocialFeedToHomepage() {
+    // Try to find the slideshow container
+    const containers = [
+        '.swiper-wrapper',
+        '.slideshow-container',
+        '.carousel-inner',
+        '.feature-slider',
+        '.glide__track',
+        '.splide__track',
+        '.features-carousel',
+        '.hero-slider'
+    ];
+    
+    let container = null;
+    for (const selector of containers) {
+        container = document.querySelector(selector);
+        if (container) break;
+    }
+    
+    if (!container) {
+        console.log("Waiting for slideshow container...");
+        setTimeout(addSocialFeedToHomepage, 1000);
+        return;
+    }
+    
+    // Check if already added
+    if (document.querySelector('.social-feed-slide-added')) return;
+    
+    // Create the social feed slide
+    const slide = document.createElement('div');
+    slide.className = 'swiper-slide feature-slide slide carousel-item';
+    slide.classList.add('social-feed-slide-added');
+    slide.innerHTML = `
+        <div class="feature-card" style="background: linear-gradient(135deg, #1da1f2, #0d8bd9); border-radius: 24px; overflow: hidden; box-shadow: 0 10px 30px rgba(29,161,242,0.3);">
+            <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 40px;">
+                <div style="font-size: 4rem; margin-bottom: 20px;">🔥</div>
+                <h3 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 15px; color: white;">Social Feed</h3>
+                <p style="color: rgba(255,255,255,0.9); margin-bottom: 20px; max-width: 500px;">Connect with the Grindly community! Share what you're learning, ask questions, and help fellow students.</p>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 25px;">
+                    <span style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;">📝 Create Posts</span>
+                    <span style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;">💬 Comment & Reply</span>
+                    <span style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;">❤️ Like & Share</span>
+                    <span style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;">🔥 Trending Topics</span>
+                </div>
+                <button onclick="window.location.href='social-feed.html'" style="background: white; color: #1da1f2; border: none; padding: 12px 30px; border-radius: 30px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: transform 0.3s ease;">
+                    Join the Feed →
+                </button>
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(slide);
+    console.log("✅ Social Feed slide added to homepage slideshow");
+    
+    // Update slider/carousel if it has an update method
+    if (window.swiper && window.swiper.update) window.swiper.update();
+    if (window.glide && window.glide.update) window.glide.update();
+    if (window.splide && window.splide.refresh) window.splide.refresh();
+}
+
+// Run when page loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(addSocialFeedToHomepage, 1000);
+    });
+} else {
+    setTimeout(addSocialFeedToHomepage, 1000);
+}
+</script>
+
+<!-- ========== MOBILE RESPONSIVE FINAL - COMPLETE ========== -->
+<style>
+@media (max-width: 768px) {
+    body {
+        background: #f8fafc !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .desktop-only, .large-card, .wide-grid {
+        display: none !important;
+    }
+    
+    .mobile-responsive {
+        display: block !important;
+        padding: 16px !important;
+        margin: 0 !important;
+    }
+    
+    /* Header - FIRST ELEMENT, NOTHING ABOVE */
+    .mobile-header {
+        text-align: center !important;
+        padding: 0 !important;
+        margin: 0 0 20px 0 !important;
+    }
+    
+    .mobile-header h1 {
+        font-size: 2rem !important;
+        font-weight: 800 !important;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Cards grid - 2 columns */
+    .modes-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 16px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .mode-card {
+        background: white !important;
+        border-radius: 20px !important;
+        padding: 20px 12px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+    
+    .mode-card:active {
+        transform: scale(0.98) !important;
+    }
+    
+    .mode-icon {
+        font-size: 2.5rem !important;
+        text-align: center !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .mode-title {
+        font-size: 1.2rem !important;
+        font-weight: 700 !important;
+        text-align: center !important;
+        color: #1e293b !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .feature-row {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .feature-chip {
+        font-size: 0.6rem !important;
+        padding: 4px 10px !important;
+        border-radius: 20px !important;
+        background: #f1f5f9 !important;
+        color: #475569 !important;
+    }
+    
+    .feature-list {
+        margin: 12px 0 !important;
+        padding-left: 16px !important;
+    }
+    
+    .feature-list li {
+        font-size: 0.65rem !important;
+        color: #64748b !important;
+        margin: 6px 0 !important;
+        line-height: 1.3 !important;
+    }
+    
+    .tier-s, .tier-a, .tier-b {
+        display: inline-block !important;
+        font-size: 0.55rem !important;
+        padding: 2px 8px !important;
+        border-radius: 12px !important;
+        margin-right: 6px !important;
+        font-weight: 600 !important;
+    }
+    
+    .tier-s { background: #fef3c7 !important; color: #d97706 !important; }
+    .tier-a { background: #dcfce7 !important; color: #059669 !important; }
+    .tier-b { background: #dbeafe !important; color: #2563eb !important; }
+    
+    .mode-btn {
+        width: 100% !important;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+        color: white !important;
+        border: none !important;
+        padding: 10px !important;
+        border-radius: 30px !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        margin-top: 12px !important;
+    }
+    
+    .teacher-btn {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+    }
+    
+    /* Social Feed Card */
+    .social-feed {
+        background: linear-gradient(135deg, #1da1f2, #0d8bd9) !important;
+        border-radius: 20px !important;
+        padding: 16px 20px !important;
+        margin: 20px 0 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        cursor: pointer !important;
+    }
+    
+    .social-feed h4 {
+        color: white !important;
+        font-size: 1rem !important;
+        margin: 0 0 4px 0 !important;
+    }
+    
+    .social-feed p {
+        color: rgba(255,255,255,0.9) !important;
+        font-size: 0.7rem !important;
+        margin: 0 !important;
+    }
+    
+    .feed-btn {
+        background: white !important;
+        color: #1da1f2 !important;
+        padding: 6px 14px !important;
+        border-radius: 30px !important;
+        font-size: 0.7rem !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Stats Row - MOVED DOWN (no lines above) */
+    .stats-row {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 10px !important;
+        margin: 20px 0 !important;
+        text-align: center !important;
+    }
+    
+    .stat-number {
+        font-size: 1.1rem !important;
+        font-weight: 800 !important;
+        color: #4f46e5 !important;
+    }
+    
+    .stat-label {
+        font-size: 0.55rem !important;
+        color: #64748b !important;
+    }
+    
+    /* Live row */
+    .live-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        background: #f1f5f9 !important;
+        padding: 12px 16px !important;
+        border-radius: 40px !important;
+        margin: 20px 0 !important;
+    }
+    
+    .avatars {
+        display: flex !important;
+        gap: 4px !important;
+    }
+    
+    .avatar {
+        width: 28px !important;
+        height: 28px !important;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 0.6rem !important;
+        color: white !important;
+    }
+    
+    .live-text {
+        font-size: 0.7rem !important;
+        color: #10b981 !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Slideshow */
+    .slideshow-container {
+        position: relative !important;
+        overflow: hidden !important;
+        background: white !important;
+        border-radius: 20px !important;
+        border: 1px solid #e2e8f0 !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .slide {
+        display: none !important;
+        padding: 16px !important;
+    }
+    
+    .slide.active {
+        display: block !important;
+    }
+    
+    .slide-content {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+    
+    .slide-image {
+        text-align: center !important;
+        width: 100% !important;
+    }
+    
+    .slide-image img {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        border-radius: 16px !important;
+        object-fit: cover !important;
+    }
+    
+    .slide-text h3 {
+        font-size: 0.9rem !important;
+        margin-bottom: 6px !important;
+        color: #1e293b !important;
+    }
+    
+    .slide-text p {
+        font-size: 0.7rem !important;
+        color: #64748b !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .feature-list-slide {
+        list-style: none !important;
+        padding-left: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .feature-list-slide li {
+        font-size: 0.65rem !important;
+        padding: 3px 0 !important;
+        color: #64748b !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+    }
+    
+    .feature-list-slide li i {
+        color: #10b981 !important;
+        width: 14px !important;
+        font-size: 0.6rem !important;
+    }
+    
+    .nav-arrow {
+        position: absolute !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        width: 28px !important;
+        height: 28px !important;
+        background: white !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        z-index: 10 !important;
+        color: #1e293b !important;
+        font-size: 0.7rem !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    }
+    
+    .nav-arrow.left { left: 8px !important; }
+    .nav-arrow.right { right: 8px !important; }
+    
+    .slideshow-nav {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        margin-top: 12px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .nav-dot {
+        width: 6px !important;
+        height: 6px !important;
+        border-radius: 50% !important;
+        background: #cbd5e1 !important;
+        cursor: pointer !important;
+    }
+    
+    .nav-dot.active {
+        width: 20px !important;
+        background: #4f46e5 !important;
+        border-radius: 12px !important;
+    }
+    
+    /* Testimonials Section */
+    .testimonials-section {
+        margin: 20px 0 !important;
+    }
+    
+    .testimonials-title {
+        text-align: center !important;
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        margin-bottom: 16px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+    }
+    
+    .testimonials-scroll {
+        display: flex !important;
+        overflow-x: auto !important;
+        gap: 16px !important;
+        scroll-snap-type: x mandatory !important;
+        padding-bottom: 8px !important;
+    }
+    
+    .testimonial-card {
+        flex: 0 0 auto !important;
+        width: 280px !important;
+        background: white !important;
+        border-radius: 20px !important;
+        padding: 16px !important;
+        border: 1px solid #e2e8f0 !important;
+        scroll-snap-align: start !important;
+    }
+    
+    .testimonial-header {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .testimonial-avatar {
+        width: 40px !important;
+        height: 40px !important;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: white !important;
+        font-weight: 700 !important;
+    }
+    
+    .testimonial-name {
+        font-weight: 700 !important;
+        font-size: 0.85rem !important;
+        color: #1e293b !important;
+    }
+    
+    .testimonial-stars {
+        color: #fbbf24 !important;
+        font-size: 0.7rem !important;
+        letter-spacing: 2px !important;
+    }
+    
+    .testimonial-text {
+        font-size: 0.7rem !important;
+        color: #64748b !important;
+        line-height: 1.5 !important;
+        font-style: italic !important;
+    }
+    
+    /* Feature Grid */
+    .feature-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        margin: 20px 0 !important;
+    }
+    
+    .grid-item {
+        background: white !important;
+        border-radius: 16px !important;
+        padding: 10px !important;
+        text-align: center !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+    
+    .grid-item i {
+        font-size: 1rem !important;
+        color: #4f46e5 !important;
+        display: block !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .grid-item span {
+        font-size: 0.65rem !important;
+        font-weight: 600 !important;
+        color: #1e293b !important;
+        display: block !important;
+    }
+    
+    .grid-item small {
+        font-size: 0.5rem !important;
+        color: #64748b !important;
+    }
+    
+    /* Newsletter Section */
+    .newsletter-section {
+        margin: 20px 0 !important;
+        padding: 20px !important;
+        background: white !important;
+        border-radius: 20px !important;
+        border: 1px solid #e2e8f0 !important;
+        text-align: center !important;
+    }
+    
+    .newsletter-title {
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .newsletter-desc {
+        font-size: 0.65rem !important;
+        color: #64748b !important;
+        margin-bottom: 16px !important;
+    }
+    
+    .newsletter-form {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    .newsletter-input {
+        width: 100% !important;
+        padding: 12px !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 30px !important;
+        font-size: 0.85rem !important;
+        background: #f8fafc !important;
+    }
+    
+    .newsletter-input:focus {
+        outline: none !important;
+        border-color: #4f46e5 !important;
+    }
+    
+    .newsletter-btn {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+        color: white !important;
+        border: none !important;
+        padding: 12px !important;
+        border-radius: 30px !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+    }
+    
+    /* Footer */
+    .mobile-footer {
+        text-align: center !important;
+        padding: 16px 0 !important;
+        font-size: 0.6rem !important;
+        color: #94a3b8 !important;
+        border-top: 1px solid #e2e8f0 !important;
+        margin-top: 20px !important;
+    }
+    
+    .social-links {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 16px !important;
+        margin: 12px 0 !important;
+    }
+    
+    .social-links a {
+        color: #64748b !important;
+        font-size: 1rem !important;
+        text-decoration: none !important;
+    }
+}
+
+@media (max-width: 550px) {
+    .modes-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+</style>
+
+<div class="mobile-responsive" style="display: none;">
+    
+    <!-- ONLY HEADER - NOTHING ABOVE -->
+    <div class="mobile-header">
+        <h1>🔥 grindly</h1>
+    </div>
+
+    <!-- Student & Teacher Cards -->
+    <div class="modes-grid">
+        <div class="mode-card">
+            <div class="mode-icon">🎓</div>
+            <div class="mode-title">Student</div>
+            <div class="feature-row">
+                <span class="feature-chip">✨ Study Groups</span>
+                <span class="feature-chip">⚡ Battle Arena</span>
+                <span class="feature-chip">📌 Memory Wall</span>
+                <span class="feature-chip">🎴 Focus Persona</span>
+            </div>
+            <ul class="feature-list">
+                <li><span class="tier-s">S-TIER</span> Live study groups with synced timers</li>
+                <li><span class="tier-s">S-TIER</span> Battle friends in class competitions</li>
+                <li><span class="tier-a">A-TIER</span> Collect 12 badges like Pokémon</li>
+                <li><span class="tier-a">A-TIER</span> Build visual streak chains</li>
+                <li><span class="tier-b">B-TIER</span> Free Pomodoro with 4 soundscapes</li>
+            </ul>
+            <button class="mode-btn" onclick="location.href='studentmode.html'">Enter Student Mode →</button>
+        </div>
+        
+        <div class="mode-card">
+            <div class="mode-icon">👩‍🏫</div>
+            <div class="mode-title">Teacher</div>
+            <div class="feature-row">
+                <span class="feature-chip">🎨 Live Sketchpad</span>
+                <span class="feature-chip">⚔️ Battle Arena</span>
+                <span class="feature-chip">📌 Memory Wall</span>
+                <span class="feature-chip">🎮 Challenges</span>
+            </div>
+            <ul class="feature-list">
+                <li><span class="tier-s">S-TIER</span> Live Sketchpad · Class vs Class battles</li>
+                <li><span class="tier-s">S-TIER</span> Moderate Memory Wall in real-time</li>
+                <li><span class="tier-a">A-TIER</span> See student progress LIVE</li>
+                <li><span class="tier-a">A-TIER</span> Identify at-risk students instantly</li>
+                <li><span class="tier-b">B-TIER</span> Emotional check-ins with QR codes</li>
+            </ul>
+            <button class="mode-btn teacher-btn" onclick="location.href='teachermode.html'">Enter Teacher Mode →</button>
+        </div>
+    </div>
+
+    <!-- Social Feed -->
+    <div class="social-feed" onclick="location.href='social-feed.html'">
+        <div>
+            <h4>🐦 Social Feed</h4>
+            <p>Connect with learners worldwide! Share your journey and help others.</p>
+        </div>
+        <div class="feed-btn">Explore →</div>
+    </div>
+
+    <!-- Stats Row - MOVED HERE (below Social Feed, no lines above) -->
+    <div class="stats-row">
+        <div class="stat-item"><div class="stat-number">52</div><div class="stat-label">features</div></div>
+        <div class="stat-item"><div class="stat-number">12</div><div class="stat-label">badges</div></div>
+        <div class="stat-item"><div class="stat-number">5</div><div class="stat-label">personas</div></div>
+        <div class="stat-item"><div class="stat-number">9</div><div class="stat-label">themes</div></div>
+        <div class="stat-item"><div class="stat-number">1.2K</div><div class="stat-label">users</div></div>
+        <div class="stat-item"><div class="stat-number">214</div><div class="stat-label">classes</div></div>
+    </div>
+
+    <!-- Student Slideshow -->
+    <div class="slideshow-container" id="studentSlideshowMobile">
+        <div class="slide active">
+            <div class="slide-content">
+                <div class="slide-image"><img src="student-dashboard.png" alt="Dashboard" onerror="this.src='https://placehold.co/600x400/4f46e5/white?text=Dashboard'"></div>
+                <div class="slide-text">
+                    <h3><i class="fas fa-tachometer-alt"></i> personal dashboard</h3>
+                    <p>Track streaks, set daily goals, manage priority tasks, and monitor assignments.</p>
+                    <ul class="feature-list-slide"><li><i class="fas fa-check"></i> study streak (milestones at 3,7,14,30,60,90)</li><li><i class="fas fa-check"></i> daily goal with confetti celebrations</li><li><i class="fas fa-check"></i> urgent / not urgent / optional tasks</li><li><i class="fas fa-check"></i> quick notes with autosave</li></ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide"><div class="slide-content"><div class="slide-image"><img src="student-focus.png" alt="Focus Portal" onerror="this.src='https://placehold.co/600x400/06b6d4/white?text=Focus+Portal'"></div><div class="slide-text"><h3><i class="fas fa-hourglass-half"></i> focus portal</h3><p>Distraction‑free zone with timer, sounds, and energy tracking.</p><ul class="feature-list-slide"><li><i class="fas fa-check"></i> pomodoro timer (customizable)</li><li><i class="fas fa-check"></i> distraction blocker (60s emergency unlock)</li><li><i class="fas fa-check"></i> study sounds – brown noise, rain, library</li><li><i class="fas fa-check"></i> learn by teaching – grow your tree 🌱</li></ul></div></div></div>
+        <div class="slide"><div class="slide-content"><div class="slide-image"><img src="student-memory.png" alt="Memory Wall" onerror="this.src='https://placehold.co/600x400/10b981/white?text=Memory+Wall'"></div><div class="slide-text"><h3><i class="fas fa-chalkboard"></i> memory wall</h3><p>Interactive class whiteboard – share achievements, encouragement, and questions.</p><ul class="feature-list-slide"><li><i class="fas fa-check"></i> add sticky notes with 6 colours</li><li><i class="fas fa-check"></i> drag & drop anywhere</li><li><i class="fas fa-check"></i> like others' notes</li><li><i class="fas fa-check"></i> real‑time updates</li></ul></div></div></div>
+        <div class="slide"><div class="slide-content"><div class="slide-image"><img src="student-badges.png" alt="Badges" onerror="this.src='https://placehold.co/600x400/f59e0b/white?text=Badges'"></div><div class="slide-text"><h3><i class="fas fa-medal"></i> gamification & analytics</h3><p>Unlock badges, grow a tree, and track progress with detailed charts.</p><ul class="feature-list-slide"><li><i class="fas fa-check"></i> 12 achievement badges</li><li><i class="fas fa-check"></i> growth tree (🌱 → 🌳)</li><li><i class="fas fa-check"></i> 6 analytics charts</li><li><i class="fas fa-check"></i> study heatmap & focus score</li></ul></div></div></div>
+        <div class="slide"><div class="slide-content"><div class="slide-image"><img src="focus-persona.png" alt="Focus Persona" onerror="this.src='https://placehold.co/600x400/8b5cf6/white?text=Focus+Persona'"></div><div class="slide-text"><h3><i class="fas fa-id-card"></i> focus persona</h3><p>Discover your unique study identity based on your actual study patterns.</p><ul class="feature-list-slide"><li><i class="fas fa-check"></i> analyzes start time, duration & frequency</li><li><i class="fas fa-check"></i> 5 unique personas to unlock</li><li><i class="fas fa-check"></i> 7-day focus hours chart</li><li><i class="fas fa-check"></i> shareable RPG-style card</li></ul><div style="margin-top: 8px; display: flex; gap: 4px; flex-wrap: wrap;"><span class="tag">🦉 Night Owl</span><span class="tag">🏊 Deep Diver</span><span class="tag">⚡ Sprinter</span><span class="tag">📚 Steady Scholar</span><span class="tag">🌙 Unawakened</span></div></div></div></div>
+        <div class="nav-arrow left" onclick="changeStudentSlideMobile(-1)">‹</div>
+        <div class="nav-arrow right" onclick="changeStudentSlideMobile(1)">›</div>
+    </div>
+    <div class="slideshow-nav" id="studentDotsMobile"><span class="nav-dot active" onclick="goToStudentSlideMobile(0)"></span><span class="nav-dot" onclick="goToStudentSlideMobile(1)"></span><span class="nav-dot" onclick="goToStudentSlideMobile(2)"></span><span class="nav-dot" onclick="goToStudentSlideMobile(3)"></span><span class="nav-dot" onclick="goToStudentSlideMobile(4)"></span></div>
+
+    <!-- Teacher Slideshow -->
+    <div class="slideshow-container" id="teacherSlideshowMobile">
+        <div class="slide active"><div class="slide-content"><div class="slide-image"><img src="teacher-checkins.png" alt="Check-ins" onerror="this.src='https://placehold.co/600x400/ef4444/white?text=Check-ins'"></div><div class="slide-text"><h3><i class="fas fa-heart"></i> live emotional check‑ins</h3><p>Anonymous student check‑ins – see class sentiment in real time.</p><ul class="feature-list-slide"><li><i class="fas fa-check"></i> 6‑digit code + QR code</li><li><i class="fas fa-check"></i> live bars (😊 😐 😕)</li><li><i class="fas fa-check"></i> action suggestions for each emotion</li><li><i class="fas fa-check"></i> response history</li></ul></div></div></div>
+        <div class="slide"><div class="slide-content"><div class="slide-image"><img src="teacher-challenges.png" alt="Challenges" onerror="this.src='https://placehold.co/600x400/f59e0b/white?text=Challenges'"></div><div class="slide-text"><h3><i class="fas fa-crosshairs"></i> class challenges</h3><p>Challenge other classes – compete on study hours or average streak.</p><ul class="feature-list-slide"><li><i class="fas fa-check"></i> 1, 3, or 7 day durations</li><li><i class="fas fa-check"></i> live scoreboard</li><li><i class="fas fa-check"></i> winner celebration with confetti</li><li><i class="fas fa-check"></i> filter by status</li></ul></div></div></div>
+        <div class="slide"><div class="slide-content"><div class="slide-image"><img src="teacher-analytics.png" alt="Analytics" onerror="this.src='https://placehold.co/600x400/3b82f6/white?text=Analytics'"></div><div class="slide-text"><h3><i class="fas fa-chart-bar"></i> class analytics & heatmap</h3><p>Understand when and how your class studies.</p><ul class="feature-list-slide"><li><i class="fas fa-check"></i> 12‑week activity heatmap</li><li><i class="fas fa-check"></i> daily active count</li><li><i class="fas fa-check"></i> at‑risk student alerts</li><li><i class="fas fa-check"></i> top performers leaderboard</li></ul></div></div></div>
+        <div class="slide"><div class="slide-content"><div class="slide-image"><img src="teacher-toolkit.png" alt="Toolkit" onerror="this.src='https://placehold.co/600x400/10b981/white?text=Toolkit'"></div><div class="slide-text"><h3><i class="fas fa-wrench"></i> teacher toolkit</h3><p>10+ in‑class tools to keep you organized and responsive.</p><ul class="feature-list-slide"><li><i class="fas fa-check"></i> random student picker</li><li><i class="fas fa-check"></i> group generator</li><li><i class="fas fa-check"></i> priority list</li><li><i class="fas fa-check"></i> focus bell & lightning plan</li><li><i class="fas fa-check"></i> exit tickets & weekly wins</li></ul></div></div></div>
+        <div class="nav-arrow left" onclick="changeTeacherSlideMobile(-1)">‹</div>
+        <div class="nav-arrow right" onclick="changeTeacherSlideMobile(1)">›</div>
+    </div>
+    <div class="slideshow-nav" id="teacherDotsMobile"><span class="nav-dot active" onclick="goToTeacherSlideMobile(0)"></span><span class="nav-dot" onclick="goToTeacherSlideMobile(1)"></span><span class="nav-dot" onclick="goToTeacherSlideMobile(2)"></span><span class="nav-dot" onclick="goToTeacherSlideMobile(3)"></span></div>
+
+    <!-- Testimonials Section -->
+    <div class="testimonials-section">
+        <div class="testimonials-title">❤️ loved by thousands · what our community says</div>
+        <div class="testimonials-scroll">
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-avatar">⭐</div>
+                    <div><div class="testimonial-name">Sarah Johnson</div><div class="testimonial-stars">★★★★★</div></div>
+                </div>
+                <div class="testimonial-text">"The study groups feature transformed my classroom! Students are actually excited to study together."</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-avatar">🎓</div>
+                    <div><div class="testimonial-name">Michael Chen</div><div class="testimonial-stars">★★★★★</div></div>
+                </div>
+                <div class="testimonial-text">"My focus score went up by 40% in just two weeks. The Pomodoro timer is a game-changer!"</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-avatar">👩‍🏫</div>
+                    <div><div class="testimonial-name">Emily Rodriguez</div><div class="testimonial-stars">★★★★★</div></div>
+                </div>
+                <div class="testimonial-text">"The analytics dashboard helps me identify struggling students instantly. Best free tool ever!"</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Grid -->
+    <div class="feature-grid">
+        <div class="grid-item"><i class="fas fa-users"></i><span>study groups</span><small>live sessions</small></div>
+        <div class="grid-item"><i class="fas fa-crosshairs"></i><span>battle arena</span><small>class vs class</small></div>
+        <div class="grid-item"><i class="fas fa-chalkboard"></i><span>memory wall</span><small>interactive</small></div>
+        <div class="grid-item"><i class="fas fa-id-card"></i><span>focus persona</span><small>study identity</small></div>
+        <div class="grid-item"><i class="fas fa-fire"></i><span>streak chain</span><small>visual milestones</small></div>
+        <div class="grid-item"><i class="fas fa-medal"></i><span>12 badges</span><small>achievements</small></div>
+        <div class="grid-item"><i class="fas fa-clock"></i><span>pomodoro</span><small>+ soundscapes</small></div>
+        <div class="grid-item"><i class="fas fa-tasks"></i><span>task manager</span><small>priority levels</small></div>
+        <div class="grid-item"><i class="fas fa-palette"></i><span>9 themes</span><small>customization</small></div>
+        <div class="grid-item"><i class="fas fa-smile"></i><span>check‑ins</span><small>emotional pulse</small></div>
+        <div class="grid-item"><i class="fas fa-poll"></i><span>polls</span><small>real-time</small></div>
+        <div class="grid-item"><i class="fas fa-bullhorn"></i><span>announcements</span><small>updates</small></div>
+        <div class="grid-item"><i class="fas fa-random"></i><span>random picker</span><small>participation</small></div>
+        <div class="grid-item"><i class="fas fa-share-alt"></i><span>resources</span><small>library</small></div>
+    </div>
+
+    <!-- Live Row -->
+    <div class="live-row">
+        <div class="avatars"><div class="avatar">👤</div><div class="avatar">👤</div><div class="avatar">👤</div><div class="avatar">+6</div></div>
+        <div class="live-text">🔥 9 students studying now</div>
+    </div>
+
+    <!-- Newsletter Signup -->
+    <div class="newsletter-section">
+        <div class="newsletter-title">📧 Stay Updated</div>
+        <div class="newsletter-desc">Get the latest updates, tips, and new features directly to your inbox!</div>
+        <form class="newsletter-form" action="https://formspree.io/f/xkoqyven" method="POST" target="_blank">
+            <input type="email" name="email" class="newsletter-input" placeholder="Enter your email address" required>
+            <button type="submit" class="newsletter-btn">Subscribe →</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="mobile-footer">
+        <p>FREE FOREVER · 1,247 views · 214 active classes</p>
+        <div class="social-links">
+            <a href="#">🐦 Twitter</a>
+            <a href="#">📘 Facebook</a>
+            <a href="#">📸 Instagram</a>
+            <a href="#">💬 Discord</a>
+        </div>
+        <p>© 2024 Grindly Learn — Learn. Compete. Grow.</p>
+    </div>
+</div>
+
+<script>
+let studentCurrentMobile = 0, teacherCurrentMobile = 0;
+const studentSlidesMobile = document.querySelectorAll('#studentSlideshowMobile .slide');
+const teacherSlidesMobile = document.querySelectorAll('#teacherSlideshowMobile .slide');
+const studentDotsMobile = document.querySelectorAll('#studentDotsMobile .nav-dot');
+const teacherDotsMobile = document.querySelectorAll('#teacherDotsMobile .nav-dot');
+
+function showStudentSlideMobile(index) {
+    if (!studentSlidesMobile.length) return;
+    if (index < 0) index = studentSlidesMobile.length - 1;
+    if (index >= studentSlidesMobile.length) index = 0;
+    studentSlidesMobile.forEach(s => s.classList.remove('active'));
+    studentDotsMobile.forEach(d => d.classList.remove('active'));
+    studentSlidesMobile[index].classList.add('active');
+    if (studentDotsMobile[index]) studentDotsMobile[index].classList.add('active');
+    studentCurrentMobile = index;
+}
+
+function showTeacherSlideMobile(index) {
+    if (!teacherSlidesMobile.length) return;
+    if (index < 0) index = teacherSlidesMobile.length - 1;
+    if (index >= teacherSlidesMobile.length) index = 0;
+    teacherSlidesMobile.forEach(s => s.classList.remove('active'));
+    teacherDotsMobile.forEach(d => d.classList.remove('active'));
+    teacherSlidesMobile[index].classList.add('active');
+    if (teacherDotsMobile[index]) teacherDotsMobile[index].classList.add('active');
+    teacherCurrentMobile = index;
+}
+
+function changeStudentSlideMobile(d) { showStudentSlideMobile(studentCurrentMobile + d); }
+function changeTeacherSlideMobile(d) { showTeacherSlideMobile(teacherCurrentMobile + d); }
+function goToStudentSlideMobile(i) { showStudentSlideMobile(i); }
+function goToTeacherSlideMobile(i) { showTeacherSlideMobile(i); }
+
+if (window.innerWidth <= 768) {
+    document.querySelector('.mobile-responsive').style.display = 'block';
+    document.body.querySelectorAll(':scope > *:not(.mobile-responsive)').forEach(el => {
+        if (el.style) el.style.display = 'none';
+    });
+}
+
+window.addEventListener('resize', function() {
+    if (window.innerWidth <= 768) {
+        document.querySelector('.mobile-responsive').style.display = 'block';
+        document.body.querySelectorAll(':scope > *:not(.mobile-responsive)').forEach(el => {
+            if (el.style) el.style.display = 'none';
+        });
+    } else {
+        location.reload();
+    }
+});
+
+// Newsletter toast
+document.querySelectorAll('.newsletter-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = this.querySelector('.newsletter-input').value;
+        if (email) {
+            const toast = document.createElement('div');
+            toast.textContent = '🎉 Thanks for subscribing!';
+            toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#4f46e5;color:white;padding:12px 24px;border-radius:30px;font-size:0.8rem;z-index:9999;';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+            this.querySelector('.newsletter-input').value = '';
+        }
+    });
+});
+</script>
 </body>
 </html>
