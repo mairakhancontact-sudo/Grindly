@@ -19503,7 +19503,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🎯 Cursor tracking system ready');
 })();
 </script>
-  <!-- ========== GOOGLE AUTH FOR GRINDLYLEARN.COM ========== -->
+ <!-- ========== COMPLETE GOOGLE AUTH (SAVES & RESTORES EVERYTHING) ========== -->
 <style>
 .auth-top-bar {
     background: var(--card);
@@ -19610,24 +19610,42 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentUser = null;
     let authBarCreated = false;
     
-    // ========== CAPTURE ALL APP DATA ==========
-    function captureAllData() {
+    // ========== CAPTURE EVERYTHING (COMPLETE DATA) ==========
+    function captureCompleteData() {
         const data = {
             timestamp: Date.now(),
-            profile: { name: 'Student' },
+            version: '2.0',
+            // Profile
+            profile: {
+                name: 'Student',
+                userId: null
+            },
+            // Study Data (streak, hours, sessions)
             studyData: {},
+            // Tasks
             tasks: [],
+            // Assignments
             assignments: [],
-            classes: []
+            // Classes
+            classes: [],
+            // Memory Wall Notes
+            memoryWallNotes: [],
+            // Focus Scores
+            focusScores: [],
+            // Daily Stats
+            dailyStats: []
         };
         
         try {
+            // === PROFILE ===
             if (typeof window.currentUserName !== 'undefined' && window.currentUserName) {
                 data.profile.name = window.currentUserName;
             } else {
                 data.profile.name = localStorage.getItem('studentName') || 'Student';
             }
+            data.profile.userId = localStorage.getItem('studentUserId');
             
+            // === STUDY DATA (STREAK, HOURS, SESSIONS) ===
             if (typeof window.studyData !== 'undefined' && window.studyData) {
                 data.studyData = {
                     streak: window.studyData.streak || 0,
@@ -19637,47 +19655,110 @@ document.addEventListener('DOMContentLoaded', () => {
                     studySessions: window.studyData.studySessions || [],
                     dailyStats: window.studyData.dailyStats || [],
                     weeklyPattern: window.studyData.weeklyPattern || [0,0,0,0,0,0,0],
-                    streakHistory: window.studyData.streakHistory || []
+                    streakHistory: window.studyData.streakHistory || [],
+                    focusScores: window.studyData.focusScores || [],
+                    consistencyScores: window.studyData.consistencyScores || []
                 };
+            } else {
+                // Try to load from localStorage
+                const savedStudy = localStorage.getItem('studentStudyData');
+                if (savedStudy) {
+                    try {
+                        data.studyData = JSON.parse(savedStudy);
+                    } catch(e) {}
+                }
             }
             
+            // === TASKS ===
             if (typeof window.tasks !== 'undefined' && Array.isArray(window.tasks)) {
                 data.tasks = window.tasks;
             } else {
-                const saved = localStorage.getItem('studentTasks');
-                if (saved) data.tasks = JSON.parse(saved);
+                const savedTasks = localStorage.getItem('studentTasks');
+                if (savedTasks) {
+                    try {
+                        data.tasks = JSON.parse(savedTasks);
+                    } catch(e) {}
+                }
             }
             
+            // === ASSIGNMENTS ===
             if (typeof window.assignments !== 'undefined' && Array.isArray(window.assignments)) {
                 data.assignments = window.assignments;
             } else {
-                const saved = localStorage.getItem('studentAssignments');
-                if (saved) data.assignments = JSON.parse(saved);
+                const savedAssignments = localStorage.getItem('studentAssignments');
+                if (savedAssignments) {
+                    try {
+                        data.assignments = JSON.parse(savedAssignments);
+                    } catch(e) {}
+                }
             }
             
+            // === CLASSES ===
             if (typeof window.userClasses !== 'undefined' && Array.isArray(window.userClasses)) {
                 data.classes = window.userClasses;
             } else {
-                const saved = localStorage.getItem('studentUserClasses');
-                if (saved) data.classes = JSON.parse(saved);
+                const savedClasses = localStorage.getItem('studentUserClasses');
+                if (savedClasses) {
+                    try {
+                        data.classes = JSON.parse(savedClasses);
+                    } catch(e) {}
+                }
             }
             
-        } catch(e) { console.warn(e); }
+            // === MEMORY WALL NOTES ===
+            if (typeof window.studentMemoryWallNotes !== 'undefined' && Array.isArray(window.studentMemoryWallNotes)) {
+                data.memoryWallNotes = window.studentMemoryWallNotes;
+            } else {
+                const savedMemoryWall = localStorage.getItem('studentMemoryWallNotes');
+                if (savedMemoryWall) {
+                    try {
+                        data.memoryWallNotes = JSON.parse(savedMemoryWall);
+                    } catch(e) {}
+                }
+            }
+            
+            // === DAILY STATS & FOCUS SCORES ===
+            if (typeof window.studyData !== 'undefined' && window.studyData) {
+                data.dailyStats = window.studyData.dailyStats || [];
+                data.focusScores = window.studyData.focusScores || [];
+            }
+            
+        } catch(e) { 
+            console.warn('Capture error:', e); 
+        }
         
         return data;
     }
     
-    // ========== RESTORE DATA ==========
-    function restoreAllData(data) {
+    // ========== RESTORE EVERYTHING (COMPLETE DATA) ==========
+    function restoreCompleteData(data) {
         if (!data) return false;
         
+        console.log('🔄 Restoring complete data...', data);
+        
         try {
+            // === PROFILE ===
             if (data.profile && data.profile.name) {
-                if (typeof window.currentUserName !== 'undefined') window.currentUserName = data.profile.name;
+                if (typeof window.currentUserName !== 'undefined') {
+                    window.currentUserName = data.profile.name;
+                }
                 localStorage.setItem('studentName', data.profile.name);
-                document.querySelectorAll('#studentName, #profileName').forEach(inp => { if(inp) inp.value = data.profile.name; });
+                
+                // Update all name fields
+                const nameInputs = document.querySelectorAll('#studentName, #profileName');
+                nameInputs.forEach(inp => { 
+                    if (inp) inp.value = data.profile.name; 
+                });
             }
             
+            if (data.profile && data.profile.userId) {
+                localStorage.setItem('studentUserId', data.profile.userId);
+                if (typeof window.currentUserId !== 'undefined') {
+                    window.currentUserId = data.profile.userId;
+                }
+            }
+            
+            // === STUDY DATA ===
             if (data.studyData && typeof window.studyData !== 'undefined') {
                 window.studyData.streak = data.studyData.streak || 0;
                 window.studyData.totalStudyHours = data.studyData.totalHours || 0;
@@ -19687,9 +19768,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.studyData.dailyStats = data.studyData.dailyStats || [];
                 window.studyData.weeklyPattern = data.studyData.weeklyPattern || [0,0,0,0,0,0,0];
                 window.studyData.streakHistory = data.studyData.streakHistory || [];
+                window.studyData.focusScores = data.studyData.focusScores || [];
+                window.studyData.consistencyScores = data.studyData.consistencyScores || [];
+                
                 localStorage.setItem('studentStudyData', JSON.stringify(window.studyData));
             }
             
+            // === TASKS ===
             if (data.tasks && Array.isArray(data.tasks) && typeof window.tasks !== 'undefined') {
                 window.tasks = data.tasks;
                 if (typeof window.saveTasks === 'function') window.saveTasks();
@@ -19698,6 +19783,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('studentTasks', JSON.stringify(window.tasks));
             }
             
+            // === ASSIGNMENTS ===
             if (data.assignments && Array.isArray(data.assignments) && typeof window.assignments !== 'undefined') {
                 window.assignments = data.assignments;
                 if (typeof window.saveAssignments === 'function') window.saveAssignments();
@@ -19705,6 +19791,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('studentAssignments', JSON.stringify(window.assignments));
             }
             
+            // === CLASSES ===
             if (data.classes && Array.isArray(data.classes) && typeof window.userClasses !== 'undefined') {
                 window.userClasses = data.classes;
                 localStorage.setItem('studentUserClasses', JSON.stringify(window.userClasses));
@@ -19712,42 +19799,92 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (typeof window.renderClassesList === 'function') window.renderClassesList();
             }
             
+            // === MEMORY WALL NOTES ===
+            if (data.memoryWallNotes && Array.isArray(data.memoryWallNotes) && typeof window.studentMemoryWallNotes !== 'undefined') {
+                window.studentMemoryWallNotes = data.memoryWallNotes;
+                localStorage.setItem('studentMemoryWallNotes', JSON.stringify(window.studentMemoryWallNotes));
+                if (typeof window.renderStudentStickyNotes === 'function') window.renderStudentStickyNotes();
+            }
+            
+            // === FORCE ALL UI UPDATES ===
             if (typeof window.updateUI === 'function') window.updateUI();
             if (typeof window.updateStreakUI === 'function') window.updateStreakUI();
             if (typeof window.updateAllStatistics === 'function') window.updateAllStatistics();
+            if (typeof window.updateSidebarStats === 'function') window.updateSidebarStats();
+            if (typeof window.renderBadges === 'function') window.renderBadges();
+            if (typeof window.renderStudyHeatmap === 'function') window.renderStudyHeatmap();
             
+            // === UPDATE VISIBLE STATS ===
             const streakEl = document.getElementById('streakDisplay');
             if (streakEl) streakEl.textContent = data.studyData?.streak || 0;
+            
+            const streakNumberEl = document.getElementById('streakNumber');
+            if (streakNumberEl) streakNumberEl.textContent = data.studyData?.streak || 0;
+            
             const hoursEl = document.getElementById('totalHoursDisplay');
             if (hoursEl) hoursEl.textContent = (data.studyData?.totalHours || 0).toFixed(1);
+            
             const tasksEl = document.getElementById('tasksCompletedDisplay');
             if (tasksEl) tasksEl.textContent = data.tasks?.filter(t => t.completed).length || 0;
             
+            const focusEl = document.getElementById('focusScoreDisplay');
+            if (focusEl) {
+                let focusScore = 70;
+                if (data.studyData?.focusScores && data.studyData.focusScores.length > 0) {
+                    focusScore = data.studyData.focusScores[data.studyData.focusScores.length - 1].score || 70;
+                } else if (data.studyData?.streak) {
+                    focusScore = Math.min(100, 70 + (data.studyData.streak * 2));
+                }
+                focusEl.textContent = focusScore + '%';
+            }
+            
             return true;
-        } catch(e) { return false; }
+        } catch(e) { 
+            console.error('Restore error:', e); 
+            return false; 
+        }
     }
     
-    // ========== SAVE/LOAD FOR USER ==========
-    function saveDataForUser(uid) {
-        const data = captureAllData();
-        localStorage.setItem(`google_user_data_${uid}`, JSON.stringify(data));
-        console.log('💾 Data saved for user');
+    // ========== SAVE ALL DATA FOR USER ==========
+    function saveAllDataForUser(uid) {
+        const completeData = captureCompleteData();
+        const saveObject = {
+            uid: uid,
+            data: completeData,
+            lastSaved: Date.now(),
+            version: '2.0'
+        };
+        localStorage.setItem(`grindly_user_${uid}`, JSON.stringify(saveObject));
+        console.log('💾 All data saved for user:', uid);
+        return true;
     }
     
-    function loadDataForUser(uid) {
-        const saved = localStorage.getItem(`google_user_data_${uid}`);
+    // ========== LOAD ALL DATA FOR USER ==========
+    function loadAllDataForUser(uid) {
+        const saved = localStorage.getItem(`grindly_user_${uid}`);
         if (saved) {
-            restoreAllData(JSON.parse(saved));
-            return true;
+            try {
+                const saveObject = JSON.parse(saved);
+                if (saveObject.data) {
+                    restoreCompleteData(saveObject.data);
+                    console.log('📂 All data loaded for user:', uid);
+                    return true;
+                }
+            } catch(e) {
+                console.error('Load error:', e);
+            }
         }
         return false;
     }
     
+    // ========== UPDATE CURRENT USER DATA ==========
     function updateCurrentUserData() {
-        if (currentUser) saveDataForUser(currentUser.uid);
+        if (currentUser && currentUser.uid) {
+            saveAllDataForUser(currentUser.uid);
+        }
     }
     
-    // ========== GOOGLE AUTH (works on grindlylearn.com) ==========
+    // ========== GOOGLE AUTH ==========
     async function signUpWithGoogle() {
         if (!window.firebase || !window.firebase.auth) {
             showMessage("Loading... Please wait a moment.", "error");
@@ -19770,16 +19907,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 photoURL: user.photoURL
             };
             
-            localStorage.setItem('google_user', JSON.stringify(currentUser));
-            saveDataForUser(user.uid);
+            localStorage.setItem('grindly_current_user', JSON.stringify(currentUser));
+            
+            // Save current data to this new account
+            saveAllDataForUser(user.uid);
             
             updateAuthUI();
-            showMessage(`✅ Account created! Welcome ${currentUser.name}!`, "success");
+            showMessage(`✅ Account created! Welcome ${currentUser.name}! Your data is now backed up.`, "success");
+            
+            // Refresh to show all data
+            setTimeout(() => {
+                if (confirm("Account created! Refresh to see your saved data?")) {
+                    window.location.reload();
+                }
+            }, 1000);
             
         } catch(error) {
             console.error("Sign up error:", error);
             if (error.message.includes("authorized domain")) {
-                showMessage("Please deploy to grindlylearn.com or add 127.0.0.1 to Firebase authorized domains.", "error");
+                showMessage("Please deploy to grindlylearn.com first.", "error");
             } else {
                 showMessage("Failed: " + error.message, "error");
             }
@@ -19808,17 +19954,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 photoURL: user.photoURL
             };
             
-            localStorage.setItem('google_user', JSON.stringify(currentUser));
+            localStorage.setItem('grindly_current_user', JSON.stringify(currentUser));
             
-            const hasData = loadDataForUser(user.uid);
+            // Load all data for this user
+            const hasData = loadAllDataForUser(user.uid);
+            
             if (hasData) {
-                showMessage(`🎉 Welcome back ${currentUser.name}!`, "success");
+                showMessage(`🎉 Welcome back ${currentUser.name}! All your data restored.`, "success");
             } else {
-                saveDataForUser(user.uid);
+                // First time signing in on this device, save current data
+                saveAllDataForUser(user.uid);
                 showMessage(`✅ Signed in as ${currentUser.name}`, "success");
             }
             
             updateAuthUI();
+            
+            // Refresh to ensure all data is displayed
+            setTimeout(() => {
+                if (confirm("Data restored! Refresh to see all your saved data?")) {
+                    window.location.reload();
+                }
+            }, 1000);
             
         } catch(error) {
             console.error("Sign in error:", error);
@@ -19834,20 +19990,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.firebase && window.firebase.auth) {
             try { await firebase.auth().signOut(); } catch(e) {}
         }
+        
+        // Save current data before signing out
+        if (currentUser) {
+            saveAllDataForUser(currentUser.uid);
+        }
+        
         currentUser = null;
-        localStorage.removeItem('google_user');
+        localStorage.removeItem('grindly_current_user');
         updateAuthUI();
         showMessage("Signed out successfully", "success");
+        
+        setTimeout(() => {
+            if (confirm("Signed out. Refresh to clear data?")) {
+                window.location.reload();
+            }
+        }, 500);
     }
     
     function checkExistingSession() {
-        const savedUser = localStorage.getItem('google_user');
+        const savedUser = localStorage.getItem('grindly_current_user');
         if (savedUser) {
             try {
                 currentUser = JSON.parse(savedUser);
-                loadDataForUser(currentUser.uid);
+                loadAllDataForUser(currentUser.uid);
                 updateAuthUI();
-                console.log('✅ Session restored:', currentUser.name);
+                console.log('✅ Session restored for:', currentUser.name);
             } catch(e) {}
         } else {
             updateAuthUI();
@@ -19950,19 +20118,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // ========== AUTO-SAVE ==========
-    function hookFunctions() {
-        const funcs = ['addStudyHours', 'markStudyToday', 'addTask', 'toggleTask', 'deleteTask', 'addAssignment', 'toggleAssignment', 'joinClass', 'leaveClass'];
-        funcs.forEach(name => {
-            const original = window[name];
+    // ========== AUTO-SAVE ON ALL CHANGES ==========
+    function hookAllFunctions() {
+        const functionsToHook = [
+            'addStudyHours', 'markStudyToday', 'addTask', 'toggleTask', 
+            'deleteTask', 'clearCompletedTasks', 'addAssignment', 'toggleAssignment',
+            'joinClass', 'leaveClass', 'studentSubmitMemory', 'studentLikeNote'
+        ];
+        
+        functionsToHook.forEach(funcName => {
+            const original = window[funcName];
             if (original && typeof original === 'function') {
-                window[name] = function() {
+                window[funcName] = function() {
                     const result = original.apply(this, arguments);
-                    if (currentUser) setTimeout(() => updateCurrentUserData(), 500);
+                    if (currentUser && currentUser.uid) {
+                        setTimeout(() => updateCurrentUserData(), 500);
+                    }
                     return result;
                 };
             }
         });
+        
+        // Also hook into study data changes
+        if (typeof window.studyData !== 'undefined') {
+            const originalStudyData = window.studyData;
+            // No direct hook needed, functions above cover it
+        }
     }
     
     // ========== INIT ==========
@@ -19976,10 +20157,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(checkFirebase);
                 console.log('✅ Firebase Auth ready');
                 checkExistingSession();
-                hookFunctions();
+                hookAllFunctions();
             } else if (attempts > 30) {
                 clearInterval(checkFirebase);
-                console.log('⚠️ Firebase not loaded');
+                console.log('⚠️ Firebase not loaded, using offline mode');
                 updateAuthUI();
             }
         }, 500);
@@ -19990,9 +20171,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         init();
     }
+    
+    // Expose functions globally
+    window.saveAllData = updateCurrentUserData;
+    window.loadAllData = loadAllDataForUser;
 })();
 </script>
-<!-- ========== END GOOGLE AUTH ========== -->
+<!-- ========== END COMPLETE GOOGLE AUTH ========== -->
 </body>
 </html>
 
